@@ -1,16 +1,11 @@
-import { PrimaryKey, Property } from '@mikro-orm/core';
+import { PrimaryKey } from '@mikro-orm/core';
 import { v4 as uuid } from 'uuid';
+import { DateEntity } from './date.entity';
 
 // Generic BaseEntity with utility methods
-export abstract class BaseEntity {
+export abstract class BaseEntity extends DateEntity {
   @PrimaryKey()
   id: string = uuid();
-
-  @Property({ onCreate: () => new Date() })
-  created_at: Date;
-
-  @Property({ onCreate: () => new Date(), onUpdate: () => new Date() })
-  updated_at: Date;
 
   // Utility method for property assignment
   assign(data: Partial<this>) {
