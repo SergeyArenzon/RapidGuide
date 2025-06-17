@@ -3,20 +3,20 @@ import { DateEntity } from 'src/entities/date.entity';
 
 @Entity()
 export class Country extends DateEntity {
-  constructor(guide: Partial<Country>) {
+  constructor(country: Partial<Country>) {
     super();
-    Object.assign(this, guide);
+    Object.assign(this, country);
   }
 
   @AfterCreate()
   logCreate() {
-    console.log('Created new country with id', this.code);
+    console.log('Created new country with code', this.code);
   }
 
   @PrimaryKey({ type: 'text', nullable: false })
   code: string;
 
-  @PrimaryKey({ type: 'text', nullable: false })
+  @Property({ type: 'text', nullable: false })
   alpha3: string;
 
   @Property({ type: 'text', nullable: false })
