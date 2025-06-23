@@ -5,10 +5,11 @@ import { Languages } from './languages/languages.entity';
 import { Guide } from './guide/guide.entity';
 import { SeedManager } from '@mikro-orm/seeder';
 import { Country } from './country/country.entity';
+import { City } from './city/city.entity';
 
 const microOrmConfig: MikroOrmModuleSyncOptions = {
   clientUrl: process.env.USER_DB_HOST, // Connection URL
-  entities: [User, Traveller, Languages, Guide, Country],
+  entities: [User, Traveller, Languages, Guide, Country, City],
   driver: PostgreSqlDriver, // Specify PostgreSQL driver
   migrations: {
     path: './database/migrations', // Ensure migrations are inside src
