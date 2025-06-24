@@ -9,7 +9,8 @@ import { Guide } from './guide.entity';
 @Injectable()
 export class GuideService {
   constructor(
-    @InjectRepository(Guide) private guideRepository: EntityRepository<Guide>,
+    @InjectRepository(Guide)
+    private guideRepository: EntityRepository<Guide>,
     // private readonly userService: UserService,
     private readonly em: EntityManager,
   ) {}

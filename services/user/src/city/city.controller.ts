@@ -5,4 +5,8 @@ import { CityService } from './city.service';
 export class CityController {
   constructor(private readonly cityService: CityService) {}
 
+  @Get()
+  async getCities() {
+    return this.cityService.getCities();
+  }
 }
