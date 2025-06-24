@@ -2,7 +2,7 @@ import { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
 import { Languages } from 'src/languages/languages.entity';
 
-export class DatabaseSeeder extends Seeder {
+export class LanguageSeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     const languages = [
       {

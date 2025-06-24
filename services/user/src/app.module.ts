@@ -4,6 +4,8 @@ import { microOrmConfig } from 'src/config';
 import { UserModule } from './user/user.module';
 import { AppController } from './app.controller';
 import { LanguagesModule } from './languages/languages.module';
+import { CountryModule } from './country/country.module';
+import { CityModule } from './city/city.module';
 
 @Module({
   imports: [
@@ -11,6 +13,8 @@ import { LanguagesModule } from './languages/languages.module';
     // ClientsModule.register(rabbitMqConfig),
     UserModule,
     LanguagesModule,
+    CountryModule,
+    CityModule,
   ],
   controllers: [AppController],
   providers: [],
