@@ -5,7 +5,6 @@ import Api from "@/utils/api";
 import Loading from "@/components/Loading";
 import { Error } from "@/components/Error";
 import { useState } from "react";
-import { GeoLocationService } from "@/lib/geo-location";
 import Logo from "@/components/Logo";
 
 type GuideFormValues = {
@@ -20,7 +19,6 @@ type GuideFormValues = {
 export default function SignupGuide() {
   const [formState, setFormState] = useState<GuideFormValues>();
   const api = new Api();
-  const geoLocationService = new GeoLocationService();
   
   const handleFormChange = (currentState: Partial<GuideFormValues>) => {
     setFormState(currentState as GuideFormValues);
@@ -36,8 +34,14 @@ export default function SignupGuide() {
     retry: false,  
     queryKey: ['categories'], 
     queryFn:() => api.getCategories() });
-    
 
+  const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
+    retry: false,  
+    queryKey: ['country'], 
+    queryFn:() => api.getCountries() });
+    
+  console.log({countries});
+  
   const handleSubmit = (data: GuideFormValues) => {
     console.log("Form submitted:", data)
     // Handle form submission here
@@ -108,29 +112,29 @@ export default function SignupGuide() {
               },
               helperText: "Select the languages you speak.",
             },
-            {
-              type: "select",
-              name: "country",
-              label: "Country",
-              options: geoLocationService.getAllCountries()?.map(country => ({ value: country.isoCode, label: country.name })),
-              placeholder: "Select country",
-              required: true,
-              helperText: "Select the country you live in.",
-            },
-            {
-              type: "select",
-              name: "city",
-              label: "City",
-              options: geoLocationService.getAllCities(formState?.country || "")?.map(city => ({ value: city.name, label: city.name })) || [],
-              placeholder: "Select city",
-              required: true,
-              disabled: !Boolean(formState?.country),
-              validation: {
-                min: 1,
-                max: 1,
-              },
-              helperText: "Select the city you live in.",
-            },
+            // {
+            //   type: "select",
+            //   name: "country",
+            //   label: "Country",
+            //   options: geoLocationService.getAllCountries()?.map(country => ({ value: country.isoCode, label: country.name })),
+            //   placeholder: "Select country",
+            //   required: true,
+            //   helperText: "Select the country you live in.",
+            // },
+            // {
+            //   type: "select",
+            //   name: "city",
+            //   label: "City",
+            //   options: geoLocationService.getAllCities(formState?.country || "")?.map(city => ({ value: city.name, label: city.name })) || [],
+            //   placeholder: "Select city",
+            //   required: true,
+            //   disabled: !Boolean(formState?.country),
+            //   validation: {
+            //     min: 1,
+            //     max: 1,
+            //   },
+            //   helperText: "Select the city you live in.",
+            // },
           ]}
           onSubmit={handleSubmit}
           onChange={handleFormChange} 

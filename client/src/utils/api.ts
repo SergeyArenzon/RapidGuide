@@ -1,14 +1,12 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import { Language, Country, Category } from '@/types';
+import { Language, Category, Country } from '@/types';
 import { z } from 'zod';
 import { CountrySchema, LanguageSchema } from '@/schema/user.schema';
-import { GeoLocationService } from '@/lib/geo-location';
 import { CategorySchema } from '@/schema';
 
 
 export default class Api {
   private axios: AxiosInstance;
-  private geoService: GeoLocationService;
 
   constructor() {
     this.axios = axios.create({
@@ -19,7 +17,6 @@ export default class Api {
       },
     });
     
-    this.geoService = new GeoLocationService();
 
     // Attach response interceptor
     this.axios.interceptors.response.use(
@@ -58,16 +55,10 @@ export default class Api {
   }
   
   async getCountries(): Promise<Country[]> {
-    const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,cca3');
-    const fixedCountries = response.data.map((country: {name: { common: string }, cca3: string}) => {
-      return {
-        name: country.name.common,
-        code: country.cca3
-      }
-    })
+    const response = await this.axios.get('/user/country');
     
     // ✅ Validate API response
-    const parsed = z.array(CountrySchema).safeParse(fixedCountries);
+    const parsed = z.array(CountrySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
