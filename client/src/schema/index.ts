@@ -1,5 +1,6 @@
 import { UserSchema } from './user.schema';
-export { UserSchema };
-
 import { CategorySchema } from './category.schema';
-export { CategorySchema };
+import { CountrySchema } from './country.schema';
+import { CitySchema } from './city.schema';
+
+export { CountrySchema, CategorySchema, UserSchema, CitySchema };

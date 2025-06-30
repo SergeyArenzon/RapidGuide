@@ -5,7 +5,6 @@ import Api from "@/utils/api";
 import Loading from "@/components/Loading";
 import { Error } from "@/components/Error";
 import { useState } from "react";
-import { GeoLocationService } from "@/lib/geo-location";
 import Logo from "@/components/Logo";
 
 type GuideFormValues = {
@@ -20,7 +19,7 @@ type GuideFormValues = {
 export default function SignupGuide() {
   const [formState, setFormState] = useState<GuideFormValues>();
   const api = new Api();
-  const geoLocationService = new GeoLocationService();
+
   
   const handleFormChange = (currentState: Partial<GuideFormValues>) => {
     setFormState(currentState as GuideFormValues);
@@ -36,6 +35,17 @@ export default function SignupGuide() {
     retry: false,  
     queryKey: ['categories'], 
     queryFn:() => api.getCategories() });
+
+  const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
+    retry: false,  
+    queryKey: ['countries'], 
+    queryFn:() => api.getCountries() });
+  
+  const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
+    retry: false,  
+    enabled: Boolean(formState?.country),
+    queryKey: ['cities', formState?.country], 
+    queryFn:() => api.getCities(formState?.country || "")});
     
 
   const handleSubmit = (data: GuideFormValues) => {
@@ -112,7 +122,7 @@ export default function SignupGuide() {
               type: "select",
               name: "country",
               label: "Country",
-              options: geoLocationService.getAllCountries()?.map(country => ({ value: country.isoCode, label: country.name })),
+              options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
               placeholder: "Select country",
               required: true,
               helperText: "Select the country you live in.",
@@ -121,7 +131,7 @@ export default function SignupGuide() {
               type: "select",
               name: "city",
               label: "City",
-              options: geoLocationService.getAllCities(formState?.country || "")?.map(city => ({ value: city.name, label: city.name })) || [],
+              options: cities?.map(city => ({ value: city.name, label: city.name })) || [],
               placeholder: "Select city",
               required: true,
               disabled: !Boolean(formState?.country),
