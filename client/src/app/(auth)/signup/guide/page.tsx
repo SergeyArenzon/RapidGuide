@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import Api from "@/utils/api";
 import Loading from "@/components/Loading";
 import { Error } from "@/components/Error";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 
 type GuideFormValues = {
@@ -37,20 +37,29 @@ export default function SignupGuide() {
 
   const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
     retry: false,  
-    queryKey: ['country'], 
+    queryKey: ['countries'], 
     queryFn:() => api.getCountries() });
     
-  console.log({countries});
-  
+    const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
+      retry: false,  
+      enabled: Boolean(formState?.country),
+      queryKey: ['cities', formState?.country], 
+      queryFn:() => api.getCities(formState?.country || "")});
+
   const handleSubmit = (data: GuideFormValues) => {
     console.log("Form submitted:", data)
     // Handle form submission here
   }
+  useEffect(() => {
+    
+    console.log("Signup rerender");
   
-  if (isLoadingLanguages || isLoadingCategories) return <Loading/>
-
-  if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
-  if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
+  })
+  
+  
+  
+  if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities) return <Loading/>
+  // if (errorLanguages || errorCategories || errorCountries || errorCities) return <Error retryAction={() => refetchLanguages()}/>
   
   return (
         <Form
@@ -112,29 +121,29 @@ export default function SignupGuide() {
               },
               helperText: "Select the languages you speak.",
             },
-            // {
-            //   type: "select",
-            //   name: "country",
-            //   label: "Country",
-            //   options: geoLocationService.getAllCountries()?.map(country => ({ value: country.isoCode, label: country.name })),
-            //   placeholder: "Select country",
-            //   required: true,
-            //   helperText: "Select the country you live in.",
-            // },
-            // {
-            //   type: "select",
-            //   name: "city",
-            //   label: "City",
-            //   options: geoLocationService.getAllCities(formState?.country || "")?.map(city => ({ value: city.name, label: city.name })) || [],
-            //   placeholder: "Select city",
-            //   required: true,
-            //   disabled: !Boolean(formState?.country),
-            //   validation: {
-            //     min: 1,
-            //     max: 1,
-            //   },
-            //   helperText: "Select the city you live in.",
-            // },
+            {
+              type: "select",
+              name: "country",
+              label: "Country",
+              options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
+              placeholder: "Select country",
+              required: true,
+              helperText: "Select the country you live in.",
+            },
+            {
+              type: "select",
+              name: "city",
+              label: "City",
+              options: cities?.map(city => ({ value: city.name, label: city.name })) || [],
+              placeholder: "Select city",
+              required: true,
+              disabled: !Boolean(formState?.country),
+              validation: {
+                min: 1,
+                max: 1,
+              },
+              helperText: "Select the city you live in.",
+            },
           ]}
           onSubmit={handleSubmit}
           onChange={handleFormChange} 

@@ -1,8 +1,9 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import { Language, Category, Country } from '@/types';
+import { Language, Category, Country, City } from '@/types';
 import { z } from 'zod';
-import { CountrySchema, LanguageSchema } from '@/schema/user.schema';
-import { CategorySchema } from '@/schema';
+import {  LanguageSchema } from '@/schema/user.schema';
+import { CategorySchema, CountrySchema } from '@/schema';
+import { CitySchema } from '@/schema/city.schema';
 
 
 export default class Api {
@@ -59,6 +60,18 @@ export default class Api {
     
     // ✅ Validate API response
     const parsed = z.array(CountrySchema).safeParse(response.data);
+    if (!parsed.success) {
+      console.error('Invalid API response:', parsed.error);
+      throw new Error('Unexpected API response format.');
+    }
+    return parsed.data;
+  }
+
+  async getCities(country_code: string): Promise<City[]> {
+    const response = await this.axios.get(`/user/city?countryCode=${country_code}`);
+    
+    // ✅ Validate API response
+    const parsed = z.array(CitySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');

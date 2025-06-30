@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CityService } from './city.service';
 
 @Controller('city')
@@ -10,8 +10,8 @@ export class CityController {
     return this.cityService.getCities();
   }
 
-  @Get('country/:countryCode')
-  async getCitiesByCountry(@Param('countryCode') countryCode: string) {
+  @Get()
+  async getCitiesByCountry(@Query('countryCode') countryCode: string) {
     return this.cityService.getCitiesByCountry(countryCode);
   }
 }

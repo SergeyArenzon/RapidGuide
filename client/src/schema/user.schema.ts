@@ -18,7 +18,6 @@ const ISOSchema = z.object({
 
 // Define the expected structure of a language object
 const LanguageSchema = ISOSchema
-const CountrySchema = ISOSchema;
-const CitySchema = ISOSchema;
 
-export { UserSchema, LanguageSchema, CountrySchema, CitySchema };
+
+export { UserSchema, LanguageSchema};
