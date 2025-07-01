@@ -2,17 +2,11 @@ import { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
 import { City } from 'src/city/city.entity';
 import { Country } from 'src/country/country.entity';
-import citiesData from './data/city.json';
-
-interface CityData {
-  name: string;
-  country_code: string;
-}
+import { cities } from './data/city';
 
 export class CitySeeder extends Seeder {
   async run(em: EntityManager): Promise<void> {
     // used https://github.com/lukes/ISO-3166-Countries-with-Regional-Codes/blob/master/all/all.json for countries dataset
-    const cities: CityData[] = citiesData;
 
     const existingCities = await em.findAll(City);
 
