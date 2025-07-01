@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 const CitySchema = z.object({
-    id: z.string().uuid(),
+    id: z.number(),
     name: z.string(),
-    country_code: z.string(),
+    country: z.string(),
 });
 
 

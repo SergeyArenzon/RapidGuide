@@ -7,12 +7,6 @@ export class CityController {
 
   @Get()
   async getCities(@Query('countryCode') countryCode: string) {
-    console.log("-=-=-=-=-=-=-=-=-");
-    
-    return [{
-      id: 1,
-      name: "New York",
-      country_code: "US"
-    }];
+    return this.cityService.getCitiesByCountry(countryCode);
   }
 }

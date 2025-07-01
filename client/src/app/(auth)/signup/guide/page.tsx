@@ -52,6 +52,8 @@ export default function SignupGuide() {
     console.log("Form submitted:", data)
     // Handle form submission here
   }
+  console.log({cities});
+  
   
   if (isLoadingLanguages || isLoadingCategories) return <Loading/>
 
@@ -131,7 +133,7 @@ export default function SignupGuide() {
               type: "select",
               name: "city",
               label: "City",
-              options: cities?.map(city => ({ value: city.name, label: city.name })) || [],
+              options: cities?.map(city => ({ value: String(city.id), label: city.name })) || [],
               placeholder: "Select city",
               required: true,
               disabled: !Boolean(formState?.country),
