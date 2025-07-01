@@ -8,7 +8,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import type { UseFormRegister, UseFormWatch, UseFormSetValue } from "react-hook-form"
+import type { UseFormRegister, UseFormWatch, UseFormSetValue, Control } from "react-hook-form"
+import { useWatch } from "react-hook-form"
 
 export type CategoryOption = {
   value: string
@@ -24,6 +25,7 @@ export type CategorizedCheckboxDropdownProps = {
   register: UseFormRegister<any>
   watch: UseFormWatch<any>
   setValue: UseFormSetValue<any>
+  control: Control<any>
   disabled?: boolean
   required?: boolean
   className?: string
@@ -38,13 +40,14 @@ export function CategorizedCheckboxDropdown({
   register,
   watch,
   setValue,
+  control,
   disabled = false,
   required = false,
   className = "",
   maxBadges = 3,
 }: CategorizedCheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
-  const selectedItems = (watch(name) as string[]) || []
+  const selectedItems = (useWatch({ control, name }) as string[]) || []
 
   // Get all subcategory values for a category
   const getCategorySubcategories = (categoryValue: string) => {

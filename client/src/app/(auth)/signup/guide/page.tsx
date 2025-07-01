@@ -17,12 +17,19 @@ type GuideFormValues = {
 }
 
 export default function SignupGuide() {
-  const [formState, setFormState] = useState<GuideFormValues>();
+  const [formState, setFormState] = useState<GuideFormValues>({
+    bio: '',
+    categories: [],
+    languages: [],
+    name: '',
+    country: '',
+    city: ''
+  });
   const api = new Api();
 
   
   const handleFormChange = (currentState: Partial<GuideFormValues>) => {
-    setFormState(currentState as GuideFormValues);
+    setFormState(prev => ({ ...prev, ...currentState }));
   };
   
   // Queries
@@ -52,7 +59,7 @@ export default function SignupGuide() {
     console.log("Form submitted:", data)
     // Handle form submission here
   }
-  console.log({cities});
+  console.log({formState});
   
   
   if (isLoadingLanguages || isLoadingCategories) return <Loading/>

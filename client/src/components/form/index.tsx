@@ -70,6 +70,7 @@ export default function Form<T>({
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors }
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -91,6 +92,8 @@ export default function Form<T>({
     // Cleanup subscription
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
+
+
   
   // Handle form submission
   const onSubmitHandler = (data: FormValues) => {
@@ -157,6 +160,7 @@ export default function Form<T>({
                 watch={watch}
                 required={field.required}
                 setValue={setValue}
+                control={control}
                 disabled={field.disabled}/>
 
           </FormFieldBase>
@@ -180,6 +184,7 @@ export default function Form<T>({
                 watch={watch}
                 required={field.required}
                 setValue={setValue}
+                control={control}
                 disabled={field.disabled}/>
 
           </FormFieldBase>
