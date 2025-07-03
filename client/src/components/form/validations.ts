@@ -52,7 +52,7 @@ const validateCheckbox = (field: CheckboxFieldConfig) => {
 const validateSelect = (field: SelectFieldConfig) => {
     let fieldSchema = z.string()
     if (field.required) {
-        fieldSchema = fieldSchema.min(1, `${field.label} is required`)
+        fieldSchema = fieldSchema.min(field.validation?.min || 1, `${field.label} is required`)
     }
     if (field.validation?.min) {
         fieldSchema = fieldSchema.min(

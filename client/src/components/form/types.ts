@@ -40,6 +40,7 @@ type BaseFieldConfig = {
     type: 'select'
     options: Array<{ value: string; label: string }>
     placeholder?: string
+    isLoading?: boolean
   }
   
   

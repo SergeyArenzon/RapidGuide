@@ -142,13 +142,14 @@ export default function SignupGuide() {
               label: "City",
               options: cities?.map(city => ({ value: String(city.id), label: city.name })) || [],
               placeholder: "Select city",
-              required: true,
+              required: Boolean(formState?.country),
               disabled: !Boolean(formState?.country),
               validation: {
-                min: 1,
+                min: formState?.country ? 1 : 0,
                 max: 1,
               },
               helperText: "Select the city you live in.",
+              isLoading: isLoadingCities
             },
           ]}
           onSubmit={handleSubmit}

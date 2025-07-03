@@ -46,7 +46,7 @@ export default function Form<T>({
     const schemaMap: Record<string, z.ZodTypeAny> = {}; // ✅ Correct type
 
     fields.forEach(field => {
-      let fieldSchema: z.ZodString | z.ZodArray<z.ZodString> = z.string();
+      let fieldSchema: z.ZodTypeAny = z.string();
       
       if (field.type === 'textarea' || field.type === 'text') 
         fieldSchema = validateText(field as TextFieldConfig)
@@ -208,7 +208,8 @@ export default function Form<T>({
                 register={register}
                 watch={watch}
                 setValue={setValue}
-                disabled={field.disabled}/>
+                disabled={field.disabled}
+                isLoading={field.isLoading}/>
           </FormFieldBase>
         )
 
