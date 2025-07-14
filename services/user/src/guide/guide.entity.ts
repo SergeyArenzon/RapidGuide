@@ -4,9 +4,17 @@ import {
   AfterUpdate,
   Entity,
   OneToOne,
+  Property,
+  ManyToMany,
+  Collection,
+  OneToMany,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../entities/base.entity';
 import { User } from '../entities';
+import { City } from 'src/city/city.entity';
+import { Country } from 'src/country/country.entity';
+import { Languages } from 'src/languages/languages.entity';
+import { GuideSubcategory } from './guide-subcategory.entity';
 
 @Entity()
 export class Guide extends BaseEntity {
@@ -29,6 +37,24 @@ export class Guide extends BaseEntity {
   logDelete() {
     console.log('Deleted guide with id', this.id);
   }
+
+  @Property({ type: 'text' })
+  name: string;
+
+  @Property({ type: 'text' })
+  bio: string;
+
+  @OneToMany(() => GuideSubcategory, (subcategory) => subcategory.guide)
+  subcategories = new Collection<GuideSubcategory>(this);
+
+  @ManyToMany(() => Languages)
+  languages = new Collection<Languages>(this);
+
+  @OneToOne(() => Country)
+  country!: Country;
+
+  @OneToOne(() => City)
+  city!: City;
 
   @OneToOne(() => User)
   user!: User;

@@ -4,17 +4,14 @@ import { CreateGuideDto, ResponseGuideDto } from './dto/guide.dto';
 
 @Controller('guide')
 export class GuideController {
-  constructor(
-    private guideService: GuideService
-  ) {}
-
+  constructor(private guideService: GuideService) {}
 
   @HttpCode(200)
   @Get('/')
   health() {}
 
   @Post('/')
-  async create(@Body() body: CreateGuideDto) : Promise<ResponseGuideDto> {
+  async create(@Body() body: CreateGuideDto): Promise<ResponseGuideDto> {
     return this.guideService.create(body);
   }
 }
