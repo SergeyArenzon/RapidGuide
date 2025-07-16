@@ -37,16 +37,16 @@ export function Error({
       <div className="flex flex-col sm:flex-row gap-4">
         {showRetryButton && (
           <Button onClick={retryAction} variant="default">
-            <RotateCcw className="mr-2 h-4 w-4" />
             Try again
+            <RotateCcw className="mr-2 h-4 w-4" />
           </Button>
         )}
 
         {showHomeButton && (
           <Button asChild variant={showRetryButton ? "outline" : "default"}>
             <Link href="/">
-              <Home className="mr-2 h-4 w-4" />
               Go back home
+              <Home className="mr-2 h-4 w-4" />
             </Link>
           </Button>
         )}

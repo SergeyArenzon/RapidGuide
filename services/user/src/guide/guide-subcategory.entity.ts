@@ -29,7 +29,7 @@ export class GuideSubcategory extends BaseEntity {
   @AfterDelete()
   logDelete() {
     console.log('Deleted guide subcategory');
-  } 
+  }
 
   @ManyToOne(() => Guide, { deleteRule: 'cascade' }) // 🔗 FK to guides
   guide!: Guide;

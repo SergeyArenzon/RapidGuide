@@ -5,19 +5,14 @@ import Api from "@/utils/api";
 import Loading from "@/components/Loading";
 import { Error } from "@/components/Error";
 import { useState } from "react";
-import Logo from "@/components/Logo";
+import { useRouter } from "next/navigation";
+import { GuideBaseSchema } from "@/schema";
+import { z } from "zod";
 
-type GuideFormValues = {
-    bio: string
-    categories: string[]
-    languages: string[]
-    name: string
-    country: string
-    city: string
-}
 
 export default function SignupGuide() {
-  const [formState, setFormState] = useState<GuideFormValues>({
+  const router = useRouter();
+  const [formState, setFormState] = useState<z.infer<typeof GuideBaseSchema>>({
     bio: '',
     categories: [],
     languages: [],
@@ -25,10 +20,11 @@ export default function SignupGuide() {
     country: '',
     city: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const api = new Api();
 
-  
-  const handleFormChange = (currentState: Partial<GuideFormValues>) => {
+  const handleFormChange = (currentState: Partial<z.infer<typeof GuideBaseSchema>>) => {
     setFormState(prev => ({ ...prev, ...currentState }));
   };
   
@@ -55,17 +51,37 @@ export default function SignupGuide() {
     queryFn:() => api.getCities(formState?.country || "")});
     
 
-  const handleSubmit = (data: GuideFormValues) => {
-    console.log("Form submitted:", data)
-    // Handle form submission here
+  const handleSubmit = async (data: z.infer<typeof GuideBaseSchema>) => {
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      
+      // Validate data against schema
+      const validatedData = GuideBaseSchema.parse(data);
+      
+      await api.createGuide(validatedData);
+
+      // Redirect to dashboard using Next.js router
+      router.push('/dashboard');
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        setSubmitError(error.errors[0].message);
+      } else if (error instanceof Error) {
+        setSubmitError(error.message);
+      } else {
+        setSubmitError('Failed to create guide profile. Please try again.');
+      }
+      console.error('Failed to create guide:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
-  console.log({formState});
-  
   
   if (isLoadingLanguages || isLoadingCategories) return <Loading/>
 
   if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
   if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
+  if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
   
   return (
         <Form
@@ -140,7 +156,7 @@ export default function SignupGuide() {
               type: "select",
               name: "city",
               label: "City",
-              options: cities?.map(city => ({ value: String(city.id), label: city.name })) || [],
+              options: cities?.map(city => ({ value: city.id.toString(), label: city.name })) || [],
               placeholder: "Select city",
               required: Boolean(formState?.country),
               disabled: !Boolean(formState?.country),
@@ -155,6 +171,7 @@ export default function SignupGuide() {
           onSubmit={handleSubmit}
           onChange={handleFormChange} 
           submitButtonText="Save Profile"
+          isSubmitting={isSubmitting}
         />
   )
 }

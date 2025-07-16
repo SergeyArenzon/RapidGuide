@@ -1,6 +1,5 @@
-import { UserSchema } from './user.schema';
-import { CategorySchema } from './category.schema';
-import { CountrySchema } from './country.schema';
-import { CitySchema } from './city.schema';
-
-export { CountrySchema, CategorySchema, UserSchema, CitySchema };
+export { GuideSchema, GuideBaseSchema } from './guide.schema';
+export { CategorySchema } from './category.schema';
+export { CountrySchema } from './country.schema';
+export { CitySchema } from './city.schema';
+export { UserSchema } from './user.schema';

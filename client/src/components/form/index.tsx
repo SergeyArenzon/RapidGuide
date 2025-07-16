@@ -22,6 +22,8 @@ type FormProps<T> = {
   submitButtonText?: string
   title?: string
   description?: string
+  isSubmitting?: boolean
+  error?: string | null
 } & (
   | { 
       onCancel?: undefined; 
@@ -39,7 +41,8 @@ export default function Form<T>({
   onChange,
   submitButtonText = "Submit",
   title,
-  description
+  description,
+  isSubmitting = false,
 }: FormProps<T>) {
   // Generate Zod schema dynamically based on field configurations
   const generateZodSchema = () => {
@@ -229,8 +232,8 @@ export default function Form<T>({
 
       {fields.map(renderField)}
 
-      <Button type="submit" className="w-full">
-        {submitButtonText}
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Submitting..." : submitButtonText}
       </Button>
     </form>
   )
