@@ -7,7 +7,9 @@ const GuideBaseSchema = z.object({
     languages: z.array(z.string()).min(1, { message: "At least one language is required" }),
     country: z.string().min(1, { message: "Country is required" }),
     city: z.string().min(1, { message: "City is required" }),
-    bio: z.string().min(10, { message: "Bio must be at least 10 characters" }),
+    bio: z.string()
+    .min(10, { message: "Bio must be at least 10 characters" })
+    .max(500, { message: "Bio must be less than 500 characters" })  ,
 });
 
 const GuideSchema = z.object({

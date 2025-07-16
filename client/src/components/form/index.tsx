@@ -1,8 +1,7 @@
 "use client"
-
-import { useEffect, useMemo } from  "react"
+import { useEffect } from  "react"
 import { Button } from "@/components/ui/button"
-import { useForm } from "react-hook-form"
+import { useForm, FieldValues, DefaultValues, Path } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "../ui/input"
@@ -10,13 +9,12 @@ import { FormFieldBase } from "./FormFieldBase"
 import { Textarea } from "../ui/textarea"
 import { CheckboxDropdown } from "../CheckboxDropdown"
 import SelectDropdown from "../SelectDropdown"
-import { CheckboxFieldConfig, FieldConfig, TextFieldConfig, SelectFieldConfig } from "./types"
-import { validateCheckbox, validateText, validateSelect } from "./validations"
+import { CheckboxFieldConfig, FieldConfig, TextFieldConfig } from "./types"
 import { CategorizedCheckboxDropdown } from "../CategorizedCheckboxDropdown"
 
 
-type FormProps<T> = {
-  fields: FieldConfig[]
+type FormProps<T extends FieldValues> = {
+  fields: Array<FieldConfig & { name: keyof T }>
   onSubmit: (data: T) => void
   onChange?: (data: Partial<T>) => void
   submitButtonText?: string
@@ -24,18 +22,20 @@ type FormProps<T> = {
   description?: string
   isSubmitting?: boolean
   error?: string | null
+  schema: z.ZodSchema<T>
+  disabled?: boolean
 } & (
   | { 
       onCancel?: undefined; 
       cancelButtonText?: undefined 
-    } // Neither exists
+    }
   | { 
     onCancel: () => void; 
     cancelButtonText: string 
-  } // Both required
+  }
 )
 
-export default function Form<T>({
+export default function Form<T extends FieldValues>({
   fields,
   onSubmit,
   onChange,
@@ -43,30 +43,10 @@ export default function Form<T>({
   title,
   description,
   isSubmitting = false,
+  schema,
+  disabled = false,
 }: FormProps<T>) {
-  // Generate Zod schema dynamically based on field configurations
-  const generateZodSchema = () => {
-    const schemaMap: Record<string, z.ZodTypeAny> = {}; // ✅ Correct type
-
-    fields.forEach(field => {
-      let fieldSchema: z.ZodTypeAny = z.string();
-      
-      if (field.type === 'textarea' || field.type === 'text') 
-        fieldSchema = validateText(field as TextFieldConfig)
-      if (field.type === 'checkbox' || field.type === 'categorized-checkbox') 
-        fieldSchema = validateCheckbox(field as CheckboxFieldConfig)
-      if (field.type === 'select') 
-        fieldSchema = validateSelect(field as SelectFieldConfig)
-      
-      schemaMap[field.name] = fieldSchema
-    })
-
-    return z.object(schemaMap)
-  }
-
-  const schema = generateZodSchema()
-  type FormValues = z.infer<typeof schema>
-
+  
   // Setup form
   const {
     register,
@@ -75,12 +55,12 @@ export default function Form<T>({
     watch,
     control,
     formState: { errors }
-  } = useForm<FormValues>({
+  } = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues: fields.reduce((acc, field) => {
-      acc[field.name] = field.type === 'checkbox' ? [] : ''
-      return acc
-    }, {} as Record<string, unknown> )
+      (acc as any)[field.name] = field.type === 'checkbox' ? [] : '';
+      return acc;
+    }, {} as DefaultValues<T>)
   })
 
   // Set up subscription to form changes instead of watching all values
@@ -99,7 +79,7 @@ export default function Form<T>({
 
   
   // Handle form submission
-  const onSubmitHandler = (data: FormValues) => {
+  const onSubmitHandler = (data: T) => {
     onSubmit(data as T)
   }
 
@@ -119,7 +99,7 @@ export default function Form<T>({
                 id={field.name} type={field.inputType || 'text'} 
                 placeholder={field.placeholder} 
                 disabled={field.disabled} 
-                {...register(field.name)} />
+                {...register(field.name as Path<T>)} />
             </FormFieldBase>
           
         )
@@ -138,7 +118,7 @@ export default function Form<T>({
               className={`min-h-[${6 * 24}px]`}
               placeholder={field.placeholder}
               disabled={field.disabled}
-              {...register(field.name)} 
+              {...register(field.name as Path<T>)} 
             />
           </FormFieldBase>
         )

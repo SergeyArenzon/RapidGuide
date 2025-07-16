@@ -56,21 +56,11 @@ export default function SignupGuide() {
       setIsSubmitting(true);
       setSubmitError(null);
       
-      // Validate data against schema
-      const validatedData = GuideBaseSchema.parse(data);
-      
-      await api.createGuide(validatedData);
-
-      // Redirect to dashboard using Next.js router
+      await api.createGuide(data);
       router.push('/dashboard');
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setSubmitError(error.errors[0].message);
-      } else if (error instanceof Error) {
-        setSubmitError(error.message);
-      } else {
-        setSubmitError('Failed to create guide profile. Please try again.');
-      }
+    } catch (err) {
+      const error = err as Error;
+      setSubmitError(error?.message || 'Failed to create guide profile. Please try again.');
       console.error('Failed to create guide:', error);
     } finally {
       setIsSubmitting(false);
@@ -87,17 +77,13 @@ export default function SignupGuide() {
         <Form
           title="Profile Information"
           description="Complete your profile information below"
+          schema={GuideBaseSchema}
           fields={[
             {
               type: "text",
               name: "name",
               label: "Guide Name",
               placeholder: "Enter guide name",
-              required: true,
-              validation: {
-                min: 2,
-                max: 100,
-              },
               helperText: "Your full name as it appears on your ID.",
             },
             {
@@ -105,11 +91,6 @@ export default function SignupGuide() {
               name: "bio",
               label: "Bio",
               placeholder: "Tell us about yourself...",
-              required: true,
-              validation: {
-                min: 10,
-                max: 500,
-              },
               helperText: "Write a short bio to introduce yourself to others.",
             },
             {
@@ -125,10 +106,6 @@ export default function SignupGuide() {
                 })) || []
               })) || [],
               placeholder: "Select categories",
-              required: true,
-              validation: {
-                min: 1,
-              },
               helperText: "Select the categories that interest you.",
             },
             {
@@ -137,10 +114,6 @@ export default function SignupGuide() {
               label: "Languages",
               options: languages?.map((lang) => ({ value: lang.code, label: lang.name })) || [],
               placeholder: "Select languages",
-              required: true,
-              validation: {
-                min: 1,
-              },
               helperText: "Select the languages you speak.",
             },
             {
@@ -149,7 +122,6 @@ export default function SignupGuide() {
               label: "Country",
               options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
               placeholder: "Select country",
-              required: true,
               helperText: "Select the country you live in.",
             },
             {
@@ -158,12 +130,7 @@ export default function SignupGuide() {
               label: "City",
               options: cities?.map(city => ({ value: city.id.toString(), label: city.name })) || [],
               placeholder: "Select city",
-              required: Boolean(formState?.country),
               disabled: !Boolean(formState?.country),
-              validation: {
-                min: formState?.country ? 1 : 0,
-                max: 1,
-              },
               helperText: "Select the city you live in.",
               isLoading: isLoadingCities
             },

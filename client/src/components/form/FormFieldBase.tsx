@@ -12,6 +12,7 @@ export type FormFieldBaseProps = {
   required?: boolean
   className?: string
   children: React.ReactNode
+  disabled?: boolean
 }
 
 export function FormFieldBase({
@@ -22,6 +23,7 @@ export function FormFieldBase({
   required = false,
   className = "",
   children,
+  disabled = false,
 }: FormFieldBaseProps) {
   return (
     <div className={`space-y-2 ${className}`}>
@@ -32,7 +34,7 @@ export function FormFieldBase({
       
       {children}
 
-      {errors[name] && <p className="text-sm text-red-500">{errors[name]?.message as string}</p>}
+      {!disabled && errors[name] && <p className="text-sm text-red-500">{errors[name]?.message as string}</p>}
       {!errors[name]  && helperText && <p className="text-sm text-muted-foreground">{helperText}</p>}
     </div>
   )
