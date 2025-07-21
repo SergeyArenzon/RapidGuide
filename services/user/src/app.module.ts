@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { LanguagesModule } from './languages/languages.module';
 import { CountryModule } from './country/country.module';
 import { CityModule } from './city/city.module';
+import { GuideModule } from './guide/guide.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CityModule } from './city/city.module';
     LanguagesModule,
     CountryModule,
     CityModule,
+    GuideModule,
   ],
   controllers: [AppController],
   providers: [],

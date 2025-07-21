@@ -1,11 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsEmail,
-  IsUrl,
-  IsUUID,
-  IsDate,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsDate, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OmitType } from '@nestjs/mapped-types';
 import { UserDto } from 'src/dtos';
@@ -15,8 +8,38 @@ export class GuideDto {
   @IsNotEmpty()
   id: string;
 
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  bio: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  user_id: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  country_id: string;
+
+  @IsUUID()
+  @IsNotEmpty()
+  city_id: string;
+
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @IsNotEmpty()
+  language_ids: string[];
+
+  @IsArray()
+  @IsUUID('4', { each: true })
+  @IsNotEmpty()
+  subcategory_ids: string[];
+
   @Type(() => UserDto)
-  user: UserDto; // Transforms the user relation into the UserDto
+  user: UserDto;
 
   @IsDate()
   @Type(() => Date)
@@ -31,13 +54,12 @@ export class CreateGuideDto extends OmitType(GuideDto, [
   'id',
   'created_at',
   'updated_at',
-] as const) {
-    @IsUUID()
-    @IsNotEmpty()
-    user_id: string;
-}
+  'user',
+] as const) {}
+
 export class UpdateGuideDto extends OmitType(GuideDto, [
   'created_at',
   'updated_at',
 ] as const) {}
+
 export class ResponseGuideDto extends GuideDto {}

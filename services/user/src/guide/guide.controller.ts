@@ -10,6 +10,7 @@ export class GuideController {
   @Get('/')
   health() {}
 
+  @HttpCode(201)
   @Post('/')
   async create(@Body() body: CreateGuideDto): Promise<ResponseGuideDto> {
     return this.guideService.create(body);
