@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsUUID, IsDate, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsUUID,
+  IsDate,
+  IsArray,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { OmitType } from '@nestjs/mapped-types';
 import { UserDto } from 'src/dtos';
@@ -17,12 +24,12 @@ export class GuideDto {
   bio: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  user_id: string;
+  @IsOptional()
+  user_id?: string;
 
   @IsUUID()
   @IsNotEmpty()
-  country_id: string;
+  country_code: string;
 
   @IsUUID()
   @IsNotEmpty()

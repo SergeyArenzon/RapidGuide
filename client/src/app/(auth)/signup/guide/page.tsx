@@ -14,11 +14,11 @@ export default function SignupGuide() {
   const router = useRouter();
   const [formState, setFormState] = useState<z.infer<typeof GuideBaseSchema>>({
     bio: '',
-    categories: [],
-    languages: [],
+    subcategories_ids: [],
+    languages_code: [],
     name: '',
-    country: '',
-    city: ''
+    country_code: '',
+    city_id: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -46,9 +46,9 @@ export default function SignupGuide() {
   
   const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
     retry: false,  
-    enabled: Boolean(formState?.country),
-    queryKey: ['cities', formState?.country], 
-    queryFn:() => api.getCities(formState?.country || "")});
+    enabled: Boolean(formState?.country_code  ),
+    queryKey: ['cities', formState?.country_code], 
+    queryFn:() => api.getCities(formState?.country_code || "")});
     
 
   const handleSubmit = async (data: z.infer<typeof GuideBaseSchema>) => {
@@ -95,7 +95,7 @@ export default function SignupGuide() {
             },
             {
               type: "categorized-checkbox",
-              name: "categories",
+              name: "subcategories_ids",
               label: "Categories",
               options: categories?.map((cat) => ({ 
                 value: cat.id, 
@@ -110,7 +110,7 @@ export default function SignupGuide() {
             },
             {
               type: "checkbox",
-              name: "languages",
+              name: "languages_code",
               label: "Languages",
               options: languages?.map((lang) => ({ value: lang.code, label: lang.name })) || [],
               placeholder: "Select languages",
@@ -118,7 +118,7 @@ export default function SignupGuide() {
             },
             {
               type: "select",
-              name: "country",
+              name: "country_code",
               label: "Country",
               options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
               placeholder: "Select country",
@@ -126,11 +126,11 @@ export default function SignupGuide() {
             },
             {
               type: "select",
-              name: "city",
+              name: "city_id",
               label: "City",
               options: cities?.map(city => ({ value: city.id.toString(), label: city.name })) || [],
               placeholder: "Select city",
-              disabled: !Boolean(formState?.country),
+              disabled: !Boolean(formState?.country_code),
               helperText: "Select the city you live in.",
               isLoading: isLoadingCities
             },
