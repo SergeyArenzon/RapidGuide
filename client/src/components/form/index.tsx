@@ -23,7 +23,6 @@ type FormProps<T extends FieldValues> = {
   isSubmitting?: boolean
   error?: string | null
   schema: z.ZodSchema<T>
-  disabled?: boolean
 } & (
   | { 
       onCancel?: undefined; 
@@ -44,7 +43,6 @@ export default function Form<T extends FieldValues>({
   description,
   isSubmitting = false,
   schema,
-  disabled = false,
 }: FormProps<T>) {
   
   // Setup form
@@ -94,7 +92,8 @@ export default function Form<T extends FieldValues>({
               label={field.label}
               helperText={field.helperText}
               errors={errors}
-              required={field.required}>
+              required={field.required}
+              disabled={field.disabled}>
               <Input 
                 id={field.name} type={field.inputType || 'text'} 
                 placeholder={field.placeholder} 
@@ -112,7 +111,8 @@ export default function Form<T extends FieldValues>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
             <Textarea
               id={field.name}
               className={`min-h-[${6 * 24}px]`}
@@ -131,7 +131,8 @@ export default function Form<T extends FieldValues>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
               <CheckboxDropdown
                 key={field.name}
                 name={field.name}
@@ -156,7 +157,8 @@ export default function Form<T extends FieldValues>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
               <CategorizedCheckboxDropdown
                 key={field.name}
                 name={field.name}
@@ -180,7 +182,8 @@ export default function Form<T extends FieldValues>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
               <SelectDropdown
                 key={field.name}
                 name={field.name}
