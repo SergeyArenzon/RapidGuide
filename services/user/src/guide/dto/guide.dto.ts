@@ -57,16 +57,7 @@ export class GuideDto {
   updated_at: Date;
 }
 
-export class CreateGuideDto extends OmitType(GuideDto, [
-  'id',
-  'created_at',
-  'updated_at',
-  'user',
-] as const) {}
-
 export class UpdateGuideDto extends OmitType(GuideDto, [
   'created_at',
   'updated_at',
 ] as const) {}
-
-export class ResponseGuideDto extends GuideDto {}

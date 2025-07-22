@@ -1,30 +1,14 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Post,
-  UseGuards,
-  Request,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { GuideService } from './guide.service';
-import { CreateGuideDto, ResponseGuideDto } from './dto/guide.dto';
-import { AuthGuard } from '../guards/auth.guard';
+import { CreateGuideDto } from './dto/create-guide.dto';
+import { ResponseGuideDto } from './dto/response-guide.dto';
 
 @Controller('guide')
-// @UseGuards(AuthGuard)
 export class GuideController {
-  constructor(private guideService: GuideService) {}
+  constructor(private readonly guideService: GuideService) {}
 
-  @HttpCode(201)
-  @Post('/')
-  async create(
-    @Request() req,
-    @Body() body: CreateGuideDto,
-  ): Promise<ResponseGuideDto> {
-    return this.guideService.create({
-      ...body,
-      user_id: "req.user.id",
-    });
+  @Post()
+  async create(@Body() body: CreateGuideDto): Promise<ResponseGuideDto> {
+    return this.guideService.create(body);
   }
 }

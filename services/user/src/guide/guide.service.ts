@@ -4,14 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { CreateGuideDto, ResponseGuideDto } from './dto/guide.dto';
 import { User } from 'src/entities';
 import { Guide } from './guide.entity';
-// import { UserService } from 'src/app.service';
 
 @Injectable()
 export class GuideService {
   constructor(
     @InjectRepository(Guide)
     private guideRepository: EntityRepository<Guide>,
-    // private readonly userService: UserService,
     private readonly em: EntityManager,
   ) {}
 
@@ -20,15 +18,25 @@ export class GuideService {
 
     // Start a new transaction with EntityManager
     const em = this.em.fork();
-    // Create a new User entity
+    // Create a new Guide entity
     const newGuide = new Guide({ ...createGuideDto, user });
     console.log({ newGuide });
 
-    // Persist the user in the transaction
+    // Persist the guide in the transaction
     await em.persistAndFlush(newGuide);
-    // Create the Guide associated with the user inside the same transaction
     // Commit the transaction
     await em.flush();
-    return newGuide;
+
+    // Map the entity to DTO
+    return {
+      id: newGuide.id,
+      name: newGuide.name,
+      bio: newGuide.bio,
+      user_id: user.id,
+      country_code: newGuide.country.code,
+      city_id: String(newGuide.city.id),
+      language_ids: newGuide.languages.getItems().map((lang) => lang.code),
+      subcategory_ids: newGuide.subcategories.getItems().map((sub) => sub.id),
+    };
   }
 }
