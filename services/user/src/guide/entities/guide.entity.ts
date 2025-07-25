@@ -9,11 +9,11 @@ import {
   Collection,
   OneToMany,
 } from '@mikro-orm/core';
-import { BaseEntity } from '../entities/base.entity';
-import { User } from '../entities';
-import { City } from 'src/city/city.entity';
-import { Country } from 'src/country/country.entity';
-import { Languages } from 'src/languages/languages.entity';
+import { BaseEntity } from '../../entities/base.entity';
+import { User } from '../../entities';
+import { City } from '../../city/city.entity';
+import { Country } from '../../country/country.entity';
+import { Languages } from '../../languages/languages.entity';
 import { GuideSubcategory } from './guide-subcategory.entity';
 
 @Entity()

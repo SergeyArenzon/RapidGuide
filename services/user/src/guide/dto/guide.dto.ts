@@ -1,63 +1,21 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsUUID,
-  IsDate,
-  IsArray,
-  IsOptional,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { OmitType } from '@nestjs/mapped-types';
-import { UserDto } from 'src/dtos';
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
 
-export class GuideDto {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
+// Base schema that will be extended by create and response DTOs
+const guideSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1),
+  bio: z.string().min(1),
+  user_id: z.string(),
+  country_code: z.string().min(2).max(2),
+  city_id: z.number(),
+  languages_code: z.array(z.string().min(2).max(2)),
+  subcategories_ids: z.array(z.string()),
+  created_at: z.date(),
+  updated_at: z.date(),
+});
 
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  bio: string;
-
-  @IsUUID()
-  @IsOptional()
-  user_id?: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  country_code: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  city_id: string;
-
-  @IsArray()
-  @IsUUID('4', { each: true })
-  @IsNotEmpty()
-  language_ids: string[];
-
-  @IsArray()
-  @IsUUID('4', { each: true })
-  @IsNotEmpty()
-  subcategory_ids: string[];
-
-  @Type(() => UserDto)
-  user: UserDto;
-
-  @IsDate()
-  @Type(() => Date)
-  created_at: Date;
-
-  @IsDate()
-  @Type(() => Date)
-  updated_at: Date;
-}
-
-export class UpdateGuideDto extends OmitType(GuideDto, [
-  'created_at',
-  'updated_at',
-] as const) {}
+// Schema for guide response - includes all fields
+export { guideSchema };
+// Create DTOs from schemas
+export class GuideDto extends createZodDto(guideSchema) {}

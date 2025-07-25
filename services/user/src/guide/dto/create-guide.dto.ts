@@ -1,9 +1,11 @@
-import { OmitType } from '@nestjs/mapped-types';
-import { GuideDto } from './guide.dto';
+import { createZodDto } from 'nestjs-zod';
+import { guideSchema } from './guide.dto';
 
-export class CreateGuideDto extends OmitType(GuideDto, [
-  'id',
-  'created_at',
-  'updated_at',
-  'user',
-] as const) {}
+// Schema for creating a guide - omits auto-generated fields
+const createGuideSchema = guideSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+});
+
+export class CreateGuideDto extends createZodDto(createGuideSchema) {}
