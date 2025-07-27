@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { CreateGuideDto } from './dto/create-guide.dto';
 
@@ -7,8 +7,11 @@ export class GuideController {
   constructor(private readonly guideService: GuideService) {}
 
   @Post()
-  async create(@Body() body: CreateGuideDto) {
-    console.log('[][][][][', body);
+  async create(
+    @Body() body: CreateGuideDto,
+    @Param('user_id') user_id: string,
+  ) {
+    console.log('[][][][][', body, user_id);
     return this.guideService.create(body);
   }
 }

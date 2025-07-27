@@ -36,10 +36,11 @@
 
 POST http://huddlehub.io/api/user/guide
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTM2Mzc1MjIsImV4cCI6MTc1MzY0MTEyMn0.x9SvaLfUSxe47rh8eM92Oy1PxyY6KoczT4SZQLk7GAo
 
 {
   "name": "Sergey the Guide",
-  "subcategories_ids": ["c5b33001-f691-4d94-831a-8d44185e5a53","7bcdf597-0d4b-4c50-921b-f1a68a52ca9e","07a8a248-b1d9-496b-9bf4-637f0c7e20e6","17286200-9242-46d7-b24e-f43fc32cfa67","ead865fd-5d64-437b-8f83-9b85e33a42b5","8857b97d-9238-4f1e-900b-2c26e624eef6","a8844f2d-895e-4dfe-a80c-39b8f486287f","cb39c37c-d9fb-43e6-b08a-5e1521bba108","408d5024-af60-45e3-a46f-5ba7cc993814"],
+  "subcategories_id": ["c5b33001-f691-4d94-831a-8d44185e5a53","7bcdf597-0d4b-4c50-921b-f1a68a52ca9e","07a8a248-b1d9-496b-9bf4-637f0c7e20e6","17286200-9242-46d7-b24e-f43fc32cfa67","ead865fd-5d64-437b-8f83-9b85e33a42b5","8857b97d-9238-4f1e-900b-2c26e624eef6","a8844f2d-895e-4dfe-a80c-39b8f486287f","cb39c37c-d9fb-43e6-b08a-5e1521bba108","408d5024-af60-45e3-a46f-5ba7cc993814"],
   "languages_code": ["he","ru","en"],
   "country_code": "IL",
   "city_id": 22,
