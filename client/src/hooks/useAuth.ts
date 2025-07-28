@@ -1,22 +1,28 @@
 import { UserSchema } from "@/schema";
 import useUserStore from "@/store/useUser";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const useAuth = () => {
     const {  data, status } = useSession();
     const { setUser, clearUser, isLogged } = useUserStore();
+    const [error, setError] = useState<boolean>(false)
     
     useEffect(() => {
       if (status === "authenticated") {  
-        const user = UserSchema.parse(data?.user);
-        setUser(user);
+        try {
+          const user = UserSchema.parse(data?.user);
+          setUser(user);
+        } catch (error) {
+          setError(true)
+        }
+        
       } else if (status === "unauthenticated") {
         clearUser();
       }
     }, [status]);
 
-    return { isLogged , status};
+    return { isLogged , status, error};
 };
 
 export default useAuth;
