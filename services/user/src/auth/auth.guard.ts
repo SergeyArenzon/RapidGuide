@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { IS_PUBLIC_KEY } from './decorators/public.decorator';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractTokenFromCookies(request);
 
     if (!token) {
       // this.logger.warn('No token provided in request');
@@ -39,16 +39,11 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      console.log('token', token);
-      
       const payload = await this.jwtService.verifyAsync(token);
       // this.logger.log(`Token verified for user: ${JSON.stringify(payload)}`);
-      
       // Attach user to request object
       request['user'] = payload;
     } catch (error) {
-      console.log('error', error);
-      
       // this.logger.error(`Token verification failed: ${error.message}`);
       throw new UnauthorizedException(
         error.name === 'TokenExpiredError'
@@ -60,8 +55,10 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  private extractTokenFromCookies(request: Request): string | undefined {
+    console.log({cookiez: request.headers.cookie});
+
+    const accessToken = request.headers.cookie;
+    return accessToken;
   }
 }

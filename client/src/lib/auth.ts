@@ -37,7 +37,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (response.ok) {
         const userData = await response.json();
-        console.log({userData});
         user.tokenData = userData;
         const setCookie = qs.decode(
           response.headers.get("set-cookie") as string,

@@ -11,9 +11,13 @@ const useAuth = () => {
     useEffect(() => {
       if (status === "authenticated") {  
         try {
+          console.log({user: data?.user});
+          
           const user = UserSchema.parse(data?.user);
           setUser(user);
         } catch (error) {
+          console.log({error});
+          
           setError(true)
         }
         

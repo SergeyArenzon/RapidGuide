@@ -39,7 +39,7 @@ export class AuthController {
     const user = await this.authService.authenticateProvider(body);
     this.logger.debug(`Authenticated user: ${JSON.stringify(user)}`);
 
-    const res = await fetch('http://user:3000/auth', {
+    const res = await fetch('http://user:3000/user', {
       method: 'POST',
       body: JSON.stringify(user),
       headers: {
@@ -57,7 +57,7 @@ export class AuthController {
 
     const token = this.authService.generateToken({ userId: authUser.id });
 
-    this.logger.log('Setting accessToken cookie in response');
+    this.logger.log('Setting accessToken cookie in response', authUser);
 
     response.cookie('accessToken', token, {
       httpOnly: true,

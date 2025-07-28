@@ -36,7 +36,7 @@
 
 POST http://huddlehub.io/api/user/guide
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTM2Mzc1MjIsImV4cCI6MTc1MzY0MTEyMn0.x9SvaLfUSxe47rh8eM92Oy1PxyY6KoczT4SZQLk7GAo
+cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTM2Mzc1MjIsImV4cCI6MTc1MzY0MTEyMn0.x9SvaLfUSxe47rh8eM92Oy1PxyY6KoczT4SZQLk7GAo
 
 {
   "name": "Sergey the Guide",

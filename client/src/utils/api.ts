@@ -11,6 +11,7 @@ export default class Api {
   constructor() {
     this.axios = axios.create({
       baseURL: process.env.NEXT_PUBLIC_API_URL + '/api',
+      withCredentials: true,
       timeout: 5000, // 5s timeout
       headers: {
         'Content-Type': 'application/json'
@@ -41,6 +42,7 @@ export default class Api {
   }
   
 
+  
   // 🛠 Fetch languages with validation
   async getLanguages(): Promise<Language[]> {
     const response = await this.axios.get('/user/languages');
