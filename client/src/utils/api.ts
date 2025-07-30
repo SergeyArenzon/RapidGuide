@@ -10,7 +10,7 @@ export default class Api {
 
   constructor() {
     this.axios = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL + '/api',
+      baseURL: process.env.NEXT_PUBLIC_API_URL,
       withCredentials: true,
       timeout: 5000, // 5s timeout
       headers: {

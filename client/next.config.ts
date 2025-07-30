@@ -1,13 +1,19 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     domains: ['lh3.googleusercontent.com'],
-    
   },
   experimental: {
     reactCompiler: true,
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: 'http://huddlehub.io/api/v1/:path*',
+      },
+    ];
   },
 };
 
