@@ -43,6 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           "; ",
           "="
       );
+      console.log({setCookie});
       
           // Extract the cookie name and the value from the first entry in the 
           // setCookie object
@@ -57,11 +58,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           httpOnly: true, // the parsing of httpOnly returns an empty string, so either have some logic to set it to boolean, or set it manually
           maxAge: setCookie["Max-Age"] ? parseInt(setCookie["Max-Age"] as string) : undefined,
           path: Array.isArray(setCookie.Path) ? setCookie.Path[0] : setCookie.Path,
-          sameSite: "strict",
+          sameSite: "lax",
           expires: setCookie.Expires ? new Date(setCookie.Expires as string) : undefined,
-          secure: true,
+          // secure: true, //if production should be TRUE!
         })
       } else {
+        console.log("FAILED SETTING accessToken");
+        
         return false; // If the request fails, sign-in is rejected
       }
       return true;

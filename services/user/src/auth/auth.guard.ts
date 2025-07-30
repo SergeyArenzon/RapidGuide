@@ -2,6 +2,7 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
   // Logger,
 } from '@nestjs/common';
@@ -12,7 +13,7 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  // private readonly logger = new Logger(AuthGuard.name);
+  private readonly logger = new Logger(AuthGuard.name);
 
   constructor(
     private jwtService: JwtService,
@@ -26,7 +27,7 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (isPublic) {
-      // this.logger.debug('Endpoint is public, skipping auth');
+      this.logger.debug('Endpoint is public, skipping auth');
       return true;
     }
 
@@ -40,11 +41,11 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token);
-      // this.logger.log(`Token verified for user: ${JSON.stringify(payload)}`);
+      this.logger.log(`Token verified for user: ${JSON.stringify(payload)}`);
       // Attach user to request object
       request['user'] = payload;
     } catch (error) {
-      // this.logger.error(`Token verification failed: ${error.message}`);
+      this.logger.error(`Token verification failed: ${error.message}`);
       throw new UnauthorizedException(
         error.name === 'TokenExpiredError'
           ? 'Token has expired'
@@ -56,9 +57,6 @@ export class AuthGuard implements CanActivate {
   }
 
   private extractTokenFromCookies(request: Request): string | undefined {
-    console.log({cookiez: request.cookies});
-
-    const accessToken = request.headers.cookie;
-    return accessToken;
+    return request.cookies.accessToken;
   }
 }
