@@ -1,6 +1,0 @@
-dependencies:
-- name: tour-db
-  repository: file://../tour-db
-  version: 0.1.0
-digest: sha256:5bc9970637269ce2e5d1393896ea61bacaa85006d256ebf850c38ffde7900583
-generated: "2025-05-12T21:43:22.220269+03:00"
