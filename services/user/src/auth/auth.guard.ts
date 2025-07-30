@@ -32,15 +32,15 @@ export class AuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromCookies(request);
+    const accessToken = request.cookies.accessToken;
 
-    if (!token) {
+    if (!accessToken) {
       // this.logger.warn('No token provided in request');
       throw new UnauthorizedException('No token provided');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      const payload = await this.jwtService.verifyAsync(accessToken);
       this.logger.log(`Token verified for user: ${JSON.stringify(payload)}`);
       // Attach user to request object
       request['user'] = payload;
@@ -56,7 +56,4 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromCookies(request: Request): string | undefined {
-    return request.cookies.accessToken;
-  }
 }

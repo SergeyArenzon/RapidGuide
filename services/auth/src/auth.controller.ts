@@ -55,7 +55,7 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const token = this.authService.generateToken({ userId: authUser.id });
+    const token = this.authService.generateToken(authUser);
 
     this.logger.log('Setting accessToken cookie in response', authUser);
 
