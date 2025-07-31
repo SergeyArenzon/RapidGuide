@@ -63,8 +63,6 @@ export default function SelectDropdown({
       setValue(name, "", { shouldValidate: true })
     }
   }, [options, name, setValue])
-    
-  console.log({isLoading});
   
   return (
     <Popover open={open} onOpenChange={setOpen}>

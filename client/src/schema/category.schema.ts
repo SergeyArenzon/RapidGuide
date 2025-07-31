@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const SubCategorySchema = z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string(),
     description: z.string()
 });
@@ -9,7 +9,7 @@ const SubCategorySchema = z.object({
 
 
 const CategorySchema = z.object({
-    id: z.string().uuid(),
+    id: z.uuid(),
     name: z.string(),
     description: z.string(),
     subcategories: z.array(SubCategorySchema)
