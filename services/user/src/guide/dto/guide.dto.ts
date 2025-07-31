@@ -1,4 +1,3 @@
-import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 // Base schema that will be extended by create and response DTOs
@@ -18,4 +17,4 @@ const guideSchema = z.object({
 // Schema for guide response - includes all fields
 export { guideSchema };
 // Create DTOs from schemas
-export class GuideDto extends createZodDto(guideSchema) {}
+export type GuideDto = z.infer<typeof guideSchema>;
