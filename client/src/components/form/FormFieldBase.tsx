@@ -25,7 +25,7 @@ export function FormFieldBase({
   children,
   disabled = false,
 }: FormFieldBaseProps) {
-  console.log({disabled})
+
   return (
     <div className={`space-y-2 ${className}`}>
       <Label htmlFor={name} className="flex items-center gap-1">
