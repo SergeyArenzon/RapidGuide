@@ -15,12 +15,30 @@ import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';
 import { GuideSubcategory } from './guide-subcategory.entity';
+import { GuideDto } from '../dto/guide.dto';
 
 @Entity()
 export class Guide extends BaseEntity {
   constructor(guide: Partial<Guide>) {
     super();
     Object.assign(this, guide);
+  }
+
+  toDto(): GuideDto {
+    return {
+      id: this.id,
+      name: this.name,
+      bio: this.bio,
+      user_id: this.user.id,
+      country_code: this.country.code,
+      city_id: this.city.id,
+      languages_code: this.languages.getItems().map((lang) => lang.code),
+      subcategories_ids: this.subcategories
+        .getItems()
+        .map((sub) => sub.subcategory_id),
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+    };
   }
 
   @AfterCreate()

@@ -94,20 +94,6 @@ export class GuideService {
     // Persist the guide and subcategories in the transaction
     await em.persistAndFlush([newGuide, ...guideSubcategories]);
 
-    // Map the entity to DTO
-    return {
-      id: newGuide.id,
-      name: newGuide.name,
-      bio: newGuide.bio,
-      user_id: user.id,
-      country_code: country.code,
-      city_id: city.id,
-      languages_code: languages.map((lang) => lang.code),
-      subcategories_ids: newGuide.subcategories
-        .getItems()
-        .map((sub) => sub.subcategory_id),
-      created_at: newGuide.created_at,
-      updated_at: newGuide.updated_at,
-    };
+    return newGuide.toDto();
   }
 }
