@@ -1,5 +1,4 @@
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
+import { EntityManager } from '@mikro-orm/postgresql';
 import {
   Injectable,
   NotFoundException,
@@ -16,28 +15,22 @@ import { GuideSubcategory } from './entities/guide-subcategory.entity';
 
 @Injectable()
 export class GuideService {
-  constructor(
-    @InjectRepository(Guide)
-    private guideRepository: EntityRepository<Guide>,
-    @InjectRepository(GuideSubcategory)
-    private guideSubcategoryRepository: EntityRepository<GuideSubcategory>,
-    private readonly em: EntityManager,
-  ) {}
+  constructor(private readonly em: EntityManager) {}
 
   async create(
     userId: string,
     createGuideDto: CreateGuideDto,
   ): Promise<GuideDto> {
+    // Start a new transaction with EntityManager
+    const em = this.em.fork();
+
     // Check if guide already exists for this user
-    const existingGuide = await this.guideRepository.findOne({ user: userId });
+    const existingGuide = await em.findOne(Guide, { user: userId });
     if (existingGuide) {
       throw new ConflictException(
         `Guide already exists for user with ID ${userId}`,
       );
     }
-
-    // Start a new transaction with EntityManager
-    const em = this.em.fork();
 
     // Find the user
     const user = await em.findOne(User, {
