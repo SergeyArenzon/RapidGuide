@@ -7,12 +7,11 @@ import { LanguagesModule } from './languages/languages.module';
 import { CountryModule } from './country/country.module';
 import { CityModule } from './city/city.module';
 import { GuideModule } from './guide/guide.module';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './auth/auth.guard';
 import { jwtConfig } from './config';
 import { LoggerMiddleware } from './logger.middleware';
-
 
 @Module({
   imports: [

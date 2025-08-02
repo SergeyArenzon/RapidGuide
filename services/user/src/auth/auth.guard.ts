@@ -10,6 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { UserDto } from 'src/dtos';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -40,7 +41,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(accessToken);
+      const payload = await this.jwtService.verifyAsync<UserDto>(accessToken);
       this.logger.log(`Token verified for user: ${JSON.stringify(payload)}`);
       // Attach user to request object
       request['user'] = payload;
@@ -55,5 +56,4 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
-
 }

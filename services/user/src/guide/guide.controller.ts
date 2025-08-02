@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Param, UsePipes } from '@nestjs/common';
+import { Controller, Post, Body, Req } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { CreateGuideDto, createGuideSchema } from './dto/create-guide.dto';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
+import { Request } from 'express';
 
 @Controller('guide')
 export class GuideController {
@@ -10,9 +11,9 @@ export class GuideController {
   @Post()
   async create(
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-    @Param('user_id') user_id: string,
+    @Req() req: Request,
   ) {
-    console.log('[][][][][', body, user_id);
-    return this.guideService.create(body);
+    const user = req['user'];
+    return this.guideService.create(user.id, body);
   }
 }
