@@ -1,4 +1,4 @@
-import { UserSchema } from "@/schema";
+import { userSchema } from "@rapid-guide-io/shared";
 import useUserStore from "@/store/useUser";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -13,7 +13,7 @@ const useAuth = () => {
         try {
           console.log({user: data?.user});
           
-          const user = UserSchema.parse(data?.user);
+          const user = userSchema.parse(data?.user);
           setUser(user);
         } catch (error) {
           console.log({error});

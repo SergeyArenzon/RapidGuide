@@ -95,4 +95,18 @@ export class GuideService {
 
     return newGuide.toDto();
   }
+
+  async getGuide(id: string): Promise<GuideDto> {
+    const guide = await this.em.findOne(
+      Guide,
+      { id },
+      {
+        populate: ['languages', 'subcategories', 'country', 'city'],
+      },
+    );
+    if (!guide) {
+      throw new NotFoundException(`Guide with ID ${id} not found`);
+    }
+    return guide.toDto();
+  }
 }

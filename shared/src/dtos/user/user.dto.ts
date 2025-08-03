@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { timeSchema } from '../time.dto';
-import { guideSchema } from '../guide/guide.dto';
 
 // Base user schema
 export const userSchema = timeSchema.extend({
@@ -9,7 +8,6 @@ export const userSchema = timeSchema.extend({
   last_name: z.string().min(1, { message: 'Last name is required' }),
   email: z.email({ message: 'Invalid email address' }),
   image_url: z.url({ message: 'Invalid image URL' }),
-  guide: guideSchema.optional(),
 });
 
 // Export types

@@ -14,11 +14,7 @@ export class UserService {
 
   async createOrFind(createUserDto: CreateUserDto): Promise<UserDto | null> {
     try {
-      const user = await this.em.findOne(
-        User,
-        { email: createUserDto.email },
-        { populate: ['guide'] },
-      );
+      const user = await this.em.findOne(User, { email: createUserDto.email });
       if (user) {
         // @ts-ignore
         return user;

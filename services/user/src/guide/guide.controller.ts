@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, Get, Param } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { Request } from 'express';
@@ -19,5 +19,10 @@ export class GuideController {
   ): Promise<GuideDto> {
     const user = req['user'];
     return await this.guideService.create(user.id, body);
+  }
+
+  @Get(':id')
+  async getGuide(@Param('id') id: string): Promise<GuideDto> {
+    return await this.guideService.getGuide(id);
   }
 }
