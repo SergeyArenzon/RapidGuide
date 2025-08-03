@@ -9,11 +9,12 @@ import { useRouter } from "next/navigation";
 import { GuideBaseSchema } from "@/schema";
 import { z } from "zod";
 import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from "@/components/AlertDialog";
+import { createGuideSchema, CreateGuideDto } from "@rapid-guide-io/shared";
 
 
 export default function SignupGuide() {
   const router = useRouter();
-  const [formState, setFormState] = useState<z.infer<typeof GuideBaseSchema>>({
+  const [formState, setFormState] = useState<z.infer<CreateGuideDto>>({
     bio: '',
     subcategories_id: [],
     languages_code: [],
