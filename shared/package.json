@@ -1,6 +1,6 @@
 {
 	"name": "@rapid-guide-io/shared",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"description": "Shared modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

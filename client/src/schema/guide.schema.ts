@@ -9,7 +9,7 @@ const GuideBaseSchema = z.object({
     city_id: z.number().min(1, { message: "City is required" }),
     bio: z.string()
     .min(10, { message: "Bio must be at least 10 characters" })
-    .max(500, { message: "Bio must be less than 500 characters" })  ,
+    .max(500, { message: "Bio must be less than 500 characters" }),
 });
 
 
