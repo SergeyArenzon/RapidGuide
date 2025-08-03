@@ -48,8 +48,8 @@ importers:
         specifier: ^10.0.0
         version: 10.4.8(@nestjs/common@10.4.8(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.8)
       '@rapid-guide-io/shared':
-        specifier: 1.0.13
-        version: 1.0.13
+        specifier: ^1.0.14
+        version: 1.0.14
       amqp-connection-manager:
         specifier: ^4.1.14
         version: 4.1.14(amqplib@0.10.5)
@@ -726,8 +726,8 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@rapid-guide-io/shared@1.0.13':
-    resolution: {integrity: sha512-8m+EXki+oPg+YLUVd4xWcHtPoNjdkds/IDUYdPK76j5U34qCG9CPwx0wLoFcG9QhseXdTZ/4m7abEMD/lcYVpw==}
+  '@rapid-guide-io/shared@1.0.14':
+    resolution: {integrity: sha512-IrnAxyxzjl4Ed37rSn8WWJdYkFmz0fRwuCaJqp6o+be7zoiFOR+QSOsrKhnKVPjgZgeitV8Nf2RNXfzhgWfiNA==}
 
   '@rushstack/node-core-library@5.10.1':
     resolution: {integrity: sha512-BSb/KcyBHmUQwINrgtzo6jiH0HlGFmrUy33vO6unmceuVKTEyL2q+P0fQq2oB5hvXVWOEUhxB2QvlkZluvUEmg==}
@@ -4372,7 +4372,7 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@rapid-guide-io/shared@1.0.13':
+  '@rapid-guide-io/shared@1.0.14':
     dependencies:
       uuid: 11.1.0
       zod: 4.0.14
