@@ -1,53 +1,32 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsEmail,
-  IsUrl,
-  IsUUID,
-  IsDate,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { OmitType } from '@nestjs/mapped-types';
-import { GuideDto } from 'src/guide/dto/guide.dto';
+import { z } from 'zod';
+import { timeSchema } from '@rapid-guide-io/shared/src/dtos/time.dto';
+import { guideSchema } from '@rapid-guide-io/shared';
 
-export class UserDto {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
+// Base user schema
+export const userSchema = timeSchema.extend({
+  id: z.uuid(),
+  first_name: z.string().min(1, { message: 'First name is required' }),
+  last_name: z.string().min(1, { message: 'Last name is required' }),
+  email: z.email({ message: 'Invalid email address' }),
+  image_url: z.url({ message: 'Invalid image URL' }),
+  guide: guideSchema.optional(),
+});
 
-  @IsString()
-  @IsNotEmpty()
-  first_name: string;
+// Schema for creating a new user - omits system-managed fields
+export const createUserSchema = userSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  guide: true,
+});
 
-  @IsString()
-  @IsNotEmpty()
-  last_name: string;
+// Schema for updating a user - omits timestamps
+export const updateUserSchema = userSchema.omit({
+  created_at: true,
+  updated_at: true,
+});
 
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
-  @IsUrl()
-  image_url: string;
-
-  @IsDate()
-  @Type(() => Date)
-  created_at: Date;
-
-  @IsDate()
-  @Type(() => Date)
-  updated_at: Date;
-
-  guide?: GuideDto;
-}
-
-export class CreateUserDto extends OmitType(UserDto, [
-  'id',
-  'created_at',
-  'updated_at',
-  'guide',
-] as const) {}
-export class UpdateUserDto extends OmitType(UserDto, [
-  'created_at',
-  'updated_at',
-] as const) {}
+// Export types
+export type UserDto = z.infer<typeof userSchema>;
+export type CreateUserDto = z.infer<typeof createUserSchema>;
+export type UpdateUserDto = z.infer<typeof updateUserSchema>;
