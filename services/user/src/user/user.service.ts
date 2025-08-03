@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository, wrap } from '@mikro-orm/postgresql';
 import { User } from '../entities';
-// import { CreateUserDto, UpdateUserDto, UserDto } from '../dtos';
 import { CreateUserDto, UserDto } from '@rapid-guide-io/shared';
 
 @Injectable()
