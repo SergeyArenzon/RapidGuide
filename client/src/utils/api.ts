@@ -2,7 +2,8 @@ import axios, { AxiosInstance, AxiosError } from 'axios';
 import { Language, Category, Country, City, Guide } from '@/types';
 import { z } from 'zod';
 import { LanguageSchema } from '@/schema/user.schema';
-import { CategorySchema, CountrySchema, CitySchema, GuideSchema, GuideBaseSchema } from '@/schema';
+import { CategorySchema, CountrySchema, CitySchema } from '@/schema';
+import { CreateGuideDto, createGuideSchema } from '@rapid-guide-io/shared';
 
 
 export default class Api {
@@ -90,9 +91,9 @@ export default class Api {
     return parsed.data;
   }
 
-  async createGuide(guide: z.infer<typeof GuideBaseSchema>): Promise<Guide> {
+  async createGuide(guide: CreateGuideDto): Promise<Guide> {
     const response = await this.axios.post('/user/guide', guide);
-    const parsed = GuideSchema.safeParse(response.data);
+    const parsed = createGuideSchema.safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
