@@ -57,20 +57,26 @@ export default function SignupGuide() {
     try {
       setIsSubmitting(true);
       setSubmitError(null);
-      
       await api.createGuide(data);
       setDialogState({
         open: true,
         title: 'Guide Profile Created',
         description: 'Your guide profile has been created successfully.',
         approveText: 'OK',
-        
         onApprove: () => {
           router.push('/dashboard');
         },
       }); 
     } catch (err) {
       const error = err as Error;
+      setDialogState({
+        open: true,
+        title: 'Failed to create guide profile',
+        description: error.message,
+        approveText: 'Try again',
+        variant: 'destructive',
+        onApprove: () => {},
+      }); 
       setSubmitError(error?.message || 'Failed to create guide profile. Please try again.');
       console.error('Failed to create guide:', error);
     } finally {
@@ -95,6 +101,7 @@ export default function SignupGuide() {
         onApprove={dialogState.onApprove}
         onCancel={dialogState.onCancel}
         cancelText={dialogState.cancelText}
+        variant={dialogState.variant}
       />
 
       <Form

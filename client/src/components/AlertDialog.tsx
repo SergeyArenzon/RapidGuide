@@ -16,6 +16,7 @@ export type AlertDialogState = {
   title: string;
   description: string;
   approveText: string;
+  variant?: "default" | "destructive"
   onApprove: () => void;
 } & ({
   onCancel: () => void;
