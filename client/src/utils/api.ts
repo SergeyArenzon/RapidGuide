@@ -3,7 +3,7 @@ import { Language, Category, Country, City, Guide } from '@/types';
 import { z } from 'zod';
 import { LanguageSchema } from '@/schema/user.schema';
 import { CategorySchema, CountrySchema, CitySchema } from '@/schema';
-import { CreateGuideDto, createGuideSchema } from '@rapid-guide-io/shared';
+import { CreateGuideDto, createGuideSchema, GuideDto, UserDto } from '@rapid-guide-io/shared';
 
 
 export default class Api {
@@ -100,4 +100,16 @@ export default class Api {
     }
     return response.data;
   }
+  async getGuide(userId: UserDto["id"]): Promise<GuideDto> {
+    const response = await this.axios.get(`/user/user/${userId}/guide`);
+    const parsed = createGuideSchema.safeParse(response.data);
+    if (!parsed.success) {
+      console.error('Invalid API response:', parsed.error);
+      throw new Error('Unexpected API response format.');
+    }
+    return response.data;
+  }
+
+
+
 }

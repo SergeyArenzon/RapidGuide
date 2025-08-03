@@ -96,17 +96,21 @@ export class GuideService {
     return newGuide.toDto();
   }
 
-  async getGuide(id: string): Promise<GuideDto> {
-    const guide = await this.em.findOne(
+  async findByUserId(userId: string): Promise<GuideDto> {
+    const em = this.em.fork();
+
+    const guide = await em.findOne(
       Guide,
-      { id },
+      { user: userId },
       {
-        populate: ['languages', 'subcategories', 'country', 'city'],
+        populate: ['country', 'city', 'languages', 'subcategories'],
       },
     );
+
     if (!guide) {
-      throw new NotFoundException(`Guide with ID ${id} not found`);
+      throw new NotFoundException(`No guide found for user with ID ${userId}`);
     }
+
     return guide.toDto();
   }
 }

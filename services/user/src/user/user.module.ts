@@ -5,9 +5,11 @@ import { jwtConfig } from 'src/config';
 import { User } from 'src/entities';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
+import { GuideModule } from 'src/guide/guide.module';
 
 @Module({
   imports: [
+    GuideModule,
     JwtModule.registerAsync(jwtConfig.asProvider()),
     MikroOrmModule.forFeature([User]),
   ],
