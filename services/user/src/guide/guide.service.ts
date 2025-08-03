@@ -1,34 +1,99 @@
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { Injectable } from '@nestjs/common';
-import { CreateGuideDto, ResponseGuideDto } from './dto/guide.dto';
+import { EntityManager } from '@mikro-orm/postgresql';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
+import { CreateGuideDto } from './dto/create-guide.dto';
+import { GuideDto } from './dto/guide.dto';
 import { User } from 'src/entities';
-import { Guide } from './guide.entity';
-// import { UserService } from 'src/app.service';
+import { Guide } from './entities/guide.entity';
+import { Country } from '../country/country.entity';
+import { City } from '../city/city.entity';
+import { Languages } from '../languages/languages.entity';
+import { GuideSubcategory } from './entities/guide-subcategory.entity';
 
 @Injectable()
 export class GuideService {
-  constructor(
-    @InjectRepository(Guide)
-    private guideRepository: EntityRepository<Guide>,
-    // private readonly userService: UserService,
-    private readonly em: EntityManager,
-  ) {}
+  constructor(private readonly em: EntityManager) {}
 
-  async create(createGuideDto: CreateGuideDto): Promise<ResponseGuideDto> {
-    const user = await this.em.findOne(User, { id: createGuideDto.user_id });
-
+  async create(
+    userId: string,
+    createGuideDto: CreateGuideDto,
+  ): Promise<GuideDto> {
     // Start a new transaction with EntityManager
     const em = this.em.fork();
-    // Create a new User entity
-    const newGuide = new Guide({ ...createGuideDto, user });
-    console.log({ newGuide });
 
-    // Persist the user in the transaction
-    await em.persistAndFlush(newGuide);
-    // Create the Guide associated with the user inside the same transaction
-    // Commit the transaction
-    await em.flush();
-    return newGuide;
+    // Check if guide already exists for this user
+    const existingGuide = await em.findOne(Guide, { user: userId });
+    if (existingGuide) {
+      throw new ConflictException(
+        `Guide already exists for user with ID ${userId}`,
+      );
+    }
+
+    // Find the user
+    const user = await em.findOne(User, {
+      id: userId,
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Find the country
+    const country = await em.findOne(Country, {
+      code: createGuideDto.country_code,
+    });
+    if (!country) {
+      throw new NotFoundException(
+        `Country with code ${createGuideDto.country_code} not found`,
+      );
+    }
+
+    // Find the city
+    const city = await em.findOne(City, {
+      id: createGuideDto.city_id,
+    });
+    if (!city) {
+      throw new NotFoundException(
+        `City with ID ${createGuideDto.city_id} not found`,
+      );
+    }
+
+    // Find languages
+    const languages = await em.find(Languages, {
+      code: { $in: createGuideDto.languages_code },
+    });
+    if (languages.length !== createGuideDto.languages_code.length) {
+      throw new NotFoundException('Some languages were not found');
+    }
+
+    // Create a new Guide entity
+    const newGuide = new Guide({
+      ...createGuideDto,
+      user,
+      country,
+      city,
+    });
+
+    // Add languages to the guide
+    newGuide.languages.set(languages);
+
+    // Create guide subcategories
+    const guideSubcategories = createGuideDto.subcategories_id.map(
+      (subcategoryId) =>
+        new GuideSubcategory({
+          guide: newGuide,
+          subcategory_id: subcategoryId,
+        }),
+    );
+
+    // Add subcategories to the guide
+    newGuide.subcategories.set(guideSubcategories);
+
+    // Persist the guide and subcategories in the transaction
+    await em.persistAndFlush([newGuide, ...guideSubcategories]);
+
+    return newGuide.toDto();
   }
 }

@@ -1,43 +1,19 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsEmail,
-  IsUrl,
-  IsUUID,
-  IsDate,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { OmitType } from '@nestjs/mapped-types';
-import { UserDto } from 'src/dtos';
+import { z } from 'zod';
 
-export class GuideDto {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
+// Base schema that will be extended by create and response DTOs
+const guideSchema = z.object({
+  id: z.uuid(),
+  name: z.string().min(1),
+  bio: z.string().min(1),
+  country_code: z.string().min(2).max(2),
+  city_id: z.number(),
+  languages_code: z.array(z.string().min(2).max(2)),
+  subcategories_id: z.array(z.uuid()),
+  created_at: z.date(),
+  updated_at: z.date(),
+});
 
-  @Type(() => UserDto)
-  user: UserDto; // Transforms the user relation into the UserDto
-
-  @IsDate()
-  @Type(() => Date)
-  created_at: Date;
-
-  @IsDate()
-  @Type(() => Date)
-  updated_at: Date;
-}
-
-export class CreateGuideDto extends OmitType(GuideDto, [
-  'id',
-  'created_at',
-  'updated_at',
-] as const) {
-    @IsUUID()
-    @IsNotEmpty()
-    user_id: string;
-}
-export class UpdateGuideDto extends OmitType(GuideDto, [
-  'created_at',
-  'updated_at',
-] as const) {}
-export class ResponseGuideDto extends GuideDto {}
+// Schema for guide response - includes all fields
+export { guideSchema };
+// Create DTOs from schemas
+export type GuideDto = z.infer<typeof guideSchema>;

@@ -1,8 +1,7 @@
 "use client"
-
-import { useEffect, useMemo } from  "react"
+import { useEffect } from  "react"
 import { Button } from "@/components/ui/button"
-import { useForm } from "react-hook-form"
+import { useForm, FieldValues, DefaultValues, Path } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Input } from "../ui/input"
@@ -10,73 +9,57 @@ import { FormFieldBase } from "./FormFieldBase"
 import { Textarea } from "../ui/textarea"
 import { CheckboxDropdown } from "../CheckboxDropdown"
 import SelectDropdown from "../SelectDropdown"
-import { CheckboxFieldConfig, FieldConfig, TextFieldConfig, SelectFieldConfig } from "./types"
-import { validateCheckbox, validateText, validateSelect } from "./validations"
+import { CheckboxFieldConfig, FieldConfig, TextFieldConfig } from "./types"
 import { CategorizedCheckboxDropdown } from "../CategorizedCheckboxDropdown"
+import { Loader2 } from "lucide-react"
 
 
-type FormProps<T> = {
-  fields: FieldConfig[]
+type FormProps<T extends FieldValues> = {
+  fields: Array<FieldConfig & { name: keyof T }>
   onSubmit: (data: T) => void
   onChange?: (data: Partial<T>) => void
   submitButtonText?: string
   title?: string
   description?: string
+  isSubmitting?: boolean
+  error?: string | null
+  schema: z.ZodSchema<T>
 } & (
   | { 
       onCancel?: undefined; 
       cancelButtonText?: undefined 
-    } // Neither exists
+    }
   | { 
     onCancel: () => void; 
     cancelButtonText: string 
-  } // Both required
+  }
 )
 
-export default function Form<T>({
+export default function Form<T extends FieldValues>({
   fields,
   onSubmit,
   onChange,
   submitButtonText = "Submit",
   title,
-  description
+  description,
+  isSubmitting = false,
+  schema,
 }: FormProps<T>) {
-  // Generate Zod schema dynamically based on field configurations
-  const generateZodSchema = () => {
-    const schemaMap: Record<string, z.ZodTypeAny> = {}; // ✅ Correct type
-
-    fields.forEach(field => {
-      let fieldSchema: z.ZodString | z.ZodArray<z.ZodString> = z.string();
-      
-      if (field.type === 'textarea' || field.type === 'text') 
-        fieldSchema = validateText(field as TextFieldConfig)
-      if (field.type === 'checkbox' || field.type === 'categorized-checkbox') 
-        fieldSchema = validateCheckbox(field as CheckboxFieldConfig)
-      if (field.type === 'select') 
-        fieldSchema = validateSelect(field as SelectFieldConfig)
-      
-      schemaMap[field.name] = fieldSchema
-    })
-
-    return z.object(schemaMap)
-  }
-
-  const schema = generateZodSchema()
-  type FormValues = z.infer<typeof schema>
-
+  
   // Setup form
   const {
     register,
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors }
-  } = useForm<FormValues>({
+  } = useForm<T>({
     resolver: zodResolver(schema),
     defaultValues: fields.reduce((acc, field) => {
-      acc[field.name] = field.type === 'checkbox' ? [] : ''
-      return acc
-    }, {} as Record<string, unknown> )
+      (acc as any)[field.name] = field.type === 'checkbox' ? [] : '';
+      return acc;
+    }, {} as DefaultValues<T>)
   })
 
   // Set up subscription to form changes instead of watching all values
@@ -91,9 +74,11 @@ export default function Form<T>({
     // Cleanup subscription
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
+
+
   
   // Handle form submission
-  const onSubmitHandler = (data: FormValues) => {
+  const onSubmitHandler = (data: T) => {
     onSubmit(data as T)
   }
 
@@ -108,12 +93,13 @@ export default function Form<T>({
               label={field.label}
               helperText={field.helperText}
               errors={errors}
-              required={field.required}>
+              required={field.required}
+              disabled={field.disabled}>
               <Input 
                 id={field.name} type={field.inputType || 'text'} 
                 placeholder={field.placeholder} 
-                disabled={field.disabled} 
-                {...register(field.name)} />
+                disabled={field.disabled || isSubmitting} 
+                {...register(field.name as Path<T>)} />
             </FormFieldBase>
           
         )
@@ -126,13 +112,14 @@ export default function Form<T>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
             <Textarea
               id={field.name}
               className={`min-h-[${6 * 24}px]`}
               placeholder={field.placeholder}
-              disabled={field.disabled}
-              {...register(field.name)} 
+              disabled={field.disabled || isSubmitting}
+              {...register(field.name as Path<T>)} 
             />
           </FormFieldBase>
         )
@@ -145,7 +132,8 @@ export default function Form<T>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
               <CheckboxDropdown
                 key={field.name}
                 name={field.name}
@@ -157,7 +145,8 @@ export default function Form<T>({
                 watch={watch}
                 required={field.required}
                 setValue={setValue}
-                disabled={field.disabled}/>
+                control={control}
+                disabled={field.disabled || isSubmitting}/>
 
           </FormFieldBase>
         )
@@ -169,7 +158,8 @@ export default function Form<T>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
               <CategorizedCheckboxDropdown
                 key={field.name}
                 name={field.name}
@@ -180,7 +170,8 @@ export default function Form<T>({
                 watch={watch}
                 required={field.required}
                 setValue={setValue}
-                disabled={field.disabled}/>
+                control={control}
+                disabled={field.disabled || isSubmitting}/>
 
           </FormFieldBase>
         )
@@ -192,7 +183,8 @@ export default function Form<T>({
             label={field.label}
             helperText={field.helperText}
             errors={errors}
-            required={field.required}>
+            required={field.required}
+            disabled={field.disabled}>
               <SelectDropdown
                 key={field.name}
                 name={field.name}
@@ -203,7 +195,8 @@ export default function Form<T>({
                 register={register}
                 watch={watch}
                 setValue={setValue}
-                disabled={field.disabled}/>
+                disabled={field.disabled || isSubmitting}
+                isLoading={field.isLoading}/>
           </FormFieldBase>
         )
 
@@ -223,8 +216,9 @@ export default function Form<T>({
 
       {fields.map(renderField)}
 
-      <Button type="submit" className="w-full">
-        {submitButtonText}
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
+        {isSubmitting ? "Submitting..." : submitButtonText}
       </Button>
     </form>
   )

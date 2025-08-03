@@ -8,7 +8,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import type { UseFormRegister, UseFormWatch, UseFormSetValue } from "react-hook-form"
+import type { UseFormRegister, UseFormWatch, UseFormSetValue, Control } from "react-hook-form"
+import { useWatch } from "react-hook-form"
 
 export type CheckboxDropdownProps = {
   name: string
@@ -19,6 +20,7 @@ export type CheckboxDropdownProps = {
   register: UseFormRegister<any>
   watch: UseFormWatch<any>
   setValue: UseFormSetValue<any>
+  control: Control<any>
   disabled?: boolean
   required?: boolean
   className?: string
@@ -33,13 +35,14 @@ export function CheckboxDropdown({
   register,
   watch,
   setValue,
+  control,
   disabled = false,
   required = false,
   className = "",
   maxBadges = 3,
 }: CheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
-  const selectedItems = (watch(name) as string[]) || []
+  const selectedItems = (useWatch({ control, name }) as string[]) || []
 
   const handleItemToggle = (value: string) => {
     const currentValues = [...selectedItems]

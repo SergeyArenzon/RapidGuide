@@ -37,9 +37,9 @@ export class AuthController {
     @Body() body: AuthDto,
   ): Promise<any> {
     const user = await this.authService.authenticateProvider(body);
-    this.logger.debug(`Authenticated user: ${JSON.stringify(user)}`);
+    this.logger.debug(`Authenticated provider: ${JSON.stringify(user)}`);
 
-    const res = await fetch('http://user:3000/auth', {
+    const res = await fetch('http://user:3000/user', {
       method: 'POST',
       body: JSON.stringify(user),
       headers: {
@@ -48,6 +48,7 @@ export class AuthController {
     });
 
     const authUser = await res.json();
+    this.logger.debug(`Authenticated user: ${JSON.stringify(authUser)}`);
     if (authUser?.statusCode === 400) {
       this.logger.warn(
         'Authentication failed: No user returned from user service',
@@ -55,9 +56,9 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const token = this.authService.generateToken({ userId: authUser.id });
+    const token = this.authService.generateToken(authUser);
 
-    this.logger.log('Setting accessToken cookie in response');
+    this.logger.log('Setting accessToken cookie in response', authUser);
 
     response.cookie('accessToken', token, {
       httpOnly: true,

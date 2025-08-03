@@ -2,3 +2,6 @@ node_modules
 dist
 build
 *.log
+.cache
+.pnpm-store
+.env

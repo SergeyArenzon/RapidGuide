@@ -1,15 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
+import * as cookieParser from 'cookie-parser';
 // import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({ credentials: true });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.enableCors({ credentials: true, origin: 'http://huddlehub.io:3000' });
+  // app.useGlobalPipes(new ZodValidationPipe());
   const logger = new Logger('Bootstrap');
   app.useLogger(logger);
+  app.use(cookieParser());
   await app.listen(process.env.PORT ?? 3000);
 
   // const microservice = app.connectMicroservice<MicroserviceOptions>({

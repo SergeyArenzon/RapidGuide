@@ -31,3 +31,10 @@ database:
   name: "user"
   user: "postgres"
   password: "postgres"
+
+env:
+  - name: JWT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: global-secrets
+        key: jwt-secret

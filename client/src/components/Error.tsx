@@ -9,7 +9,6 @@ interface ErrorProps {
   title?: string
   description?: string
   showHomeButton?: boolean
-  showRetryButton?: boolean
   Icon?: LucideIcon
   retryAction?: () => void
 }
@@ -20,7 +19,6 @@ export function Error({
   description = "Something went wrong. Please try again later.",
   Icon = AlertCircle,
   showHomeButton = true,
-  showRetryButton = true,
   retryAction,
 }: ErrorProps) {
   return (
@@ -35,18 +33,18 @@ export function Error({
       <p className="text-muted-foreground text-lg mb-8 max-w-md">{description}</p>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        {showRetryButton && (
+        {retryAction && (
           <Button onClick={retryAction} variant="default">
-            <RotateCcw className="mr-2 h-4 w-4" />
             Try again
+            <RotateCcw className="mr-2 h-4 w-4" />
           </Button>
         )}
 
         {showHomeButton && (
-          <Button asChild variant={showRetryButton ? "outline" : "default"}>
+          <Button asChild variant={retryAction ? "outline" : "default"}>
             <Link href="/">
-              <Home className="mr-2 h-4 w-4" />
               Go back home
+              <Home className="mr-2 h-4 w-4" />
             </Link>
           </Button>
         )}

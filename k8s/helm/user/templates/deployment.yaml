@@ -44,6 +44,13 @@ spec:
                 configMapKeyRef:
                   name: {{ index .Values.configMaps "user-db" "name" | quote }}
                   key: POSTGRES_HOST
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .valueFrom.secretKeyRef.name }}
+                  key: {{ .valueFrom.secretKeyRef.key }}
+            {{- end }}
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}

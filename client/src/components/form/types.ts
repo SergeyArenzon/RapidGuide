@@ -38,8 +38,9 @@ type BaseFieldConfig = {
   
   type SelectFieldConfig = BaseFieldConfig & {
     type: 'select'
-    options: Array<{ value: string; label: string }>
+    options: Array<{ value: string | number; label: string }>
     placeholder?: string
+    isLoading?: boolean
   }
   
   

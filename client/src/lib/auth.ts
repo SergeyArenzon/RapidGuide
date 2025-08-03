@@ -24,7 +24,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     signIn: async ({ account, user }) => {
-      const response = await fetch(`http://huddlehub.io/api/auth`, {
+      const response = await fetch(`http://huddlehub.io/api/v1/auth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,13 +37,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (response.ok) {
         const userData = await response.json();
-        console.log({userData});
         user.tokenData = userData;
         const setCookie = qs.decode(
           response.headers.get("set-cookie") as string,
           "; ",
           "="
       );
+      console.log({setCookie});
       
           // Extract the cookie name and the value from the first entry in the 
           // setCookie object
@@ -58,11 +58,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           httpOnly: true, // the parsing of httpOnly returns an empty string, so either have some logic to set it to boolean, or set it manually
           maxAge: setCookie["Max-Age"] ? parseInt(setCookie["Max-Age"] as string) : undefined,
           path: Array.isArray(setCookie.Path) ? setCookie.Path[0] : setCookie.Path,
-          sameSite: "strict",
+          sameSite: "lax",
           expires: setCookie.Expires ? new Date(setCookie.Expires as string) : undefined,
-          secure: true,
+          // secure: true, //if production should be TRUE!
         })
       } else {
+        console.log("FAILED SETTING accessToken");
+        
         return false; // If the request fails, sign-in is rejected
       }
       return true;

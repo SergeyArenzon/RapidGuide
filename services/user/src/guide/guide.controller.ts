@@ -1,20 +1,20 @@
-import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
+import { Controller, Post, Body, Req } from '@nestjs/common';
 import { GuideService } from './guide.service';
-import { CreateGuideDto, ResponseGuideDto } from './dto/guide.dto';
+import { CreateGuideDto, createGuideSchema } from './dto/create-guide.dto';
+import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
+import { Request } from 'express';
+import { GuideDto } from './dto/guide.dto';
 
 @Controller('guide')
 export class GuideController {
-  constructor(
-    private guideService: GuideService
-  ) {}
+  constructor(private readonly guideService: GuideService) {}
 
-
-  @HttpCode(200)
-  @Get('/')
-  health() {}
-
-  @Post('/')
-  async create(@Body() body: CreateGuideDto) : Promise<ResponseGuideDto> {
-    return this.guideService.create(body);
+  @Post()
+  async create(
+    @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
+    @Req() req: Request,
+  ): Promise<GuideDto> {
+    const user = req['user'];
+    return await this.guideService.create(user.id, body);
   }
 }

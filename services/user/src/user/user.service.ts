@@ -15,6 +15,7 @@ export class UserService {
     try {
       const user = await this.em.findOne(User, { email: createUserDto.email },  {populate: ['guide']});
       if (user) {
+        // @ts-ignore
         return user;
       }
       
@@ -33,6 +34,7 @@ export class UserService {
     await em.persistAndFlush(newUser);
     // Commit the transaction
     await em.flush();
+    // @ts-ignore
     return newUser;
   }
 
