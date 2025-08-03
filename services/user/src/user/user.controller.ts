@@ -1,15 +1,5 @@
-import {
-  Controller,
-  Post,
-  Body,
-  // Get,
-  // Param,
-  // UsePipes,
-  // ValidationPipe,
-  HttpCode,
-  Logger,
-} from '@nestjs/common';
-import { CreateUserDto, UserDto } from '../dtos';
+import { Controller, Post, Body, HttpCode, Logger } from '@nestjs/common';
+import { CreateUserDto, UserDto } from '@rapid-guide-io/shared';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
 import { Public } from 'src/decorators/public.decorator';
