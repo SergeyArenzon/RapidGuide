@@ -1,9 +1,12 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
 import { GuideService } from './guide.service';
-import { CreateGuideDto, createGuideSchema } from './dto/create-guide.dto';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { Request } from 'express';
-import { GuideDto } from './dto/guide.dto';
+import {
+  CreateGuideDto,
+  createGuideSchema,
+  GuideDto,
+} from '@rapid-guide-io/shared';
 
 @Controller('guide')
 export class GuideController {
