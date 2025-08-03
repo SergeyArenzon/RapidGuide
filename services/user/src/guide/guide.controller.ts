@@ -3,6 +3,7 @@ import { GuideService } from './guide.service';
 import { CreateGuideDto, createGuideSchema } from './dto/create-guide.dto';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { Request } from 'express';
+import { GuideDto } from './dto/guide.dto';
 
 @Controller('guide')
 export class GuideController {
@@ -12,8 +13,8 @@ export class GuideController {
   async create(
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
     @Req() req: Request,
-  ) {
+  ): Promise<GuideDto> {
     const user = req['user'];
-    return this.guideService.create(user.id, body);
+    return await this.guideService.create(user.id, body);
   }
 }

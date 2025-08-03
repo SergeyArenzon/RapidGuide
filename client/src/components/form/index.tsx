@@ -11,6 +11,7 @@ import { CheckboxDropdown } from "../CheckboxDropdown"
 import SelectDropdown from "../SelectDropdown"
 import { CheckboxFieldConfig, FieldConfig, TextFieldConfig } from "./types"
 import { CategorizedCheckboxDropdown } from "../CategorizedCheckboxDropdown"
+import { Loader2 } from "lucide-react"
 
 
 type FormProps<T extends FieldValues> = {
@@ -97,7 +98,7 @@ export default function Form<T extends FieldValues>({
               <Input 
                 id={field.name} type={field.inputType || 'text'} 
                 placeholder={field.placeholder} 
-                disabled={field.disabled} 
+                disabled={field.disabled || isSubmitting} 
                 {...register(field.name as Path<T>)} />
             </FormFieldBase>
           
@@ -117,7 +118,7 @@ export default function Form<T extends FieldValues>({
               id={field.name}
               className={`min-h-[${6 * 24}px]`}
               placeholder={field.placeholder}
-              disabled={field.disabled}
+              disabled={field.disabled || isSubmitting}
               {...register(field.name as Path<T>)} 
             />
           </FormFieldBase>
@@ -145,7 +146,7 @@ export default function Form<T extends FieldValues>({
                 required={field.required}
                 setValue={setValue}
                 control={control}
-                disabled={field.disabled}/>
+                disabled={field.disabled || isSubmitting}/>
 
           </FormFieldBase>
         )
@@ -170,7 +171,7 @@ export default function Form<T extends FieldValues>({
                 required={field.required}
                 setValue={setValue}
                 control={control}
-                disabled={field.disabled}/>
+                disabled={field.disabled || isSubmitting}/>
 
           </FormFieldBase>
         )
@@ -194,7 +195,7 @@ export default function Form<T extends FieldValues>({
                 register={register}
                 watch={watch}
                 setValue={setValue}
-                disabled={field.disabled}
+                disabled={field.disabled || isSubmitting}
                 isLoading={field.isLoading}/>
           </FormFieldBase>
         )
@@ -216,6 +217,7 @@ export default function Form<T extends FieldValues>({
       {fields.map(renderField)}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
         {isSubmitting ? "Submitting..." : submitButtonText}
       </Button>
     </form>

@@ -8,20 +8,22 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { GuideBaseSchema } from "@/schema";
 import { z } from "zod";
+import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from "@/components/AlertDialog";
 
 
 export default function SignupGuide() {
   const router = useRouter();
   const [formState, setFormState] = useState<z.infer<typeof GuideBaseSchema>>({
     bio: '',
-    subcategories_ids: [],
+    subcategories_id: [],
     languages_code: [],
     name: '',
     country_code: '',
-    city_id: ''
+    city_id: 0
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
   const api = new Api();
 
   const handleFormChange = (currentState: Partial<z.infer<typeof GuideBaseSchema>>) => {
@@ -57,7 +59,16 @@ export default function SignupGuide() {
       setSubmitError(null);
       
       await api.createGuide(data);
-      router.push('/dashboard');
+      setDialogState({
+        open: true,
+        title: 'Guide Profile Created',
+        description: 'Your guide profile has been created successfully.',
+        approveText: 'OK',
+        
+        onApprove: () => {
+          router.push('/dashboard');
+        },
+      }); 
     } catch (err) {
       const error = err as Error;
       setSubmitError(error?.message || 'Failed to create guide profile. Please try again.');
@@ -74,72 +85,85 @@ export default function SignupGuide() {
   if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
   
   return (
-        <Form
-          title="Profile Information"
-          description="Complete your profile information below"
-          schema={GuideBaseSchema}
-          fields={[
-            {
-              type: "text",
-              name: "name",
-              label: "Guide Name",
-              placeholder: "Enter guide name",
-              helperText: "Your full name as it appears on your ID.",
-            },
-            {
-              type: "textarea",
-              name: "bio",
-              label: "Bio",
-              placeholder: "Tell us about yourself...",
-              helperText: "Write a short bio to introduce yourself to others.",
-            },
-            {
-              type: "categorized-checkbox",
-              name: "subcategories_ids",
-              label: "Categories",
-              options: categories?.map((cat) => ({ 
-                value: cat.id, 
-                label: cat.name,
-                subcategories: cat.subcategories?.map(subcat => ({
-                  value: subcat.id,
-                  label: subcat.name
-                })) || []
-              })) || [],
-              placeholder: "Select categories",
-              helperText: "Select the categories that interest you.",
-            },
-            {
-              type: "checkbox",
-              name: "languages_code",
-              label: "Languages",
-              options: languages?.map((lang) => ({ value: lang.code, label: lang.name })) || [],
-              placeholder: "Select languages",
-              helperText: "Select the languages you speak.",
-            },
-            {
-              type: "select",
-              name: "country_code",
-              label: "Country",
-              options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
-              placeholder: "Select country",
-              helperText: "Select the country you live in.",
-            },
-            {
-              type: "select",
-              name: "city_id",
-              label: "City",
-              options: cities?.map(city => ({ value: city.id.toString(), label: city.name })) || [],
-              placeholder: "Select city",
-              disabled: !Boolean(formState?.country_code),
-              helperText: "Select the city you live in.",
-              isLoading: isLoadingCities
-            },
-          ]}
-          onSubmit={handleSubmit}
-          onChange={handleFormChange} 
-          submitButtonText="Save Profile"
-          isSubmitting={isSubmitting}
-        />
+    <>
+      <AlertDialog
+        open={dialogState.open}
+        onOpenChange={(open) => setDialogState(prev => ({ ...prev, open }))}
+        title={dialogState.title}
+        description={dialogState.description}
+        approveText={dialogState.approveText}
+        onApprove={dialogState.onApprove}
+        onCancel={dialogState.onCancel}
+        cancelText={dialogState.cancelText}
+      />
+
+      <Form
+        title="Profile Information"
+        description="Complete your profile information below"
+        schema={GuideBaseSchema}
+        fields={[
+          {
+            type: "text",
+            name: "name",
+            label: "Guide Name",
+            placeholder: "Enter guide name",
+            helperText: "Your full name as it appears on your ID.",
+          },
+          {
+            type: "textarea",
+            name: "bio",
+            label: "Bio",
+            placeholder: "Tell us about yourself...",
+            helperText: "Write a short bio to introduce yourself to others.",
+          },
+          {
+            type: "categorized-checkbox",
+            name: "subcategories_id",
+            label: "Categories",
+            options: categories?.map((cat) => ({ 
+              value: cat.id, 
+              label: cat.name,
+              subcategories: cat.subcategories?.map(subcat => ({
+                value: subcat.id,
+                label: subcat.name
+              })) || []
+            })) || [],
+            placeholder: "Select categories",
+            helperText: "Select the categories that interest you.",
+          },
+          {
+            type: "checkbox",
+            name: "languages_code",
+            label: "Languages",
+            options: languages?.map((lang) => ({ value: lang.code, label: lang.name })) || [],
+            placeholder: "Select languages",
+            helperText: "Select the languages you speak.",
+          },
+          {
+            type: "select",
+            name: "country_code",
+            label: "Country",
+            options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
+            placeholder: "Select country",
+            helperText: "Select the country you live in.",
+          },
+          {
+            type: "select",
+            name: "city_id",
+            label: "City",
+            options: cities?.map(city => ({ value: Number(city.id), label: city.name })) || [],
+            placeholder: "Select city",
+            disabled: !Boolean(formState?.country_code),
+            helperText: "Select the city you live in.",
+            isLoading: isLoadingCities
+          },
+        ]}
+        onSubmit={handleSubmit}
+        onChange={handleFormChange} 
+        submitButtonText="Save Profile"
+        isSubmitting={isSubmitting}
+      />
+    </>
   )
 }
 

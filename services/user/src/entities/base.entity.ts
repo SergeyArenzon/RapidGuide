@@ -11,10 +11,4 @@ export abstract class BaseEntity extends DateEntity {
   assign(data: Partial<this>) {
     Object.assign(this, data);
   }
-
-  // Utility method for serialization
-  toJSON() {
-    const obj = { ...this };
-    return obj;
-  }
 }

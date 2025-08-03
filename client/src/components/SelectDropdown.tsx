@@ -12,7 +12,7 @@ import { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 
 // Generic type for items
 type Item = {
-  value: string
+  value: string | number
   label: string
 }
 
@@ -44,11 +44,14 @@ export default function SelectDropdown({
     isLoading = false,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState<SelectDropdownProps["defaultValue"]>(defaultValue)
+  const [selected, setSelected] = useState<string | number | null>(defaultValue)
   
   const handleSelect = (currentValue: string) => {
-    setValue(name, currentValue, { shouldValidate: true })
-    setSelected(currentValue)
+    // Convert to number if the selected option's value is a number
+    const selectedOption = options.find(opt => opt.value.toString() === currentValue);
+    const finalValue = typeof selectedOption?.value === 'number' ? Number(currentValue) : currentValue;
+    setValue(name, finalValue, { shouldValidate: true })
+    setSelected(finalValue)
     setOpen(false)
   }
 
@@ -60,7 +63,7 @@ export default function SelectDropdown({
   useEffect(() => {
     if (options.length === 0) {
       setSelected(null)
-      setValue(name, "", { shouldValidate: true })
+      setValue(name, null, { shouldValidate: true })
     }
   }, [options, name, setValue])
   
@@ -101,9 +104,9 @@ export default function SelectDropdown({
                 <CommandGroup>
                     {options.map((option) => (
                     <CommandItem 
-                        id={option.value} 
+                        id={option.value.toString()} 
                         key={option.value} 
-                        value={`${option.value}`} 
+                        value={option.value.toString()} 
                         onSelect={handleSelect}>
                         <Check className={cn("mr-2 h-4 w-4 text-primary", selected === option.value ? "opacity-100" : "opacity-0")} />
                         <Label htmlFor={`${option.value}`} className="flex-grow cursor-pointer">{option.label}</Label>

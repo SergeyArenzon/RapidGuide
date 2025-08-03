@@ -29,11 +29,10 @@ export class Guide extends BaseEntity {
       id: this.id,
       name: this.name,
       bio: this.bio,
-      user_id: this.user.id,
       country_code: this.country.code,
       city_id: this.city.id,
       languages_code: this.languages.getItems().map((lang) => lang.code),
-      subcategories_ids: this.subcategories
+      subcategories_id: this.subcategories
         .getItems()
         .map((sub) => sub.subcategory_id),
       created_at: this.created_at,
