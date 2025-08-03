@@ -23,8 +23,7 @@ export class GuideController {
   }
 
   @Get()
-  async getGuide(@Req() req: Request): Promise<GuideDto> {
-    const user = req['user'];
-    return await this.guideService.findByUserId(user.id);
+  async getGuide(@CurrentUser() currentUser: UserDto): Promise<GuideDto> {
+    return await this.guideService.findByUserId(currentUser.id);
   }
 }
