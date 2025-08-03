@@ -1,19 +1,20 @@
 {
 	"name": "@rapid-guide-io/shared",
-	"version": "1.0.1",
+	"version": "1.0.4",
 	"description": "Shared modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsc",
 		"clean": "rimraf dist",
-		"prebuild": "npm run clean"
+		"prebuild": "pnpm run clean"
 	},
 	"publishConfig": {
 		"access": "public"
 	},
 	"dependencies": {
-		"uuid": "^11.1.0"
+		"uuid": "^11.1.0",
+		"zod": "^4.0.14"
 	},
 	"devDependencies": {
 		"rimraf": "^5.0.10",
