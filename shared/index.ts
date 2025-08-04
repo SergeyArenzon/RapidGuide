@@ -3,3 +3,6 @@ export * from './src/dtos/guide/guide.dto';
 export * from './src/dtos/guide/create-guide.dto';
 export * from './src/dtos/user/user.dto';
 export * from './src/dtos/user/create-user.dto';
+export * from './src/dtos/city.dto';
+export * from './src/dtos/country.dto';
+export * from './src/dtos/language.dto';
