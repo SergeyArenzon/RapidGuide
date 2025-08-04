@@ -1,6 +1,7 @@
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { User, Traveller } from './entities';
+import { User } from './user/user.entity';
+import { Traveller } from './traveller/traveller.entity';
 import { Languages } from './languages/languages.entity';
 import { Guide } from './guide/entities/guide.entity';
 import { SeedManager } from '@mikro-orm/seeder';

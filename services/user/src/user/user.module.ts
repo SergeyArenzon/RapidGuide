@@ -2,7 +2,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from 'src/config';
-import { User } from 'src/entities';
+import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { GuideModule } from 'src/guide/guide.module';

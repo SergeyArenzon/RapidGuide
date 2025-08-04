@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { CreateGuideDto, GuideDto } from '@rapid-guide-io/shared';
-import { User } from 'src/entities';
+import { User } from 'src/user/user.entity';
 import { Guide } from './entities/guide.entity';
 import { Country } from '../country/country.entity';
 import { City } from '../city/city.entity';

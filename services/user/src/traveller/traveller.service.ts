@@ -1,6 +1,7 @@
 import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
-import { Traveller, User } from 'src/entities';
+import { Traveller } from './traveller.entity';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class TravellerService {
