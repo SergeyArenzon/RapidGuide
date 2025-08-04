@@ -7,6 +7,7 @@ import {
 } from '@mikro-orm/core';
 import { DateEntity } from 'src/entities/date.entity';
 import { Country } from '../country/country.entity';
+import { CityDto } from '@rapid-guide-io/shared';
 
 @Entity()
 export class City extends DateEntity {
@@ -28,4 +29,14 @@ export class City extends DateEntity {
 
   @ManyToOne(() => Country, { nullable: false, fieldName: 'country_code' })
   country!: Country;
+
+
+
+  toDto(): CityDto {
+    return {
+      id: this.id,
+      name: this.name,
+      country_code: this.country.code,
+    };
+  }
 }
