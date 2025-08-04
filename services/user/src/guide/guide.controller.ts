@@ -1,14 +1,13 @@
-import { Controller, Post, Body, Req, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
-import { Request } from 'express';
 import {
   CreateGuideDto,
   createGuideSchema,
   GuideDto,
   UserDto,
 } from '@rapid-guide-io/shared';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('guide')
 export class GuideController {
@@ -17,13 +16,13 @@ export class GuideController {
   @Post()
   async create(
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-    @CurrentUser() currentUser: UserDto,
+    @User() user: UserDto,
   ): Promise<GuideDto> {
-    return await this.guideService.create(currentUser.id, body);
+    return await this.guideService.create(user.id, body);
   }
 
   @Get()
-  async getGuide(@CurrentUser() currentUser: UserDto): Promise<GuideDto> {
-    return await this.guideService.findByUserId(currentUser.id);
+  async getGuide(@User() user: UserDto): Promise<GuideDto> {
+    return await this.guideService.findByUserId(user.id);
   }
 }

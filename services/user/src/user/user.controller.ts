@@ -8,7 +8,7 @@ import {
   Param,
   ForbiddenException,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from 'src/decorators/user.decorator';
 import { CreateUserDto, UserDto } from '@rapid-guide-io/shared';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
@@ -32,11 +32,8 @@ export class UserController {
   }
 
   @Get(':userId/guide')
-  async getUserGuide(
-    @Param('userId') userId: string,
-    @CurrentUser() currentUser: UserDto,
-  ) {
-    if (userId !== currentUser.id) {
+  async getUserGuide(@Param('userId') userId: string, @User() user: UserDto) {
+    if (userId !== user.id) {
       throw new ForbiddenException(
         'You can only access your own guide information',
       );
