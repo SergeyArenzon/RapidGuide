@@ -1,9 +1,21 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import { Language, Category, Country, City, Guide } from '@/types';
+import { Category } from '@/types';
 import { z } from 'zod';
 import { LanguageSchema } from '@/schema/user.schema';
-import { CategorySchema, CountrySchema, CitySchema } from '@/schema';
-import { CreateGuideDto, createGuideSchema, GuideDto, UserDto } from '@rapid-guide-io/shared';
+import { CategorySchema } from '@/schema';
+import { 
+  CreateGuideDto, 
+  createGuideSchema, 
+  GuideDto, 
+  UserDto, 
+  CityDto, 
+  citySchema, 
+  LanguageDto, 
+  CountryDto, 
+  countrySchema,
+  subCategorySchema,
+  SubCategoryDto
+} from '@rapid-guide-io/shared';
 
 
 export default class Api {
@@ -45,7 +57,7 @@ export default class Api {
 
   
   // 🛠 Fetch languages with validation
-  async getLanguages(): Promise<Language[]> {
+  async getLanguages(): Promise<LanguageDto[]> {
     const response = await this.axios.get('/user/languages');
     // ✅ Validate API response
     const parsed = z.array(LanguageSchema).safeParse(response.data);
@@ -57,11 +69,11 @@ export default class Api {
     return parsed.data;
   }
   
-  async getCountries(): Promise<Country[]> {
+  async getCountries(): Promise<CountryDto[]> {
     const response = await this.axios.get('/user/country');
 
     // ✅ Validate API response
-    const parsed = z.array(CountrySchema).safeParse(response.data);
+    const parsed = z.array(countrySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
@@ -69,11 +81,11 @@ export default class Api {
     return parsed.data;
   }
 
-  async getCities(country_code: string): Promise<City[]> {
+  async getCities(country_code: string): Promise<CityDto[]> {
     const response = await this.axios.get(`/user/city?countryCode=${country_code}`);
 
     // ✅ Validate API response
-    const parsed = z.array(CitySchema).safeParse(response.data);
+    const parsed = z.array(citySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
@@ -81,9 +93,9 @@ export default class Api {
     return parsed.data;
   }
 
-  async getCategories(): Promise<Category[]> {
+  async getCategories(): Promise<SubCategoryDto[]> {
     const response = await this.axios.get('/tour/categories');
-    const parsed = z.array(CategorySchema).safeParse(response.data);
+    const parsed = z.array(subCategorySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
@@ -91,7 +103,7 @@ export default class Api {
     return parsed.data;
   }
 
-  async createGuide(guide: CreateGuideDto): Promise<Guide> {
+  async createGuide(guide: CreateGuideDto): Promise<GuideDto> {
     const response = await this.axios.post('/user/guide', guide);
     const parsed = createGuideSchema.safeParse(response.data);
     if (!parsed.success) {

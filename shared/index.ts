@@ -6,3 +6,4 @@ export * from './src/dtos/user/create-user.dto';
 export * from './src/dtos/city.dto';
 export * from './src/dtos/country.dto';
 export * from './src/dtos/language.dto';
+export * from './src/dtos/sub-category.dto';

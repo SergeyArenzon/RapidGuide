@@ -42,8 +42,8 @@ importers:
         specifier: ^1.1.8
         version: 1.2.7(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@rapid-guide-io/shared':
-        specifier: ^1.0.14
-        version: 1.0.14
+        specifier: ^1.0.19
+        version: 1.0.19
       '@tanstack/react-query':
         specifier: ^5.75.2
         version: 5.84.1(react@19.1.1)
@@ -866,8 +866,8 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@rapid-guide-io/shared@1.0.14':
-    resolution: {integrity: sha512-IrnAxyxzjl4Ed37rSn8WWJdYkFmz0fRwuCaJqp6o+be7zoiFOR+QSOsrKhnKVPjgZgeitV8Nf2RNXfzhgWfiNA==}
+  '@rapid-guide-io/shared@1.0.19':
+    resolution: {integrity: sha512-gpuT/HP7vql/mVaopcPJeAN9RVQxTT5zpZTed00IbF1ibz25DiZCLuCq7bl1vGqLFRHZOss02jVjgFGQ9Or/EA==}
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
@@ -3249,7 +3249,7 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@rapid-guide-io/shared@1.0.14':
+  '@rapid-guide-io/shared@1.0.19':
     dependencies:
       uuid: 11.1.0
       zod: 4.0.14
