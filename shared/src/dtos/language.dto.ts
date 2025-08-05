@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const LanguageSchema = z.object({
+export const languageSchema = z.object({
   code: z.string()
     .length(2, 'Language code must be exactly 2 characters')
     .regex(/^[a-z]{2}$/, 'Language code must be a valid ISO 639-1 code (e.g., "en", "es", "fr")'),
@@ -9,4 +9,4 @@ export const LanguageSchema = z.object({
     .max(50, 'Language name must be less than 50 characters'),
 });
 
-export type LanguageDto = z.infer<typeof LanguageSchema>;
+export type LanguageDto = z.infer<typeof languageSchema>;

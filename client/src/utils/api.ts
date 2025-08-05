@@ -1,8 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
-import { Category } from '@/types';
 import { z } from 'zod';
-import { LanguageSchema } from '@/schema/user.schema';
-import { CategorySchema } from '@/schema';
 import { 
   CreateGuideDto, 
   createGuideSchema, 
@@ -10,7 +7,8 @@ import {
   UserDto, 
   CityDto, 
   citySchema, 
-  LanguageDto, 
+  LanguageDto,
+  languageSchema, 
   CountryDto, 
   countrySchema,
   subCategorySchema,
@@ -60,7 +58,7 @@ export default class Api {
   async getLanguages(): Promise<LanguageDto[]> {
     const response = await this.axios.get('/user/languages');
     // ✅ Validate API response
-    const parsed = z.array(LanguageSchema).safeParse(response.data);
+    const parsed = z.array(languageSchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
