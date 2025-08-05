@@ -15,11 +15,8 @@ export class CategoryService {
     private readonly em: EntityManager,
   ) {}
 
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
-  }
 
-  async findAll(): Promise<ResponseCategoryDto[]> {
+  async findAll(): Promise<Category[]> {
     // Find all categories
     const categories = await this.categoryRepository.findAll();
     

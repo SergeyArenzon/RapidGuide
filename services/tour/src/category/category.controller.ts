@@ -2,19 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Response } from '@ne
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { ResponseSubCategoryDto } from 'src/sub-category/dto/response-sub-category.dto';
+import { SubCategoryDto } from "@rapid-guide-io/shared"
 
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
-  }
-
   @Get()
-  async findAll(): Promise<ResponseSubCategoryDto[]> {
+  async findAll(): Promise<SubCategoryDto[]> {
     return await this.categoryService.findAll();
   }
 
