@@ -12,7 +12,9 @@ import {
   CountryDto, 
   countrySchema,
   subCategorySchema,
-  SubCategoryDto
+  SubCategoryDto,
+  categorySchema,
+  CategoryDto
 } from '@rapid-guide-io/shared';
 
 
@@ -94,6 +96,16 @@ export default class Api {
   async getSubCategories(): Promise<SubCategoryDto[]> {
     const response = await this.axios.get('/tour/sub-category');
     const parsed = z.array(subCategorySchema).safeParse(response.data);
+    if (!parsed.success) {
+      console.error('Invalid API response:', parsed.error);
+      throw new Error('Unexpected API response format.');
+    }
+    return parsed.data;
+  }
+
+  async getCategories(): Promise<CategoryDto[]> {
+    const response = await this.axios.get('/tour/category');
+    const parsed = z.array(categorySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);
       throw new Error('Unexpected API response format.');
