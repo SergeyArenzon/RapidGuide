@@ -10,4 +10,8 @@ export class CategoryService {
     @InjectRepository(Category) private categoryRepository: EntityRepository<Category>,
     private readonly em: EntityManager,
   ) {}
+
+  async findAll(): Promise<Category[]> {
+    return this.categoryRepository.findAll();
+  }
 }
