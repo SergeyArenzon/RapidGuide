@@ -6,6 +6,7 @@ import {
   Property,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
+import { CategoryDto } from '@rapid-guide-io/shared';
 
 @Entity()
 export class Category extends BaseEntity {
@@ -34,4 +35,14 @@ export class Category extends BaseEntity {
 
   @Property()
   description: string;
+
+  toDto(): CategoryDto {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+    };
+  }
 }

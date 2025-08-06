@@ -7,3 +7,4 @@ export * from './src/dtos/city.dto';
 export * from './src/dtos/country.dto';
 export * from './src/dtos/language.dto';
 export * from './src/dtos/sub-category.dto';
+export * from './src/dtos/category.dto';

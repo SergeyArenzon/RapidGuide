@@ -1,14 +1,9 @@
 import { z } from 'zod';
-
-// Base entity schema (common fields from BaseEntity)
-const baseEntitySchema = z.object({
-  id: z.uuid(),
-  created_at: z.coerce.date(),
-  updated_at: z.coerce.date(),
-});
+import { timeSchema } from './time.dto';
 
 // Sub-category schema
-const subCategorySchema = baseEntitySchema.extend({
+const subCategorySchema = timeSchema.extend({
+  id: z.uuid(),
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
   category_id: z.uuid(), // For create/update operations

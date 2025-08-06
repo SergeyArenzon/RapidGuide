@@ -39,8 +39,8 @@ importers:
         specifier: ^10.0.0
         version: 10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@10.4.15)
       '@rapid-guide-io/shared':
-        specifier: ^1.0.20
-        version: 1.0.20
+        specifier: ^1.0.22
+        version: 1.0.22
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -614,8 +614,8 @@ packages:
     resolution: {integrity: sha512-25L86MyPvnlQoX2MTIV2OiUcb6vJ6aRbFa9pbwByn95INKD5mFH2smgjDhq+fwJoqAgvgbdJLj6Tz7V9X5CFAQ==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@rapid-guide-io/shared@1.0.20':
-    resolution: {integrity: sha512-5roe6TcdGgcuO485Yt18PUGE9iXvTo9rwStSJScpbw+HRgXK5vK/UMpw6PJu8TS6w+vEMGtbHgOCEmeHvPWyEQ==}
+  '@rapid-guide-io/shared@1.0.22':
+    resolution: {integrity: sha512-V4sLYAgxwTeVqmylQqO6Ac1k4LkRmNNhtXKbfsfFhF0x04aGOeykt2MPmDnIDx0+4g61I8UIpwjZB3POu3RyjQ==}
 
   '@rushstack/node-core-library@5.13.0':
     resolution: {integrity: sha512-IGVhy+JgUacAdCGXKUrRhwHMTzqhWwZUI+qEPcdzsb80heOw0QPbhhoVsoiMF7Klp8eYsp7hzpScMXmOa3Uhfg==}
@@ -3856,7 +3856,7 @@ snapshots:
 
   '@pkgr/core@0.2.2': {}
 
-  '@rapid-guide-io/shared@1.0.20':
+  '@rapid-guide-io/shared@1.0.22':
     dependencies:
       uuid: 11.1.0
       zod: 4.0.14
