@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager, EntityRepository } from '@mikro-orm/core';
 import { SubCategory } from './entities/sub-category';
-
 
 @Injectable()
 export class SubCategoryService {
+  constructor(
+    @InjectRepository(SubCategory) private subCategoryRepository: EntityRepository<SubCategory>,
+    private readonly em: EntityManager,
+  ) {}
 
-  findAll(): Promise<SubCategory[]> {
-    return `This action returns all subCategory`;
+  async findAll(): Promise<SubCategory[]> {
+    const subCategories = await this.subCategoryRepository.findAll();
+    return subCategories;
   }
 
   findOne(id: number) {

@@ -7,12 +7,8 @@ export class SubCategoryController {
   constructor(private readonly subCategoryService: SubCategoryService) {}
 
   @Get()
-  findAll(): Promise<SubCategoryDto[]> {
-    return this.subCategoryService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subCategoryService.findOne(+id);
+  async findAll(): Promise<SubCategoryDto[]> {
+    const subCategories = await this.subCategoryService.findAll();
+    return subCategories.map(subCategory => subCategory.toDto());
   }
 }
