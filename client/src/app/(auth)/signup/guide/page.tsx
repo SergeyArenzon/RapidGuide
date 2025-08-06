@@ -39,7 +39,7 @@ export default function SignupGuide() {
   const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
     retry: false,  
     queryKey: ['categories'], 
-    queryFn:() => api.getCategories() });
+    queryFn:() => api.getSubCategories() });
 
   const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
     retry: false,  

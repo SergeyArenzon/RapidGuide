@@ -91,8 +91,8 @@ export default class Api {
     return parsed.data;
   }
 
-  async getCategories(): Promise<SubCategoryDto[]> {
-    const response = await this.axios.get('/tour/categories');
+  async getSubCategories(): Promise<SubCategoryDto[]> {
+    const response = await this.axios.get('/tour/sub-category');
     const parsed = z.array(subCategorySchema).safeParse(response.data);
     if (!parsed.success) {
       console.error('Invalid API response:', parsed.error);

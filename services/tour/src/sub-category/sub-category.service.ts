@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { SubCategory } from './entities/sub-category';
 
 
 @Injectable()
 export class SubCategoryService {
 
-  findAll() {
+  findAll(): Promise<SubCategory[]> {
     return `This action returns all subCategory`;
   }
 

@@ -8,6 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
 import { Category } from '../../category/entities/category.entity';
+import { SubCategoryDto } from '@rapid-guide-io/shared';
 
 @Entity()
 export class SubCategory extends BaseEntity {
@@ -39,4 +40,15 @@ export class SubCategory extends BaseEntity {
 
   @ManyToOne(() => Category)
   category: Category;
+
+  toDto(): SubCategoryDto {
+    return {
+      id: this.id,
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+      name: this.name,
+      description: this.description,
+      category_id: this.category.id,
+    };
+  }
 }
