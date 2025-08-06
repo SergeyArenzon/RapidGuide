@@ -1,23 +1,20 @@
-import { UserSchema } from "@/schema";
-import useUserStore from "@/store/useUser";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { userSchema } from "@rapid-guide-io/shared";
+import useUserStore from "@/store/useUser";
+
 
 const useAuth = () => {
     const {  data, status } = useSession();
     const { setUser, clearUser, isLogged } = useUserStore();
     const [error, setError] = useState<boolean>(false)
     
-    useEffect(() => {
+    useEffect(async () => {
       if (status === "authenticated") {  
-        try {
-          console.log({user: data?.user});
-          
-          const user = UserSchema.parse(data?.user);
+        try {          
+          const user = userSchema.parse(data?.user);
           setUser(user);
         } catch (error) {
-          console.log({error});
-          
           setError(true)
         }
         

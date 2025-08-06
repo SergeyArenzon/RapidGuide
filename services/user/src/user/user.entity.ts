@@ -6,7 +6,7 @@ import {
   OneToOne,
   Property,
 } from '@mikro-orm/core';
-import { BaseEntity } from './base.entity';
+import { BaseEntity } from 'src/entities/base.entity';
 import { Guide } from '../guide/entities/guide.entity';
 
 @Entity()

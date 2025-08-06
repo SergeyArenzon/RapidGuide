@@ -5,7 +5,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { CreateGuideDto, GuideDto } from '@rapid-guide-io/shared';
-import { User } from 'src/entities';
+import { User } from 'src/user/user.entity';
 import { Guide } from './entities/guide.entity';
 import { Country } from '../country/country.entity';
 import { City } from '../city/city.entity';
@@ -94,5 +94,23 @@ export class GuideService {
     await em.persistAndFlush([newGuide, ...guideSubcategories]);
 
     return newGuide.toDto();
+  }
+
+  async findByUserId(userId: string): Promise<GuideDto> {
+    const em = this.em.fork();
+
+    const guide = await em.findOne(
+      Guide,
+      { user: userId },
+      {
+        populate: ['country', 'city', 'languages', 'subcategories'],
+      },
+    );
+
+    if (!guide) {
+      throw new NotFoundException(`No guide found for user with ID ${userId}`);
+    }
+
+    return guide.toDto();
   }
 }

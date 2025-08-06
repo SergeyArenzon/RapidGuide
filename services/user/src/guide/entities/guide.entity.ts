@@ -10,12 +10,12 @@ import {
   OneToMany,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
-import { User } from '../../entities';
+import { User } from 'src/user/user.entity';
 import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';
 import { GuideSubcategory } from './guide-subcategory.entity';
-import { GuideDto } from '../dto/guide.dto';
+import { GuideDto } from '@rapid-guide-io/shared';
 
 @Entity()
 export class Guide extends BaseEntity {

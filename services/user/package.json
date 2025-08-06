@@ -33,7 +33,7 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/microservices": "^10.4.15",
     "@nestjs/platform-express": "^10.0.0",
-    "@rapid-guide-io/shared": "^1.0.7",
+    "@rapid-guide-io/shared": "1.0.19",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.5",
     "class-transformer": "^0.5.1",
@@ -42,6 +42,7 @@
     "mikro-orm": "^6.4.1",
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.0",
+    "remove": "^0.1.5",
     "rxjs": "^7.8.1",
     "uuid": "^11.0.3",
     "zod": "^4.0.14"

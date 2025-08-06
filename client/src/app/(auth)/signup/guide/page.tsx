@@ -6,14 +6,14 @@ import Loading from "@/components/Loading";
 import { Error } from "@/components/Error";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GuideBaseSchema } from "@/schema";
 import { z } from "zod";
 import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from "@/components/AlertDialog";
+import { createGuideSchema, CreateGuideDto } from "@rapid-guide-io/shared";
 
 
 export default function SignupGuide() {
   const router = useRouter();
-  const [formState, setFormState] = useState<z.infer<typeof GuideBaseSchema>>({
+  const [formState, setFormState] = useState<CreateGuideDto>({
     bio: '',
     subcategories_id: [],
     languages_code: [],
@@ -26,7 +26,7 @@ export default function SignupGuide() {
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
   const api = new Api();
 
-  const handleFormChange = (currentState: Partial<z.infer<typeof GuideBaseSchema>>) => {
+  const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
     setFormState(prev => ({ ...prev, ...currentState }));
   };
   
@@ -53,7 +53,7 @@ export default function SignupGuide() {
     queryFn:() => api.getCities(formState?.country_code || "")});
     
 
-  const handleSubmit = async (data: z.infer<typeof GuideBaseSchema>) => {
+  const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
     try {
       setIsSubmitting(true);
       setSubmitError(null);
@@ -107,7 +107,7 @@ export default function SignupGuide() {
       <Form
         title="Profile Information"
         description="Complete your profile information below"
-        schema={GuideBaseSchema}
+        schema={createGuideSchema}
         fields={[
           {
             type: "text",

@@ -1,11 +1,6 @@
 import { z } from 'zod';
 
-const UserSchema = z.object({
-    email: z.email(),
-    last_name: z.string(),
-    first_name: z.string(),
-    image_url: z.url(),
-});
+
 
 
 const ISOSchema = z.object({
@@ -17,4 +12,4 @@ const ISOSchema = z.object({
 const LanguageSchema = ISOSchema
 
 
-export { UserSchema, LanguageSchema };
+export { LanguageSchema };

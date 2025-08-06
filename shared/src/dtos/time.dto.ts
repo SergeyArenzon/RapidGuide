@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 // Base schema that will be extended by create and response DTOs
 const timeSchema = z.object({
-  created_at: z.date(),
-  updated_at: z.date(),
+  created_at: z.coerce.date(),
+  updated_at: z.coerce.date(),
 });
 
 // Schema for guide response - includes all fields
