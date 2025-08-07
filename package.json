@@ -1,0 +1,19 @@
+{
+  "name": "rapid-guide-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rapid Guide Monorepo",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm build && changeset publish",
+    "publish-shared": "pnpm --filter @rapid-guide-io/shared publish",
+    "update-services": "pnpm -r --filter=./services/* install"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.5"
+  },
+  "packageManager": "pnpm@10.13.1"
+}
