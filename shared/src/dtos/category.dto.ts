@@ -11,3 +11,4 @@ const categorySchema = timeSchema.extend({
 
 // Types derived from schemas
 export type CategoryDto = z.infer<typeof categorySchema>;
+export { categorySchema };

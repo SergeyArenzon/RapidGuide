@@ -13,7 +13,9 @@ import {
   countrySchema,
   subCategorySchema,
   SubCategoryDto,
-  guideSchema
+  guideSchema,
+  CategoryDto,
+  categorySchema
 } from '@rapid-guide-io/shared';
 
 
@@ -98,6 +100,13 @@ export default class Api {
     return this.validateResponse(
       () => this.axios.get('/tour/sub-category'),
       z.array(subCategorySchema)
+    );
+  }
+
+  async getCategories(): Promise<CategoryDto[]> {
+    return this.validateResponse(
+      () => this.axios.get('/tour/category'),
+      z.array(categorySchema)
     );
   }
 

@@ -36,10 +36,16 @@ export default function SignupGuide() {
     queryKey: ['languages'], 
     queryFn:() => api.getLanguages() });
 
-  const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
+  const { data: subCategories, isLoading: isLoadingSubCategories, error: errorSubCategories, refetch: refetchSubCategories } = useQuery({
+    retry: false,  
+    queryKey: ['subCategories'], 
+    queryFn:() => api.getSubCategories() });
+  
+    const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
     retry: false,  
     queryKey: ['categories'], 
     queryFn:() => api.getCategories() });
+
 
   const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
     retry: false,  
@@ -130,7 +136,7 @@ export default function SignupGuide() {
             options: categories?.map((cat) => ({ 
               value: cat.id, 
               label: cat.name,
-              subcategories: cat.subcategories?.map(subcat => ({
+              subcategories: subCategories?.filter(subcat => subcat.category_id === cat.id).map(subcat => ({
                 value: subcat.id,
                 label: subcat.name
               })) || []
