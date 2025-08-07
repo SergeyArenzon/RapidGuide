@@ -49,14 +49,14 @@ export default class Api {
     const parsed = schema.safeParse(response.data);
     
     if (!parsed.success) {
-      console.error('Invalid API response:', parsed.error);
+      console.error('Invalid API response:', parsed);
       throw new Error('Unexpected API response format.');
     }
 
     return parsed.data;
   }
   
-
+  
   // 🛑 Handle API errors globally
   private handleError(error: AxiosError) {
     if (error.response) {
@@ -89,9 +89,9 @@ export default class Api {
     );
   }
 
-  async getCities(country_code: string): Promise<CityDto[]> {
+  async getCities(): Promise<CityDto[]> {
     return this.validateResponse(
-      () => this.axios.get(`/user/city?countryCode=${country_code}`),
+      () => this.axios.get(`/user/city`),
       z.array(citySchema)
     );
   }

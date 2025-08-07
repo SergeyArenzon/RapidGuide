@@ -11,7 +11,10 @@ export class CityService {
     private readonly cityRepository: EntityRepository<City>,
   ) {}
 
-  async getCitiesByCountry(countryCode: string): Promise<City[]> {
+  async getCities(countryCode?: string): Promise<City[]> {
+    if (!countryCode) {
+      return await this.cityRepository.findAll();
+    }
     return await this.cityRepository.find({ country: { code: countryCode } });
   }
 }
