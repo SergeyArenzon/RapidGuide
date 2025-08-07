@@ -36,21 +36,26 @@ export default function SignupGuide() {
     queryKey: ['languages'], 
     queryFn:() => api.getLanguages() });
 
-  const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
+  const { data: subCategories, isLoading: isLoadingSubCategories, error: errorSubCategories, refetch: refetchSubCategories } = useQuery({
+    retry: false,  
+    queryKey: ['subCategories'], 
+    queryFn:() => api.getSubCategories() });
+  
+    const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
     retry: false,  
     queryKey: ['categories'], 
     queryFn:() => api.getCategories() });
+
 
   const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
     retry: false,  
     queryKey: ['countries'], 
     queryFn:() => api.getCountries() });
-  
+    
   const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
     retry: false,  
-    enabled: Boolean(formState?.country_code  ),
-    queryKey: ['cities', formState?.country_code], 
-    queryFn:() => api.getCities(formState?.country_code || "")});
+    queryKey: ['cities'], 
+    queryFn:() => api.getCities()});
     
 
   const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
@@ -84,11 +89,15 @@ export default function SignupGuide() {
     }
   }
   
-  if (isLoadingLanguages || isLoadingCategories) return <Loading/>
+  if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
 
+  console.log([errorCategories, errorCountries, errorCities, errorLanguages, errorSubCategories]);
+  
   if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
   if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
   if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
+  if (errorCities) return <Error retryAction={() => refetchCities()}/>
+  if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
   
   return (
     <>
@@ -130,7 +139,7 @@ export default function SignupGuide() {
             options: categories?.map((cat) => ({ 
               value: cat.id, 
               label: cat.name,
-              subcategories: cat.subcategories?.map(subcat => ({
+              subcategories: subCategories?.filter(subcat => subcat.category_id === cat.id).map(subcat => ({
                 value: subcat.id,
                 label: subcat.name
               })) || []
@@ -158,7 +167,7 @@ export default function SignupGuide() {
             type: "select",
             name: "city_id",
             label: "City",
-            options: cities?.map(city => ({ value: Number(city.id), label: city.name })) || [],
+            options: cities?.filter(city => city.country_code === formState?.country_code).map(city => ({ value: Number(city.id), label: city.name })) || [],
             placeholder: "Select city",
             disabled: !Boolean(formState?.country_code),
             helperText: "Select the city you live in.",

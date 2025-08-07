@@ -27,16 +27,16 @@ export class City extends DateEntity {
   @Property({ type: 'text' })
   name!: string;
 
-  @ManyToOne(() => Country, { nullable: false, fieldName: 'country_code' })
+  @ManyToOne(() => Country, { nullable: false, fieldName: 'code' })
   country!: Country;
-
-
 
   toDto(): CityDto {
     return {
       id: this.id,
       name: this.name,
       country_code: this.country.code,
+      created_at: this.created_at,
+      updated_at: this.updated_at,
     };
   }
 }

@@ -6,7 +6,7 @@ import { Category } from './entities/category.entity';
 import { SubCategory } from '../sub-category/entities/sub-category';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Category, SubCategory])],
+  imports: [MikroOrmModule.forFeature([Category])],
   controllers: [CategoryController],
   providers: [CategoryService],
 })

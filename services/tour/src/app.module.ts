@@ -8,7 +8,7 @@ import { SubCategoryModule } from './sub-category/sub-category.module';
 
 
 @Module({
-  imports: [MikroOrmModule.forRoot(microOrmConfig), AppModule, CategoryModule, SubCategoryModule],
+  imports: [MikroOrmModule.forRoot(microOrmConfig), CategoryModule, SubCategoryModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -9,7 +9,7 @@ const useAuth = () => {
     const { setUser, clearUser, isLogged } = useUserStore();
     const [error, setError] = useState<boolean>(false)
     
-    useEffect(async () => {
+    useEffect( () => {
       if (status === "authenticated") {  
         try {          
           const user = userSchema.parse(data?.user);
@@ -17,7 +17,6 @@ const useAuth = () => {
         } catch (error) {
           setError(true)
         }
-        
       } else if (status === "unauthenticated") {
         clearUser();
       }
