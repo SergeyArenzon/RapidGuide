@@ -4,16 +4,16 @@ metadata:
   name: huddlehub-dev
 build:
   artifacts:
-    # - image: sergeyarenzon/huddlehub-auth
-    #   context: services/auth
-    #   docker:
-    #     dockerfile: Dockerfile.dev
-    #   sync: 
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    #       - src: "src/**/*.json"
-    #         dest: .
+    - image: sergeyarenzon/huddlehub-auth
+      context: services/auth
+      docker:
+        dockerfile: Dockerfile.dev
+      sync: 
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+          - src: "src/**/*.json"
+            dest: .
     - image: sergeyarenzon/huddlehub-user
       context: services/user
       docker:
@@ -61,10 +61,10 @@ manifests:
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
           - k8s/helm/ingress-nginx/values.yaml
-      # - name: auth
-      #   chartPath: k8s/helm/auth/
-      #   valuesFiles:
-      #     - k8s/helm/auth/values.yaml
+      - name: auth
+        chartPath: k8s/helm/auth/
+        valuesFiles:
+          - k8s/helm/auth/values.yaml
       - name: user
         chartPath: k8s/helm/user/
         valuesFiles:
