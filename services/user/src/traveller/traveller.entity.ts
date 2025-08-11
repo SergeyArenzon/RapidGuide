@@ -5,8 +5,8 @@ import {
   Entity,
   ManyToOne,
 } from '@mikro-orm/core';
-import { BaseEntity } from 'src/entities/base.entity';
-import { User } from 'src/user/user.entity';
+import { BaseEntity } from '../entities/base.entity';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Traveller extends BaseEntity {

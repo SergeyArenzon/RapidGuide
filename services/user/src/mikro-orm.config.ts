@@ -8,6 +8,7 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { Country } from './country/country.entity';
 import { City } from './city/city.entity';
 import { GuideSubcategory } from './guide/entities/guide-subcategory.entity';
+import { join } from 'path';
 
 const microOrmConfig: MikroOrmModuleSyncOptions = {
   clientUrl: process.env.USER_DB_HOST, // Connection URL
@@ -22,12 +23,12 @@ const microOrmConfig: MikroOrmModuleSyncOptions = {
   ],
   driver: PostgreSqlDriver, // Specify PostgreSQL driver
   migrations: {
-    path: './database/migrations', // Ensure migrations are inside src
+    path: join(__dirname, 'database/migrations'), // Use absolute path
   },
   extensions: [SeedManager],
   seeder: {
-    path: './database/seeder',
-    pathTs: './database/seeder',
+    path: join(__dirname, 'database/seeder'), // Use absolute path
+    pathTs: join(__dirname, 'database/seeder'), // Use absolute path
     defaultSeeder: 'MainSeeder',
   },
   debug: true, // Enable for development

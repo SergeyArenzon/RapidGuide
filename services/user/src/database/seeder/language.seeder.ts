@@ -1,6 +1,6 @@
 import { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Languages } from 'src/languages/languages.entity';
+import { Languages } from '../../languages/languages.entity';
 import { languages } from './data/language';
 
 export class LanguageSeeder extends Seeder {

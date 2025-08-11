@@ -1,7 +1,7 @@
 import { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { City } from 'src/city/city.entity';
-import { Country } from 'src/country/country.entity';
+import { City } from '../../city/city.entity';
+import { Country } from '../../country/country.entity';
 import { cities } from './data/city';
 
 export class CitySeeder extends Seeder {
