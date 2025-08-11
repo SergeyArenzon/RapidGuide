@@ -13,15 +13,15 @@ import {
 import { AccessTokenService } from './access-token.service';
 import { Response } from 'express';
 import { AuthDto, RefreshTokenDto } from './dtos';
+import { RefreshTokenService } from './refresh-token.service';
 
 @Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  // In-memory storage for refresh tokens (in production, use Redis or database)
-  private refreshTokens = new Map<string, any>();
-
-  constructor(private accessTokenervice: AccessTokenService) {}
+  constructor(
+    private accessTokenService: AccessTokenService, 
+    private refreshTokenService: RefreshTokenService) {}
 
   // ENDPOINTS
   @HttpCode(200)
@@ -39,7 +39,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Body() body: AuthDto,
   ): Promise<any> {
-    const user = await this.accessTokenervice.authenticateProvider(body);
+    const user = await this.accessTokenService.authenticateProvider(body);
     this.logger.debug(`Authenticated provider: ${JSON.stringify(user)}`);
 
     const res = await fetch('http://user:3000/user', {
@@ -59,11 +59,11 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const accessToken = this.accessTokenervice.generateAccessToken(authUser);
-    const refreshToken = this.accessTokenervice.generateRefreshToken();
+    const accessToken = this.accessTokenService.generateAccessToken(authUser);
+    const refreshToken = this.accessTokenService.generateRefreshToken();
 
     // Store refresh token with user data
-    this.refreshTokens.set(refreshToken, authUser);
+    this.refreshTokenService.set(refreshToken, authUser);
 
     this.logger.log('Setting access and refresh token cookies in response', authUser);
 
@@ -84,42 +84,44 @@ export class AuthController {
     return authUser;
   }
 
-  @Post('/refresh')
-  @UsePipes(ValidationPipe)
-  async refreshToken(
-    @Res({ passthrough: true }) response: Response,
-    @Body() body: RefreshTokenDto,
-  ): Promise<any> {
-    try {
-      // Validate refresh token format
-      if (!this.accessTokenervice.verifyRefreshToken(body.refreshToken)) {
-        throw new UnauthorizedException('Invalid refresh token format');
-      }
+  // @Post('/refresh')
+  // @UsePipes(ValidationPipe)
+  // async refresh(
+  //   @Res({ passthrough: true }) response: Response,
+  //   @Body() body: RefreshTokenDto,
+  // ): Promise<any> {
+  //   try {
+  //     // Validate refresh token format
+  //     if (!this.accessTokenService.verifyRefreshToken(body.refreshToken)) {
+  //       throw new UnauthorizedException('Invalid refresh token format');
+  //     }
 
-      // Check if refresh token exists and get user data
-      const userData = this.refreshTokens.get(body.refreshToken);
-      if (!userData) {
-        throw new UnauthorizedException('Invalid or expired refresh token');
-      }
+  //     // Check if refresh token exists and get user data
+  //     const userData = this.refreshTokenService.validateRefreshToken(body.refreshToken);
+  //     if (!userData) {
+  //       throw new UnauthorizedException('Invalid or expired refresh token');
+  //     }
 
-      // Generate new access token
-      const newAccessToken = this.accessTokenervice.generateAccessToken(userData);
+  //     // Generate new access token
+  //     const newAccessToken = this.accessTokenService.generateAccessToken(userData);
       
-      this.logger.log('Refreshing access token for user', userData);
+  //     this.logger.log('Refreshing access token for user', userData);
 
-      // Set new access token cookie
-      response.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        maxAge: Number(process.env.JWT_ACCESS_MAX_AGE) || 15 * 60 * 1000, // 15 minutes
-        secure: true,
-      });
+  //     // Set new access token cookie
+  //     response.cookie('accessToken', newAccessToken, {
+  //       httpOnly: true,
+  //       maxAge: Number(process.env.JWT_ACCESS_MAX_AGE) || 15 * 60 * 1000, // 15 minutes
+  //       secure: true,
+  //     });
 
-      return { message: 'Token refreshed successfully' };
-    } catch (error) {
-      this.logger.error('Failed to refresh token', error);
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-  }
+  //     return { message: 'Token refreshed successfully' };
+  //   } catch (error) {
+  //     this.logger.error('Failed to refresh token', error);
+  //     throw new UnauthorizedException('Invalid refresh token');
+  //   }
+  // }
+
+
 
   @Post('/logout')
   async logout(

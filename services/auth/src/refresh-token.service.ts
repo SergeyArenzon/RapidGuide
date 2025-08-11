@@ -8,12 +8,19 @@ import { randomUUID } from 'crypto';
 export class RefreshTokenService {
   constructor() {}
 
-  generateRefreshToken(user_id: string): string {
-    const refreshToken =  randomUUID();
-    const expiresAt = Date.now() + process.env.JWT_REFRESH_EXPIRES_IN || (7 * 24 * 60 * 60 * 1000); // 7 days
-
-    return refreshToken;
+  generateRefreshToken(): string {
+    return randomUUID();
   }
+
+  validateRefreshToken(token: string): boolean {
+    return true;
+  }
+
+//   getRefreshToken = (token: string): string => {
+//     const expiresAt = Date.now() + process.env.JWT_REFRESH_EXPIRES_IN || (7 * 24 * 60 * 60 * 1000); // 7 days
+
+//     return refreshToken;
+//   }
 
 //   verifyRefreshToken(token: string): boolean {
 //     const refreshToken = this.refreshTokens.get(token);
