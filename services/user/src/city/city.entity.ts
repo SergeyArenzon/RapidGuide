@@ -5,7 +5,7 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-import { DateEntity } from 'src/entities/date.entity';
+import { DateEntity } from '../entities/date.entity';
 import { Country } from '../country/country.entity';
 import { CityDto } from '@rapid-guide-io/shared';
 

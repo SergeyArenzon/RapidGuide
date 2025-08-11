@@ -1,6 +1,6 @@
 import { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
-import { Country } from 'src/country/country.entity';
+import { Country } from '../../country/country.entity';
 import { countries } from './data/country';
 
 export class CountrySeeder extends Seeder {

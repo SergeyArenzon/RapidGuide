@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
-import { User } from 'src/user/user.entity';
+import { User } from '../../user/user.entity';
 import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';

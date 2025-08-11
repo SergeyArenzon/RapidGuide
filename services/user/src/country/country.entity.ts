@@ -1,5 +1,5 @@
 import { AfterCreate, Entity, PrimaryKey, Property } from '@mikro-orm/core';
-import { DateEntity } from 'src/entities/date.entity';
+import { DateEntity } from '../entities/date.entity';
 
 @Entity()
 export class Country extends DateEntity {
