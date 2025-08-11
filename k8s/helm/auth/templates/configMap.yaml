@@ -4,3 +4,5 @@ metadata:
   name: auth-config
 data:
   JWT_MAX_AGE: {{ .Values.env.JWT_MAX_AGE | quote }} 
+  JWT_ACCESS_EXPIRES_IN: {{ .Values.env.JWT_ACCESS_EXPIRES_IN | quote }}
+  JWT_REFRESH_EXPIRES_IN: {{ .Values.env.JWT_REFRESH_EXPIRES_IN | quote }}

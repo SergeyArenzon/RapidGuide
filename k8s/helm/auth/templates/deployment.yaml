@@ -39,6 +39,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secrets.global.name }}
                   key: jwt-secret
+            - name: JWT_ACCESS_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: JWT_ACCESS_EXPIRES_IN
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}

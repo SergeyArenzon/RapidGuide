@@ -2,16 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Providers } from './enums';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto, ProviderUserDto } from './dtos';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
-export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
+export class AccessTokenService {
+  private readonly logger = new Logger(AccessTokenService.name);
 
   constructor(private jwtService: JwtService) {}
 
-  generateToken(payload: Record<string, string>): string {
-    this.logger.log('Sign JWT token');
+  generateAccessToken(payload: Record<string, string>): string {
+    this.logger.log('Sign JWT access token');
     return this.jwtService.sign(payload);
+  }
+
+  generateRefreshToken(): string {
+    this.logger.log('Generating UUID refresh token');
+    return uuidv4();
+  }
+
+  verifyRefreshToken(token: string): boolean {
+    // For UUID refresh tokens, we just validate the format
+    // In a real implementation, you'd check against a database
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(token);
   }
 
   async authenticateProvider(auth: AuthDto): Promise<ProviderUserDto> {
