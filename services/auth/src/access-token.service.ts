@@ -3,6 +3,7 @@ import { Providers } from './enums';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto, ProviderUserDto } from './dtos';
 import { v4 as uuidv4 } from 'uuid';
+import { RedisTokenService } from './redis/redis-token.service';
 
 @Injectable()
 export class AccessTokenService {
