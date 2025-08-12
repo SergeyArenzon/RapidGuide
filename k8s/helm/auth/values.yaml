@@ -5,6 +5,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+# Add init container to wait for Redis
+initContainers:
+  - name: wait-for-redis
+    image: busybox:1.35
+    command: ['sh', '-c', 'until nc -z redis-master 6379; do echo waiting for redis; sleep 2; done; echo "Redis is ready!";']
+
 service:
   type: ClusterIP
   port: 3000
@@ -27,7 +33,11 @@ env:
   NODE_ENV: production
   JWT_MAX_AGE: 3600000
   JWT_ACCESS_EXPIRES_IN: 15m
-  JWT_REFRESH_EXPIRES_IN:  {{ mul 7 24 60 60 1000 }}
+  JWT_REFRESH_EXPIRES_IN: "7d"
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: "redis"
+  REDIS_DB: "0"
   # Add other environment variables as needed
 
 # configMaps:

@@ -73,3 +73,8 @@ manifests:
         chartPath: k8s/helm/tour/
         valuesFiles:
           - k8s/helm/tour/values.yaml
+      - name: redis
+        repo: https://charts.bitnami.com/bitnami
+        remoteChart: redis
+        valuesFiles:
+          - k8s/helm/redis/values.yaml

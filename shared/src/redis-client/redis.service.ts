@@ -11,7 +11,7 @@ export class RedisService implements OnModuleDestroy {
   }
 
   // Basic operations
-  async get<T = string>(key: string): Promise<T | null> {
+  async get(key: string): Promise<string | null> {
     try {
       return await this.redis.get(key);
     } catch (error) {

@@ -14,6 +14,7 @@ import { AccessTokenService } from './access-token.service';
 import { Response } from 'express';
 import { AuthDto, RefreshTokenDto } from './dtos';
 import { RefreshTokenService } from './refresh-token.service';
+import { RedisService } from './redis/redis.service';
 
 @Controller()
 export class AuthController {
@@ -21,7 +22,8 @@ export class AuthController {
 
   constructor(
     private accessTokenService: AccessTokenService, 
-    private refreshTokenService: RefreshTokenService) {}
+    private refreshTokenService: RefreshTokenService,
+    private redisService: RedisService) {}
 
   // ENDPOINTS
   @HttpCode(200)
@@ -63,7 +65,7 @@ export class AuthController {
     const refreshToken = this.accessTokenService.generateRefreshToken();
 
     // Store refresh token with user data
-    this.refreshTokenService.set(refreshToken, authUser);
+    // this.refreshTokenService.set(refreshToken, authUser);
 
     this.logger.log('Setting access and refresh token cookies in response', authUser);
 
@@ -132,7 +134,7 @@ export class AuthController {
 
     // Revoke refresh token if provided
     if (body.refreshToken) {
-      this.refreshTokens.delete(body.refreshToken);
+      // this.refreshTokens.delete(body.refreshToken);
       this.logger.log('Revoked refresh token');
     }
 
@@ -141,5 +143,35 @@ export class AuthController {
     response.clearCookie('refreshToken');
 
     return { message: 'Logged out successfully' };
+  }
+
+
+  @Get('/test')
+  async testRedis() {
+    try {
+      const testKey = 'test:auth:timestamp';
+      const testValue = new Date().toISOString();
+      
+      // Set data in Redis with 60 seconds TTL
+      await this.redisService.set(testKey, testValue, 60);
+      
+      // Get the data back to verify
+      const retrievedValue = await this.redisService.get(testKey);
+      
+      this.logger.log(`Test data set in Redis: ${testKey} = ${testValue}`);
+      
+      return {
+        message: 'Redis test successful',
+        data: {
+          key: testKey,
+          value: testValue,
+          retrieved: retrievedValue,
+          timestamp: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      this.logger.error('Redis test failed', error);
+      throw new Error(`Redis test failed: ${error.message}`);
+    }
   }
 }

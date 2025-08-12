@@ -4,6 +4,7 @@ import { AccessTokenService } from './access-token.service';
 import { LoggerMiddleware } from './logger.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenService } from './refresh-token.service';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { RefreshTokenService } from './refresh-token.service';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m' }, // Optional expiration
     }),
+    RedisModule.forRoot(),
   ],
   controllers: [AuthController],
   providers: [AccessTokenService, RefreshTokenService],
