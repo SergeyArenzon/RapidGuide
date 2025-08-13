@@ -8,3 +8,5 @@ export * from './src/country.dto';
 export * from './src/language.dto';
 export * from './src/sub-category.dto';
 export * from './src/category.dto';
+export * from './src/auth.dto';
+export * from './src/provider-user.dto';

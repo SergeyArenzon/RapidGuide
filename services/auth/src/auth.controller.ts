@@ -30,11 +30,6 @@ export class AuthController {
   @Get('/health')
   health() {}
 
-  @Get()
-  findUser() {
-    return { first_name: 'John', last_name: 'Doe' };
-  }
-
   @Post()
   @UsePipes(ValidationPipe)
   async signIn(
@@ -149,7 +144,7 @@ export class AuthController {
   @Get('/test')
   async testRedis() {
     try {
-      const testKey = 'test:auth:timestamp';
+      const testKey = 'sergey:test';
       const testValue = new Date().toISOString();
       
       // Set data in Redis with 60 seconds TTL

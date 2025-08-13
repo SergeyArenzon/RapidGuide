@@ -15,7 +15,6 @@ export class ProviderUserDto {
   
   @IsUrl()
   image_url: string;
-  
 
 }
 

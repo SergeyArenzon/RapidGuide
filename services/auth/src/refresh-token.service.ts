@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Providers } from './enums';
+import { Providers } from '@rapid-guide-io/dto';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto, ProviderUserDto } from './dtos';
 import { randomUUID } from 'crypto';

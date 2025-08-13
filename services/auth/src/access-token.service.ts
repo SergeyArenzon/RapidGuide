@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Providers } from './enums';
+import { AuthDto, ProviderUserDto, authSchema } from '@rapid-guide-io/dto';
 import { JwtService } from '@nestjs/jwt';
-import { AuthDto, ProviderUserDto } from './dtos';
 import { v4 as uuidv4 } from 'uuid';
-
 
 @Injectable()
 export class AccessTokenService {
@@ -32,7 +30,7 @@ export class AccessTokenService {
     {
       let user = {} as ProviderUserDto;
       switch (auth.provider) {
-        case Providers.GOOGLE:
+        case authSchema.shape.provider.enum.google:
           const googleResponse = await fetch(
             `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${auth.jwt}`,
           );
