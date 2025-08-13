@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { SubCategoryService } from './sub-category.service';
-import { SubCategoryDto } from '@rapid-guide-io/shared';
+import { SubCategoryDto } from '@rapid-guide-io/dto';
 
 @Controller('sub-category')
 export class SubCategoryController {

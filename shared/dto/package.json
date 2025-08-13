@@ -1,7 +1,7 @@
 {
-	"name": "@rapid-guide-io/shared",
-	"version": "1.1.5",
-	"description": "Shared modules for Rapid Guide services",
+	"name": "@rapid-guide-io/dto",
+	"version": "0.0.2",
+	"description": "Shared DTO modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {

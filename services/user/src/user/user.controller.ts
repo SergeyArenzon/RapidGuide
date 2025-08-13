@@ -9,7 +9,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
-import { CreateUserDto, UserDto } from '@rapid-guide-io/shared';
+import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
 import { Public } from 'src/decorators/public.decorator';

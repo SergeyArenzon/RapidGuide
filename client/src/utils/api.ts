@@ -16,7 +16,7 @@ import {
   guideSchema,
   CategoryDto,
   categorySchema
-} from '@rapid-guide-io/shared';
+} from '@rapid-guide-io/dto';
 
 
 export default class Api {

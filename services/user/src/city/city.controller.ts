@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { CityService } from './city.service';
-import { CityDto } from '@rapid-guide-io/shared';
+import { CityDto } from '@rapid-guide-io/dto';
 
 @Controller('city')
 export class CityController {

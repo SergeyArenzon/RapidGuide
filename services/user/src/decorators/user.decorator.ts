@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { UserDto } from '@rapid-guide-io/shared';
+import { UserDto } from '@rapid-guide-io/dto';
 
 export const User = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): UserDto => {
