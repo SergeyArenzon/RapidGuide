@@ -34,10 +34,7 @@ env:
   JWT_MAX_AGE: 3600000
   JWT_ACCESS_EXPIRES_IN: 15m
   JWT_REFRESH_EXPIRES_IN: "7d"
-  REDIS_HOST: redis
-  REDIS_PORT: "6379"
-  REDIS_PASSWORD: "redis"
-  REDIS_DB: "0"
+  # Redis credentials will be loaded from global secrets
   # Add other environment variables as needed
 
 # configMaps:
@@ -58,4 +55,13 @@ secrets:
   global:
     name: global-secrets
     keys:
-      jwt-secret: jwt-secret 
+      jwt-secret: jwt-secret
+      redis-password: redis-password
+
+configMaps:
+  global:
+    name: global-config
+    keys:
+      redis-host: redis-host
+      redis-port: redis-port
+      redis-db: redis-db 

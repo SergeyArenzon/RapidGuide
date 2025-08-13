@@ -14,7 +14,7 @@ import { AccessTokenService } from './access-token.service';
 import { Response } from 'express';
 import { AuthDto, RefreshTokenDto } from './dtos';
 import { RefreshTokenService } from './refresh-token.service';
-import { RedisService } from './redis/redis.service';
+import { RedisService } from '@rapid-guide-io/redis';
 
 @Controller()
 export class AuthController {

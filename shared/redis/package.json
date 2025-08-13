@@ -1,0 +1,25 @@
+{
+	"name": "@rapid-guide-io/redis",
+	"version": "0.0.1",
+	"description": "Shared Redis client modules for Rapid Guide services",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"clean": "rimraf dist",
+		"prebuild": "pnpm run clean"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"dependencies": {
+		"@nestjs/common": "^11.1.6",
+		"ioredis": "^5.7.0"
+	},
+	"devDependencies": {
+		"rimraf": "^5.0.10",
+		"typescript": "^5.1.0"
+	},
+	"author": "",
+	"license": "ISC"
+}

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { timeSchema } from './time.dto';
-import { countrySchema } from './country.dto';
+import { countrySchema } from './src/dtos/country.dto';
 
 const citySchema = timeSchema.extend({
   id: z.number(),
