@@ -1,17 +1,14 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
-import { AccessTokenService } from './access-token.service';
+import { AccessTokenModule } from './access-token/access-token.module';
 import { LoggerMiddleware } from './logger.middleware';
-import { JwtModule } from '@nestjs/jwt';
-import { RefreshTokenService } from './refresh-token.service';
+import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { RedisModule } from '@rapid-guide-io/redis';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m' }, // Optional expiration
-    }),
+    AccessTokenModule,
+    RefreshTokenModule,
     RedisModule.forRoot({
       host: process.env.REDIS_HOST ,
       port: parseInt(process.env.REDIS_PORT),
@@ -20,7 +17,7 @@ import { RedisModule } from '@rapid-guide-io/redis';
     }),
   ],
   controllers: [AuthController],
-  providers: [AccessTokenService, RefreshTokenService],
+  providers: [],
 })
 export class AuthModule {
   // configure(consumer: MiddlewareConsumer) {

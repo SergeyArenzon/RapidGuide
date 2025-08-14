@@ -10,10 +10,10 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { AccessTokenService } from './access-token.service';
+import { AccessTokenService } from './access-token/access-token.service';
 import { Response } from 'express';
-import { AuthDto, RefreshTokenDto } from './dtos';
-import { RefreshTokenService } from './refresh-token.service';
+import { AuthDto } from '@rapid-guide-io/dto';
+import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { RedisService } from '@rapid-guide-io/redis';
 
 @Controller()
