@@ -67,8 +67,8 @@ REDIS_PASSWORD=redis-password
 REDIS_DB=0
 
 # JWT Configuration
-JWT_ACCESS_EXPIRES_IN=15m      # Access token expiration (15 minutes)
-JWT_REFRESH_EXPIRES_IN=7d      # Refresh token expiration (7 days)
+JWT_ACCESS_EXPIRES_IN_MS=15m      # Access token expiration (15 minutes)
+JWT_REFRESH_EXPIRES_IN_MS=7d      # Refresh token expiration (7 days)
 ```
 
 ## Security Features

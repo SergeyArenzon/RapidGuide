@@ -84,21 +84,22 @@ export class AuthController {
 
     this.logger.log('Setting access and refresh token cookies in response', user);
 
-    // Set access token cookie
-    response.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      maxAge: this.parseTTL(process.env.JWT_ACCESS_EXPIRES_IN || '15m') * 1000, // Convert to milliseconds
-      secure: true,
-    });
-
-    // Set refresh token cookie
-    response.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      maxAge: this.parseTTL(process.env.JWT_REFRESH_EXPIRES_IN || '7d') * 1000, // Convert to milliseconds
-      secure: true,
-    });
-
-    return user;
+    return {
+      user,
+      cookies: [{
+        name: 'accessToken',
+        value: accessToken,
+        httpOnly: true,
+        maxAge: Number(process.env.JWT_ACCESS_EXPIRES_IN_MS),
+        secure: true,
+      }, {
+        name: 'refreshToken',
+        value: refreshToken,
+        httpOnly: true,
+        maxAge: Number(process.env.JWT_REFRESH_EXPIRES_IN_MS),
+        secure: true,
+      }]
+    }
   }
 
   @Post('/refresh')
@@ -122,7 +123,7 @@ export class AuthController {
       // Set new access token cookie
       response.cookie('accessToken', newAccessToken, {
         httpOnly: true,
-        maxAge: this.parseTTL(process.env.JWT_ACCESS_EXPIRES_IN || '15m') * 1000, // Convert to milliseconds
+        maxAge: parseInt(process.env.JWT_ACCESS_EXPIRES_IN_MS),
         secure: true,
       });
 

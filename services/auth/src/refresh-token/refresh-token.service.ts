@@ -7,28 +7,9 @@ import { UserDto } from '@rapid-guide-io/dto';
 export class RefreshTokenService {
   private readonly logger = new Logger(RefreshTokenService.name);
   private readonly REFRESH_TOKEN_PREFIX = 'refresh_token:';
-  private readonly REFRESH_TOKEN_TTL = this.parseTTL(process.env.JWT_REFRESH_EXPIRES_IN || '7d'); // Parse from env or default to 7 days
+  private readonly REFRESH_TOKEN_TTL = parseInt(process.env.JWT_REFRESH_EXPIRES_IN_MS); // Parse from env or default to 7 days
 
   constructor(private readonly redisService: RedisService) {}
-
-  private parseTTL(ttlString: string): number {
-    const match = ttlString.match(/^(\d+)([smhd])$/);
-    if (!match) {
-      this.logger.warn(`Invalid TTL format: ${ttlString}, using default 7 days`);
-      return 7 * 24 * 60 * 60; // 7 days in seconds
-    }
-    
-    const value = parseInt(match[1]);
-    const unit = match[2];
-    
-    switch (unit) {
-      case 's': return value;
-      case 'm': return value * 60;
-      case 'h': return value * 60 * 60;
-      case 'd': return value * 24 * 60 * 60;
-      default: return 7 * 24 * 60 * 60; // 7 days in seconds
-    }
-  }
 
   generateRefreshToken(): string {
     return randomUUID();

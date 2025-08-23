@@ -43,11 +43,16 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secrets.global.name }}
                   key: jwt-secret
-            - name: JWT_ACCESS_EXPIRES_IN
+            - name: JWT_ACCESS_EXPIRES_IN_MS
               valueFrom:
                 configMapKeyRef:
                   name: auth-config
-                  key: JWT_ACCESS_EXPIRES_IN
+                  key: JWT_ACCESS_EXPIRES_IN_MS
+            - name: JWT_REFRESH_EXPIRES_IN_MS
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: JWT_REFRESH_EXPIRES_IN_MS
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:

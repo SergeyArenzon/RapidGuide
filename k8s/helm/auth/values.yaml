@@ -32,8 +32,10 @@ resources:
 env:
   NODE_ENV: production
   JWT_MAX_AGE: 3600000
-  JWT_ACCESS_EXPIRES_IN: 15m
-  JWT_REFRESH_EXPIRES_IN: "7d"
+  # 15 minutes in milliseconds: 15 * 60 * 1000 = 900000
+  JWT_ACCESS_EXPIRES_IN_MS: 900000
+  # 7 days in milliseconds: 7 * 24 * 60 * 60 * 1000 = 604800000
+  JWT_REFRESH_EXPIRES_IN_MS: 604800000
   # Redis credentials will be loaded from global secrets
   # Add other environment variables as needed
 

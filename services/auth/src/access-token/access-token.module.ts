@@ -6,7 +6,7 @@ import { AccessTokenService } from './access-token.service';
   imports: [
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || '15m' },
+      signOptions: { expiresIn: process.env.JWT_ACCESS_EXPIRES_IN_MS },
     }),
   ],
   providers: [AccessTokenService],
