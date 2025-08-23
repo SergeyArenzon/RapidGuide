@@ -12,9 +12,10 @@ import {
 } from '@nestjs/common';
 import { AccessTokenService } from './access-token/access-token.service';
 import { Response } from 'express';
-import { AuthDto } from '@rapid-guide-io/dto';
+import { AuthDto, UserDto } from '@rapid-guide-io/dto';
 import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { RedisService } from '@rapid-guide-io/redis';
+import { RefreshTokenDto, LogoutDto, LogoutAllDto } from './types/auth';
 
 @Controller()
 export class AuthController {
@@ -24,6 +25,25 @@ export class AuthController {
     private accessTokenService: AccessTokenService, 
     private refreshTokenService: RefreshTokenService,
     private redisService: RedisService) {}
+
+  private parseTTL(ttlString: string): number {
+    const match = ttlString.match(/^(\d+)([smhd])$/);
+    if (!match) {
+      this.logger.warn(`Invalid TTL format: ${ttlString}, using default 7 days`);
+      return 7 * 24 * 60 * 60; // 7 days in seconds
+    }
+    
+    const value = parseInt(match[1]);
+    const unit = match[2];
+    
+    switch (unit) {
+      case 's': return value;
+      case 'm': return value * 60;
+      case 'h': return value * 60 * 60;
+      case 'd': return value * 24 * 60 * 60;
+      default: return 7 * 24 * 60 * 60; // 7 days in seconds
+    }
+  }
 
   // ENDPOINTS
   @HttpCode(200)
@@ -36,100 +56,93 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
     @Body() body: AuthDto,
   ): Promise<any> {
-    const user = await this.accessTokenService.authenticateProvider(body);
-    this.logger.debug(`Authenticated provider: ${JSON.stringify(user)}`);
+    const providerUser = await this.accessTokenService.authenticateProvider(body);
+    this.logger.debug(`Authenticated provider: ${JSON.stringify(providerUser)}`);
 
     const res = await fetch('http://user:3000/user', {
       method: 'POST',
-      body: JSON.stringify(user),
+      body: JSON.stringify(providerUser),
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    const authUser = await res.json();
-    this.logger.debug(`Authenticated user: ${JSON.stringify(authUser)}`);
-    if (authUser?.statusCode === 400) {
+    const user: UserDto = await res.json();
+    this.logger.debug(`Authenticated user: ${JSON.stringify(user)}`);
+    if (res.status === 400) {
       this.logger.warn(
         'Authentication failed: No user returned from user service',
       );
       throw new UnauthorizedException();
     }
 
-    const accessToken = this.accessTokenService.generateAccessToken(authUser);
-    const refreshToken = this.accessTokenService.generateRefreshToken();
+    const accessToken = this.accessTokenService.generateAccessToken(user);
+    const refreshToken = this.refreshTokenService.generateRefreshToken();
 
-    // Store refresh token with user data
-    // this.refreshTokenService.set(refreshToken, authUser);
+    // Store refresh token with user data in Redis
+    await this.refreshTokenService.storeRefreshToken(refreshToken, user);
 
-    this.logger.log('Setting access and refresh token cookies in response', authUser);
+    this.logger.log('Setting access and refresh token cookies in response', user);
 
     // Set access token cookie
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      maxAge: Number(process.env.JWT_ACCESS_MAX_AGE) || 15 * 60 * 1000, // 15 minutes
+      maxAge: this.parseTTL(process.env.JWT_ACCESS_EXPIRES_IN || '15m') * 1000, // Convert to milliseconds
       secure: true,
     });
 
     // Set refresh token cookie
     response.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      maxAge: Number(process.env.JWT_REFRESH_MAX_AGE) || 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: this.parseTTL(process.env.JWT_REFRESH_EXPIRES_IN || '7d') * 1000, // Convert to milliseconds
       secure: true,
     });
 
-    return authUser;
+    return user;
   }
 
-  // @Post('/refresh')
-  // @UsePipes(ValidationPipe)
-  // async refresh(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Body() body: RefreshTokenDto,
-  // ): Promise<any> {
-  //   try {
-  //     // Validate refresh token format
-  //     if (!this.accessTokenService.verifyRefreshToken(body.refreshToken)) {
-  //       throw new UnauthorizedException('Invalid refresh token format');
-  //     }
+  @Post('/refresh')
+  @UsePipes(ValidationPipe)
+  async refresh(
+    @Res({ passthrough: true }) response: Response,
+    @Body() body: RefreshTokenDto,
+  ): Promise<any> {
+    try {
+      // Validate refresh token and get user data from Redis
+      const userData = await this.refreshTokenService.validateRefreshToken(body.refreshToken);
+      if (!userData) {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
 
-  //     // Check if refresh token exists and get user data
-  //     const userData = this.refreshTokenService.validateRefreshToken(body.refreshToken);
-  //     if (!userData) {
-  //       throw new UnauthorizedException('Invalid or expired refresh token');
-  //     }
-
-  //     // Generate new access token
-  //     const newAccessToken = this.accessTokenService.generateAccessToken(userData);
+      // Generate new access token
+      const newAccessToken = this.accessTokenService.generateAccessToken(userData);
       
-  //     this.logger.log('Refreshing access token for user', userData);
+      this.logger.log('Refreshing access token for user', userData);
 
-  //     // Set new access token cookie
-  //     response.cookie('accessToken', newAccessToken, {
-  //       httpOnly: true,
-  //       maxAge: Number(process.env.JWT_ACCESS_MAX_AGE) || 15 * 60 * 1000, // 15 minutes
-  //       secure: true,
-  //     });
+      // Set new access token cookie
+      response.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        maxAge: this.parseTTL(process.env.JWT_ACCESS_EXPIRES_IN || '15m') * 1000, // Convert to milliseconds
+        secure: true,
+      });
 
-  //     return { message: 'Token refreshed successfully' };
-  //   } catch (error) {
-  //     this.logger.error('Failed to refresh token', error);
-  //     throw new UnauthorizedException('Invalid refresh token');
-  //   }
-  // }
-
-
+      return { message: 'Token refreshed successfully' };
+    } catch (error) {
+      this.logger.error('Failed to refresh token', error);
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
 
   @Post('/logout')
   async logout(
     @Res({ passthrough: true }) response: Response,
-    @Body() body: { refreshToken?: string },
+    @Body() body: LogoutDto,
   ): Promise<any> {
     this.logger.log('Logging out user');
 
     // Revoke refresh token if provided
     if (body.refreshToken) {
-      // this.refreshTokens.delete(body.refreshToken);
+      await this.refreshTokenService.revokeRefreshToken(body.refreshToken);
       this.logger.log('Revoked refresh token');
     }
 
@@ -138,6 +151,27 @@ export class AuthController {
     response.clearCookie('refreshToken');
 
     return { message: 'Logged out successfully' };
+  }
+
+  @Post('/logout-all')
+  async logoutAll(
+    @Res({ passthrough: true }) response: Response,
+    @Body() body: LogoutAllDto,
+  ): Promise<any> {
+    this.logger.log(`Logging out all sessions for user: ${body.userId}`);
+
+    // Revoke all refresh tokens for the user
+    const revokedCount = await this.refreshTokenService.revokeAllUserTokens(body.userId);
+    this.logger.log(`Revoked ${revokedCount} refresh tokens for user: ${body.userId}`);
+
+    // Clear cookies
+    response.clearCookie('accessToken');
+    response.clearCookie('refreshToken');
+
+    return { 
+      message: 'Logged out from all sessions successfully',
+      revokedTokensCount: revokedCount
+    };
   }
 
 

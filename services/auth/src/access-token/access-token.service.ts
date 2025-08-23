@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthDto, ProviderUserDto, authSchema } from '@rapid-guide-io/dto';
+import { AuthDto, ProviderUserDto, UserDto, authSchema } from '@rapid-guide-io/dto';
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,9 +9,9 @@ export class AccessTokenService {
 
   constructor(private jwtService: JwtService) {}
 
-  generateAccessToken(payload: Record<string, string>): string {
+  generateAccessToken(userPayload: UserDto): string {
     this.logger.log('Sign JWT access token');
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(userPayload);
   }
 
   generateRefreshToken(): string {
