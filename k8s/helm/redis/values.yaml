@@ -5,6 +5,7 @@ auth:
   password: "redis"  # Change this in production!
 
 master:
+  disableCommands: []
   persistence:
     enabled: true
     size: 1Gi
