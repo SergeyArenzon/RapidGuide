@@ -122,4 +122,13 @@ export default class Api {
       guideSchema
     );
   }
+
+  async logout(): Promise<void> {
+    try {
+      await this.axios.post('/auth//logout');
+    } catch (error) {
+      console.error('Logout request failed:', error);
+      throw error;
+    }
+  }
 }

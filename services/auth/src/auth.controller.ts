@@ -7,14 +7,16 @@ import {
   Logger,
   UnauthorizedException,
   Res,
+  Req,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { AccessTokenService } from './access-token/access-token.service';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { AuthDto, UserDto } from '@rapid-guide-io/dto';
 import { RefreshTokenService } from './refresh-token/refresh-token.service';
-import { RefreshTokenDto, LogoutDto } from './types/auth';
+import { RefreshTokenDto } from './types/auth';
+
 
 @Controller()
 export class AuthController {
@@ -111,23 +113,34 @@ export class AuthController {
   //   }
   // }
 
-  // @Post('/logout')
-  // async logout(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Body() body: LogoutDto,
-  // ): Promise<any> {
-  //   this.logger.log('Logging out user');
+  @Post('/logout')
+  async logout(
+    @Req() request: Request, 
+    @Res({ passthrough: true }) response: Response): Promise<any> {
+    this.logger.log('Logging out user');
 
-  //   // Revoke refresh token if provided
-  //   if (body.refreshToken) {
-  //     await this.refreshTokenService.revokeRefreshToken(body.refreshToken);
-  //     this.logger.log('Revoked refresh token');
-  //   }
+    try {
+      // Get refresh token from cookies
+      const refreshToken = request.cookies?.refreshToken;
+      
+      // Revoke refresh token if it exists in cookies
+      if (refreshToken) {
+        await this.refreshTokenService.revokeRefreshToken(refreshToken);
+        this.logger.log('Revoked refresh token from Redis');
+      }
 
-  //   // Clear both cookies
-  //   response.clearCookie('accessToken');
-  //   response.clearCookie('refreshToken');
+      // Clear both cookies by setting them to expire immediately
+      response.clearCookie('accessToken');
+      response.clearCookie('refreshToken');
 
-  //   return { message: 'Logged out successfully' };
-  // }
+      this.logger.log('Successfully logged out user');
+      return { message: 'Logged out successfully' };
+    } catch (error) {
+      this.logger.error('Error during logout:', error);
+      // Even if there's an error, still clear the cookies
+      response.clearCookie('accessToken');
+      response.clearCookie('refreshToken');
+      return { message: 'Logged out successfully' };
+    }
+  }
 }

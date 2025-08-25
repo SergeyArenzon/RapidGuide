@@ -2,8 +2,6 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers";
 import { cookies } from "next/headers";
-import qs from "querystring";
-
 
 const providers: Provider[] = [Google];
  
