@@ -26,25 +26,6 @@ export class AuthController {
     private refreshTokenService: RefreshTokenService,
     private redisService: RedisService) {}
 
-  private parseTTL(ttlString: string): number {
-    const match = ttlString.match(/^(\d+)([smhd])$/);
-    if (!match) {
-      this.logger.warn(`Invalid TTL format: ${ttlString}, using default 7 days`);
-      return 7 * 24 * 60 * 60; // 7 days in seconds
-    }
-    
-    const value = parseInt(match[1]);
-    const unit = match[2];
-    
-    switch (unit) {
-      case 's': return value;
-      case 'm': return value * 60;
-      case 'h': return value * 60 * 60;
-      case 'd': return value * 24 * 60 * 60;
-      default: return 7 * 24 * 60 * 60; // 7 days in seconds
-    }
-  }
-
   // ENDPOINTS
   @HttpCode(200)
   @Get('/health')
