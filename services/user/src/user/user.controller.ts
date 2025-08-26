@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   ForbiddenException,
+  Headers,
 } from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
 import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
@@ -15,7 +16,7 @@ import { UserService } from './user.service';
 import { Public } from 'src/decorators/public.decorator';
 import { GuideService } from 'src/guide/guide.service';
 
-@Controller()
+@Controller('user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
 
@@ -25,7 +26,7 @@ export class UserController {
   ) {}
 
   @Public()
-  @Post('/user')
+  @Post()
   @HttpCode(200)
   async createOrFind(@Body() body: CreateUserDto): Promise<UserDto> {
     return await this.usersService.createOrFind(body);
@@ -41,27 +42,12 @@ export class UserController {
     return this.guideService.findByUserId(userId);
   }
 
-  // findUser() {
-  //   return { first_name: 'John', last_name: 'Doe' };
-  // }
 
-  // @Get('/:id')
-  // getUserById(@Param('id') id: string) {
-  //   const user = this.usersService.findOne(id);
-  //   return user;
-  // }
-
-  // @Post()
-  // @UsePipes(ValidationPipe)
-  // @HttpCode(201)
-  // createUser(@Body() body: CreateUserDto) {
-  //   this.usersService.create(body);
-  // }
-
-  // // EVENTS
-  // @EventPattern('user_create')
-  // @UsePipes(ValidationPipe)
-  // async createUserEvent(@Payload() user: CreateUserDto) {
-  //   this.usersService.create(user);
-  // }
+  @Get('/:id')
+  getUserById(@Param('id') id: string) {
+    console.log("------------------>", id);
+    
+    const user = this.usersService.findOne(id);
+    return user;
+  }
 }

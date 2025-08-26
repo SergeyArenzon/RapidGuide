@@ -81,37 +81,67 @@ export class AuthController {
     }
   }
 
-  // @Post('/refresh')
-  // @UsePipes(ValidationPipe)
-  // async refresh(
-  //   @Res({ passthrough: true }) response: Response,
-  //   @Body() body: RefreshTokenDto,
-  // ): Promise<any> {
-  //   try {
-  //     // Validate refresh token and get user data from Redis
-  //     const userData = await this.refreshTokenService.validateRefreshToken(body.refreshToken);
-  //     if (!userData) {
-  //       throw new UnauthorizedException('Invalid or expired refresh token');
-  //     }
+  @Post('/refresh')
+  async refresh(
+    @Res({ passthrough: true }) response: Response,
+    @Req() request: Request,
+    @Body() body,
+  ): Promise<any> {
+    try {
+      // Validate refresh token and get user data from Redis
+      const refreshToken = request.cookies?.refreshToken;
 
-  //     // Generate new access token
-  //     const newAccessToken = this.accessTokenService.generateAccessToken(userData);
+      if (!refreshToken) {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+
+      const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
+      if (!userData) {
+        throw new UnauthorizedException('Invalid or expired refresh token');
+      }
+
+      const userResponse = await fetch(`http://user:3000/user/${userData.userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': `accessToken=${request.cookies?.accessToken}`
+        }
+      });
+
+      if (!userResponse.ok) {
+        this.logger.warn(`User service returned ${userResponse.status} for user ${userData.userId}`);
+        throw new UnauthorizedException('User not found');
+      }
+
+      const user: UserDto = await userResponse.json();
       
-  //     this.logger.log('Refreshing access token for user', userData);
+      // Generate new access token
+      const newAccessToken = this.accessTokenService.generateAccessToken(user);
+      const newRefreshToken = this.refreshTokenService.generateRefreshToken();
 
-  //     // Set new access token cookie
-  //     response.cookie('accessToken', newAccessToken, {
-  //       httpOnly: true,
-  //       maxAge: parseInt(process.env.JWT_ACCESS_EXPIRES_IN_MS),
-  //       secure: true,
-  //     });
+      await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
+      await this.refreshTokenService.revokeRefreshToken(refreshToken);
+      
+      this.logger.log('Refreshing access token for user', userData);
 
-  //     return { message: 'Token refreshed successfully' };
-  //   } catch (error) {
-  //     this.logger.error('Failed to refresh token', error);
-  //     throw new UnauthorizedException('Invalid refresh token');
-  //   }
-  // }
+      // Set new access token cookie
+      response.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        maxAge: parseInt(process.env.JWT_ACCESS_EXPIRES_IN_MS),
+        secure: true,
+      });
+
+      response.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        maxAge: parseInt(process.env.JWT_REFRESH_EXPIRES_IN_MS),
+        secure: true,
+      });
+
+      return { message: 'Token refreshed successfully' };
+    } catch (error) {
+      this.logger.error('Failed to refresh token', error);
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
 
   @Post('/logout')
   async logout(
