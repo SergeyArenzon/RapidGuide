@@ -8,6 +8,7 @@ import {
   Param,
   ForbiddenException,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
 import { User } from 'src/decorators/user.decorator';
 import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
@@ -15,6 +16,8 @@ import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
 import { Public } from 'src/decorators/public.decorator';
 import { GuideService } from 'src/guide/guide.service';
+import { Scopes } from 'src/decorators/scope.decorator';
+import { ScopesGuard } from 'src/guards/scope.guard';
 
 @Controller('user')
 export class UserController {
@@ -25,9 +28,9 @@ export class UserController {
     private guideService: GuideService,
   ) {}
 
-  @Public()
   @Post()
-  @HttpCode(200)
+  @UseGuards(ScopesGuard)
+  @Scopes(['read:user', 'create:user'])
   async createOrFind(@Body() body: CreateUserDto): Promise<UserDto> {
     return await this.usersService.createOrFind(body);
   }
@@ -44,9 +47,9 @@ export class UserController {
 
 
   @Get('/:id')
+  @UseGuards(ScopesGuard)
+  @Scopes(['read:user'])
   getUserById(@Param('id') id: string) {
-    console.log("------------------>", id);
-    
     const user = this.usersService.findOne(id);
     return user;
   }

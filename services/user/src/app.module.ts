@@ -9,9 +9,10 @@ import { CityModule } from './city/city.module';
 import { GuideModule } from './guide/guide.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthGuard } from './auth/auth.guard';
+import { AuthGuard } from './guards/auth.guard';
 import { jwtConfig } from './config';
 import { LoggerMiddleware } from './logger.middleware';
+import { ScopesGuard } from './guards/scope.guard';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { LoggerMiddleware } from './logger.middleware';
   ],
   controllers: [AppController],
   providers: [
+    ScopesGuard,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
