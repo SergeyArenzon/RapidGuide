@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from "@/components/AlertDialog";
-import { createGuideSchema, CreateGuideDto } from "@rapid-guide-io/shared";
+import { createGuideSchema, CreateGuideDto } from "@rapid-guide-io/dto";
 
 
 export default function SignupGuide() {

@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers";
 import { cookies } from "next/headers";
-import qs from "querystring";
 
 const providers: Provider[] = [Google];
  
@@ -36,32 +35,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       });  
 
       if (response.ok) {
-        const userData = await response.json();
-        user.tokenData = userData;
-        const setCookie = qs.decode(
-          response.headers.get("set-cookie") as string,
-          "; ",
-          "="
-      );
-      console.log({setCookie});
-      
-          // Extract the cookie name and the value from the first entry in the 
-          // setCookie object
-          const [cookieName, cookieValue] = Object.entries(setCookie)[0] as [
-            string,
-            string
-        ];
-        
-        (await cookies()).set({
-          name: cookieName,
-          value: cookieValue,
-          httpOnly: true, // the parsing of httpOnly returns an empty string, so either have some logic to set it to boolean, or set it manually
-          maxAge: setCookie["Max-Age"] ? parseInt(setCookie["Max-Age"] as string) : undefined,
-          path: Array.isArray(setCookie.Path) ? setCookie.Path[0] : setCookie.Path,
-          sameSite: "lax",
-          expires: setCookie.Expires ? new Date(setCookie.Expires as string) : undefined,
-          // secure: true, //if production should be TRUE!
-        })
+        const authResponse = await response.json();
+        user.tokenData = authResponse.user;
+        if (authResponse.cookies && authResponse.cookies.length > 0) {
+          const cookieStore = await cookies();
+          authResponse.cookies.forEach((cookie: any) => {
+            console.log('Raw cookie from backend:', cookie);
+            console.log('maxAge value:', cookie.maxAge);
+            console.log('maxAge type:', typeof cookie.maxAge);
+            console.log('maxAge as number:', Number(cookie.maxAge));
+            console.log('maxAge is NaN:', isNaN(Number(cookie.maxAge)));
+            
+            // Ensure maxAge is a valid number
+            const maxAge = Number(cookie.maxAge);
+            if (isNaN(maxAge)) {
+              console.error('Invalid maxAge value:', cookie.maxAge);
+              return; // Skip this cookie if maxAge is invalid
+            }
+            
+            const cookieOptions: any = {
+              httpOnly: cookie.httpOnly,
+              maxAge: maxAge / 1000,
+            };
+            
+            console.log('Setting cookie with options:', cookieOptions);
+            cookieStore.set(cookie.name, cookie.value, cookieOptions);
+          });
+        }
       } else {
         console.log("FAILED SETTING accessToken");
         

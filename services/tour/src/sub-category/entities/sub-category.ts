@@ -8,7 +8,7 @@ import {
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
 import { Category } from '../../category/entities/category.entity';
-import { SubCategoryDto } from '@rapid-guide-io/shared';
+import { SubCategoryDto } from '@rapid-guide-io/dto';
 
 @Entity()
 export class SubCategory extends BaseEntity {

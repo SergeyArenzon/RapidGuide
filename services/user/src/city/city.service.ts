@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 import { City } from './city.entity';
-import { CityDto } from '@rapid-guide-io/shared';
+import { CityDto } from '@rapid-guide-io/dto';
 
 @Injectable()
 export class CityService {

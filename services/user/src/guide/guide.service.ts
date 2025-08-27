@@ -4,7 +4,7 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { CreateGuideDto, GuideDto } from '@rapid-guide-io/shared';
+import { CreateGuideDto, GuideDto } from '@rapid-guide-io/dto';
 import { User } from 'src/user/user.entity';
 import { Guide } from './entities/guide.entity';
 import { Country } from '../country/country.entity';

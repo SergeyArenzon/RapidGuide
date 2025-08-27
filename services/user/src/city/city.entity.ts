@@ -7,7 +7,7 @@ import {
 } from '@mikro-orm/core';
 import { DateEntity } from '../entities/date.entity';
 import { Country } from '../country/country.entity';
-import { CityDto } from '@rapid-guide-io/shared';
+import { CityDto } from '@rapid-guide-io/dto';
 
 @Entity()
 export class City extends DateEntity {

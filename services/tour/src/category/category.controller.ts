@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CategoryDto } from '@rapid-guide-io/shared';
+import { CategoryDto } from '@rapid-guide-io/dto';
 
 @Controller('category')
 export class CategoryController {

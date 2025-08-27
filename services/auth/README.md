@@ -68,7 +68,6 @@ If you are looking for a cloud-based platform to deploy your NestJS application,
 $ npm install -g mau
 $ mau deploy
 ```
-
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
 ## Resources
@@ -97,3 +96,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+

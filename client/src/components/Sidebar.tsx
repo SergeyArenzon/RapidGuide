@@ -42,12 +42,25 @@ import {
 import useUserStore from "@/store/useUser"
 import { signOut } from "next-auth/react"
 import Logo from "./Logo"
-
+import Api from "@/utils/api"
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const [activeTab, setActiveTab] = React.useState("analytics");
   const { user } = useUserStore();
+  const api = new Api();
 
+  const handleLogout = async () => {
+    try {
+      // Send logout request to backend
+      await api.logout();
+    } catch (error) {
+      console.error('Logout request failed:', error);
+      // Continue with logout even if backend request fails
+    } finally {
+      // Always call NextAuth signOut
+      signOut();
+    }
+  };
 
   const tabs = [
     { id: "analytics", label: "Analytics", icon: BarChart3 },
@@ -153,7 +166,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut()}>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

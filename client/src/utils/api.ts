@@ -16,7 +16,7 @@ import {
   guideSchema,
   CategoryDto,
   categorySchema
-} from '@rapid-guide-io/shared';
+} from '@rapid-guide-io/dto';
 
 
 export default class Api {
@@ -121,5 +121,14 @@ export default class Api {
       () => this.axios.get(`/user/user/${userId}/guide`),
       guideSchema
     );
+  }
+
+  async logout(): Promise<void> {
+    try {
+      await this.axios.post('/auth//logout');
+    } catch (error) {
+      console.error('Logout request failed:', error);
+      throw error;
+    }
   }
 }

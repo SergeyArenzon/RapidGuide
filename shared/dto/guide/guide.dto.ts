@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { timeSchema } from '../time.dto';
+import { timeSchema } from '../src/time.dto';
 
 // Base schema that will be extended by create and response DTOs
 const guideSchema = timeSchema.extend({

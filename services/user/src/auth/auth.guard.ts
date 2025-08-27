@@ -10,7 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import { UserDto } from '@rapid-guide-io/shared';
+import { UserDto } from '@rapid-guide-io/dto';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

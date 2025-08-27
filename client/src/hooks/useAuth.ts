@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { userSchema } from "@rapid-guide-io/shared";
+import { userSchema } from "@rapid-guide-io/dto";
 import useUserStore from "@/store/useUser";
 
 

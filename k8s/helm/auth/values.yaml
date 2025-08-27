@@ -5,6 +5,12 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
+# Add init container to wait for Redis
+initContainers:
+  - name: wait-for-redis
+    image: busybox:1.35
+    command: ['sh', '-c', 'until nc -z redis-master 6379; do echo waiting for redis; sleep 2; done; echo "Redis is ready!";']
+
 service:
   type: ClusterIP
   port: 3000
@@ -26,6 +32,11 @@ resources:
 env:
   NODE_ENV: production
   JWT_MAX_AGE: 3600000
+  # 15 minutes in milliseconds: 15 * 60 * 1000 = 900000
+  JWT_ACCESS_EXPIRES_IN_MS: 900000
+  # 7 days in milliseconds: 7 * 24 * 60 * 60 * 1000 = 604800000
+  JWT_REFRESH_EXPIRES_IN_MS: 604800000
+  # Redis credentials will be loaded from global secrets
   # Add other environment variables as needed
 
 # configMaps:
@@ -46,4 +57,13 @@ secrets:
   global:
     name: global-secrets
     keys:
-      jwt-secret: jwt-secret 
+      jwt-secret: jwt-secret
+      redis-password: redis-password
+
+configMaps:
+  global:
+    name: global-config
+    keys:
+      redis-host: redis-host
+      redis-port: redis-port
+      redis-db: redis-db 

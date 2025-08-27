@@ -15,7 +15,7 @@ import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';
 import { GuideSubcategory } from './guide-subcategory.entity';
-import { GuideDto } from '@rapid-guide-io/shared';
+import { GuideDto } from '@rapid-guide-io/dto';
 
 @Entity()
 export class Guide extends BaseEntity {

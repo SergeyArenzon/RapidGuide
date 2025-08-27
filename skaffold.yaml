@@ -43,11 +43,11 @@ manifests:
         chartPath: k8s/helm/secrets/
         valuesFiles:
           - k8s/helm/secrets/values.yaml
-      # - name: redis
-      #   repo: https://charts.bitnami.com/bitnami
-      #   remoteChart: redis
-      #   valuesFiles:
-          # - k8s/minikube/redis/values.yaml
+      - name: redis
+        repo: https://charts.bitnami.com/bitnami
+        remoteChart: redis
+        valuesFiles:
+          - k8s/minikube/redis/values.yaml
       - name: user-db
         chartPath: k8s/helm/user-db/
         valuesFiles:

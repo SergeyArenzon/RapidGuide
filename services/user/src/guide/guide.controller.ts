@@ -6,7 +6,7 @@ import {
   createGuideSchema,
   GuideDto,
   UserDto,
-} from '@rapid-guide-io/shared';
+} from '@rapid-guide-io/dto';
 import { User } from 'src/decorators/user.decorator';
 
 @Controller('guide')
