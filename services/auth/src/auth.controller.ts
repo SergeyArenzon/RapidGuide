@@ -41,7 +41,7 @@ export class AuthController {
     this.logger.debug(`Authenticated provider: ${JSON.stringify(providerUser)}`);
 
     const internalAccessToken = this.accessTokenService.generateAccessToken("user", "user", ["admin"], ["user:read", "user:write"]);
-
+    
     const res = await fetch('http://user:3000/user', {
       method: 'POST',
       body: JSON.stringify(providerUser),

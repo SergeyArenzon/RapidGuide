@@ -7,7 +7,7 @@ import {
   GuideDto,
   UserDto,
 } from '@rapid-guide-io/dto';
-import { User } from 'src/decorators/user.decorator';
+import { Subject } from 'src/decorators/subject.decorator';
 
 @Controller('guide')
 export class GuideController {
@@ -16,13 +16,13 @@ export class GuideController {
   @Post()
   async create(
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-    @User() user: UserDto,
+    @Subject() userId: string,
   ): Promise<GuideDto> {
-    return await this.guideService.create(user.id, body);
+    return await this.guideService.create(userId, body);
   }
 
   @Get()
-  async getGuide(@User() user: UserDto): Promise<GuideDto> {
-    return await this.guideService.findByUserId(user.id);
+  async getGuide(@Subject() userId: string): Promise<GuideDto> {
+    return await this.guideService.findByUserId(userId);
   }
 }
