@@ -30,7 +30,7 @@ export class UserController {
 
   @Post()
   @UseGuards(ScopesGuard)
-  @Scopes(['read:user', 'create:user'])
+  @Scopes(['user:read', 'user:write'])
   async createOrFind(@Body() body: CreateUserDto): Promise<UserDto> {
     return await this.usersService.createOrFind(body);
   }

@@ -14,8 +14,8 @@ class JwtPayload {
   iat: number;
 
   constructor(sub: string,aud: string, roles: string[], scopes: string[]) {
+    this.iss = "auth";
     this.sub = sub;
-    this.iss = "auth-service";
     this.aud = aud;
     this.roles = roles;
     this.scopes = scopes;
@@ -41,9 +41,9 @@ export class AccessTokenService {
   constructor(private jwtService: JwtService) {}
 
 
-  generateAccessToken(sub: string, type: "internal" | "external"): string {
+  generateAccessToken(sub: string, aud: string, roles: string[], scopes: string[]): string {
     this.logger.log('Sign JWT access token');
-    const payload = new JwtPayload(sub, type);
+    const payload = new JwtPayload(sub, aud, roles, scopes);
     return this.jwtService.sign(payload.toJSON());
   }
 

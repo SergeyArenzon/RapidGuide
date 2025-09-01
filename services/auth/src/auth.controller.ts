@@ -21,6 +21,8 @@ import { RefreshTokenDto } from './types/auth';
 @Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
+  private readonly jwt_access_expires_in_ms = Number(process.env.JWT_ACCESS_EXPIRES_IN_MS);
+  private readonly jwt_refresh_expires_in_ms = Number(process.env.JWT_REFRESH_EXPIRES_IN_MS);
 
   constructor(
     private accessTokenService: AccessTokenService, 
@@ -38,13 +40,14 @@ export class AuthController {
     const providerUser = await this.accessTokenService.authenticateProvider(body);
     this.logger.debug(`Authenticated provider: ${JSON.stringify(providerUser)}`);
 
-    const internalAccessToken = this.accessTokenService.generateAccessToken("internal");
+    const internalAccessToken = this.accessTokenService.generateAccessToken("user", "user", ["admin"], ["user:read", "user:write"]);
 
     const res = await fetch('http://user:3000/user', {
       method: 'POST',
       body: JSON.stringify(providerUser),
       headers: {
         'Content-Type': 'application/json',
+        'Cookie': `accessToken=${internalAccessToken}`,
       },
     });
 
@@ -57,7 +60,7 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const accessToken = this.accessTokenService.generateAccessToken(user);
+    const accessToken = this.accessTokenService.generateAccessToken(user.id, "client", ["client"], ["user:read", "user:write"]);
     const refreshToken = this.refreshTokenService.generateRefreshToken();
 
     // Store refresh token with user data in Redis
@@ -71,13 +74,13 @@ export class AuthController {
         name: 'accessToken',
         value: accessToken,
         httpOnly: true,
-        maxAge: Number(process.env.JWT_ACCESS_EXPIRES_IN_MS),
+        maxAge: Number(this.jwt_access_expires_in_ms),
         secure: true,
       }, {
         name: 'refreshToken',
         value: refreshToken,
         httpOnly: true,
-        maxAge: Number(process.env.JWT_REFRESH_EXPIRES_IN_MS),
+        maxAge: Number(this.jwt_refresh_expires_in_ms),
         secure: true,
       }]
     }
@@ -117,7 +120,11 @@ export class AuthController {
       const user: UserDto = await userResponse.json();
       
       // Generate new access token
-      const newAccessToken = this.accessTokenService.generateAccessToken(user);
+      const newAccessToken = this.accessTokenService.generateAccessToken(
+        user.id, 
+        "client", 
+        ["guide","traveller"], 
+        ["user:read", "user:write", "traveller:read", "traveller:write"]);
       const newRefreshToken = this.refreshTokenService.generateRefreshToken();
 
       await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
@@ -128,13 +135,13 @@ export class AuthController {
       // Set new access token cookie
       response.cookie('accessToken', newAccessToken, {
         httpOnly: true,
-        maxAge: parseInt(process.env.JWT_ACCESS_EXPIRES_IN_MS),
+        maxAge: this.jwt_access_expires_in_ms,
         secure: true,
       });
 
       response.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
-        maxAge: parseInt(process.env.JWT_REFRESH_EXPIRES_IN_MS),
+        maxAge: this.jwt_refresh_expires_in_ms,
         secure: true,
       });
 
