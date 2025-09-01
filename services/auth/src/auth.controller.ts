@@ -74,13 +74,13 @@ export class AuthController {
         name: 'accessToken',
         value: accessToken,
         httpOnly: true,
-        maxAge: Number(this.jwt_access_expires_in_ms),
+        maxAge: this.jwt_access_expires_in_ms,
         secure: true,
       }, {
         name: 'refreshToken',
         value: refreshToken,
         httpOnly: true,
-        maxAge: Number(this.jwt_refresh_expires_in_ms),
+        maxAge: this.jwt_refresh_expires_in_ms,
         secure: true,
       }]
     }
