@@ -9,15 +9,17 @@ class JwtPayload {
   sub: string;
   iss: string;
   aud: string;
+  roles: string[];
+  scopes: string[];
   iat: number;
-  exp: number;
 
-  constructor(sub: string, type: "internal" | "external") {
+  constructor(sub: string,aud: string, roles: string[], scopes: string[]) {
     this.sub = sub;
     this.iss = "auth-service";
-    this.aud = "user-service";
+    this.aud = aud;
+    this.roles = roles;
+    this.scopes = scopes;
     this.iat = Date.now();
-    this.exp = Date.now() + Number(process.env.JWT_ACCESS_EXPIRES_IN_MS);
   } 
 
   toJSON() {
@@ -25,8 +27,9 @@ class JwtPayload {
       sub: this.sub,
       iss: this.iss,
       aud: this.aud,
-      iat: this.iat,
-      exp: this.exp
+      roles: this.roles,
+      scopes: this.scopes,
+      iat: this.iat
     };
   }
 }
