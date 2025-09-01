@@ -8,13 +8,19 @@ import {
   Param,
   ForbiddenException,
   Headers,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
-import { User } from 'src/decorators/user.decorator';
 import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
-import { Public } from 'src/decorators/public.decorator';
 import { GuideService } from 'src/guide/guide.service';
+import { Scopes } from 'src/decorators/scope.decorator';
+import { ScopesGuard } from 'src/guards/scope.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { AllowedRoles } from 'src/decorators/allowed-roles.decorator';
+import { Subject } from 'src/decorators/subject.decorator';
 
 @Controller('user')
 export class UserController {
@@ -25,28 +31,22 @@ export class UserController {
     private guideService: GuideService,
   ) {}
 
-  @Public()
   @Post()
-  @HttpCode(200)
-  async createOrFind(@Body() body: CreateUserDto): Promise<UserDto> {
+  @UseGuards(RolesGuard, ScopesGuard)
+  @Roles('admin')
+  @Scopes(['user:read', 'user:write'])
+  async createOrFind(
+    @Body() body: CreateUserDto,
+    @AllowedRoles() roles: string[],
+    @Subject() subject: string,
+  ): Promise<UserDto> {
     return await this.usersService.createOrFind(body);
   }
 
-  @Get(':userId/guide')
-  async getUserGuide(@Param('userId') userId: string, @User() user: UserDto) {
-    if (userId !== user.id) {
-      throw new ForbiddenException(
-        'You can only access your own guide information',
-      );
-    }
-    return this.guideService.findByUserId(userId);
-  }
-
-
   @Get('/:id')
+  @UseGuards(ScopesGuard)
+  @Scopes(['read:user'])
   getUserById(@Param('id') id: string) {
-    console.log("------------------>", id);
-    
     const user = this.usersService.findOne(id);
     return user;
   }

@@ -3,27 +3,48 @@ import { AuthDto, ProviderUserDto, UserDto, authSchema } from '@rapid-guide-io/d
 import { JwtService } from '@nestjs/jwt';
 import { v4 as uuidv4 } from 'uuid';
 
+
+
+class JwtPayload {
+  sub: string;
+  iss: string;
+  aud: string;
+  roles: string[];
+  scopes: string[];
+  iat: number;
+
+  constructor(sub: string,aud: string, roles: string[], scopes: string[]) {
+    this.iss = "auth";
+    this.sub = sub;
+    this.aud = aud;
+    this.roles = roles;
+    this.scopes = scopes;
+    this.iat = Date.now();
+  } 
+
+  toJSON() {
+    return {
+      sub: this.sub,
+      iss: this.iss,
+      aud: this.aud,
+      roles: this.roles,
+      scopes: this.scopes,
+      iat: this.iat
+    };
+  }
+}
+
+
 @Injectable()
 export class AccessTokenService {
   private readonly logger = new Logger(AccessTokenService.name);
-
   constructor(private jwtService: JwtService) {}
 
-  generateAccessToken(userPayload: UserDto): string {
+
+  generateAccessToken(sub: string, aud: string, roles: string[], scopes: string[]): string {
     this.logger.log('Sign JWT access token');
-    return this.jwtService.sign(userPayload);
-  }
-
-  generateRefreshToken(): string {
-    this.logger.log('Generating UUID refresh token');
-    return uuidv4();
-  }
-
-  verifyRefreshToken(token: string): boolean {
-    // For UUID refresh tokens, we just validate the format
-    // In a real implementation, you'd check against a database
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(token);
+    const payload = new JwtPayload(sub, aud, roles, scopes);
+    return this.jwtService.sign(payload.toJSON());
   }
 
   async authenticateProvider(auth: AuthDto): Promise<ProviderUserDto> {
