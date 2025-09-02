@@ -92,64 +92,63 @@ export class AuthController {
     @Req() request: Request,
     @Body() body,
   ): Promise<any> {
-    try {
-      // Validate refresh token and get user data from Redis
-      const refreshToken = request.cookies?.refreshToken;
+  
+    // Validate refresh token and get user data from Redis
+    const refreshToken = request.cookies?.refreshToken;
 
-      if (!refreshToken) {
-        throw new UnauthorizedException('Invalid or expired refresh token');
-      }
-
-      const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
-      if (!userData) {
-        throw new UnauthorizedException('Invalid or expired refresh token');
-      }
-
-      const userResponse = await fetch(`http://user:3000/user/${userData.userId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': `accessToken=${request.cookies?.accessToken}`
-        }
-      });
-
-      if (!userResponse.ok) {
-        this.logger.warn(`User service returned ${userResponse.status} for user ${userData.userId}`);
-        throw new UnauthorizedException('User not found');
-      }
-
-      const user: UserDto = await userResponse.json();
-      
-      // Generate new access token
-      const newAccessToken = this.accessTokenService.generateAccessToken(
-        user.id, 
-        "client", 
-        ["guide","traveller"], 
-        ["user:read", "user:write", "traveller:read", "traveller:write"]);
-      const newRefreshToken = this.refreshTokenService.generateRefreshToken();
-
-      await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
-      await this.refreshTokenService.revokeRefreshToken(refreshToken);
-      
-      this.logger.log('Refreshing access token for user', userData);
-
-      // Set new access token cookie
-      response.cookie('accessToken', newAccessToken, {
-        httpOnly: true,
-        maxAge: this.jwt_access_expires_in_ms,
-        secure: true,
-      });
-
-      response.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        maxAge: this.jwt_refresh_expires_in_ms,
-        secure: true,
-      });
-
-      return { message: 'Token refreshed successfully' };
-    } catch (error) {
-      this.logger.error('Failed to refresh token', error);
-      throw new UnauthorizedException('Invalid refresh token');
+    if (!refreshToken) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
     }
+
+    const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
+    if (!userData) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+
+    const internalAccessToken = this.accessTokenService.generateAccessToken("user", "user", ["admin"], ["user:read"]);
+
+    const userResponse = await fetch(`http://user:3000/user/${userData.userId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': `accessToken=${internalAccessToken}`
+      }
+    });
+
+    if (!userResponse.ok) {
+      this.logger.warn(`User service returned ${userResponse.status} for user ${userData.userId}`);
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    const user: UserDto = await userResponse.json();
+    
+    // Generate new access token
+    const newAccessToken = this.accessTokenService.generateAccessToken(
+      user.id, 
+      "client", 
+      ["guide","traveller"], 
+      ["user:read", "user:write", "traveller:read", "traveller:write"]);
+    const newRefreshToken = this.refreshTokenService.generateRefreshToken();
+
+    await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
+    await this.refreshTokenService.revokeRefreshToken(refreshToken);
+    
+    this.logger.log('Refreshing access token for user', userData);
+
+    // Set new access token cookie
+    response.cookie('accessToken', newAccessToken, {
+      httpOnly: true,
+      maxAge: this.jwt_access_expires_in_ms,
+      secure: true,
+    });
+
+    response.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      maxAge: this.jwt_refresh_expires_in_ms,
+      secure: true,
+    });
+
+    return { message: 'Token refreshed successfully' };
+    
   }
 
   @Post('/logout')

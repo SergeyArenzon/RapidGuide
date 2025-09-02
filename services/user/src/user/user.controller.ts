@@ -44,8 +44,9 @@ export class UserController {
   }
 
   @Get('/:id')
-  @UseGuards(ScopesGuard)
-  @Scopes(['read:user'])
+  @UseGuards(ScopesGuard, RolesGuard)
+  @Roles('admin')
+  @Scopes(['user:read'])
   getUserById(@Param('id') id: string) {
     const user = this.usersService.findOne(id);
     return user;

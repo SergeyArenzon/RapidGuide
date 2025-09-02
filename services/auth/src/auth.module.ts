@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
+import { AuthService } from './auth.service';
 import { AccessTokenModule } from './access-token/access-token.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
@@ -17,7 +18,7 @@ import { RedisModule } from '@rapid-guide-io/redis';
     }),
   ],
   controllers: [AuthController],
-  providers: [],
+  providers: [AuthService],
 })
 export class AuthModule {
   // configure(consumer: MiddlewareConsumer) {
