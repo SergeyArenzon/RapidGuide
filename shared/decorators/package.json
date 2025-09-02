@@ -1,0 +1,24 @@
+{
+	"name": "@rapid-guide-io/decorators",
+	"version": "0.0.2",
+	"description": "Shared decorators modules for Rapid Guide services",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"clean": "rimraf dist",
+		"prebuild": "pnpm run clean"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"dependencies": {
+		"@nestjs/common": "^11.1.6"
+	},
+	"devDependencies": {
+		"rimraf": "^5.0.10",
+		"typescript": "^5.1.0"
+	},
+	"author": "",
+	"license": "ISC"
+}

@@ -7,11 +7,9 @@ import {
   GuideDto,
   UserDto,
 } from '@rapid-guide-io/dto';
-import { Subject } from 'src/decorators/subject.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { ScopesGuard } from 'src/guards/scope.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Scopes } from 'src/decorators/scope.decorator';
+import { Subject, Roles, Scopes } from '@rapid-guide-io/decorators';
+import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
+
 
 @Controller('guide')
 export class GuideController {

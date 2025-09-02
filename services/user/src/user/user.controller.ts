@@ -15,13 +15,8 @@ import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
 import { GuideService } from 'src/guide/guide.service';
-import { Scopes } from 'src/decorators/scope.decorator';
-import { ScopesGuard } from 'src/guards/scope.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { RolesGuard } from '../guards/roles.guard';
-import { AllowedRoles } from 'src/decorators/allowed-roles.decorator';
-import { Subject } from 'src/decorators/subject.decorator';
-
+import { Scopes, Subject, AllowedRoles, Roles } from '@rapid-guide-io/decorators';
+import { ScopesGuard, RolesGuard } from '@rapid-guide-io/guards';
 @Controller('user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
