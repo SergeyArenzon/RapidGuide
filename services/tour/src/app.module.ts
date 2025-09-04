@@ -6,9 +6,12 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { CategoryModule } from './category/category.module';
 import { SubCategoryModule } from './sub-category/sub-category.module';
 
-
 @Module({
-  imports: [MikroOrmModule.forRoot(microOrmConfig), CategoryModule, SubCategoryModule],
+  imports: [
+    MikroOrmModule.forRoot(microOrmConfig),
+    CategoryModule,
+    SubCategoryModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

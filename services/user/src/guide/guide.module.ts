@@ -4,11 +4,17 @@ import { GuideService } from './guide.service';
 import { Guide } from './entities/guide.entity';
 import { GuideSubcategory } from './entities/guide-subcategory.entity';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { JwtModule } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
+import { jwtConfig } from '../config';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Guide, GuideSubcategory])],
+  imports: [
+    MikroOrmModule.forFeature([Guide, GuideSubcategory]),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+  ],
   controllers: [GuideController],
-  providers: [GuideService],
+  providers: [GuideService, Reflector],
   exports: [GuideService],
 })
 export class GuideModule {}

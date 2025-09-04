@@ -9,8 +9,6 @@ import { CityModule } from './city/city.module';
 import { GuideModule } from './guide/guide.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from './config';
-
-
 @Module({
   imports: [
     MikroOrmModule.forRoot(microOrmConfig),

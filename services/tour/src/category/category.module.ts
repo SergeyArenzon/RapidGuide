@@ -3,10 +3,14 @@ import { CategoryService } from './category.service';
 import { CategoryController } from './category.controller';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Category } from './entities/category.entity';
-import { SubCategory } from '../sub-category/entities/sub-category';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConfig } from './config';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Category])],
+  imports: [
+    MikroOrmModule.forFeature([Category]),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
+  ],
   controllers: [CategoryController],
   providers: [CategoryService],
 })

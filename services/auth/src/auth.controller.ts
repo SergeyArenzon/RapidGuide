@@ -15,18 +15,21 @@ import { AccessTokenService } from './access-token/access-token.service';
 import { Response, Request } from 'express';
 import { AuthDto, UserDto } from '@rapid-guide-io/dto';
 import { RefreshTokenService } from './refresh-token/refresh-token.service';
-import { RefreshTokenDto } from './types/auth';
-
+import { Role, ScopePermission } from '@rapid-guide-io/decorators';
 
 @Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  private readonly jwt_access_expires_in_ms = Number(process.env.JWT_ACCESS_EXPIRES_IN_MS);
-  private readonly jwt_refresh_expires_in_ms = Number(process.env.JWT_REFRESH_EXPIRES_IN_MS);
+  private readonly jwt_access_expires_in_ms = Number(
+    process.env.JWT_ACCESS_EXPIRES_IN_MS,
+  );
+  private readonly jwt_refresh_expires_in_ms = Number(
+    process.env.JWT_REFRESH_EXPIRES_IN_MS,
+  );
 
   constructor(
-    private accessTokenService: AccessTokenService, 
-    private refreshTokenService: RefreshTokenService
+    private accessTokenService: AccessTokenService,
+    private refreshTokenService: RefreshTokenService,
   ) {}
 
   // ENDPOINTS
@@ -37,17 +40,25 @@ export class AuthController {
   @Post()
   @UsePipes(ValidationPipe)
   async signIn(@Body() body: AuthDto): Promise<any> {
-    const providerUser = await this.accessTokenService.authenticateProvider(body);
-    this.logger.debug(`Authenticated provider: ${JSON.stringify(providerUser)}`);
+    const providerUser =
+      await this.accessTokenService.authenticateProvider(body);
+    this.logger.debug(
+      `Authenticated provider: ${JSON.stringify(providerUser)}`,
+    );
 
-    const internalAccessToken = this.accessTokenService.generateAccessToken("user", "user", ["admin"], ["user:read", "user:write"]);
-    
+    const internalAccessToken = this.accessTokenService.create(
+      'user',
+      'user',
+      [Role.ADMIN],
+      [ScopePermission.USER_READ, ScopePermission.USER_CREATE],
+    );
+
     const res = await fetch('http://user:3000/user', {
       method: 'POST',
       body: JSON.stringify(providerUser),
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': `accessToken=${internalAccessToken}`,
+        Cookie: `accessToken=${internalAccessToken}`,
       },
     });
 
@@ -60,30 +71,38 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const accessToken = this.accessTokenService.generateAccessToken(user.id, "client", ["client"], ["user:read", "user:write"]);
+    const accessToken = this.accessTokenService.createClientAccessToken(
+      user.id,
+    );
     const refreshToken = this.refreshTokenService.generateRefreshToken();
 
     // Store refresh token with user data in Redis
     await this.refreshTokenService.storeRefreshToken(refreshToken, user);
 
-    this.logger.log('Setting access and refresh token cookies in response', user);
+    this.logger.log(
+      'Setting access and refresh token cookies in response',
+      user,
+    );
 
     return {
       user,
-      cookies: [{
-        name: 'accessToken',
-        value: accessToken,
-        httpOnly: true,
-        maxAge: this.jwt_access_expires_in_ms,
-        secure: true,
-      }, {
-        name: 'refreshToken',
-        value: refreshToken,
-        httpOnly: true,
-        maxAge: this.jwt_refresh_expires_in_ms,
-        secure: true,
-      }]
-    }
+      cookies: [
+        {
+          name: 'accessToken',
+          value: accessToken,
+          httpOnly: true,
+          maxAge: this.jwt_access_expires_in_ms,
+          secure: true,
+        },
+        {
+          name: 'refreshToken',
+          value: refreshToken,
+          httpOnly: true,
+          maxAge: this.jwt_refresh_expires_in_ms,
+          secure: true,
+        },
+      ],
+    };
   }
 
   @Post('/refresh')
@@ -92,7 +111,6 @@ export class AuthController {
     @Req() request: Request,
     @Body() body,
   ): Promise<any> {
-  
     // Validate refresh token and get user data from Redis
     const refreshToken = request.cookies?.refreshToken;
 
@@ -100,38 +118,47 @@ export class AuthController {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
+    const userData =
+      await this.refreshTokenService.validateRefreshToken(refreshToken);
     if (!userData) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const internalAccessToken = this.accessTokenService.generateAccessToken("user", "user", ["admin"], ["user:read"]);
+    const internalAccessToken = this.accessTokenService.create(
+      'user',
+      'user',
+      [Role.ADMIN],
+      [ScopePermission.USER_READ],
+    );
 
-    const userResponse = await fetch(`http://user:3000/user/${userData.userId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': `accessToken=${internalAccessToken}`
-      }
-    });
+    const userResponse = await fetch(
+      `http://user:3000/user/${userData.userId}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Cookie: `accessToken=${internalAccessToken}`,
+        },
+      },
+    );
 
     if (!userResponse.ok) {
-      this.logger.warn(`User service returned ${userResponse.status} for user ${userData.userId}`);
+      this.logger.warn(
+        `User service returned ${userResponse.status} for user ${userData.userId}`,
+      );
       throw new UnauthorizedException('Unauthorized');
     }
 
     const user: UserDto = await userResponse.json();
-    
+
     // Generate new access token
-    const newAccessToken = this.accessTokenService.generateAccessToken(
-      user.id, 
-      "client", 
-      ["guide","traveller"], 
-      ["user:read", "user:write", "traveller:read", "traveller:write"]);
+    const newAccessToken = this.accessTokenService.createClientAccessToken(
+      user.id,
+    );
     const newRefreshToken = this.refreshTokenService.generateRefreshToken();
 
     await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
     await this.refreshTokenService.revokeRefreshToken(refreshToken);
-    
+
     this.logger.log('Refreshing access token for user', userData);
 
     // Set new access token cookie
@@ -148,19 +175,19 @@ export class AuthController {
     });
 
     return { message: 'Token refreshed successfully' };
-    
   }
 
   @Post('/logout')
   async logout(
-    @Req() request: Request, 
-    @Res({ passthrough: true }) response: Response): Promise<any> {
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<any> {
     this.logger.log('Logging out user');
 
     try {
-      // Get refresh token from cookies
+      // Get refresh token from cookiescreat
       const refreshToken = request.cookies?.refreshToken;
-      
+
       // Revoke refresh token if it exists in cookies
       if (refreshToken) {
         await this.refreshTokenService.revokeRefreshToken(refreshToken);

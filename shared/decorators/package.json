@@ -1,7 +1,7 @@
 {
-	"name": "@rapid-guide-io/dto",
-	"version": "0.0.5",
-	"description": "Shared DTO modules for Rapid Guide services",
+	"name": "@rapid-guide-io/decorators",
+	"version": "0.0.6",
+	"description": "Shared decorators modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
@@ -13,7 +13,7 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"zod": "^4.0.14"
+		"@nestjs/common": "^11.1.6"
 	},
 	"devDependencies": {
 		"rimraf": "^5.0.10",

@@ -15,13 +15,15 @@ import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
 import { GuideService } from 'src/guide/guide.service';
-import { Scopes } from 'src/decorators/scope.decorator';
-import { ScopesGuard } from 'src/guards/scope.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { RolesGuard } from '../guards/roles.guard';
-import { AllowedRoles } from 'src/decorators/allowed-roles.decorator';
-import { Subject } from 'src/decorators/subject.decorator';
-
+import {
+  Scopes,
+  Subject,
+  AllowedRoles,
+  Roles,
+  Role,
+  ScopePermission,
+} from '@rapid-guide-io/decorators';
+import { ScopesGuard, RolesGuard } from '@rapid-guide-io/guards';
 @Controller('user')
 export class UserController {
   private readonly logger = new Logger(UserController.name);
@@ -33,8 +35,8 @@ export class UserController {
 
   @Post()
   @UseGuards(RolesGuard, ScopesGuard)
-  @Roles('admin')
-  @Scopes(['user:read', 'user:write'])
+  @Roles(Role.ADMIN)
+  @Scopes([ScopePermission.USER_READ, ScopePermission.USER_CREATE])
   async createOrFind(
     @Body() body: CreateUserDto,
     @AllowedRoles() roles: string[],
@@ -45,8 +47,8 @@ export class UserController {
 
   @Get('/:id')
   @UseGuards(ScopesGuard, RolesGuard)
-  @Roles('admin')
-  @Scopes(['user:read'])
+  @Roles(Role.ADMIN)
+  @Scopes([ScopePermission.USER_READ])
   getUserById(@Param('id') id: string) {
     const user = this.usersService.findOne(id);
     return user;

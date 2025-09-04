@@ -7,11 +7,15 @@ import {
   GuideDto,
   UserDto,
 } from '@rapid-guide-io/dto';
-import { Subject } from 'src/decorators/subject.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { ScopesGuard } from 'src/guards/scope.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { Scopes } from 'src/decorators/scope.decorator';
+import {
+  Subject,
+  Roles,
+  Scopes,
+  Role,
+  ScopePermission,
+} from '@rapid-guide-io/decorators';
+import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
+
 
 @Controller('guide')
 export class GuideController {
@@ -19,8 +23,8 @@ export class GuideController {
 
   @Post()
   @UseGuards(RolesGuard, ScopesGuard)
-  @Roles('client')
-  @Scopes(['guide:create'])
+  @Roles(Role.CLIENT)
+  @Scopes([ScopePermission.GUIDE_CREATE])
   async create(
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
     @Subject() userId: string,
@@ -30,8 +34,8 @@ export class GuideController {
 
   @Get()
   @UseGuards(RolesGuard, ScopesGuard)
-  @Roles('client')
-  @Scopes(['guide:read'])
+  @Roles(Role.CLIENT)
+  @Scopes([ScopePermission.GUIDE_READ])
   async getGuide(@Subject() userId: string): Promise<GuideDto> {
     return await this.guideService.findByUserId(userId);
   }

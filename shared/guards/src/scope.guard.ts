@@ -9,7 +9,7 @@ import {
   import { Reflector } from '@nestjs/core';
   import { JwtService } from '@nestjs/jwt';
   import { Request } from 'express';
-  import { SCOPES_KEY } from 'src/decorators/scope.decorator';
+  import { SCOPES_KEY } from '@rapid-guide-io/decorators';
   
   @Injectable()
   export class ScopesGuard implements CanActivate {
