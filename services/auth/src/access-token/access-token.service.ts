@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AuthDto, ProviderUserDto, UserDto, authSchema } from '@rapid-guide-io/dto';
+import { AuthDto, ProviderUserDto, authSchema } from '@rapid-guide-io/dto';
 import { JwtService } from '@nestjs/jwt';
-import { v4 as uuidv4 } from 'uuid';
-
-
+import { Role, ScopePermission } from '@rapid-guide-io/decorators';
 
 class JwtPayload {
   sub: string;
@@ -13,14 +11,14 @@ class JwtPayload {
   scopes: string[];
   iat: number;
 
-  constructor(sub: string,aud: string, roles: string[], scopes: string[]) {
-    this.iss = "auth";
+  constructor(sub: string, aud: string, roles: string[], scopes: string[]) {
+    this.iss = 'auth';
     this.sub = sub;
     this.aud = aud;
     this.roles = roles;
     this.scopes = scopes;
     this.iat = Date.now();
-  } 
+  }
 
   toJSON() {
     return {
@@ -29,19 +27,42 @@ class JwtPayload {
       aud: this.aud,
       roles: this.roles,
       scopes: this.scopes,
-      iat: this.iat
+      iat: this.iat,
     };
   }
 }
-
 
 @Injectable()
 export class AccessTokenService {
   private readonly logger = new Logger(AccessTokenService.name);
   constructor(private jwtService: JwtService) {}
 
+  async createClientAccessToken(userId: string): Promise<string> {
+    return this.create(
+      userId,
+      'client',
+      [Role.CLIENT],
+      [
+        ScopePermission.USER_READ,
+        ScopePermission.USER_CREATE,
+        ScopePermission.USER_UPDATE,
+        ScopePermission.TOUR_READ,
+        ScopePermission.TOUR_CREATE,
+        ScopePermission.TOUR_UPDATE,
+        ScopePermission.TOUR_DELETE,
+        ScopePermission.GUIDE_READ,
+        ScopePermission.GUIDE_CREATE,
+        ScopePermission.GUIDE_UPDATE,
+        ScopePermission.GUIDE_DELETE,
+        ScopePermission.TRAVELLER_READ,
+        ScopePermission.TRAVELLER_CREATE,
+        ScopePermission.TRAVELLER_UPDATE,
+        ScopePermission.TRAVELLER_DELETE,
+      ],
+    );
+  }
 
-  generateAccessToken(sub: string, aud: string, roles: string[], scopes: string[]): string {
+  create(sub: string, aud: string, roles: string[], scopes: string[]): string {
     this.logger.log('Sign JWT access token');
     const payload = new JwtPayload(sub, aud, roles, scopes);
     return this.jwtService.sign(payload.toJSON());

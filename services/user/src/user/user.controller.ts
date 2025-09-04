@@ -15,7 +15,14 @@ import { CreateUserDto, UserDto } from '@rapid-guide-io/dto';
 import { UserService } from './user.service';
 // import { EventPattern, Payload } from '@nestjs/microservices';
 import { GuideService } from 'src/guide/guide.service';
-import { Scopes, Subject, AllowedRoles, Roles } from '@rapid-guide-io/decorators';
+import {
+  Scopes,
+  Subject,
+  AllowedRoles,
+  Roles,
+  Role,
+  ScopePermission,
+} from '@rapid-guide-io/decorators';
 import { ScopesGuard, RolesGuard } from '@rapid-guide-io/guards';
 @Controller('user')
 export class UserController {
@@ -28,8 +35,8 @@ export class UserController {
 
   @Post()
   @UseGuards(RolesGuard, ScopesGuard)
-  @Roles('admin')
-  @Scopes(['user:read', 'user:write'])
+  @Roles(Role.ADMIN)
+  @Scopes([ScopePermission.USER_READ, ScopePermission.USER_CREATE])
   async createOrFind(
     @Body() body: CreateUserDto,
     @AllowedRoles() roles: string[],
@@ -40,8 +47,8 @@ export class UserController {
 
   @Get('/:id')
   @UseGuards(ScopesGuard, RolesGuard)
-  @Roles('admin')
-  @Scopes(['user:read'])
+  @Roles(Role.ADMIN)
+  @Scopes([ScopePermission.USER_READ])
   getUserById(@Param('id') id: string) {
     const user = this.usersService.findOne(id);
     return user;

@@ -6,11 +6,12 @@ import { GuideSubcategory } from './entities/guide-subcategory.entity';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { JwtModule } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
+import { jwtConfig } from '../config';
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([Guide, GuideSubcategory]),
-    JwtModule,
+    JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
   controllers: [GuideController],
   providers: [GuideService, Reflector],
