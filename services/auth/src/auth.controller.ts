@@ -39,7 +39,10 @@ export class AuthController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async signIn(@Body() body: AuthDto): Promise<any> {
+  async signIn(
+    @Body() body: AuthDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<any> {
     const providerUser =
       await this.accessTokenService.authenticateProvider(body);
     this.logger.debug(
@@ -79,29 +82,19 @@ export class AuthController {
     // Store refresh token with user data in Redis
     await this.refreshTokenService.storeRefreshToken(refreshToken, user);
 
-    this.logger.log(
-      'Setting access and refresh token cookies in response',
-      user,
-    );
+    // Set refresh token as httpOnly cookie
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: this.jwt_refresh_expires_in_ms,
+      secure: true,
+      sameSite: 'strict',
+    });
 
+
+    // Return access token in response body for Authorization header usage
     return {
       user,
-      cookies: [
-        {
-          name: 'accessToken',
-          value: accessToken,
-          httpOnly: true,
-          maxAge: this.jwt_access_expires_in_ms,
-          secure: true,
-        },
-        {
-          name: 'refreshToken',
-          value: refreshToken,
-          httpOnly: true,
-          maxAge: this.jwt_refresh_expires_in_ms,
-          secure: true,
-        },
-      ],
+      accessToken,
     };
   }
 
@@ -161,20 +154,17 @@ export class AuthController {
 
     this.logger.log('Refreshing access token for user', userData);
 
-    // Set new access token cookie
-    response.cookie('accessToken', newAccessToken, {
-      httpOnly: true,
-      maxAge: this.jwt_access_expires_in_ms,
-      secure: true,
-    });
-
+    // Set new refresh token as httpOnly cookie
     response.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
       maxAge: this.jwt_refresh_expires_in_ms,
       secure: true,
     });
 
-    return { message: 'Token refreshed successfully' };
+    return { 
+      message: 'Token refreshed successfully',
+      accessToken: newAccessToken
+    };
   }
 
   @Post('/logout')
@@ -194,16 +184,14 @@ export class AuthController {
         this.logger.log('Revoked refresh token from Redis');
       }
 
-      // Clear both cookies by setting them to expire immediately
-      response.clearCookie('accessToken');
+      // Clear refresh token cookie
       response.clearCookie('refreshToken');
 
       this.logger.log('Successfully logged out user');
       return { message: 'Logged out successfully' };
     } catch (error) {
       this.logger.error('Error during logout:', error);
-      // Even if there's an error, still clear the cookies
-      response.clearCookie('accessToken');
+      // Even if there's an error, still clear the cookie
       response.clearCookie('refreshToken');
       return { message: 'Logged out successfully' };
     }
