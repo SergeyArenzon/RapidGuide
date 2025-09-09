@@ -20,9 +20,6 @@ import { Role, ScopePermission } from '@rapid-guide-io/decorators';
 @Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  private readonly jwt_access_expires_in_ms = Number(
-    process.env.JWT_ACCESS_EXPIRES_IN_MS,
-  );
   private readonly jwt_refresh_expires_in_ms = Number(
     process.env.JWT_REFRESH_EXPIRES_IN_MS,
   );
@@ -74,9 +71,11 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const accessToken = this.accessTokenService.createClientAccessToken(
+    const accessToken = await this.accessTokenService.createClientAccessToken(
       user.id,
     );
+    console.log({accessToken});
+    
     const refreshToken = this.refreshTokenService.generateRefreshToken();
 
     // Store refresh token with user data in Redis
@@ -89,7 +88,6 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
-
 
     // Return access token in response body for Authorization header usage
     return {
@@ -161,9 +159,9 @@ export class AuthController {
       secure: true,
     });
 
-    return { 
+    return {
       message: 'Token refreshed successfully',
-      accessToken: newAccessToken
+      accessToken: newAccessToken,
     };
   }
 

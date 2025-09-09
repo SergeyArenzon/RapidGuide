@@ -36,6 +36,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (response.ok) {
         const authResponse = await response.json();
+        console.log("-------",{authResponse});
+        
         user.tokenData = authResponse.user;
         if (authResponse.cookies && authResponse.cookies.length > 0) {
           const cookieStore = await cookies();

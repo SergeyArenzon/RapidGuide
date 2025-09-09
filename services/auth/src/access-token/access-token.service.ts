@@ -38,7 +38,7 @@ export class AccessTokenService {
   constructor(private jwtService: JwtService) {}
 
   async createClientAccessToken(userId: string): Promise<string> {
-    return this.create(
+    return await this.create(
       userId,
       'client',
       [Role.CLIENT],
