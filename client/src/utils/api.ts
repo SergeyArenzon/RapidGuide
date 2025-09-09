@@ -22,13 +22,16 @@ import {
 export default class Api {
   private axios: AxiosInstance;
 
-  constructor() {
+  constructor(accessToken: string) {
+    console.log({accessToken});
+    
     this.axios = axios.create({
       baseURL: process.env.NEXT_PUBLIC_API_URL,
       withCredentials: true,
       timeout: 5000, // 5s timeout
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
       },
     });
     

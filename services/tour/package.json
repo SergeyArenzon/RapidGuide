@@ -34,7 +34,7 @@
     "@nestjs/platform-express": "^11.1.6",
     "@rapid-guide-io/decorators": "^0.0.6",
     "@rapid-guide-io/dto": "^0.0.5",
-    "@rapid-guide-io/guards": "^0.0.1",
+    "@rapid-guide-io/guards": "^0.0.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "reflect-metadata": "^0.2.0",

@@ -32,9 +32,6 @@ const useAuth = () => {
         } else {
           clearUser();
           setIsLoading(false);
-          if (pathname !== ROUTES.SIGNIN) {
-            router.push(ROUTES.SIGNIN);
-          }
         }
       }
 

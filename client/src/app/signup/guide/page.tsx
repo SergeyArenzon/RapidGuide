@@ -9,10 +9,12 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from "@/components/AlertDialog";
 import { createGuideSchema, CreateGuideDto } from "@rapid-guide-io/dto";
+import useUserStore from "@/store/useUser";
 
 
 export default function SignupGuide() {
   const router = useRouter();
+  const { accessToken } = useUserStore();
   const [formState, setFormState] = useState<CreateGuideDto>({
     bio: '',
     subcategories_id: [],
@@ -24,7 +26,7 @@ export default function SignupGuide() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
-  const api = new Api();
+  const api = new Api(accessToken!);
 
   const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
     setFormState(prev => ({ ...prev, ...currentState }));
@@ -88,7 +90,7 @@ export default function SignupGuide() {
       setIsSubmitting(false);
     }
   }
-  
+    
   if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
 
   console.log([errorCategories, errorCountries, errorCities, errorLanguages, errorSubCategories]);

@@ -58,7 +58,7 @@ export class AuthController {
       body: JSON.stringify(providerUser),
       headers: {
         'Content-Type': 'application/json',
-        Cookie: `accessToken=${internalAccessToken}`,
+        Authorization: `Bearer ${internalAccessToken}`,
       },
     });
 
@@ -126,7 +126,7 @@ export class AuthController {
       {
         headers: {
           'Content-Type': 'application/json',
-          Cookie: `accessToken=${internalAccessToken}`,
+          Authorization: `Bearer ${internalAccessToken}`,
         },
       },
     );
@@ -141,14 +141,14 @@ export class AuthController {
     const user: UserDto = await userResponse.json();
 
     // Generate new access token
-    const newAccessToken = this.accessTokenService.createClientAccessToken(
-      user.id,
-    );
+    const newAccessToken =
+      await this.accessTokenService.createClientAccessToken(user.id);
     const newRefreshToken = this.refreshTokenService.generateRefreshToken();
 
     await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
     await this.refreshTokenService.revokeRefreshToken(refreshToken);
-
+    console.log({newAccessToken});
+    
     // Set new refresh token as httpOnly cookie with secure attributes
     response.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
