@@ -74,7 +74,6 @@ export class AuthController {
     const accessToken = await this.accessTokenService.createClientAccessToken(
       user.id,
     );
-    console.log({accessToken});
     
     const refreshToken = this.refreshTokenService.generateRefreshToken();
 
@@ -86,7 +85,7 @@ export class AuthController {
       httpOnly: true,
       maxAge: this.jwt_refresh_expires_in_ms,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
     });
 
     // Return access token in response body for Authorization header usage
@@ -104,13 +103,13 @@ export class AuthController {
   ): Promise<any> {
     // Validate refresh token and get user data from Redis
     const refreshToken = request.cookies?.refreshToken;
+    console.log({ refreshToken });
 
     if (!refreshToken) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const userData =
-      await this.refreshTokenService.validateRefreshToken(refreshToken);
+    const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
     if (!userData) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
@@ -150,18 +149,18 @@ export class AuthController {
     await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
     await this.refreshTokenService.revokeRefreshToken(refreshToken);
 
-    this.logger.log('Refreshing access token for user', userData);
-
-    // Set new refresh token as httpOnly cookie
+    // Set new refresh token as httpOnly cookie with secure attributes
     response.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
       maxAge: this.jwt_refresh_expires_in_ms,
-      secure: true,
+      secure: false, // TODO: Change to true on production
+      sameSite: 'lax',
     });
 
     return {
       message: 'Token refreshed successfully',
       accessToken: newAccessToken,
+      user,
     };
   }
 
@@ -175,7 +174,6 @@ export class AuthController {
     try {
       // Get refresh token from cookiescreat
       const refreshToken = request.cookies?.refreshToken;
-
       // Revoke refresh token if it exists in cookies
       if (refreshToken) {
         await this.refreshTokenService.revokeRefreshToken(refreshToken);

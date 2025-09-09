@@ -1,5 +1,5 @@
 'use client';
-import isAuth from "@/utils/isAuth";
+import { PublicPageGuard } from "@/components/AuthGuard";
 
 function AuthLayout({
   children,
@@ -7,10 +7,12 @@ function AuthLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="min-h-screen flex justify-center py-10">
-      {children}
-    </div>
+    <PublicPageGuard>
+      <div className="min-h-screen flex justify-center py-10">
+        {children}
+      </div>
+    </PublicPageGuard>
   )
 }
-// export default isAuth(AuthLayout);
+
 export default AuthLayout;

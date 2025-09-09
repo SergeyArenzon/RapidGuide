@@ -1,6 +1,6 @@
 'use client';
 import {Sidebar} from "@/components/Sidebar";
-import isAuth from "@/utils/isAuth";
+import { ProtectedPageGuard } from "@/components/AuthGuard";
 
 
 function DashboardLayout({
@@ -9,11 +9,13 @@ function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-   <div className="grid grid-cols-[1fr_300px] grid-rows-[70px_1fr] h-screen"> 
-      <Sidebar />
-      <main>{children}</main>
-    </div>
+    <ProtectedPageGuard>
+      <div className="grid grid-cols-[1fr_300px] grid-rows-[70px_1fr] h-screen"> 
+        <Sidebar />
+        <main>{children}</main>
+      </div>
+    </ProtectedPageGuard>
     )  
 }
 
-export default isAuth(DashboardLayout);
+export default DashboardLayout;

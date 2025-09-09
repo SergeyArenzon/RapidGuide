@@ -3,17 +3,11 @@
 import ROUTES from "@/app/routes";
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 import bg from '@/../public/images/guilherme-stecanella-_dH-oQF9w-Y-unsplash.jpg'
 import { Button } from "@/components/ui/button";
 
 
 export default function SigninPage() {
-  const { status } = useSession();
-  
-  if (status === "authenticated") return redirect(ROUTES.DASHBOARD);
-  else if (status === "loading") return <div>Loading...</div>;
-  
   return (
     <div className="bg-white w-3/5 h-3/4 flex shadow-md container text-primary">
       <div className="relative w-1/2 container flex justify-center rounded items-center bg-primary overflow-hidden">
