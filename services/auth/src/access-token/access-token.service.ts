@@ -58,6 +58,8 @@ export class AccessTokenService {
         ScopePermission.TRAVELLER_CREATE,
         ScopePermission.TRAVELLER_UPDATE,
         ScopePermission.TRAVELLER_DELETE,
+        ScopePermission.CATEGORY_READ,
+        ScopePermission.SUBCATEGORY_READ,
       ],
     );
   }
