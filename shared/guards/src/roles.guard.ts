@@ -4,13 +4,12 @@ import {
   Injectable,
   ForbiddenException,
   Logger,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { ROLES_KEY } from '@rapid-guide-io/decorators';
-
+import { verifyJwtToken } from './jwt-utils';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -32,24 +31,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const accessToken = request.cookies.accessToken;
-
-    if (!accessToken) {
-      throw new UnauthorizedException('No token provided');
-    }
-
-    let payload: any;
-    try {
-      payload = await this.jwtService.verifyAsync(accessToken);
-      this.logger.log(`Token verified for user: ${payload.sub}`);
-    } catch (error) {
-      this.logger.error(`Token verification failed: ${error.message}`);
-      throw new UnauthorizedException(
-        error.name === 'TokenExpiredError'
-          ? 'Token has expired'
-          : 'Invalid token',
-      );
-    }
+    const payload = await verifyJwtToken(request, this.jwtService, this.logger);
 
     if (!payload.roles || !Array.isArray(payload.roles)) {
       this.logger.warn('No roles found in user token');
@@ -71,4 +53,5 @@ export class RolesGuard implements CanActivate {
 
     return true;
   }
+
 }

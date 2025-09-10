@@ -1,15 +1,15 @@
 import {
-    CanActivate,
-    ExecutionContext,
-    Injectable,
-    ForbiddenException,
-    UnauthorizedException,
-    Logger,
-  } from '@nestjs/common';
-  import { Reflector } from '@nestjs/core';
-  import { JwtService } from '@nestjs/jwt';
-  import { Request } from 'express';
-  import { SCOPES_KEY } from '@rapid-guide-io/decorators';
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  ForbiddenException,
+  Logger,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { SCOPES_KEY } from '@rapid-guide-io/decorators';
+import { verifyJwtToken } from './jwt-utils';
   
   @Injectable()
   export class ScopesGuard implements CanActivate {
@@ -31,24 +31,7 @@ import {
       }
   
       const request = context.switchToHttp().getRequest<Request>();
-      const accessToken = request.cookies.accessToken;
-
-      if (!accessToken) {
-        throw new UnauthorizedException('No token provided');
-      }
-
-      let payload: any;
-      try {
-        payload = await this.jwtService.verifyAsync(accessToken);
-        this.logger.log(`Token verified for user: ${payload.sub}`);
-      } catch (error) {
-        this.logger.error(`Token verification failed: ${error.message}`);
-        throw new UnauthorizedException(
-          error.name === 'TokenExpiredError'
-            ? 'Token has expired'
-            : 'Invalid token',
-        );
-      }
+      const payload = await verifyJwtToken(request, this.jwtService, this.logger);
   
       if (!payload.scopes || !Array.isArray(payload.scopes)) {
         throw new ForbiddenException('No scopes in token');
@@ -68,5 +51,6 @@ import {
       this.logger.log(`Scope check passed for user ${payload.sub} with scopes: ${payload.scopes.join(', ')}`);
       return true;
     }
+
   }
   

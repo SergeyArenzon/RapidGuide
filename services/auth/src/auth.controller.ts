@@ -20,9 +20,6 @@ import { Role, ScopePermission } from '@rapid-guide-io/decorators';
 @Controller()
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
-  private readonly jwt_access_expires_in_ms = Number(
-    process.env.JWT_ACCESS_EXPIRES_IN_MS,
-  );
   private readonly jwt_refresh_expires_in_ms = Number(
     process.env.JWT_REFRESH_EXPIRES_IN_MS,
   );
@@ -39,7 +36,10 @@ export class AuthController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  async signIn(@Body() body: AuthDto): Promise<any> {
+  async signIn(
+    @Body() body: AuthDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<any> {
     const providerUser =
       await this.accessTokenService.authenticateProvider(body);
     this.logger.debug(
@@ -58,7 +58,7 @@ export class AuthController {
       body: JSON.stringify(providerUser),
       headers: {
         'Content-Type': 'application/json',
-        Cookie: `accessToken=${internalAccessToken}`,
+        Authorization: `Bearer ${internalAccessToken}`,
       },
     });
 
@@ -71,37 +71,27 @@ export class AuthController {
       throw new UnauthorizedException();
     }
 
-    const accessToken = this.accessTokenService.createClientAccessToken(
+    const accessToken = await this.accessTokenService.createClientAccessToken(
       user.id,
     );
+    
     const refreshToken = this.refreshTokenService.generateRefreshToken();
 
     // Store refresh token with user data in Redis
     await this.refreshTokenService.storeRefreshToken(refreshToken, user);
 
-    this.logger.log(
-      'Setting access and refresh token cookies in response',
-      user,
-    );
+    // Set refresh token as httpOnly cookie
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: this.jwt_refresh_expires_in_ms,
+      secure: true,
+      sameSite: 'lax',
+    });
 
+    // Return access token in response body for Authorization header usage
     return {
       user,
-      cookies: [
-        {
-          name: 'accessToken',
-          value: accessToken,
-          httpOnly: true,
-          maxAge: this.jwt_access_expires_in_ms,
-          secure: true,
-        },
-        {
-          name: 'refreshToken',
-          value: refreshToken,
-          httpOnly: true,
-          maxAge: this.jwt_refresh_expires_in_ms,
-          secure: true,
-        },
-      ],
+      accessToken,
     };
   }
 
@@ -113,13 +103,13 @@ export class AuthController {
   ): Promise<any> {
     // Validate refresh token and get user data from Redis
     const refreshToken = request.cookies?.refreshToken;
+    console.log({ refreshToken });
 
     if (!refreshToken) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const userData =
-      await this.refreshTokenService.validateRefreshToken(refreshToken);
+    const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
     if (!userData) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
@@ -136,7 +126,7 @@ export class AuthController {
       {
         headers: {
           'Content-Type': 'application/json',
-          Cookie: `accessToken=${internalAccessToken}`,
+          Authorization: `Bearer ${internalAccessToken}`,
         },
       },
     );
@@ -151,30 +141,27 @@ export class AuthController {
     const user: UserDto = await userResponse.json();
 
     // Generate new access token
-    const newAccessToken = this.accessTokenService.createClientAccessToken(
-      user.id,
-    );
+    const newAccessToken =
+      await this.accessTokenService.createClientAccessToken(user.id);
     const newRefreshToken = this.refreshTokenService.generateRefreshToken();
 
     await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
     await this.refreshTokenService.revokeRefreshToken(refreshToken);
-
-    this.logger.log('Refreshing access token for user', userData);
-
-    // Set new access token cookie
-    response.cookie('accessToken', newAccessToken, {
-      httpOnly: true,
-      maxAge: this.jwt_access_expires_in_ms,
-      secure: true,
-    });
-
+    console.log({newAccessToken});
+    
+    // Set new refresh token as httpOnly cookie with secure attributes
     response.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
       maxAge: this.jwt_refresh_expires_in_ms,
-      secure: true,
+      secure: false, // TODO: Change to true on production
+      sameSite: 'lax',
     });
 
-    return { message: 'Token refreshed successfully' };
+    return {
+      message: 'Token refreshed successfully',
+      accessToken: newAccessToken,
+      user,
+    };
   }
 
   @Post('/logout')
@@ -187,23 +174,20 @@ export class AuthController {
     try {
       // Get refresh token from cookiescreat
       const refreshToken = request.cookies?.refreshToken;
-
       // Revoke refresh token if it exists in cookies
       if (refreshToken) {
         await this.refreshTokenService.revokeRefreshToken(refreshToken);
         this.logger.log('Revoked refresh token from Redis');
       }
 
-      // Clear both cookies by setting them to expire immediately
-      response.clearCookie('accessToken');
+      // Clear refresh token cookie
       response.clearCookie('refreshToken');
 
       this.logger.log('Successfully logged out user');
       return { message: 'Logged out successfully' };
     } catch (error) {
       this.logger.error('Error during logout:', error);
-      // Even if there's an error, still clear the cookies
-      response.clearCookie('accessToken');
+      // Even if there's an error, still clear the cookie
       response.clearCookie('refreshToken');
       return { message: 'Logged out successfully' };
     }

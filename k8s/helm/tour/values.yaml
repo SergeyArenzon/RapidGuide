@@ -10,7 +10,11 @@ service:
   port: 3000
 
 env:
-  PORT: 3000
+  - name: JWT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: global-secrets
+        key: jwt-secret
 
 database:
   url: "postgresql://postgres:postgres@tour-db:5432/postgres?schema=public"
@@ -27,3 +31,15 @@ resources:
   requests:
     cpu: 100m
     memory: 150Mi
+
+healthCheck:
+  liveness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3

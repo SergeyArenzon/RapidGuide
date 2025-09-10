@@ -3,6 +3,17 @@ import Google from "next-auth/providers/google";
 import type { Provider } from "next-auth/providers";
 import { cookies } from "next/headers";
 
+// Extend NextAuth types
+declare module "next-auth" {
+  interface User {
+    tokenData?: any;
+    accessToken?: string;
+  }
+  interface Session {
+    accessToken?: string;
+  }
+}
+
 const providers: Provider[] = [Google];
  
 export const providerMap = providers
@@ -28,6 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies in the request
         body: JSON.stringify({
           jwt: account?.id_token, // Send the Google JWT to verify
           provider: account?.provider
@@ -36,30 +48,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       if (response.ok) {
         const authResponse = await response.json();
+        
         user.tokenData = authResponse.user;
-        if (authResponse.cookies && authResponse.cookies.length > 0) {
-          const cookieStore = await cookies();
-          authResponse.cookies.forEach((cookie: any) => {
-            console.log('Raw cookie from backend:', cookie);
-            console.log('maxAge value:', cookie.maxAge);
-            console.log('maxAge type:', typeof cookie.maxAge);
-            console.log('maxAge as number:', Number(cookie.maxAge));
-            console.log('maxAge is NaN:', isNaN(Number(cookie.maxAge)));
-            
-            // Ensure maxAge is a valid number
-            const maxAge = Number(cookie.maxAge);
-            if (isNaN(maxAge)) {
-              console.error('Invalid maxAge value:', cookie.maxAge);
-              return; // Skip this cookie if maxAge is invalid
+        user.accessToken = authResponse.accessToken;
+        
+        // Extract refreshToken from Set-Cookie headers and set it manually
+        const cookieStore = await cookies();
+        const setCookieHeader = response.headers.get('set-cookie');
+        
+        if (setCookieHeader) {
+          // Parse Set-Cookie header to extract refreshToken
+          const cookies = setCookieHeader.split(',').map(cookie => cookie.trim());
+          
+          cookies.forEach(cookieString => {
+            if (cookieString.startsWith('refreshToken=')) {
+              // Extract cookie value and attributes
+              const parts = cookieString.split(';').map(part => part.trim());
+              const [name, value] = parts[0].split('=');
+              
+              // Parse cookie attributes
+              const attributes: any = {};
+              parts.slice(1).forEach(attr => {
+                
+                if (attr.toLowerCase().startsWith('max-age=')) {
+                  const maxAge = parseInt(attr.split('=')[1]);
+                  if (!isNaN(maxAge)) {
+                    attributes.maxAge = maxAge;
+                  }
+                } 
+      
+              });
+              attributes.httpOnly = true;
+              attributes.sameSite = 'lax';
+              // attributes.secure = true; // TODO: Change to true on production
+              
+              console.log('Setting refreshToken cookie:', { name, value, attributes });
+              cookieStore.set(name, value, attributes);
             }
-            
-            const cookieOptions: any = {
-              httpOnly: cookie.httpOnly,
-              maxAge: maxAge / 1000,
-            };
-            
-            console.log('Setting cookie with options:', cookieOptions);
-            cookieStore.set(cookie.name, cookie.value, cookieOptions);
           });
         }
       } else {
@@ -71,11 +96,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, account, user }) {
       if (account) {
-        token.accessToken = account.access_token; // Save the Google access token
+        token.providerAccessToken = account.access_token; // Save the Google access token
         token.tokenId = account.id_token; // Save the Google access token
       }
       if (user?.tokenData) {
         token.user = user.tokenData; // Store user data from sign-in response in the token
+      }
+      if (user?.accessToken) {
+        token.accessToken = user.accessToken; // Store access token in JWT token
       }
       return token;
     },
@@ -86,6 +114,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           ...token.user, // Include the custom user data
         };
       }
+      if (token?.accessToken) {
+        session.accessToken = token.accessToken; // Include access token in session
+      }
+      
       return session;
     },
     async redirect({ url, baseUrl }) {

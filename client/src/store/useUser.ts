@@ -1,11 +1,14 @@
-import { User } from '@/types/user';
+
+import { UserDto } from '@rapid-guide-io/dto'
 import { create } from 'zustand'
 
 
 
 type UserStore = {
-  user: User | null,
-  setUser: (user: User) => void 
+  user: UserDto | null,
+  accessToken: string | null,
+  setUser: (user: UserDto, accessToken: string) => void 
+  setAccessToken: (token: string) => void
   clearUser: () => void
   isLogged: boolean
 }
@@ -13,9 +16,14 @@ type UserStore = {
 
 const useUserStore = create<UserStore>((set) => ({
     user: null,
-    setUser: (user) => set({ user, isLogged: true }),
-    clearUser: () => set({ user: null, isLogged: false }),
-    isLogged: false
+    accessToken: null,
+    setUser: (user, accessToken) => set({ user, accessToken, isLogged: true }),
+    setAccessToken: (token) => set({ accessToken: token }),
+    clearUser: () => set({ user: null, accessToken: null, isLogged: false }),
+    isLogged: false,
+
   }));
+
+
 
 export default useUserStore;

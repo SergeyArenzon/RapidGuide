@@ -8,7 +8,6 @@ const Signup = () => {
     <div className='container'>
       <Button variant="link"><Link href={ROUTES.CREATE_TRAVELLER}>Create Traveller</Link></Button>
       <Button variant="link"><Link href={ROUTES.CREATE_GUIDE}>Create Guide</Link></Button>
-      
     </div>
   )
 }

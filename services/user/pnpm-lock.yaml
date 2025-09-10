@@ -54,8 +54,8 @@ importers:
         specifier: ^0.0.5
         version: 0.0.5
       '@rapid-guide-io/guards':
-        specifier: ^0.0.1
-        version: 0.0.1(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+        specifier: ^0.0.3
+        version: 0.0.3(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@rapid-guide-io/redis':
         specifier: ^0.0.1
         version: 0.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -895,8 +895,8 @@ packages:
   '@rapid-guide-io/dto@0.0.5':
     resolution: {integrity: sha512-7lHMa8j3PUkFS1K/n0h0bt08F/hVHnfC/sOImVqucGKYFdTrb/SXcr7s5a+kcgXkFPQaGlnP4XFwVmnd3LMifw==}
 
-  '@rapid-guide-io/guards@0.0.1':
-    resolution: {integrity: sha512-hhDxf+E4ClAr4e8Ct4idL8g1mkhR/OlQL5PQR0OKh4ehvhjfosmacMJzcO0RZEQW2kOl73rFfji5D8WkYKbNSQ==}
+  '@rapid-guide-io/guards@0.0.3':
+    resolution: {integrity: sha512-2cE98yoXiv4k9LVG1Jc9RTZwAqwBnsr0Smh8BHmn91IJLzFkeZ52xKIa8OY4R0RhEPwOJ+20cptnjfnXV/Qq8g==}
 
   '@rapid-guide-io/redis@0.0.1':
     resolution: {integrity: sha512-ZjbctQvWddXdTL6QtYATAHZ2rx3bmyxZkkOLQgiUtEQWUv5jscHmmyZGloy2pz68Lz5EsQk8/XhBCJDVH+BcIQ==}
@@ -4744,7 +4744,7 @@ snapshots:
     dependencies:
       zod: 4.0.14
 
-  '@rapid-guide-io/guards@0.0.1(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
+  '@rapid-guide-io/guards@0.0.3(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.1)
