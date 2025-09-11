@@ -45,8 +45,8 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
       '@rapid-guide-io/decorators':
-        specifier: ^0.0.6
-        version: 0.0.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+        specifier: ^0.0.7
+        version: 0.0.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@rapid-guide-io/dto':
         specifier: ^0.0.5
         version: 0.0.5
@@ -669,8 +669,8 @@ packages:
   '@rapid-guide-io/decorators@0.0.2':
     resolution: {integrity: sha512-MbGmK2gKs7x3fHuPF2F3iZ/3A5oPXCtpIMx25K/UHJI05VAvNfjloxYk9oCckXN7Z4OiXQNCgjRUXbLWgerGKA==}
 
-  '@rapid-guide-io/decorators@0.0.6':
-    resolution: {integrity: sha512-FkyTPhC25oyX0g1LbiehjEoe0/4A2TQ173PFc1tq5HgaxsWq+lj8/xAOF8YRw9QCcPCfX1MqHWoj+JE+51U/oA==}
+  '@rapid-guide-io/decorators@0.0.7':
+    resolution: {integrity: sha512-UCLQ4bUBcLxmiSsaM/64453igXw6yiVjG0JPEmXX2vqMAPa2ZypX5iJVx3rWfkLZPB2TB+S14G/rpLol4sW6jg==}
 
   '@rapid-guide-io/dto@0.0.5':
     resolution: {integrity: sha512-7lHMa8j3PUkFS1K/n0h0bt08F/hVHnfC/sOImVqucGKYFdTrb/SXcr7s5a+kcgXkFPQaGlnP4XFwVmnd3LMifw==}
@@ -3284,6 +3284,9 @@ packages:
   zod@4.1.5:
     resolution: {integrity: sha512-rcUUZqlLJgBC33IT3PNMgsCq6TzLQEG/Ei/KTCU0PedSWRMAXoOUN+4t/0H+Q8bdnLPdqUYnvboJT0bn/229qg==}
 
+  zod@4.1.7:
+    resolution: {integrity: sha512-6qi6UYyzAl7W9uV29KvcSFXqK4QCYNYUz2YASPNBWpJE1RY6R1nArmmFPgGY/CBYWzpeMw3EOER+DR9a05O4IA==}
+
 snapshots:
 
   '@angular-devkit/core@17.3.11(chokidar@3.6.0)':
@@ -4040,9 +4043,10 @@ snapshots:
       - rxjs
       - supports-color
 
-  '@rapid-guide-io/decorators@0.0.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@rapid-guide-io/decorators@0.0.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      zod: 4.1.7
     transitivePeerDependencies:
       - class-transformer
       - class-validator
@@ -6944,3 +6948,5 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@4.1.5: {}
+
+  zod@4.1.7: {}
