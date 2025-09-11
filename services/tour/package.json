@@ -32,7 +32,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.1.6",
-    "@rapid-guide-io/decorators": "^0.0.7",
+    "@rapid-guide-io/decorators": "^0.0.19",
     "@rapid-guide-io/dto": "^0.0.5",
     "@rapid-guide-io/guards": "^0.0.3",
     "class-transformer": "^0.5.1",

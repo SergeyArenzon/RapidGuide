@@ -45,8 +45,8 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
       '@rapid-guide-io/decorators':
-        specifier: ^0.0.7
-        version: 0.0.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+        specifier: ^0.0.19
+        version: 0.0.19(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@rapid-guide-io/dto':
         specifier: ^0.0.5
         version: 0.0.5
@@ -666,11 +666,11 @@ packages:
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
+  '@rapid-guide-io/decorators@0.0.19':
+    resolution: {integrity: sha512-5fHoPD+L5++7nDN9cFxjY2XEPGMfwaGBbipu8X53S8y4opr5c9hCdEMwaGWn91uOraJX0/Puuj1hH2vqWDKoaw==}
+
   '@rapid-guide-io/decorators@0.0.2':
     resolution: {integrity: sha512-MbGmK2gKs7x3fHuPF2F3iZ/3A5oPXCtpIMx25K/UHJI05VAvNfjloxYk9oCckXN7Z4OiXQNCgjRUXbLWgerGKA==}
-
-  '@rapid-guide-io/decorators@0.0.7':
-    resolution: {integrity: sha512-UCLQ4bUBcLxmiSsaM/64453igXw6yiVjG0JPEmXX2vqMAPa2ZypX5iJVx3rWfkLZPB2TB+S14G/rpLol4sW6jg==}
 
   '@rapid-guide-io/dto@0.0.5':
     resolution: {integrity: sha512-7lHMa8j3PUkFS1K/n0h0bt08F/hVHnfC/sOImVqucGKYFdTrb/SXcr7s5a+kcgXkFPQaGlnP4XFwVmnd3LMifw==}
@@ -4033,9 +4033,10 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@rapid-guide-io/decorators@0.0.2(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@rapid-guide-io/decorators@0.0.19(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      zod: 4.1.7
     transitivePeerDependencies:
       - class-transformer
       - class-validator
@@ -4043,10 +4044,9 @@ snapshots:
       - rxjs
       - supports-color
 
-  '@rapid-guide-io/decorators@0.0.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@rapid-guide-io/decorators@0.0.2(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      zod: 4.1.7
     transitivePeerDependencies:
       - class-transformer
       - class-validator
