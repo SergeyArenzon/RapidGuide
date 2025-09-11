@@ -1,11 +1,12 @@
 import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { GuideService } from './guide.service';
-import { ZodValidationPipe } from '../pipes/zod-validation.pipe';
+import { ZodValidationPipe } from '@rapid-guide-io/pipes';
 import {
   CreateGuideDto,
   createGuideSchema,
   GuideDto,
   UserDto,
+  userSchema,
 } from '@rapid-guide-io/dto';
 import {
   Subject,
@@ -13,9 +14,9 @@ import {
   Scopes,
   Role,
   ScopePermission,
+  ResponseSchema,
 } from '@rapid-guide-io/decorators';
 import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
-
 
 @Controller('guide')
 export class GuideController {
@@ -23,6 +24,7 @@ export class GuideController {
 
   @Post()
   @UseGuards(RolesGuard, ScopesGuard)
+  @ResponseSchema(userSchema)
   @Roles(Role.CLIENT)
   @Scopes([ScopePermission.GUIDE_CREATE])
   async create(

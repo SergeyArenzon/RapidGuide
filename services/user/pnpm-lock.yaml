@@ -48,14 +48,20 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.6)
       '@rapid-guide-io/decorators':
-        specifier: ^0.0.6
-        version: 0.0.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+        specifier: ^0.0.19
+        version: 0.0.19(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@rapid-guide-io/dto':
         specifier: ^0.0.5
         version: 0.0.5
       '@rapid-guide-io/guards':
         specifier: ^0.0.3
         version: 0.0.3(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@rapid-guide-io/interceptors':
+        specifier: ^0.0.9
+        version: 0.0.9(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)
+      '@rapid-guide-io/pipes':
+        specifier: ^0.0.10
+        version: 0.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@rapid-guide-io/redis':
         specifier: ^0.0.1
         version: 0.0.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -96,8 +102,8 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3
       zod:
-        specifier: ^4.0.14
-        version: 4.0.14
+        specifier: ^4.1.7
+        version: 4.1.7
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.1
@@ -886,17 +892,23 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
+  '@rapid-guide-io/decorators@0.0.19':
+    resolution: {integrity: sha512-5fHoPD+L5++7nDN9cFxjY2XEPGMfwaGBbipu8X53S8y4opr5c9hCdEMwaGWn91uOraJX0/Puuj1hH2vqWDKoaw==}
+
   '@rapid-guide-io/decorators@0.0.2':
     resolution: {integrity: sha512-MbGmK2gKs7x3fHuPF2F3iZ/3A5oPXCtpIMx25K/UHJI05VAvNfjloxYk9oCckXN7Z4OiXQNCgjRUXbLWgerGKA==}
-
-  '@rapid-guide-io/decorators@0.0.6':
-    resolution: {integrity: sha512-FkyTPhC25oyX0g1LbiehjEoe0/4A2TQ173PFc1tq5HgaxsWq+lj8/xAOF8YRw9QCcPCfX1MqHWoj+JE+51U/oA==}
 
   '@rapid-guide-io/dto@0.0.5':
     resolution: {integrity: sha512-7lHMa8j3PUkFS1K/n0h0bt08F/hVHnfC/sOImVqucGKYFdTrb/SXcr7s5a+kcgXkFPQaGlnP4XFwVmnd3LMifw==}
 
   '@rapid-guide-io/guards@0.0.3':
     resolution: {integrity: sha512-2cE98yoXiv4k9LVG1Jc9RTZwAqwBnsr0Smh8BHmn91IJLzFkeZ52xKIa8OY4R0RhEPwOJ+20cptnjfnXV/Qq8g==}
+
+  '@rapid-guide-io/interceptors@0.0.9':
+    resolution: {integrity: sha512-G/fe5Anm7oU0v2gOktHoCEB6U3D9PurqWiyeaGZRe0EjlhS4+QV+PJ7hCHV0bVaXAp7WozItC5gIHy+/pZ7rLw==}
+
+  '@rapid-guide-io/pipes@0.0.10':
+    resolution: {integrity: sha512-KNk1wXYBc13VvcI2AsUpZjdNnfjS5L7vpIv3erjApXNvl/M5NRBsL55lb2iLsIXyff/GgoeQpHRCoVFlyXyLsw==}
 
   '@rapid-guide-io/redis@0.0.1':
     resolution: {integrity: sha512-ZjbctQvWddXdTL6QtYATAHZ2rx3bmyxZkkOLQgiUtEQWUv5jscHmmyZGloy2pz68Lz5EsQk8/XhBCJDVH+BcIQ==}
@@ -3208,6 +3220,9 @@ packages:
   rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
 
+  rxjs@7.8.2:
+    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
+
   safe-array-concat@1.1.3:
     resolution: {integrity: sha512-AURm5f0jYEOydBj7VQlVvDrjeFgthDdEF5H1dP+6mNpoXOMo1quQqJ4wvJDyRZ9+pO3kGWoOdmV08cSv2aJV6Q==}
     engines: {node: '>=0.4'}
@@ -3806,8 +3821,8 @@ packages:
     resolution: {integrity: sha512-U/PBtDf35ff0D8X8D0jfdzHYEPFxAI7jJlxZXwCSez5M3190m+QobIfh+sWDWSHMCWWJN2AWamkegn6vr6YBTw==}
     engines: {node: '>=18'}
 
-  zod@4.0.14:
-    resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
+  zod@4.1.7:
+    resolution: {integrity: sha512-6qi6UYyzAl7W9uV29KvcSFXqK4QCYNYUz2YASPNBWpJE1RY6R1nArmmFPgGY/CBYWzpeMw3EOER+DR9a05O4IA==}
 
 snapshots:
 
@@ -4609,6 +4624,21 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      file-type: 21.0.0
+      iterare: 1.2.1
+      load-esm: 1.0.2
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+      tslib: 2.8.1
+      uid: 2.0.2
+    optionalDependencies:
+      class-transformer: 0.5.1
+      class-validator: 0.14.1
+    transitivePeerDependencies:
+      - supports-color
+
   '@nestjs/config@4.0.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -4626,6 +4656,21 @@ snapshots:
       path-to-regexp: 8.2.0
       reflect-metadata: 0.2.2
       rxjs: 7.8.1
+      tslib: 2.8.1
+      uid: 2.0.2
+    optionalDependencies:
+      '@nestjs/microservices': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.6)(amqp-connection-manager@4.1.14(amqplib@0.10.5))(amqplib@0.10.5)(ioredis@5.7.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/platform-express': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.6)
+
+  '@nestjs/core@11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nuxt/opencollective': 0.4.1
+      fast-safe-stringify: 2.1.1
+      iterare: 1.2.1
+      path-to-regexp: 8.2.0
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
       tslib: 2.8.1
       uid: 2.0.2
     optionalDependencies:
@@ -4720,9 +4765,10 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@rapid-guide-io/decorators@0.0.2(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
+  '@rapid-guide-io/decorators@0.0.19(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      zod: 4.1.7
     transitivePeerDependencies:
       - class-transformer
       - class-validator
@@ -4730,7 +4776,18 @@ snapshots:
       - rxjs
       - supports-color
 
-  '@rapid-guide-io/decorators@0.0.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
+  '@rapid-guide-io/decorators@0.0.19(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      zod: 4.1.7
+    transitivePeerDependencies:
+      - class-transformer
+      - class-validator
+      - reflect-metadata
+      - rxjs
+      - supports-color
+
+  '@rapid-guide-io/decorators@0.0.2(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
     transitivePeerDependencies:
@@ -4742,7 +4799,7 @@ snapshots:
 
   '@rapid-guide-io/dto@0.0.5':
     dependencies:
-      zod: 4.0.14
+      zod: 4.1.7
 
   '@rapid-guide-io/guards@0.0.3(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
     dependencies:
@@ -4755,6 +4812,33 @@ snapshots:
       - '@nestjs/microservices'
       - '@nestjs/platform-express'
       - '@nestjs/websockets'
+      - class-transformer
+      - class-validator
+      - reflect-metadata
+      - rxjs
+      - supports-color
+
+  '@rapid-guide-io/interceptors@0.0.9(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)':
+    dependencies:
+      '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@rapid-guide-io/decorators': 0.0.19(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      rxjs: 7.8.2
+      zod: 4.1.7
+    transitivePeerDependencies:
+      - '@nestjs/microservices'
+      - '@nestjs/platform-express'
+      - '@nestjs/websockets'
+      - class-transformer
+      - class-validator
+      - reflect-metadata
+      - supports-color
+
+  '@rapid-guide-io/pipes@0.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
+    dependencies:
+      '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      zod: 4.1.7
+    transitivePeerDependencies:
       - class-transformer
       - class-validator
       - reflect-metadata
@@ -7408,6 +7492,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  rxjs@7.8.2:
+    dependencies:
+      tslib: 2.8.1
+
   safe-array-concat@1.1.3:
     dependencies:
       call-bind: 1.0.8
@@ -8098,4 +8186,4 @@ snapshots:
 
   yoctocolors-cjs@2.1.3: {}
 
-  zod@4.0.14: {}
+  zod@4.1.7: {}

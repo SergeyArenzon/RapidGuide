@@ -1,7 +1,7 @@
 {
-	"name": "@rapid-guide-io/guards",
-	"version": "0.0.3",
-	"description": "Shared guards client modules for Rapid Guide services",
+	"name": "@rapid-guide-io/interceptors",
+	"version": "0.0.9",
+	"description": "Shared interceptors modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"scripts": {
@@ -15,9 +15,9 @@
 	"dependencies": {
 		"@nestjs/common": "^11.1.6",
 		"@nestjs/core": "^11.1.6",
-		"@nestjs/jwt": "^11.0.0",
 		"@rapid-guide-io/decorators": "^0.0.19",
-		"express": "^5.1.0"
+		"rxjs": "^7.8.2",
+		"zod": "^4.1.7"
 	},
 	"devDependencies": {
 		"rimraf": "^5.0.10",
