@@ -1,0 +1,38 @@
+{
+  "name": "RapidGuide",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types"
+  },
+  "pnpm": {
+    "overrides": {
+      "@mikro-orm/core": "^6.5.2",
+      "@mikro-orm/migrations": "^6.5.2",
+      "@mikro-orm/nestjs": "^6.1.1",
+      "@mikro-orm/postgresql": "^6.5.2",
+      "@mikro-orm/seeder": "^6.4.1",
+      "@nestjs/common": "^11.1.6",
+      "@nestjs/config": "^4.0.2",
+      "@nestjs/core": "^11.1.6",
+      "@nestjs/jwt": "^11.0.0",
+      "@nestjs/mapped-types": "^2.1.0",
+      "@nestjs/microservices": "^11.1.6",
+      "@nestjs/platform-express": "^11.1.6",
+      "pg": "^8.13.1",
+      "zod": "^4.1.7"
+    }
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.6",
+    "typescript": "5.9.2"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -6,7 +6,7 @@ import { SubCategory } from './sub-category/entities/sub-category';
 import { join } from 'path';
 
 const microOrmConfig: MikroOrmModuleSyncOptions = {
-  clientUrl: process.env.DATABASE_URL, // Connection URL
+  clientUrl: process.env.DATABASE_URL || 'postgresql://tour_user:tour_password@localhost:5432/tour_db', // Connection URL with fallback
   entities: [Category, SubCategory],
   driver: PostgreSqlDriver, // Specify PostgreSQL driver
   migrations: {

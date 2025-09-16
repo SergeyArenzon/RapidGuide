@@ -1,0 +1,29 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: huddlehub
+build:
+  artifacts:
+    - image: sergeyarenzon/huddlehub-tour
+      context: .
+      docker:
+        dockerfile: services/tour/Dockerfile.dev
+      sync: 
+        manual:
+          - src: "services/tour/src/**/*.ts"
+            dest: services/tour/src
+  tagPolicy:
+    gitCommit: {}
+  local:
+    useBuildkit: true
+manifests:
+  helm:
+    releases:
+      - name: secrets
+        chartPath: k8s/helm/secrets/
+        valuesFiles:
+          - k8s/helm/secrets/values.yaml
+      - name: tour
+        chartPath: k8s/helm/tour/
+        valuesFiles:
+          - k8s/helm/tour/values.yaml
