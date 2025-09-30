@@ -10,8 +10,10 @@ build:
         dockerfile: services/tour/Dockerfile.dev
       sync: 
         manual:
-          - src: "services/tour/src/**/*.ts"
-            dest: services/tour/src
+          - src: "services/tour/src/**/*"
+            dest: "/app/src"
+          - src: "shared/**/*"
+            dest: "/app/shared"
   tagPolicy:
     gitCommit: {}
   local:
@@ -23,6 +25,10 @@ manifests:
         chartPath: k8s/helm/secrets/
         valuesFiles:
           - k8s/helm/secrets/values.yaml
+      - name: tour-db
+        chartPath: k8s/helm/tour-db/
+        valuesFiles:
+          - k8s/helm/tour-db/values.yaml
       - name: tour
         chartPath: k8s/helm/tour/
         valuesFiles:

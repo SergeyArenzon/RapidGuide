@@ -7,20 +7,22 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # Copy workspace files
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY services/tour/package.json ./services/tour/
-COPY services/tour/tsconfig.json services/tour/tsconfig.build.json services/tour/nest-cli.json ./services/tour/
-COPY shared ./shared
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Install dependencies using workspace
-RUN pnpm install --filter ./services/tour... --frozen-lockfile
+# Copy package files
+COPY services/tour/package.json ./package.json
+COPY services/tour/tsconfig.json tsconfig.json
+COPY services/tour/tsconfig.build.json tsconfig.build.json
+COPY services/tour/nest-cli.json nest-cli.json
+
+# Copy shared packages
+COPY shared/ ./shared/
+
+# Install all dependencies (including dev dependencies)
+RUN pnpm install
 
 # Copy the source code
-COPY services/tour/src/ ./services/tour/src/
-
-
-# Set working directory to the service
-WORKDIR /app/services/tour
+COPY services/tour/src/ ./src/
 
 # Expose port
 EXPOSE 3000
