@@ -9,7 +9,7 @@ image:
 initContainers:
   - name: wait-for-redis
     image: busybox:1.35
-    command: ['sh', '-c', 'until nc -z redis-master 6379; do echo waiting for redis; sleep 2; done; echo "Redis is ready!";']
+    command: ['sh', '-c', 'until nc -z redis 6379; do echo waiting for redis; sleep 2; done; echo "Redis is ready!";']
 
 service:
   type: ClusterIP

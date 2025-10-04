@@ -1,27 +1,11 @@
-architecture: standalone
-name: redis
-auth:
-  enabled: false
-  password: "redis"  # Change this in production!
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    cpu: 50m
+    memory: 128Mi
 
-master:
-  disableCommands: []
-  persistence:
-    enabled: true
-    size: 1Gi
-  resources:
-    requests:
-      memory: 128Mi
-      cpu: 100m
-    limits:
-      memory: 256Mi
-      cpu: 200m
-securityContext:
-  runAsUser: 1001
-  runAsNonRoot: true
-metrics:
-  enabled: false  # Enables Prometheus metrics
-
-service:
-  type: ClusterIP
-  port: 6379
+config:
+  maxmemory: 100mb
+  maxmemoryPolicy: allkeys-lru

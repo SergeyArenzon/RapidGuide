@@ -1,6 +1,6 @@
 image:
   repository: postgres
-  tag: latest
+  tag: 15.3
   pullPolicy: IfNotPresent
 
 nameOverride: ""
