@@ -3,3 +3,16 @@
 node_modules/
 dist/
 shared/dist
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+count.txt
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+todos.json
