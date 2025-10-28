@@ -1,4 +1,5 @@
 architecture: standalone
+pullPolicy: IfNotPresent
 name: redis
 auth:
   enabled: false
