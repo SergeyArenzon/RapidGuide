@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import { AlertCircle, Home, RotateCcw, LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"

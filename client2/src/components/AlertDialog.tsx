@@ -1,5 +1,3 @@
-"use client"
-
 import {
   AlertDialog as AlertDialogBase,
   AlertDialogAction,
