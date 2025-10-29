@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     id: 'email',
-    type: 'email',
+    type: 'text',
     placeholder: 'Enter your email',
   },
 }
