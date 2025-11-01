@@ -1,8 +1,8 @@
 "use client"
 
 import type * as React from "react"
-import { Label } from "@/components/ui/label"
 import type { FieldErrors } from "react-hook-form"
+import { Label } from "@/components/ui/label"
 
 export type FormFieldBaseProps = {
   name: string
@@ -35,7 +35,7 @@ export function FormFieldBase({
       
       {children}
 
-      {!disabled && errors[name] && <p className="text-sm text-red-500">{errors[name]?.message as string}</p>}
+      {!disabled && errors[name] && <p className="text-sm text-red-500">{errors[name].message as string}</p>}
       {!errors[name]  && helperText && <p className="text-sm text-muted-foreground">{helperText}</p>}
     </div>
   )

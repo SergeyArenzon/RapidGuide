@@ -8,7 +8,6 @@ import SelectDropdown from "../SelectDropdown"
 import { Input } from "../ui/input"
 import { CategorizedCheckboxDropdown } from "../CategorizedCheckboxDropdown"
 import { FormFieldBase } from "./FormFieldBase"
-import { CheckboxFieldConfig, TextFieldConfig } from "./types"
 import type * as z from "zod"
 import type { DefaultValues, FieldValues, Path} from "react-hook-form";
 import type { FieldConfig} from "./types";

@@ -40,7 +40,7 @@ export function CheckboxDropdown({
   maxBadges = 3,
 }: CheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
-  const selectedItems = (useWatch({ control, name }) as string[]) || []
+  const selectedItems = (useWatch({ control, name }) as Array<string>) || []
 
   const handleItemToggle = (value: string) => {
     const currentValues = [...selectedItems]

@@ -4,7 +4,6 @@ import {
   categorySchema, 
   citySchema,
   countrySchema,
-  createGuideSchema,
   guideSchema,
   languageSchema,
   subCategorySchema
@@ -65,7 +64,7 @@ export default class Api {
   // 🛑 Handle API errors globally
   private handleError(error: AxiosError) {
     if (error.response) {
-      const errorMessage = (error.response.data as { message?: string })?.message || 'Something went wrong.';
+      const errorMessage = (error.response.data as { message?: string }).message || 'Something went wrong.';
       console.error('API Error:', errorMessage);
       throw new Error(errorMessage);
     } else if (error.request) {

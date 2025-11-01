@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { Check, ChevronsUpDown, Loader2 } from "lucide-react"
 
+import type { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
-import { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 
 // Generic type for items
 type Item = {
@@ -15,7 +15,7 @@ type Item = {
 }
 
 type SelectDropdownProps = {
-    options: Item[]
+    options: Array<Item>
     label?: string
     placeholder?: string
     onSelectionChange?: (value: string | null) => void
@@ -107,7 +107,7 @@ export default function SelectDropdown({
                         value={option.value.toString()} 
                         onSelect={handleSelect}>
                         <Check className={cn("mr-2 h-4 w-4 text-primary", selected === option.value ? "opacity-100" : "opacity-0")} />
-                        <Label htmlFor={`${option.value}`} className="flex-grow cursor-pointer">{option.label}</Label>
+                        <Label htmlFor={`${option.value}`} className="grow cursor-pointer">{option.label}</Label>
                     </CommandItem>
                     ))}
                 </CommandGroup>
