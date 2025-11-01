@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.citySchema = void 0;
+const zod_1 = require("zod");
+const time_dto_1 = require("./time.dto");
+const country_dto_1 = require("./country.dto");
+const citySchema = time_dto_1.timeSchema.extend({
+    id: zod_1.z.number(),
+    name: zod_1.z.string(),
+    country_code: country_dto_1.countrySchema.shape.code,
+});
+exports.citySchema = citySchema;
+//# sourceMappingURL=city.dto.js.map

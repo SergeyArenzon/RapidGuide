@@ -1,22 +1,24 @@
-import axios, { AxiosInstance, AxiosError, AxiosResponse } from 'axios';
+import axios from 'axios';
 import { z } from 'zod';
 import { 
-  CreateGuideDto, 
-  createGuideSchema, 
-  GuideDto, 
-  UserDto, 
-  CityDto, 
-  citySchema, 
-  LanguageDto,
-  languageSchema, 
-  CountryDto, 
+  categorySchema, 
+  citySchema,
   countrySchema,
-  subCategorySchema,
-  SubCategoryDto,
+  createGuideSchema,
   guideSchema,
-  CategoryDto,
-  categorySchema
+  languageSchema,
+  subCategorySchema
 } from '@rapid-guide-io/dto';
+import type { 
+  CategoryDto, 
+  CityDto, 
+  CountryDto, 
+  CreateGuideDto, 
+  GuideDto, 
+  LanguageDto, 
+  SubCategoryDto,
+  UserDto} from '@rapid-guide-io/dto';
+import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 
 
 export default class Api {
@@ -78,35 +80,35 @@ export default class Api {
 
   
   // 🛠 Fetch languages with validation
-  async getLanguages(): Promise<LanguageDto[]> {
+  async getLanguages(): Promise<Array<LanguageDto>> {
     return this.validateResponse(
       () => this.axios.get('/user/languages'),
       z.array(languageSchema)
     );
   }
   
-  async getCountries(): Promise<CountryDto[]> {
+  async getCountries(): Promise<Array<CountryDto>> {
     return this.validateResponse(
       () => this.axios.get('/user/country'),
       z.array(countrySchema)
     );
   }
 
-  async getCities(): Promise<CityDto[]> {
+  async getCities(): Promise<Array<CityDto>> {
     return this.validateResponse(
       () => this.axios.get(`/user/city`),
       z.array(citySchema)
     );
   }
 
-  async getSubCategories(): Promise<SubCategoryDto[]> {
+  async getSubCategories(): Promise<Array<SubCategoryDto>> {
     return this.validateResponse(
       () => this.axios.get('/tour/sub-category'),
       z.array(subCategorySchema)
     );
   }
 
-  async getCategories(): Promise<CategoryDto[]> {
+  async getCategories(): Promise<Array<CategoryDto>> {
     return this.validateResponse(
       () => this.axios.get('/tour/category'),
       z.array(categorySchema)

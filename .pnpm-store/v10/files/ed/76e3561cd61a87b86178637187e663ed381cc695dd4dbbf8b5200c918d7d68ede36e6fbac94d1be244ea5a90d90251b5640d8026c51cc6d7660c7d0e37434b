@@ -1,0 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authSchema = void 0;
+const zod_1 = require("zod");
+exports.authSchema = zod_1.z.object({
+    jwt: zod_1.z.string().min(1, 'JWT token is required'),
+    provider: zod_1.z.enum(["google", "facebook", "apple"])
+});
+//# sourceMappingURL=auth.dto.js.map

@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.timeSchema = void 0;
+const zod_1 = require("zod");
+const timeSchema = zod_1.z.object({
+    created_at: zod_1.z.coerce.date(),
+    updated_at: zod_1.z.coerce.date(),
+});
+exports.timeSchema = timeSchema;
+//# sourceMappingURL=time.dto.js.map

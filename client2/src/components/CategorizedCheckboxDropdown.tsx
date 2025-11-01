@@ -1,13 +1,13 @@
 import * as React from "react"
 import { Check, ChevronsUpDown, X } from "lucide-react"
+import { useWatch } from "react-hook-form"
+import type { Control, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import type { UseFormRegister, UseFormWatch, UseFormSetValue, Control } from "react-hook-form"
-import { useWatch } from "react-hook-form"
 
 export type CategoryOption = {
   value: string
@@ -18,7 +18,7 @@ export type CategoryOption = {
 export type CategorizedCheckboxDropdownProps = {
   name: string
   label?: string
-  options: CategoryOption[]
+  options: Array<CategoryOption>
   placeholder?: string
   register: UseFormRegister<any>
   watch: UseFormWatch<any>
@@ -45,7 +45,7 @@ export function CategorizedCheckboxDropdown({
   maxBadges = 3,
 }: CategorizedCheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
-  const selectedItems = (useWatch({ control, name }) as string[]) || []
+  const selectedItems = (useWatch({ control, name }) as Array<string>) || []
 
   // Get all subcategory values for a category
   const getCategorySubcategories = (categoryValue: string) => {

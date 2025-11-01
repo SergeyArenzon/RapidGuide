@@ -1,0 +1,8 @@
+import { z } from 'zod';
+export declare const ProviderUserDto: z.ZodObject<{
+    first_name: z.ZodString;
+    last_name: z.ZodString;
+    email: z.ZodEmail;
+    image_url: z.ZodString;
+}, z.core.$strip>;
+export type ProviderUserDto = z.infer<typeof ProviderUserDto>;

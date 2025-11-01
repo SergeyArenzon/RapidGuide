@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.countrySchema = void 0;
+const zod_1 = require("zod");
+const time_dto_1 = require("./time.dto");
+exports.countrySchema = time_dto_1.timeSchema.extend({
+    code: zod_1.z.string().length(2),
+    alpha3: zod_1.z.string().length(3),
+    name: zod_1.z.string(),
+    country_code: zod_1.z.coerce.number(),
+    region: zod_1.z.string(),
+    region_code: zod_1.z.coerce.number(),
+});
+//# sourceMappingURL=country.dto.js.map
