@@ -97,12 +97,11 @@ function RouteComponent() {
     
   if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
 
-  
-  // if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
-  // if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
-  // if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
-  // if (errorCities) return <Error retryAction={() => refetchCities()}/>
-  // if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
+  if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
+  if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
+  if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
+  if (errorCities) return <Error retryAction={() => refetchCities()}/>
+  if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
   
   return (
     <>
@@ -174,7 +173,7 @@ function RouteComponent() {
             label: "City",
             options: cities?.filter(city => city.country_code === formState?.country_code).map(city => ({ value: Number(city.id), label: city.name })) || [],
             placeholder: "Select city",
-            disabled: !formState?.country_code,
+            disabled: !formState.country_code,
             helperText: "Select the city you live in.",
             isLoading: isLoadingCities
           },
