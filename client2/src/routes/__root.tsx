@@ -13,6 +13,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
+import { Error } from '@/components/Error'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -40,8 +41,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
 
+  notFoundComponent: () => <Error 
+  statusCode={404}
+  title="Page not found"
+  description="The page you're looking for doesn't exist."/>,
   shellComponent: RootDocument,
 })
+
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (

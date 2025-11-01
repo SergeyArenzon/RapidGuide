@@ -1,5 +1,7 @@
-import Link from "next/link"
-import { AlertCircle, Home, RotateCcw, LucideIcon } from "lucide-react"
+
+import { AlertCircle, Home, RotateCcw } from "lucide-react"
+import { Link } from "@tanstack/react-router"
+import type { LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface ErrorProps {
@@ -9,6 +11,7 @@ interface ErrorProps {
   showHomeButton?: boolean
   Icon?: LucideIcon
   retryAction?: () => void
+  [key: string]: any // Allow any additional props from router
 }
 
 export function Error({
@@ -40,7 +43,7 @@ export function Error({
 
         {showHomeButton && (
           <Button asChild variant={retryAction ? "outline" : "default"}>
-            <Link href="/">
+            <Link to="/">
               Go back home
               <Home className="mr-2 h-4 w-4" />
             </Link>
