@@ -39,24 +39,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import useUserStore from "@/store/useUser"
-import { signOut } from "next-auth/react"
-import Api from "@/utils/api"
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const [activeTab, setActiveTab] = React.useState("analytics");
   const { user } = useUserStore();
-  const api = new Api();
+  // const api = new Api();
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
       // Send logout request to backend
-      await api.logout();
+      // await api.logout();
     } catch (error) {
       console.error('Logout request failed:', error);
       // Continue with logout even if backend request fails
     } finally {
       // Always call NextAuth signOut
-      signOut();
+      // signOut();
     }
   };
 
@@ -71,7 +69,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
 
   return (
     <SidebarProvider>
-      <ShadcnSidebar side="right" {...props}>
+      <ShadcnSidebar side="right" className="h-full" {...props}>
         <SidebarHeader>
           <Logo />
           <div className="relative px-4 py-2">

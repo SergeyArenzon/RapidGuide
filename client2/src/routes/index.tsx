@@ -1,11 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({
+  component: RouteComponent,
+})
 
-function App() {
-  console.log("index");
-  
-  return (
-    <div>wdsf</div>
-  )
+function RouteComponent() {
+  return <div>Hello "/"!</div>
 }
