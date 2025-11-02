@@ -53,19 +53,23 @@ manifests:
         chartPath: k8s/helm/user-db/
         valuesFiles:
           - k8s/helm/user-db/values.yaml
-      - name: tour-db
-        chartPath: k8s/helm/tour-db/
+      # - name: tour-db
+      #   chartPath: k8s/helm/tour-db/
+      #   valuesFiles:
+      #     - k8s/helm/tour-db/values.yaml
+      - name: auth-db
+        chartPath: k8s/helm/auth-db/
         valuesFiles:
-          - k8s/helm/tour-db/values.yaml
+          - k8s/helm/auth-db/values.yaml
       - name: ingress-nginx
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
           - k8s/helm/ingress-nginx/values.yaml
-      - name: redis
-        repo: https://charts.bitnami.com/bitnami
-        remoteChart: redis
-        valuesFiles:
-          - k8s/helm/redis/values.yaml
+      # - name: redis
+      #   repo: https://charts.bitnami.com/bitnami
+      #   remoteChart: redis
+      #   valuesFiles:
+      #     - k8s/helm/redis/values.yaml
       - name: auth
         chartPath: k8s/helm/auth/
         valuesFiles:
@@ -74,7 +78,7 @@ manifests:
         chartPath: k8s/helm/user/
         valuesFiles:
           - k8s/helm/user/values.yaml
-      - name: tour
-        chartPath: k8s/helm/tour/
-        valuesFiles:
-          - k8s/helm/tour/values.yaml
+      # - name: tour
+      #   chartPath: k8s/helm/tour/
+      #   valuesFiles:
+      #     - k8s/helm/tour/values.yaml
