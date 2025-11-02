@@ -18,8 +18,8 @@ import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { Role, ScopePermission } from '@rapid-guide-io/decorators';
 
 @Controller()
-export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
+export class AppController {
+  private readonly logger = new Logger(AppController.name);
   private readonly jwt_refresh_expires_in_ms = Number(
     process.env.JWT_REFRESH_EXPIRES_IN_MS,
   );

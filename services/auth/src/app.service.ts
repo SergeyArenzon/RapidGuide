@@ -7,8 +7,8 @@ import { Request, Response } from 'express';
 
 
 @Injectable()
-export class AuthService {
-  private readonly logger = new Logger(AuthService.name);
+export class AppService {
+  private readonly logger = new Logger(AppService.name);
 
   constructor() {}
 
