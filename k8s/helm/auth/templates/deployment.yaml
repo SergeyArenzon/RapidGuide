@@ -33,6 +33,35 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
+            - name: AUTH_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_HOST
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_DB
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              value: {{ .Values.database.password | quote }}
+            - name: DATABASE_URL
+              value: "postgresql://{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_USER" }}:{{ .Values.database.password }}@{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_HOST" }}:{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_PORT" }}/{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_DB" }}"
             - name: JWT_MAX_AGE
               valueFrom:
                 configMapKeyRef:
@@ -73,6 +102,16 @@ spec:
                 configMapKeyRef:
                   name: global-config
                   key: redis-db
+            - name: AUTH_GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.global.name }}
+                  key: auth-google-client-id
+            - name: AUTH_GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secrets.global.name }}
+                  key: auth-google-client-secret
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}

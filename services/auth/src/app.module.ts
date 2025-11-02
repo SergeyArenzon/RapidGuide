@@ -1,13 +1,26 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AccessTokenModule } from './access-token/access-token.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { RedisModule } from '@rapid-guide-io/redis';
+import { AuthModule } from '@thallesp/nestjs-better-auth';
+import { auth } from './auth.config';
+import mikroOrmConfig from '../mikro-orm.config';
 
 @Module({
   imports: [
+    // MikroORM setup
+    MikroOrmModule.forRoot(mikroOrmConfig),
+    
+    // Better Auth integration
+    AuthModule.forRoot({
+      auth,
+    }),
+    
+    // Existing modules (keep for backward compatibility during migration)
     AccessTokenModule,
     RefreshTokenModule,
     RedisModule.forRoot({
@@ -17,10 +30,10 @@ import { RedisModule } from '@rapid-guide-io/redis';
       db: parseInt(process.env.REDIS_DB)
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AuthModule {
+export class AppModule {
   // configure(consumer: MiddlewareConsumer) {
   //   consumer.apply(LoggerMiddleware).forRoutes('*');
   // }

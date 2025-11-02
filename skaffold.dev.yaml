@@ -65,11 +65,11 @@ manifests:
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
           - k8s/helm/ingress-nginx/values.yaml
-      # - name: redis
-      #   repo: https://charts.bitnami.com/bitnami
-      #   remoteChart: redis
-      #   valuesFiles:
-      #     - k8s/helm/redis/values.yaml
+      - name: redis
+        repo: https://charts.bitnami.com/bitnami
+        remoteChart: redis
+        valuesFiles:
+          - k8s/helm/redis/values.yaml
       - name: auth
         chartPath: k8s/helm/auth/
         valuesFiles:
