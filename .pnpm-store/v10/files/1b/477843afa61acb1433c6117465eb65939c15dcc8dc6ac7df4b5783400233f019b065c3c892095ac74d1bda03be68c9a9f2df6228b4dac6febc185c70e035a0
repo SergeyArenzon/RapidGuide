@@ -1,0 +1,29 @@
+import { TanStackStartInputConfig, TanStackStartOutputConfig } from './schema.js';
+import { PluginOption } from 'vite';
+import { CompileStartFrameworkOptions } from './start-compiler-plugin/compilers.js';
+export interface TanStackStartVitePluginCoreOptions {
+    framework: CompileStartFrameworkOptions;
+    defaultEntryPaths: {
+        client: string;
+        server: string;
+        start: string;
+    };
+    serverFn?: {
+        directive?: string;
+        ssr?: {
+            getServerFnById?: string;
+        };
+    };
+}
+export interface ResolvedStartConfig {
+    root: string;
+    startFilePath: string | undefined;
+    routerFilePath: string;
+    srcDirectory: string;
+    viteAppBase: string;
+}
+export type GetConfigFn = () => {
+    startConfig: TanStackStartOutputConfig;
+    resolvedStartConfig: ResolvedStartConfig;
+};
+export declare function TanStackStartVitePluginCore(corePluginOpts: TanStackStartVitePluginCoreOptions, startPluginOpts: TanStackStartInputConfig): Array<PluginOption>;

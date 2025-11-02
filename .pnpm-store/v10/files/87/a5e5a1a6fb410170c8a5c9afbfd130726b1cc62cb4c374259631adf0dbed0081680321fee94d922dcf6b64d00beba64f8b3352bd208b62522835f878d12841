@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProviderUserDto = void 0;
+const zod_1 = require("zod");
+exports.ProviderUserDto = zod_1.z.object({
+    first_name: zod_1.z.string().min(1, 'First name is required'),
+    last_name: zod_1.z.string().min(1, 'Last name is required'),
+    email: zod_1.z.email('Invalid email format'),
+    image_url: zod_1.z.string().url('Invalid URL format')
+});
+//# sourceMappingURL=provider-user.dto.js.map

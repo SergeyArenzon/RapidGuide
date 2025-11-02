@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createGuideSchema = void 0;
+const guide_dto_1 = require("./guide.dto");
+exports.createGuideSchema = guide_dto_1.guideSchema.omit({
+    id: true,
+    created_at: true,
+    updated_at: true,
+});
+//# sourceMappingURL=create-guide.dto.js.map

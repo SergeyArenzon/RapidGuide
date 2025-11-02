@@ -1,0 +1,317 @@
+import { joinPaths } from "@tanstack/router-core";
+import { VIRTUAL_MODULES } from "@tanstack/start-server-core";
+import { TanStackServerFnPlugin } from "@tanstack/server-functions-plugin";
+import * as vite from "vite";
+import { crawlFrameworkPkgs } from "vitefu";
+import { join } from "pathe";
+import { escapePath } from "tinyglobby";
+import { startManifestPlugin } from "./start-manifest-plugin/plugin.js";
+import { startCompilerPlugin } from "./start-compiler-plugin/plugin.js";
+import { ENTRY_POINTS, VITE_ENVIRONMENT_NAMES } from "./constants.js";
+import { tanStackStartRouter } from "./start-router-plugin/plugin.js";
+import { loadEnvPlugin } from "./load-env-plugin/plugin.js";
+import { devServerPlugin } from "./dev-server-plugin/plugin.js";
+import { parseStartConfig } from "./schema.js";
+import { resolveEntry } from "./resolve-entries.js";
+import { getServerOutputDirectory, getClientOutputDirectory } from "./output-directory.js";
+import { postServerBuild } from "./post-server-build.js";
+import { createServerFnPlugin } from "./create-server-fn-plugin/plugin.js";
+function isFullUrl(str) {
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
+function TanStackStartVitePluginCore(corePluginOpts, startPluginOpts) {
+  const resolvedStartConfig = {
+    root: "",
+    startFilePath: void 0,
+    routerFilePath: "",
+    srcDirectory: "",
+    viteAppBase: ""
+  };
+  const directive = corePluginOpts.serverFn?.directive ?? "use server";
+  let startConfig;
+  const getConfig = () => {
+    if (!resolvedStartConfig.root) {
+      throw new Error(`Cannot get config before root is resolved`);
+    }
+    if (!startConfig) {
+      startConfig = parseStartConfig(
+        startPluginOpts,
+        corePluginOpts,
+        resolvedStartConfig.root
+      );
+    }
+    return { startConfig, resolvedStartConfig };
+  };
+  const capturedBundle = {};
+  function getBundle(envName) {
+    const bundle = capturedBundle[envName];
+    if (!bundle) {
+      throw new Error(`No bundle captured for environment: ${envName}`);
+    }
+    return bundle;
+  }
+  return [
+    {
+      name: "tanstack-start-core:config",
+      enforce: "pre",
+      async config(viteConfig, { command }) {
+        resolvedStartConfig.viteAppBase = viteConfig.base ?? "/";
+        if (!isFullUrl(resolvedStartConfig.viteAppBase)) {
+          resolvedStartConfig.viteAppBase = joinPaths([
+            "/",
+            viteConfig.base,
+            "/"
+          ]);
+        }
+        const root = viteConfig.root || process.cwd();
+        resolvedStartConfig.root = root;
+        const { startConfig: startConfig2 } = getConfig();
+        if (startConfig2.router.basepath === void 0) {
+          if (!isFullUrl(resolvedStartConfig.viteAppBase)) {
+            startConfig2.router.basepath = resolvedStartConfig.viteAppBase.replace(/^\/|\/$/g, "");
+          } else {
+            startConfig2.router.basepath = "/";
+          }
+        } else {
+          if (command === "serve" && !viteConfig.server?.middlewareMode) {
+            if (!joinPaths(["/", startConfig2.router.basepath, "/"]).startsWith(
+              joinPaths(["/", resolvedStartConfig.viteAppBase, "/"])
+            )) {
+              this.error(
+                "[tanstack-start]: During `vite dev`, `router.basepath` must start with the vite `base` config value"
+              );
+            }
+          }
+        }
+        const TSS_SERVER_FN_BASE = joinPaths([
+          "/",
+          startConfig2.router.basepath,
+          startConfig2.serverFns.base,
+          "/"
+        ]);
+        const resolvedSrcDirectory = join(root, startConfig2.srcDirectory);
+        resolvedStartConfig.srcDirectory = resolvedSrcDirectory;
+        const startFilePath = resolveEntry({
+          type: "start entry",
+          configuredEntry: startConfig2.start.entry,
+          defaultEntry: "start",
+          resolvedSrcDirectory,
+          required: false
+        });
+        resolvedStartConfig.startFilePath = startFilePath;
+        const routerFilePath = resolveEntry({
+          type: "router entry",
+          configuredEntry: startConfig2.router.entry,
+          defaultEntry: "router",
+          resolvedSrcDirectory,
+          required: true
+        });
+        resolvedStartConfig.routerFilePath = routerFilePath;
+        const clientEntryPath = resolveEntry({
+          type: "client entry",
+          configuredEntry: startConfig2.client.entry,
+          defaultEntry: "client",
+          resolvedSrcDirectory,
+          required: false
+        });
+        const serverEntryPath = resolveEntry({
+          type: "server entry",
+          configuredEntry: startConfig2.server.entry,
+          defaultEntry: "server",
+          resolvedSrcDirectory,
+          required: false
+        });
+        const clientAlias = vite.normalizePath(
+          clientEntryPath ?? corePluginOpts.defaultEntryPaths.client
+        );
+        const serverAlias = vite.normalizePath(
+          serverEntryPath ?? corePluginOpts.defaultEntryPaths.server
+        );
+        const startAlias = vite.normalizePath(
+          startFilePath ?? corePluginOpts.defaultEntryPaths.start
+        );
+        const routerAlias = vite.normalizePath(routerFilePath);
+        const entryAliasConfiguration = {
+          [ENTRY_POINTS.client]: clientAlias,
+          [ENTRY_POINTS.server]: serverAlias,
+          [ENTRY_POINTS.start]: startAlias,
+          [ENTRY_POINTS.router]: routerAlias
+        };
+        const startPackageName = `@tanstack/${corePluginOpts.framework}-start`;
+        const crawlFrameworkPkgsResult = await crawlFrameworkPkgs({
+          root: process.cwd(),
+          isBuild: command === "build",
+          isFrameworkPkgByJson(pkgJson) {
+            const peerDependencies = pkgJson["peerDependencies"];
+            if (peerDependencies) {
+              if (startPackageName in peerDependencies || "@tanstack/start-client-core" in peerDependencies) {
+                return true;
+              }
+            }
+            return false;
+          }
+        });
+        return {
+          // see https://vite.dev/config/shared-options.html#apptype
+          // this will prevent vite from injecting middlewares that we don't want
+          appType: viteConfig.appType ?? "custom",
+          environments: {
+            [VITE_ENVIRONMENT_NAMES.client]: {
+              consumer: "client",
+              build: {
+                rollupOptions: {
+                  input: {
+                    main: ENTRY_POINTS.client
+                  }
+                },
+                outDir: getClientOutputDirectory(viteConfig)
+              },
+              optimizeDeps: {
+                exclude: crawlFrameworkPkgsResult.optimizeDeps.exclude,
+                // Ensure user code can be crawled for dependencies
+                entries: [clientAlias, routerAlias].map(
+                  (entry) => (
+                    // Entries are treated as `tinyglobby` patterns so need to be escaped
+                    escapePath(entry)
+                  )
+                )
+              }
+            },
+            [VITE_ENVIRONMENT_NAMES.server]: {
+              consumer: "server",
+              build: {
+                ssr: true,
+                rollupOptions: {
+                  input: viteConfig.environments?.[VITE_ENVIRONMENT_NAMES.server]?.build?.rollupOptions?.input ?? ENTRY_POINTS.server
+                },
+                outDir: getServerOutputDirectory(viteConfig),
+                commonjsOptions: {
+                  include: [/node_modules/]
+                },
+                copyPublicDir: viteConfig.environments?.[VITE_ENVIRONMENT_NAMES.server]?.build?.copyPublicDir ?? false
+              },
+              optimizeDeps: {
+                // Ensure user code can be crawled for dependencies
+                entries: [serverAlias, startAlias, routerAlias].map(
+                  (entry) => (
+                    // Entries are treated as `tinyglobby` patterns so need to be escaped
+                    escapePath(entry)
+                  )
+                )
+              }
+            }
+          },
+          resolve: {
+            noExternal: [
+              // ENTRY_POINTS.start,
+              "@tanstack/start**",
+              `@tanstack/${corePluginOpts.framework}-start**`,
+              ...crawlFrameworkPkgsResult.ssr.noExternal.sort()
+            ],
+            alias: {
+              ...entryAliasConfiguration
+            }
+          },
+          /* prettier-ignore */
+          define: {
+            // define is an esbuild function that replaces the any instances of given keys with the given values
+            // i.e: __FRAMEWORK_NAME__ can be replaced with JSON.stringify("TanStack Start")
+            // This is not the same as injecting environment variables.
+            ...defineReplaceEnv("TSS_SERVER_FN_BASE", TSS_SERVER_FN_BASE),
+            ...defineReplaceEnv("TSS_CLIENT_OUTPUT_DIR", getClientOutputDirectory(viteConfig)),
+            ...defineReplaceEnv("TSS_ROUTER_BASEPATH", startConfig2.router.basepath),
+            ...command === "serve" ? defineReplaceEnv("TSS_SHELL", startConfig2.spa?.enabled ? "true" : "false") : {},
+            ...defineReplaceEnv("TSS_DEV_SERVER", command === "serve" ? "true" : "false")
+          },
+          builder: {
+            sharedPlugins: true,
+            async buildApp(builder) {
+              const client = builder.environments[VITE_ENVIRONMENT_NAMES.client];
+              const server = builder.environments[VITE_ENVIRONMENT_NAMES.server];
+              if (!client) {
+                throw new Error("Client environment not found");
+              }
+              if (!server) {
+                throw new Error("SSR environment not found");
+              }
+              if (!client.isBuilt) {
+                await builder.build(client);
+              }
+              if (!server.isBuilt) {
+                await builder.build(server);
+              }
+              const serverBundle = getBundle(VITE_ENVIRONMENT_NAMES.server);
+              await postServerBuild({ builder, startConfig: startConfig2, serverBundle });
+            }
+          }
+        };
+      }
+    },
+    tanStackStartRouter(startPluginOpts, getConfig, corePluginOpts),
+    // N.B. TanStackStartCompilerPlugin must be before the TanStackServerFnPlugin
+    startCompilerPlugin(corePluginOpts.framework),
+    createServerFnPlugin({ framework: corePluginOpts.framework, directive }),
+    TanStackServerFnPlugin({
+      // This is the ID that will be available to look up and import
+      // our server function manifest and resolve its module
+      manifestVirtualImportId: VIRTUAL_MODULES.serverFnManifest,
+      directive,
+      generateFunctionId: startPluginOpts?.serverFns?.generateFunctionId,
+      callers: [
+        {
+          envConsumer: "client",
+          getRuntimeCode: () => `import { createClientRpc } from '@tanstack/${corePluginOpts.framework}-start/client-rpc'`,
+          replacer: (d) => `createClientRpc('${d.functionId}')`,
+          envName: VITE_ENVIRONMENT_NAMES.client
+        },
+        {
+          envConsumer: "server",
+          getRuntimeCode: () => `import { createSsrRpc } from '@tanstack/${corePluginOpts.framework}-start/ssr-rpc'`,
+          envName: VITE_ENVIRONMENT_NAMES.server,
+          replacer: (d) => `createSsrRpc('${d.functionId}')`,
+          getServerFnById: corePluginOpts.serverFn?.ssr?.getServerFnById
+        }
+      ],
+      provider: {
+        getRuntimeCode: () => `import { createServerRpc } from '@tanstack/${corePluginOpts.framework}-start/server-rpc'`,
+        replacer: (d) => `createServerRpc('${d.functionId}', ${d.fn})`,
+        envName: VITE_ENVIRONMENT_NAMES.server
+      }
+    }),
+    loadEnvPlugin(),
+    startManifestPlugin({
+      getClientBundle: () => getBundle(VITE_ENVIRONMENT_NAMES.client),
+      getConfig
+    }),
+    devServerPlugin({ getConfig }),
+    {
+      name: "tanstack-start:core:capture-bundle",
+      applyToEnvironment(e) {
+        return e.name === VITE_ENVIRONMENT_NAMES.client || e.name === VITE_ENVIRONMENT_NAMES.server;
+      },
+      enforce: "post",
+      generateBundle(_options, bundle) {
+        const environment = this.environment.name;
+        if (!Object.values(VITE_ENVIRONMENT_NAMES).includes(environment)) {
+          throw new Error(`Unknown environment: ${environment}`);
+        }
+        capturedBundle[environment] = bundle;
+      }
+    }
+  ];
+}
+function defineReplaceEnv(key, value) {
+  return {
+    [`process.env.${key}`]: JSON.stringify(value),
+    [`import.meta.env.${key}`]: JSON.stringify(value)
+  };
+}
+export {
+  TanStackStartVitePluginCore
+};
+//# sourceMappingURL=plugin.js.map

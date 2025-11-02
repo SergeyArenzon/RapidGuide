@@ -1,0 +1,8 @@
+import z from "zod";
+export declare const createUserSchema: z.ZodObject<{
+    first_name: z.ZodString;
+    last_name: z.ZodString;
+    email: z.ZodEmail;
+    image_url: z.ZodURL;
+}, z.core.$strip>;
+export type CreateUserDto = z.infer<typeof createUserSchema>;

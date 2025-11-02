@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.userSchema = void 0;
+const zod_1 = require("zod");
+const time_dto_1 = require("../time.dto");
+exports.userSchema = time_dto_1.timeSchema.extend({
+    id: zod_1.z.uuid(),
+    first_name: zod_1.z.string().min(1, { message: 'First name is required' }),
+    last_name: zod_1.z.string().min(1, { message: 'Last name is required' }),
+    email: zod_1.z.email({ message: 'Invalid email address' }),
+    image_url: zod_1.z.url({ message: 'Invalid image URL' }),
+});
+//# sourceMappingURL=user.dto.js.map

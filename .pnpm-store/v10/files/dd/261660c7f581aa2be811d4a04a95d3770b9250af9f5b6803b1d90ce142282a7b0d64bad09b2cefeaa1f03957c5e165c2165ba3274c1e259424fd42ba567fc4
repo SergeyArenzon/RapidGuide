@@ -1,0 +1,11 @@
+import { z } from 'zod';
+export declare const userSchema: z.ZodObject<{
+    created_at: z.ZodCoercedDate<unknown>;
+    updated_at: z.ZodCoercedDate<unknown>;
+    id: z.ZodUUID;
+    first_name: z.ZodString;
+    last_name: z.ZodString;
+    email: z.ZodEmail;
+    image_url: z.ZodURL;
+}, z.core.$strip>;
+export type UserDto = z.infer<typeof userSchema>;

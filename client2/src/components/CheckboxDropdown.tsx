@@ -1,15 +1,13 @@
-"use client"
-
 import * as React from "react"
 import { Check, ChevronsUpDown, X } from "lucide-react"
+import { useWatch } from "react-hook-form"
+import type { Control, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import type { UseFormRegister, UseFormWatch, UseFormSetValue, Control } from "react-hook-form"
-import { useWatch } from "react-hook-form"
 
 export type CheckboxDropdownProps = {
   name: string
@@ -42,7 +40,7 @@ export function CheckboxDropdown({
   maxBadges = 3,
 }: CheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
-  const selectedItems = (useWatch({ control, name }) as string[]) || []
+  const selectedItems = (useWatch({ control, name }) as Array<string>) || []
 
   const handleItemToggle = (value: string) => {
     const currentValues = [...selectedItems]

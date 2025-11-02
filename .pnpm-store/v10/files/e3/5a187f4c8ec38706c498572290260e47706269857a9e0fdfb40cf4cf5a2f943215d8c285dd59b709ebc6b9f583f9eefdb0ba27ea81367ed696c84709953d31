@@ -1,0 +1,24 @@
+{
+  "name": "@rapid-guide-io/dto",
+  "version": "0.0.5",
+  "description": "Shared DTO modules for Rapid Guide services",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "zod": "^4.0.14"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.10",
+    "typescript": "^5.1.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "prebuild": "pnpm run clean"
+  }
+}

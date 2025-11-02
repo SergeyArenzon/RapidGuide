@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.subCategorySchema = void 0;
+const zod_1 = require("zod");
+const time_dto_1 = require("./time.dto");
+const subCategorySchema = time_dto_1.timeSchema.extend({
+    id: zod_1.z.uuid(),
+    name: zod_1.z.string().min(1, 'Name is required'),
+    description: zod_1.z.string().optional(),
+    category_id: zod_1.z.uuid(),
+});
+exports.subCategorySchema = subCategorySchema;
+//# sourceMappingURL=sub-category.dto.js.map

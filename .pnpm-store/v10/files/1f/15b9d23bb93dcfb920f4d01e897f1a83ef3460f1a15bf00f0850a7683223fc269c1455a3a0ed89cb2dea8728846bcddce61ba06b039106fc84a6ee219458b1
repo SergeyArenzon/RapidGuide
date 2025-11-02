@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createUserSchema = void 0;
+const user_dto_1 = require("./user.dto");
+exports.createUserSchema = user_dto_1.userSchema.omit({
+    id: true,
+    created_at: true,
+    updated_at: true,
+    guide: true,
+});
+//# sourceMappingURL=create-user.dto.js.map

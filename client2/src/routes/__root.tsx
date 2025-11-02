@@ -6,13 +6,13 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import Header from '../components/Header'
-
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
 import appCss from '../styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
+import { Error } from '@/components/Error'
+import { Sidebar } from '@/components/Sidebar'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -29,7 +29,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'RapidGuide',
       },
     ],
     links: [
@@ -40,8 +40,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
 
+  notFoundComponent: () => <Error 
+  statusCode={404}
+  title="Page not found"
+  description="The page you're looking for doesn't exist."/>,
   shellComponent: RootDocument,
 })
+
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -49,9 +54,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
-        <Header />
-        {children}
+
+      <body className="m-0 h-screen overflow-hidden">
+        <div className="grid grid-cols-[1fr_200px] grid-rows-[50px_1fr] h-full w-full">
+          <nav>
+            DASHBOARD
+          </nav>
+          <aside>
+            <Sidebar />
+          </aside>
+          <main>
+            {children}
+          </main>
+        </div>
+
         <TanStackDevtools
           config={{
             position: 'bottom-right',

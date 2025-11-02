@@ -1,23 +1,23 @@
-"use client"
-
 import * as React from "react"
 import {
-  Settings,
-  Users,
-  FileText,
   BarChart3,
-  Search,
   Bell,
-  MessageSquare,
-  User,
-  LogOut,
-  CreditCard,
   ChevronUp,
+  CreditCard,
+  FileText,
+  LogOut,
+  MessageSquare,
+  Search,
+  Settings,
+  User,
+  Users,
 } from "lucide-react"
 
+import Logo from "./Logo"
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -25,9 +25,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
-  SidebarFooter,
   SidebarProvider,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -40,25 +39,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import useUserStore from "@/store/useUser"
-import { signOut } from "next-auth/react"
-import Logo from "./Logo"
-import Api from "@/utils/api"
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const [activeTab, setActiveTab] = React.useState("analytics");
   const { user } = useUserStore();
-  const api = new Api();
+  // const api = new Api();
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
       // Send logout request to backend
-      await api.logout();
+      // await api.logout();
     } catch (error) {
       console.error('Logout request failed:', error);
       // Continue with logout even if backend request fails
     } finally {
       // Always call NextAuth signOut
-      signOut();
+      // signOut();
     }
   };
 
@@ -73,7 +69,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
 
   return (
     <SidebarProvider>
-      <ShadcnSidebar side="right" {...props}>
+      <ShadcnSidebar side="right" className="h-full" {...props}>
         <SidebarHeader>
           <Logo />
           <div className="relative px-4 py-2">
