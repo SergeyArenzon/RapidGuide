@@ -1,7 +1,0 @@
-import { z } from 'zod';
-declare const timeSchema: z.ZodObject<{
-    created_at: z.ZodCoercedDate<unknown>;
-    updated_at: z.ZodCoercedDate<unknown>;
-}, z.core.$strip>;
-export { timeSchema };
-export type GuideDto = z.infer<typeof timeSchema>;
