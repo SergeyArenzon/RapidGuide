@@ -1,9 +1,9 @@
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { User } from './src/entities/user.entity';
-import { Session } from './src/entities/session.entity';
-import { Account } from './src/entities/account.entity';
-import { Verification } from './src/entities/verification.entity';
+import { User } from './entities/user.entity';
+import { Session } from './entities/session.entity';
+import { Account } from './entities/account.entity';
+import { Verification } from './entities/verification.entity';
 import { join } from 'path';
 
 const mikroOrmConfig: MikroOrmModuleSyncOptions = {

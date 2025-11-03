@@ -8,7 +8,7 @@ import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { RedisModule } from '@rapid-guide-io/redis';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { BetterAuthProvider } from './auth.provider';
-import mikroOrmConfig from '../mikro-orm.config';
+import mikroOrmConfig from 'src/mikro-orm.config';
 import { Account } from './entities/account.entity';
 import { Session } from './entities/session.entity';
 import { User } from './entities/user.entity';
@@ -30,7 +30,7 @@ import { Verification } from './entities/verification.entity';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, BetterAuthProvider],
+  providers: [AppService],
 })
 export class AppModule {
   // configure(consumer: MiddlewareConsumer) {
