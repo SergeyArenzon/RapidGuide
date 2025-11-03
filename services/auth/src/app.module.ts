@@ -6,19 +6,15 @@ import { AccessTokenModule } from './access-token/access-token.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { RedisModule } from '@rapid-guide-io/redis';
-import { AuthModule } from '@thallesp/nestjs-better-auth';
-import { BetterAuthProvider } from './auth.provider';
+import { AuthModule } from './auth/auth.module';
 import mikroOrmConfig from 'src/mikro-orm.config';
-import { Account } from './entities/account.entity';
-import { Session } from './entities/session.entity';
-import { User } from './entities/user.entity';
-import { Verification } from './entities/verification.entity';
 
 @Module({
   imports: [
     // MikroORM setup
     MikroOrmModule.forRoot(mikroOrmConfig),
-    MikroOrmModule.forFeature([User, Session, Account, Verification]),
+    // Better Auth module
+    AuthModule,
     // Existing modules (keep for backward compatibility during migration)
     AccessTokenModule,
     RefreshTokenModule,

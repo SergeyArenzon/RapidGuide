@@ -55,3 +55,4 @@ export const BetterAuthProvider: Provider = {
 
 // Type for the Better Auth instance
 export type BetterAuthInstance = ReturnType<typeof betterAuth>;
+
