@@ -14,7 +14,7 @@ async function bootstrap() {
   app.use(cookieParser());
   app.enableCors({ 
     credentials: true, 
-    origin: 'http://huddlehub.io:3000' 
+    origin: 'http://localhost:3000' 
   });
   app.useLogger(logger);
   await app.listen(process.env.PORT ?? 3000);

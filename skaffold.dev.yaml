@@ -14,26 +14,26 @@ build:
             dest: .
           - src: "src/**/*.json"
             dest: .
-    - image: sergeyarenzon/huddlehub-user
-      context: services/user
-      docker:
-        dockerfile: Dockerfile.dev
-      sync: 
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
-    - image: sergeyarenzon/huddlehub-tour
-      context: services/tour
-      docker:
-        dockerfile: Dockerfile.dev
-      sync: 
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
+    # - image: sergeyarenzon/huddlehub-user
+    #   context: services/user
+    #   docker:
+    #     dockerfile: Dockerfile.dev
+    #   sync: 
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    #       - src: "src/**/*.json"
+    #         dest: .
+    # - image: sergeyarenzon/huddlehub-tour
+    #   context: services/tour
+    #   docker:
+    #     dockerfile: Dockerfile.dev
+    #   sync: 
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    #       - src: "src/**/*.json"
+    #         dest: .
   tagPolicy:
     gitCommit: {}
   local:

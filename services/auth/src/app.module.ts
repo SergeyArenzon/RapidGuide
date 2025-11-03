@@ -6,7 +6,7 @@ import { AccessTokenModule } from './access-token/access-token.module';
 import { LoggerMiddleware } from './logger.middleware';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 import { RedisModule } from '@rapid-guide-io/redis';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from '@thallesp/nestjs-better-auth';
 import mikroOrmConfig from 'src/mikro-orm.config';
 
 @Module({
@@ -14,7 +14,7 @@ import mikroOrmConfig from 'src/mikro-orm.config';
     // MikroORM setup
     MikroOrmModule.forRoot(mikroOrmConfig),
     // Better Auth module
-    AuthModule,
+    AuthModule.forRoot({ auth }),
     // Existing modules (keep for backward compatibility during migration)
     AccessTokenModule,
     RefreshTokenModule,
