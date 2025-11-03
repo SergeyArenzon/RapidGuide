@@ -26,10 +26,6 @@ export class User {
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
-  // Additional field from auth config
-  @Property({ type: 'text', nullable: true })
-  testField?: string;
-
   @OneToMany(() => Session, session => session.user)
   sessions = new Collection<Session>(this);
 

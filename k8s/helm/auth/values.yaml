@@ -74,7 +74,7 @@ configMaps:
     name: auth-db-config
     keys:
       POSTGRES_HOST: auth-db
-      POSTGRES_PORT: "5432"
+      POSTGRES_PORT: 5432
       POSTGRES_DB: auth
       POSTGRES_USER: postgres
   global:
