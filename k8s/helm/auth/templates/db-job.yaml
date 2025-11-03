@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: '{{ include "auth.fullname" . }}-db-job'
+  labels:
+    app: {{ include "auth.fullname" . }}
+    job: database
+  # annotations:
+    # Add a skaffold annotation to force recreation
+    # "skaffold.dev/depends-on-image1": "{{ .Values.image.repository }}"
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: {{ include "auth.fullname" . }}
+        job: database
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: busybox:latest
+          command: ['sh', '-c', 
+            'until nc -z -w1 auth-db 5432; 
+            do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: database
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Running DB migrations..." &&
+              npx mikro-orm migration:up &&
+              echo "Migrations completed successfully!"
+          env:
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_HOST
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_PORT
+            - name: DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_DB
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "auth-db" "name" | quote }}
+                  key: POSTGRES_USER
+            - name: DB_PASSWORD
+              value: {{ .Values.database.password | quote }}
+      restartPolicy: Never
+
