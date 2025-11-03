@@ -454,13 +454,10 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-<<<<<<< HEAD
-=======
   '@better-auth/cli@1.3.34':
     resolution: {integrity: sha512-CpYJtWg9wnXGjeSIajDi7uhB1J7wfcWfXkFSm9RgmielFiK4ahz2wy6zuee1Rz/ID/7lAfMptxSVeMC1nM+Udg==}
     hasBin: true
 
->>>>>>> RAG-38-migrate-tanstack-start
   '@better-auth/core@1.3.34':
     resolution: {integrity: sha512-rt/Bgl0Xa8OQ2DUMKCZEJ8vL9kUw4NCJsBP9Sj9uRhbsK8NEMPiznUOFMkUY2FvrslvfKN7H/fivwyHz9c7HzQ==}
     peerDependencies:
@@ -1496,8 +1493,6 @@ packages:
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-<<<<<<< HEAD
-=======
   better-auth-mikro-orm@0.4.3:
     resolution: {integrity: sha512-lP0Ej4GIgF0kUq+opPQDv6UVRyRpPpcHIyZAxn7u+MtvI1VfVhLWAEwy3AV/YrX6aTKfMlVmv1hdKEtNDE8XHA==}
     engines: {node: '>= 18'}
@@ -1505,7 +1500,6 @@ packages:
       '@mikro-orm/core': ^6.0.0
       better-auth: ^1.0.0
 
->>>>>>> RAG-38-migrate-tanstack-start
   better-auth@1.3.34:
     resolution: {integrity: sha512-LWA52SlvnUBJRbN8VLSTLILPomZY3zZAiLxVJCeSQ5uVmaIKkMBhERitkfJcXB9RJcfl4uP+3EqKkb6hX1/uiw==}
     peerDependencies:
@@ -1538,13 +1532,10 @@ packages:
   better-call@1.0.19:
     resolution: {integrity: sha512-sI3GcA1SCVa3H+CDHl8W8qzhlrckwXOTKhqq3OOPXjgn5aTOMIqGY34zLY/pHA6tRRMjTUC3lz5Mi7EbDA24Kw==}
 
-<<<<<<< HEAD
-=======
   better-sqlite3@12.4.1:
     resolution: {integrity: sha512-3yVdyZhklTiNrtg+4WqHpJpFDd+WHTg2oM7UcR80GqL05AOV0xEJzc6qNvFYoEtE+hRp1n9MpN6/+4yhlGkDXQ==}
     engines: {node: 20.x || 22.x || 23.x || 24.x}
 
->>>>>>> RAG-38-migrate-tanstack-start
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
@@ -1666,12 +1657,9 @@ packages:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
 
-<<<<<<< HEAD
-=======
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
 
->>>>>>> RAG-38-migrate-tanstack-start
   chrome-trace-event@1.0.4:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
     engines: {node: '>=6.0'}
@@ -1905,13 +1893,10 @@ packages:
     resolution: {integrity: sha512-rBMvIzlpA8v6E+SJZoo++HAYqsLrkg7MSfIinMPFhmkorw7X+dOXVJQs+QT69zGkzMyfDnIMN2Wid1+NbL3T+A==}
     engines: {node: '>= 0.4'}
 
-<<<<<<< HEAD
-=======
   define-lazy-prop@3.0.0:
     resolution: {integrity: sha512-N+MeXYoqr3pOgn8xfyRPREN7gHakLYjhsHhWGT3fWAiL4IkAt0iDw14QiiEm2bE30c5XX5q0FtAA3CK5f9/BUg==}
     engines: {node: '>=12'}
 
->>>>>>> RAG-38-migrate-tanstack-start
   defu@6.1.4:
     resolution: {integrity: sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==}
 
@@ -1957,8 +1942,6 @@ packages:
     resolution: {integrity: sha512-kQhDYKZecqnM0fCnzI5eIv5L4cAe/iRI+HqMbO/hbRdTAeXDG+M9FjipUxNfbARuEg4iHIbhnhs78BCHNbSxEQ==}
     engines: {node: '>=12'}
 
-<<<<<<< HEAD
-=======
   dotenv@17.2.3:
     resolution: {integrity: sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==}
     engines: {node: '>=12'}
@@ -2052,7 +2035,6 @@ packages:
       sqlite3:
         optional: true
 
->>>>>>> RAG-38-migrate-tanstack-start
   dset@3.1.4:
     resolution: {integrity: sha512-2QF/g9/zTaPDc3BjNcVTGoBbXBgYfMTTceLaYcFJ/W9kggFUkhxD/hMEeuLKbugyef9SqAx8cpgwlIP/jinUTA==}
     engines: {node: '>=4'}
@@ -3136,12 +3118,9 @@ packages:
     resolution: {integrity: sha512-kNZ9xnoJYKg/AfxjrVL4SS0fKX++4awQReGqWnwTRHxeHGZ1FJFVgTqr/eMrNQdp0Tz7M7tG/TDaX8QfHDwVCw==}
     engines: {node: ^20.0.0 || >=22.0.0}
 
-<<<<<<< HEAD
-=======
   napi-build-utils@2.0.0:
     resolution: {integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==}
 
->>>>>>> RAG-38-migrate-tanstack-start
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
@@ -3962,12 +3941,9 @@ packages:
     resolution: {integrity: sha512-axr3IdNuVIxnaK5XGEUFTu3YmAQ6lllgrvqfEoR16g/HGnYY/6We4oWENtAnzK6/LpJ2ur9PAb80RBt7/U4ugw==}
     engines: {node: '>= 6.0.0'}
 
-<<<<<<< HEAD
-=======
   tunnel-agent@0.6.0:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
 
->>>>>>> RAG-38-migrate-tanstack-start
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -4153,13 +4129,10 @@ packages:
       utf-8-validate:
         optional: true
 
-<<<<<<< HEAD
-=======
   wsl-utils@0.1.0:
     resolution: {integrity: sha512-h3Fbisa2nKGPxCpm89Hk33lBLsnaGBvctQopaBSOW/uIs6FTe1ATyAnKFJrzVs9vpGdsTe73WF3V4lIsk4Gacw==}
     engines: {node: '>=18'}
 
->>>>>>> RAG-38-migrate-tanstack-start
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
     engines: {node: '>=0.4'}
@@ -4573,8 +4546,6 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-<<<<<<< HEAD
-=======
   '@better-auth/cli@1.3.34(knex@3.1.0(better-sqlite3@12.4.1)(pg@8.16.3))(kysely@0.28.8)(pg@8.16.3)':
     dependencies:
       '@babel/core': 7.28.4
@@ -4638,7 +4609,6 @@ snapshots:
       - svelte
       - vue
 
->>>>>>> RAG-38-migrate-tanstack-start
   '@better-auth/core@1.3.34(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.0.19)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)':
     dependencies:
       '@better-auth/utils': 0.3.0
@@ -6044,15 +6014,12 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-<<<<<<< HEAD
-=======
   better-auth-mikro-orm@0.4.3(@mikro-orm/core@6.5.2)(better-auth@1.3.34):
     dependencies:
       '@mikro-orm/core': 6.5.2
       better-auth: 1.3.34
       dset: 3.1.4
 
->>>>>>> RAG-38-migrate-tanstack-start
   better-auth@1.3.34:
     dependencies:
       '@better-auth/core': 1.3.34(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.0.19)(jose@6.1.0)(kysely@0.28.8)(nanostores@1.0.1)
@@ -6078,14 +6045,11 @@ snapshots:
       set-cookie-parser: 2.7.2
       uncrypto: 0.1.3
 
-<<<<<<< HEAD
-=======
   better-sqlite3@12.4.1:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.3
 
->>>>>>> RAG-38-migrate-tanstack-start
   binary-extensions@2.3.0: {}
 
   bindings@1.5.0:
@@ -6237,11 +6201,8 @@ snapshots:
     dependencies:
       readdirp: 4.1.2
 
-<<<<<<< HEAD
-=======
   chownr@1.1.4: {}
 
->>>>>>> RAG-38-migrate-tanstack-start
   chrome-trace-event@1.0.4: {}
 
   ci-info@3.9.0: {}
@@ -6438,11 +6399,8 @@ snapshots:
       es-errors: 1.3.0
       gopd: 1.2.0
 
-<<<<<<< HEAD
-=======
   define-lazy-prop@3.0.0: {}
 
->>>>>>> RAG-38-migrate-tanstack-start
   defu@6.1.4: {}
 
   delayed-stream@1.0.0: {}
@@ -6472,8 +6430,6 @@ snapshots:
 
   dotenv@17.2.1: {}
 
-<<<<<<< HEAD
-=======
   dotenv@17.2.3: {}
 
   drizzle-orm@0.33.0(@prisma/client@5.22.0(prisma@5.22.0))(@types/better-sqlite3@7.6.13)(better-sqlite3@12.4.1)(knex@3.1.0(better-sqlite3@12.4.1)(pg@8.16.3))(kysely@0.28.8)(pg@8.16.3)(prisma@5.22.0):
@@ -6486,7 +6442,6 @@ snapshots:
       pg: 8.16.3
       prisma: 5.22.0
 
->>>>>>> RAG-38-migrate-tanstack-start
   dset@3.1.4: {}
 
   dunder-proto@1.0.1:
@@ -7764,11 +7719,8 @@ snapshots:
 
   nanostores@1.0.1: {}
 
-<<<<<<< HEAD
-=======
   napi-build-utils@2.0.0: {}
 
->>>>>>> RAG-38-migrate-tanstack-start
   natural-compare@1.4.0: {}
 
   negotiator@1.0.0: {}
@@ -8567,13 +8519,10 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-<<<<<<< HEAD
-=======
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
 
->>>>>>> RAG-38-migrate-tanstack-start
   type-check@0.4.0:
     dependencies:
       prelude-ls: 1.2.1
@@ -8743,13 +8692,10 @@ snapshots:
 
   ws@8.18.3: {}
 
-<<<<<<< HEAD
-=======
   wsl-utils@0.1.0:
     dependencies:
       is-wsl: 3.1.0
 
->>>>>>> RAG-38-migrate-tanstack-start
   xtend@4.0.2: {}
 
   y18n@5.0.8: {}

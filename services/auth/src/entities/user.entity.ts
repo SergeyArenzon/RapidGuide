@@ -3,10 +3,13 @@ import { v4 } from 'uuid';
 import { Session } from './session.entity';
 import { Account } from './account.entity';
 
-@Entity({ tableName: 'users' })
+@Entity({ tableName: 'user' })
 export class User {
   @PrimaryKey({ type: 'text' })
   id: string = v4();
+
+  @Property({ type: 'text' })
+  name!: string;
 
   @Property({ type: 'text', unique: true })
   email!: string;
@@ -15,19 +18,17 @@ export class User {
   emailVerified: boolean = false;
 
   @Property({ type: 'text', nullable: true })
-  name?: string;
-
-  @Property({ type: 'text', nullable: true })
   image?: string;
-
-  @Property({ type: 'text', nullable: true })
-  passwordHash?: string;
 
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
+
+  // Additional field from auth config
+  @Property({ type: 'text', nullable: true })
+  testField?: string;
 
   @OneToMany(() => Session, session => session.user)
   sessions = new Collection<Session>(this);

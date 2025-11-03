@@ -2,20 +2,23 @@ import { Entity, PrimaryKey, Property, ManyToOne, Unique } from '@mikro-orm/core
 import { v4 } from 'uuid';
 import { User } from './user.entity';
 
-@Entity({ tableName: 'accounts' })
-@Unique({ properties: ['provider', 'providerAccountId'] })
+@Entity({ tableName: 'account' })
+@Unique({ properties: ['providerId', 'accountId'] })
 export class Account {
   @PrimaryKey({ type: 'text' })
   id: string = v4();
 
-  @ManyToOne(() => User)
+  @Property({ type: 'text' })
+  userId!: string;
+
+  @ManyToOne(() => User, { fieldName: 'userId' })
   user!: User;
 
   @Property({ type: 'text' })
-  provider!: string;
+  accountId!: string;
 
   @Property({ type: 'text' })
-  providerAccountId!: string;
+  providerId!: string;
 
   @Property({ type: 'text', nullable: true })
   accessToken?: string;
@@ -24,9 +27,24 @@ export class Account {
   refreshToken?: string;
 
   @Property({ type: 'timestamp', nullable: true })
-  expiresAt?: Date;
+  accessTokenExpiresAt?: Date;
+
+  @Property({ type: 'timestamp', nullable: true })
+  refreshTokenExpiresAt?: Date;
+
+  @Property({ type: 'text', nullable: true })
+  scope?: string;
+
+  @Property({ type: 'text', nullable: true })
+  idToken?: string;
+
+  @Property({ type: 'text', nullable: true })
+  password?: string;
 
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
+
+  @Property({ onUpdate: () => new Date() })
+  updatedAt: Date = new Date();
 }
 

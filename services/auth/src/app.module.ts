@@ -10,12 +10,16 @@ import { AuthModule } from '@thallesp/nestjs-better-auth';
 
 import { auth } from './auth.config';
 import mikroOrmConfig from '../mikro-orm.config';
+import { Account } from './entities/account.entity';
+import { Session } from './entities/session.entity';
+import { User } from './entities/user.entity';
+import { Verification } from './entities/verification.entity';
 
 @Module({
   imports: [
     // MikroORM setup
     MikroOrmModule.forRoot(mikroOrmConfig),
-    
+    MikroOrmModule.forFeature([User, Session, Account, Verification]),
     // Better Auth integration
     AuthModule.forRoot({
       auth,
