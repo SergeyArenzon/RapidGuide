@@ -49,6 +49,11 @@ spec:
                 secretKeyRef:
                   name: global-secrets
                   key: jwt-secret
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: BETTER_AUTH_SECRET
           readinessProbe:
             httpGet:
               path: /health

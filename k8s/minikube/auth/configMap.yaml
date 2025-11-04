@@ -4,3 +4,4 @@ metadata:
   name: auth-config
 data:
   JWT_MAX_AGE: '3600000'
+  BETTER_AUTH_SECRET: ilwhX2pEiMmGBKBQnCAO9oEfrhCC0l6X
