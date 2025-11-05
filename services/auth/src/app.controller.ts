@@ -16,6 +16,8 @@ import { Response, Request } from 'express';
 import { AuthDto, UserDto } from '@rapid-guide-io/dto';
 import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { Role, ScopePermission } from '@rapid-guide-io/decorators';
+import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
+
 
 @Controller()
 export class AppController {
@@ -29,7 +31,8 @@ export class AppController {
     private refreshTokenService: RefreshTokenService,
   ) {}
 
-  // ENDPOINTS
+  
+  @AllowAnonymous()
   @HttpCode(200)
   @Get('/health')
   health() {}
