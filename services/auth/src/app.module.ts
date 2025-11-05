@@ -15,12 +15,12 @@ import { MikroORM } from '@mikro-orm/core';
     // MikroORM setup
     MikroOrmModule.forRoot(mikroOrmConfig),
     // Better Auth module
-    // AuthModule.forRootAsync({
-    //   useFactory: (orm: MikroORM) => {
-    //     return { auth: createAuth(orm) };
-    //   },
-    //   inject: [MikroORM],
-    // }),
+    AuthModule.forRootAsync({
+      useFactory: (orm: MikroORM) => {
+        return { auth: createAuth(orm) };
+      },
+      inject: [MikroORM],
+    }),
     // Existing modules (keep for backward compatibility during migration)
     AccessTokenModule,
     RefreshTokenModule,

@@ -15,6 +15,7 @@ const mikroOrmConfig: MikroOrmModuleSyncOptions = {
   password: process.env.DB_PASSWORD,
   driver: PostgreSqlDriver,
   debug: process.env.NODE_ENV !== 'production',
+  allowGlobalContext: true, // Allow global context for better-auth integration
   migrations: {
     path: join(__dirname, 'migrations'),
     tableName: 'mikro_orm_migrations',
