@@ -70,8 +70,8 @@ spec:
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.global.name }}
-                  key: jwt-secret
+                  name: global-secrets
+                  key: JWT_SECRET
             - name: JWT_ACCESS_EXPIRES_IN_MS
               valueFrom:
                 configMapKeyRef:
@@ -95,8 +95,8 @@ spec:
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.global.name }}
-                  key: redis-password
+                  name: global-secrets
+                  key: REDIS_PASSWORD
             - name: REDIS_DB
               valueFrom:
                 configMapKeyRef:
@@ -105,13 +105,13 @@ spec:
             - name: AUTH_GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.global.name }}
-                  key: auth-google-client-id
+                  name: auth-secrets
+                  key: GOOGLE_CLIENT_ID
             - name: AUTH_GOOGLE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secrets.global.name }}
-                  key: auth-google-client-secret
+                  name: auth-secrets
+                  key: GOOGLE_CLIENT_SECRET
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}

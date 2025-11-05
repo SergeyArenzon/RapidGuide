@@ -81,4 +81,8 @@ manifests:
       # - name: tour
       #   chartPath: k8s/helm/tour/
       #   valuesFiles:
-      #     - k8s/helm/tour/values.yaml
+      #     - k8s/helm/tour/values.yamldeploy:
+  hooks:
+    before:
+      - host:
+          command: ["sh", "-c", "if [ -f k8s/helm/auth/templates/.env ]; then kubectl create secret generic auth-secrets --from-env-file=k8s/helm/auth/templates/.env --dry-run=client -o yaml | kubectl apply -f -; else echo 'Warning: k8s/helm/auth/templates/.env not found - auth-secrets will not be created'; fi"]

@@ -59,27 +59,27 @@ spec:
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ index .Values.secrets "global" "name" | quote }}
-                  key: {{ index .Values.secrets "global" "keys" "jwt-secret" | quote }}
+                  name: global-secrets
+                  key: JWT_SECRET
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: {{ index .Values.configMaps "global" "name" | quote }}
-                  key: {{ index .Values.configMaps "global" "keys" "redis-host" | quote }}
+                  name: global-config
+                  key: redis-host
             - name: REDIS_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ index .Values.configMaps "global" "name" | quote }}
-                  key: {{ index .Values.configMaps "global" "keys" "redis-port" | quote }}
+                  name: global-config
+                  key: redis-port
             - name: REDIS_DB
               valueFrom:
                 configMapKeyRef:
-                  name: {{ index .Values.configMaps "global" "name" | quote }}
-                  key: {{ index .Values.configMaps "global" "keys" "redis-db" | quote }}
+                  name: global-config
+                  key: redis-db
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ index .Values.secrets "global" "name" | quote }}
-                  key: {{ index .Values.secrets "global" "keys" "redis-password" | quote }}
+                  name: global-secrets
+                  key: REDIS_PASSWORD
       restartPolicy: Never
 

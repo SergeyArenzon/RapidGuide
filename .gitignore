@@ -17,3 +17,5 @@ count.txt
 .vinxi
 todos.json
 .pnpm-store
+/k8s/helm/secrets/.env
+/k8s/helm/auth/templates/.env
