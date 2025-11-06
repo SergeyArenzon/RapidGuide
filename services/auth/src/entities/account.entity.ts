@@ -1,4 +1,10 @@
-import { Entity, PrimaryKey, Property, ManyToOne, Unique } from '@mikro-orm/core';
+import {
+  Entity,
+  PrimaryKey,
+  Property,
+  ManyToOne,
+  Unique,
+} from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { User } from './user.entity';
 
@@ -8,9 +14,7 @@ export class Account {
   @PrimaryKey({ type: 'text' })
   id: string = v4();
 
-  @Property({ type: 'text' })
-  userId!: string;
-
+  // 👇 Proper relation (MikroORM relation to User)
   @ManyToOne(() => User, { fieldName: 'userId' })
   user!: User;
 
@@ -47,4 +51,3 @@ export class Account {
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }
-

@@ -1,4 +1,10 @@
-import { Entity, PrimaryKey, Property, OneToMany, Collection } from '@mikro-orm/core';
+import {
+  Entity,
+  PrimaryKey,
+  Property,
+  OneToMany,
+  Collection,
+} from '@mikro-orm/core';
 import { v4 } from 'uuid';
 import { Session } from './session.entity';
 import { Account } from './account.entity';
@@ -26,10 +32,9 @@ export class User {
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 
-  @OneToMany(() => Session, session => session.user)
+  @OneToMany(() => Session, (session) => session.user)
   sessions = new Collection<Session>(this);
 
-  @OneToMany(() => Account, account => account.user)
+  @OneToMany(() => Account, (account) => account.user)
   accounts = new Collection<Account>(this);
 }
-

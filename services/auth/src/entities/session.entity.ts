@@ -7,9 +7,6 @@ export class Session {
   @PrimaryKey({ type: 'text' })
   id: string = v4();
 
-  @Property({ type: 'text' })
-  userId!: string;
-
   @ManyToOne(() => User, { fieldName: 'userId' })
   user!: User;
 
@@ -31,4 +28,3 @@ export class Session {
   @Property({ onUpdate: () => new Date() })
   updatedAt: Date = new Date();
 }
-
