@@ -102,16 +102,21 @@ spec:
                 configMapKeyRef:
                   name: global-config
                   key: redis-db
-            - name: AUTH_GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: GOOGLE_CLIENT_ID
-            - name: AUTH_GOOGLE_CLIENT_SECRET
+            - name: GOOGLE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: GOOGLE_CLIENT_SECRET
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secrets
+                  key: BETTER_AUTH_SECRET
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}

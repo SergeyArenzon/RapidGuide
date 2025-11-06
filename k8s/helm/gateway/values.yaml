@@ -12,7 +12,7 @@ service:
 ingress:
   enabled: true
   className: nginx
-  host: huddlehub.io
+  host: localhost
   paths:
     - path: /api/v1/user(/|$)(.*)
       pathType: Prefix
