@@ -112,6 +112,11 @@ spec:
                 secretKeyRef:
                   name: auth-secrets
                   key: GOOGLE_CLIENT_SECRET
+            - name: GOOGLE_REDIRECT_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: GOOGLE_REDIRECT_URI
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:

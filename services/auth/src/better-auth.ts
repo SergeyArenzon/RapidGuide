@@ -11,8 +11,7 @@ export function createAuth(orm: MikroORM) {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        redirectURI: "http://localhost:80/api/v1/auth/auth/callback/google"
-
+        redirectURI: process.env.GOOGLE_REDIRECT_URI,
       },
     },
     // Don't forget to disable the ID generator if it is already managed by MikroORM
