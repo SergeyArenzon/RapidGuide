@@ -6,6 +6,7 @@ export function createAuth(orm: MikroORM) {
   return betterAuth({
     database: mikroOrmAdapter(orm),
     basePath: '/auth',
+    trustedOrigins: ['http://localhost:3000', 'http://localhost'],
     socialProviders: {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID,

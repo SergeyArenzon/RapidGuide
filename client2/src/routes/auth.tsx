@@ -10,14 +10,22 @@ export const Route = createFileRoute('/auth')({
 
 function RouteComponent() {   
 
+  const { data: sessionData } =  authClient.useSession()
+  console.log({sessionData});
+
 
   const handleSignInWithGoogle = async () => {
     console.log("sign in with google");
     await authClient.signIn.social({
       provider: 'google',
+      newUserCallbackURL: "http://localhost:3000/welcome",
+      callbackURL: "http://localhost:3000"
     })
   }
+
+
   return <div className="bg-white w-3/5 h-3/4 flex  shadow-md  text-primary">
+
           <div className="relative w-1/2  flex justify-center rounded items-center bg-primary overflow-hidden">
                   <img src={bgImage} className="opacity-60 absolute z-0 w-full h-full object-cover" alt="traveller image"/>
               </div>

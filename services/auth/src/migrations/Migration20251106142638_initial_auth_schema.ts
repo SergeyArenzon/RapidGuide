@@ -1,0 +1,38 @@
+import { Migration } from '@mikro-orm/migrations';
+
+export class Migration20251106142638_initial_auth_schema extends Migration {
+  override async up(): Promise<void> {
+    this.addSql(
+      `create table "user" ("id" text not null, "name" text not null, "email" text not null, "emailVerified" boolean not null default false, "image" text null, "createdAt" timestamptz not null, "updatedAt" timestamptz not null, constraint "idx_user_id" primary key ("id"));`,
+    );
+    this.addSql(
+      `alter table "user" add constraint "idx_user_email" unique ("email");`,
+    );
+
+    this.addSql(
+      `create table "session" ("id" text not null, "userId" text not null, "token" text not null, "expiresAt" timestamptz not null, "ipAddress" text null, "userAgent" text null, "createdAt" timestamptz not null, "updatedAt" timestamptz not null, constraint "idx_session_id" primary key ("id"));`,
+    );
+    this.addSql(
+      `alter table "session" add constraint "idx_session_token" unique ("token");`,
+    );
+
+    this.addSql(
+      `create table "account" ("id" text not null, "userId" text not null, "accountId" text not null, "providerId" text not null, "accessToken" text null, "refreshToken" text null, "accessTokenExpiresAt" timestamptz null, "refreshTokenExpiresAt" timestamptz null, "scope" text null, "idToken" text null, "password" text null, "createdAt" timestamptz not null, "updatedAt" timestamptz not null, constraint "idx_account_id" primary key ("id"));`,
+    );
+    this.addSql(
+      `alter table "account" add constraint "idx_account_providerId_accountId" unique ("providerId", "accountId");`,
+    );
+
+    this.addSql(
+      `create table "verification" ("id" text not null, "identifier" text not null, "value" text not null, "expiresAt" timestamptz not null, "createdAt" timestamptz not null, "updatedAt" timestamptz not null, constraint "idx_verification_id" primary key ("id"));`,
+    );
+
+    this.addSql(
+      `alter table "session" add constraint "idx_session_userId" foreign key ("userId") references "user" ("id") on update cascade;`,
+    );
+
+    this.addSql(
+      `alter table "account" add constraint "idx_account_userId" foreign key ("userId") references "user" ("id") on update cascade;`,
+    );
+  }
+}

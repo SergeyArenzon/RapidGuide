@@ -7,3 +7,4 @@ data:
   JWT_ACCESS_EXPIRES_IN_MS: {{ .Values.env.JWT_ACCESS_EXPIRES_IN_MS | quote }}
   JWT_REFRESH_EXPIRES_IN_MS: {{ .Values.env.JWT_REFRESH_EXPIRES_IN_MS | quote }}
   GOOGLE_REDIRECT_URI: {{ .Values.env.GOOGLE_REDIRECT_URI | quote }}
+  CLIENT_URL: {{ .Values.env.CLIENT_URL | quote }}

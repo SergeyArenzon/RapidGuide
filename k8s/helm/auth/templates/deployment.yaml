@@ -117,6 +117,11 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: GOOGLE_REDIRECT_URI
+            - name: CLIENT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: CLIENT_URL
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
