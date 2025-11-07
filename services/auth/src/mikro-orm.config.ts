@@ -1,15 +1,11 @@
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
-import {
-  PostgreSqlDriver,
-  UnderscoreNamingStrategy,
-} from '@mikro-orm/postgresql';
+import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { User } from './entities/user.entity';
 import { Session } from './entities/session.entity';
 import { Account } from './entities/account.entity';
 import { Verification } from './entities/verification.entity';
 import { join } from 'path';
 import { AbstractNamingStrategy } from '@mikro-orm/core';
-
 
 export class CamelCaseNamingStrategy extends AbstractNamingStrategy {
   classToTableName(entityName: string): string {
@@ -58,7 +54,6 @@ export class CamelCaseNamingStrategy extends AbstractNamingStrategy {
   }
 }
 
-
 const mikroOrmConfig: MikroOrmModuleSyncOptions = {
   entities: [User, Session, Account, Verification],
   dbName: process.env.DB_NAME,
@@ -77,4 +72,3 @@ const mikroOrmConfig: MikroOrmModuleSyncOptions = {
 };
 
 export default mikroOrmConfig;
-
