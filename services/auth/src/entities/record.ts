@@ -1,5 +1,4 @@
 import { Index, type Opt, Property } from '@mikro-orm/postgresql';
-
 import { Node } from './node';
 
 /**

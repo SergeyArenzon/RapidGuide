@@ -1,7 +1,4 @@
 import { Index, type Opt, Property } from '@mikro-orm/postgresql';
-
-import type { MaybeNull } from './maybeNull';
-
 import { Record } from './record';
 
 /**
@@ -13,5 +10,5 @@ export abstract class RecordSoft extends Record {
    */
   @Property<RecordSoft>({ type: 'string', nullable: true, default: null })
   @Index()
-  removedAt: MaybeNull<Opt<Date>> = null;
+  removedAt: Opt<Date> = null;
 }

@@ -51,6 +51,10 @@ export function createAuth(orm: MikroORM) {
         userAgent: 'userAgent',
         userId: 'userId',
       },
+      cookieCache: {
+        enabled: true,
+        maxAge: 5 * 60, // Cache duration in seconds
+      },
     },
     verification: {
       fields: {

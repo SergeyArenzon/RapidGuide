@@ -1,7 +1,4 @@
 import { Entity, ManyToOne, type Opt, Property } from '@mikro-orm/postgresql';
-
-import type { Maybe } from './maybe';
-
 import { Record } from './record';
 import { User } from './user.entity';
 
@@ -29,7 +26,7 @@ export class Account extends Record {
     nullable: true,
     default: null,
   })
-  accessToken?: Maybe<Opt<string>>;
+  accessToken?: Opt<string>;
 
   /**
    * The refresh token of the account.
@@ -41,7 +38,7 @@ export class Account extends Record {
     nullable: true,
     default: null,
   })
-  refreshToken?: Maybe<Opt<string>>;
+  refreshToken?: Opt<string>;
 
   /**
    * The id token of the account.
@@ -53,19 +50,19 @@ export class Account extends Record {
     nullable: true,
     default: null,
   })
-  idToken?: Maybe<Opt<string>>;
+  idToken?: Opt<string>;
 
   /**
    * The time when the verification request expires
    */
   @Property<Account>({ type: 'datetime', nullable: true, default: null })
-  accessTokenExpiresAt?: Maybe<Opt<Date>>;
+  accessTokenExpiresAt?: Opt<Date>;
 
   /**
    * The time when the verification request expires
    */
   @Property<Account>({ type: 'datetime', nullable: true, default: null })
-  refreshTokenExpiresAt?: Maybe<Opt<Date>>;
+  refreshTokenExpiresAt?: Opt<Date>;
 
   /**
    * The scope of the account. Returned by the provider
@@ -76,7 +73,7 @@ export class Account extends Record {
     nullable: true,
     default: null,
   })
-  scope?: Maybe<Opt<string>>;
+  scope?: Opt<string>;
 
   /**
    * The password of the account.
@@ -88,7 +85,7 @@ export class Account extends Record {
     nullable: true,
     default: null,
   })
-  password?: Maybe<Opt<string>>;
+  password?: Opt<string>;
 
   /**
    * User associated with the account

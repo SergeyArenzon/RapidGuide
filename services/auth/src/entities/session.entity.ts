@@ -1,8 +1,5 @@
 import { Entity, ManyToOne, Property, Unique } from '@mikro-orm/postgresql';
 import type { Session as SessionSchema } from 'better-auth';
-
-import type { Maybe } from './maybe';
-
 import { Record } from './record';
 import { User } from './user.entity';
 
@@ -27,13 +24,13 @@ export class Session extends Record implements DatabaseSession {
    * The IP address of the device
    */
   @Property<Session>({ type: 'string', nullable: true, default: null })
-  ipAddress?: Maybe<string> = null;
+  ipAddress?: string = null;
 
   /**
    * The user agent information of the device
    */
   @Property<Session>({ type: 'string', nullable: true, default: null })
-  userAgent?: Maybe<string> = null;
+  userAgent?: string = null;
 
   /**
    * User associated with the sesssion
