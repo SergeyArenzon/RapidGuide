@@ -46,6 +46,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   title="Page not found"
   description="The page you're looking for doesn't exist."/>,
   shellComponent: RootDocument,
+  
 })
 
 
