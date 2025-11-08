@@ -39,16 +39,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import useUserStore from "@/store/useUser"
+import { authClient } from '@/lib/auth-client';
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const [activeTab, setActiveTab] = React.useState("analytics");
   const { user } = useUserStore();
-  // const api = new Api();
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     try {
       // Send logout request to backend
       // await api.logout();
+      await authClient.signOut()
     } catch (error) {
       console.error('Logout request failed:', error);
       // Continue with logout even if backend request fails

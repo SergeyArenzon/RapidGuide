@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import bgImage from '/images/guilherme-stecanella-_dH-oQF9w-Y-unsplash.jpg'
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
-import useUserStore from '@/store/useUser';
 
 
 export const Route = createFileRoute('/auth')({
@@ -11,9 +10,6 @@ export const Route = createFileRoute('/auth')({
 })
 
 function RouteComponent() {   
-  const { user } = useUserStore((state) => state);
-
-
   const handleSignInWithGoogle = async () => {
     console.log("sign in with google");
     await authClient.signIn.social({
@@ -21,11 +17,6 @@ function RouteComponent() {
       newUserCallbackURL: "http://localhost:3000/welcome",
       callbackURL: "http://localhost:3000"
     })
-  }
-
-
-  if (user) {
-    return <div>{JSON.stringify(user)}</div>
   }
 
   return <div className="bg-white w-3/5 h-3/4 flex  shadow-md  text-primary">

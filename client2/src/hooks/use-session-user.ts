@@ -25,7 +25,7 @@ export const useSessionUser = () => {
     } else {
       clearUser()
     }
-  }, [clearUser, data, setUser])
+  }, [data])
 
   return sessionQuery
 }
