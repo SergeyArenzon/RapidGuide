@@ -13,6 +13,7 @@ import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import { Error } from '@/components/Error'
 import { Sidebar } from '@/components/Sidebar'
+import { useSessionUser } from '@/hooks/use-session-user'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -48,7 +49,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 
+
 function RootDocument({ children }: { children: React.ReactNode }) {
+  useSessionUser()
+
   return (
     <html lang="en">
       <head>

@@ -3,15 +3,15 @@ import { createFileRoute } from '@tanstack/react-router'
 import bgImage from '/images/guilherme-stecanella-_dH-oQF9w-Y-unsplash.jpg'
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
+import useUserStore from '@/store/useUser';
+
 
 export const Route = createFileRoute('/auth')({
   component: RouteComponent,
 })
 
 function RouteComponent() {   
-
-  const { data: sessionData } =  authClient.useSession()
-  console.log({sessionData});
+  const { user } = useUserStore((state) => state);
 
 
   const handleSignInWithGoogle = async () => {
@@ -23,8 +23,9 @@ function RouteComponent() {
     })
   }
 
-  if (sessionData) {
-    return <div>{JSON.stringify(sessionData)}</div>
+
+  if (user) {
+    return <div>{JSON.stringify(user)}</div>
   }
 
   return <div className="bg-white w-3/5 h-3/4 flex  shadow-md  text-primary">
