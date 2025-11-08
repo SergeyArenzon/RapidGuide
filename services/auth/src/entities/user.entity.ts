@@ -1,40 +1,27 @@
-import {
-  Entity,
-  PrimaryKey,
-  Property,
-  OneToMany,
-  Collection,
-} from '@mikro-orm/core';
-import { v4 } from 'uuid';
-import { Session } from './session.entity';
-import { Account } from './account.entity';
+import { Entity, type Opt, Property, Unique } from '@mikro-orm/postgresql';
+import type { User as UserSchema } from 'better-auth';
 
-@Entity({ tableName: 'user' })
-export class User {
-  @PrimaryKey({ type: 'text' })
-  id: string = v4();
+import { RecordSoft } from './recordSoft';
 
-  @Property({ type: 'text' })
-  name!: string;
+export type UserBase = Omit<UserSchema, 'name'>;
 
-  @Property({ type: 'text', unique: true })
+export type UserInput = Pick<UserBase, 'email'>;
+
+@Entity()
+export class User extends RecordSoft implements UserBase {
+  /**
+   * User email address
+   */
+  @Property<User>({ type: 'string' })
+  @Unique()
   email!: string;
 
-  @Property({ type: 'boolean', default: false })
-  emailVerified: boolean = false;
+  @Property<User>({ type: 'boolean', default: false, nullable: false })
+  emailVerified: Opt<boolean> = false;
 
-  @Property({ type: 'text', nullable: true })
-  image?: string;
+  @Property<User>({ type: 'string', persist: false })
+  readonly name: Opt<string> = '';
 
-  @Property({ onCreate: () => new Date() })
-  createdAt: Date = new Date();
-
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date = new Date();
-
-  @OneToMany(() => Session, (session) => session.user)
-  sessions = new Collection<Session>(this);
-
-  @OneToMany(() => Account, (account) => account.user)
-  accounts = new Collection<Account>(this);
+  @Property<User>({ type: 'string', persist: false })
+  readonly image: Opt<string> = '';
 }

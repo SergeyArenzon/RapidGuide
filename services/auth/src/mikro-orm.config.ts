@@ -1,7 +1,7 @@
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { User } from './entities/user.entity';
-import { Session } from './entities/session.entity';
+import { Session } from './entities/session';
 import { Account } from './entities/account.entity';
 import { Verification } from './entities/verification.entity';
 import { join } from 'path';
@@ -64,7 +64,7 @@ const mikroOrmConfig: MikroOrmModuleSyncOptions = {
   driver: PostgreSqlDriver,
   debug: process.env.NODE_ENV !== 'production',
   allowGlobalContext: true, // Allow global context for better-auth integration
-  namingStrategy: CamelCaseNamingStrategy,
+  // namingStrategy: CamelCaseNamingStrategy,
   migrations: {
     path: join(__dirname, 'migrations'),
     tableName: 'mikro_orm_migrations',

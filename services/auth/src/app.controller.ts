@@ -18,7 +18,6 @@ import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { Role, ScopePermission } from '@rapid-guide-io/decorators';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 
-
 @Controller()
 export class AppController {
   private readonly logger = new Logger(AppController.name);
@@ -31,7 +30,6 @@ export class AppController {
     private refreshTokenService: RefreshTokenService,
   ) {}
 
-  
   @AllowAnonymous()
   @HttpCode(200)
   @Get('/health')
@@ -77,7 +75,7 @@ export class AppController {
     const accessToken = await this.accessTokenService.createClientAccessToken(
       user.id,
     );
-    
+
     const refreshToken = this.refreshTokenService.generateRefreshToken();
 
     // Store refresh token with user data in Redis
@@ -112,7 +110,8 @@ export class AppController {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
 
-    const userData = await this.refreshTokenService.validateRefreshToken(refreshToken);
+    const userData =
+      await this.refreshTokenService.validateRefreshToken(refreshToken);
     if (!userData) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
@@ -150,8 +149,8 @@ export class AppController {
 
     await this.refreshTokenService.storeRefreshToken(newRefreshToken, user);
     await this.refreshTokenService.revokeRefreshToken(refreshToken);
-    console.log({newAccessToken});
-    
+    console.log({ newAccessToken });
+
     // Set new refresh token as httpOnly cookie with secure attributes
     response.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,

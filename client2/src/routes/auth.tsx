@@ -23,6 +23,9 @@ function RouteComponent() {
     })
   }
 
+  if (sessionData) {
+    return <div>{JSON.stringify(sessionData)}</div>
+  }
 
   return <div className="bg-white w-3/5 h-3/4 flex  shadow-md  text-primary">
 

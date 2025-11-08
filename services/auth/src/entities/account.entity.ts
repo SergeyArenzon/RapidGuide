@@ -1,53 +1,98 @@
-import {
-  Entity,
-  PrimaryKey,
-  Property,
-  ManyToOne,
-  Unique,
-} from '@mikro-orm/core';
-import { v4 } from 'uuid';
+import { Entity, ManyToOne, type Opt, Property } from '@mikro-orm/postgresql';
+
+import type { Maybe } from './maybe';
+
+import { Record } from './record';
 import { User } from './user.entity';
 
-@Entity({ tableName: 'account' })
-@Unique({ properties: ['providerId', 'accountId'] })
-export class Account {
-  @PrimaryKey({ type: 'text' })
-  id: string = v4();
-
-  // 👇 Proper relation (MikroORM relation to User)
-  @ManyToOne(() => User, { fieldName: 'userId' })
-  user!: User;
-
-  @Property({ type: 'text' })
+@Entity()
+export class Account extends Record {
+  /**
+   * The id of the account as provided by the SSO or equal to userId for credential accounts
+   */
+  @Property<Account>({ type: 'string' })
   accountId!: string;
 
-  @Property({ type: 'text' })
+  /**
+   * The id of the provider
+   */
+  @Property<Account>({ type: 'string' })
   providerId!: string;
 
-  @Property({ type: 'text', nullable: true })
-  accessToken?: string;
+  /**
+   * The access token of the account.
+   * Returned by the provider
+   */
+  @Property<Account>({
+    type: 'string',
+    columnType: 'text',
+    nullable: true,
+    default: null,
+  })
+  accessToken?: Maybe<Opt<string>>;
 
-  @Property({ type: 'text', nullable: true })
-  refreshToken?: string;
+  /**
+   * The refresh token of the account.
+   * Returned by the provider
+   */
+  @Property<Account>({
+    type: 'string',
+    columnType: 'text',
+    nullable: true,
+    default: null,
+  })
+  refreshToken?: Maybe<Opt<string>>;
 
-  @Property({ type: 'timestamp', nullable: true })
-  accessTokenExpiresAt?: Date;
+  /**
+   * The id token of the account.
+   * Returned by the provider
+   */
+  @Property<Account>({
+    type: 'string',
+    columnType: 'text',
+    nullable: true,
+    default: null,
+  })
+  idToken?: Maybe<Opt<string>>;
 
-  @Property({ type: 'timestamp', nullable: true })
-  refreshTokenExpiresAt?: Date;
+  /**
+   * The time when the verification request expires
+   */
+  @Property<Account>({ type: 'datetime', nullable: true, default: null })
+  accessTokenExpiresAt?: Maybe<Opt<Date>>;
 
-  @Property({ type: 'text', nullable: true })
-  scope?: string;
+  /**
+   * The time when the verification request expires
+   */
+  @Property<Account>({ type: 'datetime', nullable: true, default: null })
+  refreshTokenExpiresAt?: Maybe<Opt<Date>>;
 
-  @Property({ type: 'text', nullable: true })
-  idToken?: string;
+  /**
+   * The scope of the account. Returned by the provider
+   */
+  @Property<Account>({
+    type: 'string',
+    columnType: 'text',
+    nullable: true,
+    default: null,
+  })
+  scope?: Maybe<Opt<string>>;
 
-  @Property({ type: 'text', nullable: true })
-  password?: string;
+  /**
+   * The password of the account.
+   * Mainly used for email and password authentication
+   */
+  @Property<Account>({
+    type: 'string',
+    columnType: 'text',
+    nullable: true,
+    default: null,
+  })
+  password?: Maybe<Opt<string>>;
 
-  @Property({ onCreate: () => new Date() })
-  createdAt: Date = new Date();
-
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date = new Date();
+  /**
+   * User associated with the account
+   */
+  @ManyToOne(() => User, { eager: true })
+  user!: User;
 }

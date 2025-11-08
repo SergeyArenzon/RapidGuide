@@ -4,13 +4,9 @@ import { RefreshTokenService } from './refresh-token/refresh-token.service';
 import { AuthDto, UserDto } from '@rapid-guide-io/dto';
 import { Request, Response } from 'express';
 
-
-
 @Injectable()
 export class AppService {
   private readonly logger = new Logger(AppService.name);
 
   constructor() {}
-
-  
 }

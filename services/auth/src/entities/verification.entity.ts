@@ -1,23 +1,24 @@
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-import { v4 } from 'uuid';
+import { Entity, Property } from '@mikro-orm/postgresql';
 
-@Entity({ tableName: 'verification' })
-export class Verification {
-  @PrimaryKey({ type: 'text' })
-  id: string = v4();
+import { Record } from './record';
 
-  @Property({ type: 'text' })
+@Entity()
+export class Verification extends Record {
+  /**
+   * Unique identifier for each verification
+   */
+  @Property<Verification>({ type: 'string' })
   identifier!: string;
 
-  @Property({ type: 'text' })
+  /**
+   * The value to be verified
+   */
+  @Property<Verification>({ type: 'string', columnType: 'text' })
   value!: string;
 
-  @Property({ type: 'timestamp' })
+  /**
+   * The time when the verification request expires
+   */
+  @Property<Verification>({ type: 'datetime' })
   expiresAt!: Date;
-
-  @Property({ onCreate: () => new Date() })
-  createdAt: Date = new Date();
-
-  @Property({ onUpdate: () => new Date() })
-  updatedAt: Date = new Date();
 }
