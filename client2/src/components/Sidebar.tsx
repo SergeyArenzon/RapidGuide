@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react"
 
+import { useNavigate } from '@tanstack/react-router';
 import Logo from "./Logo"
 import {
   Sidebar as ShadcnSidebar,
@@ -39,22 +40,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import useUserStore from "@/store/useUser"
+import { authClient } from '@/lib/auth-client';
+
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const [activeTab, setActiveTab] = React.useState("analytics");
   const { user } = useUserStore();
-  // const api = new Api();
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     try {
-      // Send logout request to backend
-      // await api.logout();
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            navigate({ to: '/auth', replace: false});
+          },
+        },
+      })
     } catch (error) {
-      console.error('Logout request failed:', error);
-      // Continue with logout even if backend request fails
     } finally {
-      // Always call NextAuth signOut
-      // signOut();
     }
   };
 
@@ -136,11 +140,11 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
             <DropdownMenuTrigger asChild>
               <button className="flex w-full items-center gap-3 rounded-md p-2 text-left hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src={user?.image_url} alt={user?.first_name} referrerPolicy="no-referrer"/>
-                  <AvatarFallback>{`${user?.first_name.charAt(0)}${user?.last_name.charAt(0)}`}</AvatarFallback>
+                  <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? undefined} referrerPolicy="no-referrer"/>
+                  <AvatarFallback>{`${user?.name?.charAt(0)}${user?.name?.charAt(0)}`}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-medium leading-none truncate">{`${user?.first_name} ${user?.last_name}`}</p>
+                  <p className="text-sm font-medium leading-none truncate">{`${user?.name}`}</p>
                   <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
                 <ChevronUp className="h-4 w-4 text-muted-foreground" />

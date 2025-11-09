@@ -1196,7 +1196,7 @@ dhParam: ""
 ingress:
   enabled: true
   rules:
-    - host: huddlehub.io
+    - host: localhost
       paths:
         - path: /user(/|$)(.*)
           pathType: Prefix

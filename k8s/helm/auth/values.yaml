@@ -5,11 +5,20 @@ image:
   tag: latest
   pullPolicy: IfNotPresent
 
-# Add init container to wait for Redis
+# Add init containers to wait for dependencies
 initContainers:
-  - name: wait-for-redis
-    image: busybox:1.35
-    command: ['sh', '-c', 'until nc -z redis-master 6379; do echo waiting for redis; sleep 2; done; echo "Redis is ready!";']
+  - name: wait-for-auth-db
+    image: busybox
+    env:
+      - name: AUTH_DB_PORT
+        valueFrom:
+          configMapKeyRef:
+            name: auth-db-config
+            key: POSTGRES_PORT
+  #   command: ["/bin/sh", "-c", "until nc -z -v -w30 auth-db $AUTH_DB_PORT; do echo 'Waiting for PostgreSQL...'; sleep 5; done"]
+  # - name: wait-for-redis
+  #   image: busybox:1.35
+  #   command: ['sh', '-c', 'until nc -z redis-master 6379; do echo waiting for redis; sleep 2; done; echo "Redis is ready!";']
 
 service:
   type: ClusterIP
@@ -36,6 +45,8 @@ env:
   JWT_ACCESS_EXPIRES_IN_MS: 900000
   # 7 days in milliseconds: 7 * 24 * 60 * 60 * 1000 = 604800000
   JWT_REFRESH_EXPIRES_IN_MS: 604800000
+  GOOGLE_REDIRECT_URI: http://localhost:80/api/v1/auth/auth/callback/google
+  CLIENT_URL: http://localhost:3000
   # Redis credentials will be loaded from global secrets
   # Add other environment variables as needed
 
@@ -53,17 +64,25 @@ postgresql:
     size: 8Gi
 
 
-secrets:
-  global:
-    name: global-secrets
-    keys:
-      jwt-secret: jwt-secret
-      redis-password: redis-password
+# Secrets are now created directly by Skaffold from .env using kubectl
+# See skaffold.dev.yaml hooks section
+# - global-secrets: JWT_SECRET, REDIS_PASSWORD
+# - auth-secrets: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 
 configMaps:
+  auth-db:
+    name: auth-db-config
+    keys:
+      POSTGRES_HOST: auth-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: auth
+      POSTGRES_USER: postgres
   global:
     name: global-config
     keys:
       redis-host: redis-host
       redis-port: redis-port
-      redis-db: redis-db 
+      redis-db: redis-db
+
+database:
+  password: "postgres" 

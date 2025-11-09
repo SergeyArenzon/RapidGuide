@@ -14,26 +14,26 @@ build:
             dest: .
           - src: "src/**/*.json"
             dest: .
-    - image: sergeyarenzon/huddlehub-user
-      context: services/user
-      docker:
-        dockerfile: Dockerfile.dev
-      sync: 
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
-    - image: sergeyarenzon/huddlehub-tour
-      context: services/tour
-      docker:
-        dockerfile: Dockerfile.dev
-      sync: 
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
+    # - image: sergeyarenzon/huddlehub-user
+    #   context: services/user
+    #   docker:
+    #     dockerfile: Dockerfile.dev
+    #   sync: 
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    #       - src: "src/**/*.json"
+    #         dest: .
+    # - image: sergeyarenzon/huddlehub-tour
+    #   context: services/tour
+    #   docker:
+    #     dockerfile: Dockerfile.dev
+    #   sync: 
+    #     manual:
+    #       - src: "src/**/*.ts"
+    #         dest: .
+    #       - src: "src/**/*.json"
+    #         dest: .
   tagPolicy:
     gitCommit: {}
   local:
@@ -49,14 +49,18 @@ manifests:
         chartPath: k8s/helm/gateway/
         valuesFiles:
           - k8s/helm/gateway/values.yaml
-      - name: user-db
-        chartPath: k8s/helm/user-db/
+      # - name: user-db
+      #   chartPath: k8s/helm/user-db/
+      #   valuesFiles:
+      #     - k8s/helm/user-db/values.yaml
+      # - name: tour-db
+      #   chartPath: k8s/helm/tour-db/
+      #   valuesFiles:
+      #     - k8s/helm/tour-db/values.yaml
+      - name: auth-db
+        chartPath: k8s/helm/auth-db/
         valuesFiles:
-          - k8s/helm/user-db/values.yaml
-      - name: tour-db
-        chartPath: k8s/helm/tour-db/
-        valuesFiles:
-          - k8s/helm/tour-db/values.yaml
+          - k8s/helm/auth-db/values.yaml
       - name: ingress-nginx
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
@@ -70,11 +74,15 @@ manifests:
         chartPath: k8s/helm/auth/
         valuesFiles:
           - k8s/helm/auth/values.yaml
-      - name: user
-        chartPath: k8s/helm/user/
-        valuesFiles:
-          - k8s/helm/user/values.yaml
-      - name: tour
-        chartPath: k8s/helm/tour/
-        valuesFiles:
-          - k8s/helm/tour/values.yaml
+      # - name: user
+      #   chartPath: k8s/helm/user/
+      #   valuesFiles:
+      #     - k8s/helm/user/values.yaml
+      # - name: tour
+      #   chartPath: k8s/helm/tour/
+      #   valuesFiles:
+      #     - k8s/helm/tour/values.yamldeploy:
+  hooks:
+    before:
+      - host:
+          command: ["sh", "-c", "if [ -f k8s/helm/auth/templates/.env ]; then kubectl create secret generic auth-secrets --from-env-file=k8s/helm/auth/templates/.env --dry-run=client -o yaml | kubectl apply -f -; else echo 'Warning: k8s/helm/auth/templates/.env not found - auth-secrets will not be created'; fi"]
