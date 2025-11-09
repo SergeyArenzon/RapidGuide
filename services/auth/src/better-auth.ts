@@ -1,11 +1,15 @@
 import { mikroOrmAdapter } from 'better-auth-mikro-orm';
 import { betterAuth } from 'better-auth';
 import { MikroORM } from '@mikro-orm/core';
+import { jwt } from 'better-auth/plugins';
 
-export function createAuth(orm: MikroORM) {
+type AuthInstance = ReturnType<typeof betterAuth>;
+
+export function createAuth(orm: MikroORM): AuthInstance {
   return betterAuth({
     database: mikroOrmAdapter(orm),
     basePath: '/auth',
+    plugins: [jwt()],
     trustedOrigins: ['http://localhost:3000', 'http://localhost'],
     socialProviders: {
       google: {

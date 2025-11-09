@@ -1,14 +1,14 @@
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { User } from './entities/user.entity';
-import { Session } from './entities/session.entity';
 import { Account } from './entities/account.entity';
+import { Jwks } from './entities/jwks.entity';
+import { Session } from './entities/session.entity';
+import { User } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 import { join } from 'path';
-import { AbstractNamingStrategy } from '@mikro-orm/core';
 
 const mikroOrmConfig: MikroOrmModuleSyncOptions = {
-  entities: [User, Session, Account, Verification],
+  entities: [User, Session, Account, Verification, Jwks],
   dbName: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT),

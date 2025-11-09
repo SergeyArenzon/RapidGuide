@@ -7,27 +7,58 @@ import { userSchema } from '@/schema/user.schema'
 export const useSessionUser = () => {
   const { setUser, clearUser } = useUserStore((state) => state)
 
-  const sessionQuery = authClient.useSession()
-  const { data } = sessionQuery
-
   useEffect(() => {
-    const sessionUser = data?.user
+    let cancelled = false
 
-    if (sessionUser) {
-      const result = userSchema.safeParse(sessionUser)
+    const fetchSession = async () => {
+      try {
+        const result = await authClient.getSession({
+          fetchOptions: {
+            onSuccess: (ctx) => {
+              const jwt = ctx.response.headers.get('set-auth-jwt')
+              console.log(jwt)
+            },
+          },
+        })
 
-      if (result.success) {
-        setUser(result.data)
-      } else {
-        console.error('Failed to parse session user', result.error)
-        clearUser()
+        if (cancelled) {
+          return
+        }
+
+        if (!('data' in result)) {
+          clearUser()
+          return
+        }
+
+        const sessionUser = result.data?.user
+
+        if (sessionUser) {
+          const parsed = userSchema.safeParse(sessionUser)
+
+          if (parsed.success) {
+            setUser(parsed.data)
+          } else {
+            console.error('Failed to parse session user', parsed.error)
+            clearUser()
+          }
+        } else {
+          clearUser()
+        }
+      } catch (error) {
+        console.error('Failed to fetch session', error)
+
+        if (!cancelled) {
+          clearUser()
+        }
       }
-    } else {
-      clearUser()
     }
-  }, [data])
 
-  return sessionQuery
+    fetchSession()
+
+    return () => {
+      cancelled = true
+    }
+  }, [clearUser, setUser])
 }
 
 
