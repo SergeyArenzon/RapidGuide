@@ -3,20 +3,29 @@ import { useEffect } from 'react'
 import { authClient } from '@/lib/auth-client'
 import useUserStore from '@/store/useUser'
 import { userSchema } from '@/schema/user.schema'
+import useJwtToken from '@/store/useJwtToken'
+import { useSessionStore } from '@/store/useSession'
 
-export const useSessionUser = () => {
+
+export const useAuthInit = () => {
   const { setUser, clearUser } = useUserStore((state) => state)
+  const { setToken, clearToken } = useJwtToken((state) => state)
+  const { setSession, clearSession } = useSessionStore((state) => state)
 
   useEffect(() => {
     let cancelled = false
 
-    const fetchSession = async () => {
+    const fetchAuthInit = async () => {
       try {
         const result = await authClient.getSession({
           fetchOptions: {
             onSuccess: (ctx) => {
               const jwt = ctx.response.headers.get('set-auth-jwt')
-              console.log(jwt)
+              if (jwt) {
+                setToken(jwt)
+              } else {
+                clearToken()
+              }
             },
           },
         })
@@ -44,6 +53,12 @@ export const useSessionUser = () => {
         } else {
           clearUser()
         }
+
+        if (result.data?.session) {
+          setSession(result.data.session)
+        } else {
+          clearSession()
+        }
       } catch (error) {
         console.error('Failed to fetch session', error)
 
@@ -53,7 +68,7 @@ export const useSessionUser = () => {
       }
     }
 
-    fetchSession()
+    fetchAuthInit()
 
     return () => {
       cancelled = true

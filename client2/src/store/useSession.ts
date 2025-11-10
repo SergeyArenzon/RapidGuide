@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { authClient } from '@/lib/auth-client'
 
-type AuthSessionQuery = ReturnType<typeof authClient.useSession>
+type AuthSessionQuery = ReturnType<typeof authClient.getSession>
 export type SessionData =
   AuthSessionQuery extends { data: infer T } ? T | null : null
 export type SessionError =
@@ -14,6 +14,7 @@ type SessionStore = {
   setSession: (session: SessionData) => void
   setLoading: (loading: boolean) => void
   setError: (error: SessionError) => void
+  clearSession: () => void
 }
 
 export const useSessionStore = create<SessionStore>((set) => ({
@@ -23,5 +24,6 @@ export const useSessionStore = create<SessionStore>((set) => ({
   setSession: (session) => set({ session }),
   setLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
+  clearSession: () => set({ session: null, isLoading: true, error: null }),
 }))
 
