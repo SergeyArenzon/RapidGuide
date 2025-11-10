@@ -24,10 +24,8 @@ export default class Api {
   private axios: AxiosInstance;
 
   constructor(accessToken: string) {
-    console.log({accessToken});
-    
     this.axios = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      baseURL: process.env.API_BASE_URL,
       withCredentials: true,
       timeout: 5000, // 5s timeout
       headers: {
@@ -78,6 +76,14 @@ export default class Api {
   
 
   
+  // 🛠 Fetch languages with validation
+  async getUser(): Promise<Array<LanguageDto>> {
+    return this.validateResponse(
+      () => this.axios.get('/user'),
+      z.array(languageSchema)
+    );
+  }
+
   // 🛠 Fetch languages with validation
   async getLanguages(): Promise<Array<LanguageDto>> {
     return this.validateResponse(

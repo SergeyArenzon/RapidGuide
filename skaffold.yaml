@@ -12,8 +12,8 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
-    - image: sergeyarenzon/huddlehub-user
-      context: services/user
+    - image: sergeyarenzon/huddlehub-profile
+      context: services/profile
       docker:
         dockerfile: Dockerfile
       sync: 
@@ -48,10 +48,10 @@ manifests:
         remoteChart: redis
         valuesFiles:
           - k8s/minikube/redis/values.yaml
-      - name: user-db
-        chartPath: k8s/helm/user-db/
+      - name: profile-db
+        chartPath: k8s/helm/profile-db/
         valuesFiles:
-          - k8s/helm/user-db/values.yaml
+          - k8s/helm/profile-db/values.yaml
       - name: tour-db
         chartPath: k8s/helm/tour-db/
         valuesFiles:
@@ -64,10 +64,10 @@ manifests:
         chartPath: k8s/helm/auth/
         valuesFiles:
           - k8s/helm/auth/values.yaml
-      - name: user
-        chartPath: k8s/helm/user/
+      - name: profile
+        chartPath: k8s/helm/profile/
         valuesFiles:
-          - k8s/helm/user/values.yaml
+          - k8s/helm/profile/values.yaml
       - name: tour
         chartPath: k8s/helm/tour/
         valuesFiles:

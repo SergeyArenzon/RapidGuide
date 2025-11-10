@@ -9,6 +9,8 @@ import { userSchema } from '@/schema/user.schema'
 import useJwtToken from '@/store/useJwtToken'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import Api from '@/lib/api'
 
 export const useAuthInit = (): {
   session: SessionData
@@ -25,66 +27,71 @@ export const useAuthInit = (): {
   const clearSession = useSessionStore((state) => state.clearSession)
   const session = useSessionStore((state) => state.session)
 
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    const fetchAuthInit = async () => {
-      try {
-        const result = await authClient.getSession({
-          fetchOptions: {
-            onSuccess: (ctx) => {
-              const jwt = ctx.response.headers.get('set-auth-jwt')
-              if (jwt) {
-                setToken(jwt)
-              } else {
-                clearToken()
-              }
-            },
-            onError: (error) => {
-              console.error('Failed to fetch session', error)
-              // router.push(ROUTES.SIGNIN)
-            },
+  const fetchAuthInit = async () => {
+    try {
+      const result = await authClient.getSession({
+        fetchOptions: {
+          onSuccess: (ctx) => {
+            const jwt = ctx.response.headers.get('set-auth-jwt')
+            if (jwt) {
+              setToken(jwt)
+            } else {
+              clearToken()
+            }
           },
-        })
-
-        if (!result.data) {
-          clearUser()
-          clearToken()
-          clearSession()
-          navigate({ to: '/auth' })
-        }
-
-        const sessionUser = result.data?.user
-
-        if (sessionUser) {
-          const parsed = userSchema.safeParse(sessionUser)
-
-          if (parsed.success) {
-            setUser(parsed.data)
-          } else {
-            console.error('Failed to parse session user', parsed.error)
-            clearUser()
-          }
-        } else {
-          clearUser()
-        }
-
-        if (result.data?.session) {
-          setSession(result.data.session)
-        } else {
-          clearSession()
-        }
-      } catch (error) {
-        console.error('Failed to fetch session', error)
+          onError: (error) => {
+            console.error('Failed to fetch session', error)
+            // router.push(ROUTES.SIGNIN)
+          },
+        },
+      })
+      
+      if (!result.data) {
         clearUser()
         clearToken()
         clearSession()
         navigate({ to: '/auth' })
       }
-    }
 
+      const sessionUser = result.data?.user
+
+      if (sessionUser) {
+        const parsed = userSchema.safeParse(sessionUser)
+
+        if (parsed.success) {
+          setUser(parsed.data)
+        } else {
+          console.error('Failed to parse session user', parsed.error)
+          clearUser()
+        }
+      } else {
+        clearUser()
+      }
+
+      if (result.data?.session) {
+        setSession(result.data.session)
+      } else {
+        clearSession()
+      }
+    } catch (error) {
+      console.error('Failed to fetch session', error)
+      clearUser()
+      clearToken()
+      clearSession()
+      navigate({ to: '/auth' })
+    }
+  }
+  const navigate = useNavigate()
+
+  useEffect(() => {
     fetchAuthInit()
   }, [])
+
+  const queryClient = useQueryClient()
+  const Api = new Api(token);
+  // Queries
+  const query = useQuery({ queryKey: ['profile'], queryFn:  })
+
 
   return { session, user, token }
 }
