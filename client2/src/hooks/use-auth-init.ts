@@ -1,17 +1,29 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+
+import { useNavigate } from '@tanstack/react-router'
+import type { AuthUser } from '@/store/useUser'
+import type { SessionData } from '@/store/useSession'
 
 import { authClient } from '@/lib/auth-client'
-import useUserStore from '@/store/useUser'
 import { userSchema } from '@/schema/user.schema'
 import useJwtToken from '@/store/useJwtToken'
+import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
-import { useNavigate } from '@tanstack/react-router'
 
-export const useAuthInit = (): { isLoading: boolean } => {
-  const { setUser, clearUser } = useUserStore((state) => state)
-  const { setToken, clearToken } = useJwtToken((state) => state)
-  const { setSession, clearSession } = useSessionStore((state) => state)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+export const useAuthInit = (): {
+  session: SessionData
+  user: AuthUser | null
+  token: string | null
+} => {
+  const setUser = useUserStore((state) => state.setUser)
+  const clearUser = useUserStore((state) => state.clearUser)
+  const user = useUserStore((state) => state.user)
+  const setToken = useJwtToken((state) => state.setToken)
+  const clearToken = useJwtToken((state) => state.clearToken)
+  const token = useJwtToken((state) => state.token)
+  const setSession = useSessionStore((state) => state.setSession)
+  const clearSession = useSessionStore((state) => state.clearSession)
+  const session = useSessionStore((state) => state.session)
 
   const navigate = useNavigate()
 
@@ -34,15 +46,13 @@ export const useAuthInit = (): { isLoading: boolean } => {
             },
           },
         })
-        
-        
+
         if (!result.data) {
           clearUser()
           clearToken()
           clearSession()
           navigate({ to: '/auth' })
         }
-        
 
         const sessionUser = result.data?.user
 
@@ -64,24 +74,19 @@ export const useAuthInit = (): { isLoading: boolean } => {
         } else {
           clearSession()
         }
-        setIsLoading(false)
       } catch (error) {
         console.error('Failed to fetch session', error)
-
-        if (!cancelled) {
-          clearUser()
-        }
+        clearUser()
+        clearToken()
+        clearSession()
+        navigate({ to: '/auth' })
       }
     }
 
     fetchAuthInit()
+  }, [])
 
-    return () => {
-      cancelled = true
-    }
-  }, [clearUser, setUser])
-
-  return { isLoading }
+  return { session, user, token }
 }
 
 

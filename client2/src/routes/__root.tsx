@@ -1,25 +1,16 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
-  Outlet,
-  useLoaderData,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
 import appCss from '../styles.css?url'
-
 import type { QueryClient } from '@tanstack/react-query'
 import { Error } from '@/components/Error'
 import { Sidebar } from '@/components/Sidebar'
-import { authClient } from '@/lib/auth-client'
-import useUserStore from '@/store/useUser'
-import { userSchema } from '@/schema/user.schema'
-import useJwtToken from '@/store/useJwtToken'
-import { useSessionStore } from '@/store/useSession'
 import Loading from '@/components/Loading'
 import { useAuthInit } from '@/hooks/use-auth-init'
 
@@ -48,7 +39,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
-
   pendingComponent: () => <Loading />,
   notFoundComponent: () => <Error 
     statusCode={404}
@@ -62,12 +52,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 function RootComponent() {
-  const { isLoading } = useAuthInit();
-  console.log({isLoading});
-  
-  if (isLoading) {
-    return <Loading />
-  }
+  const { token } = useAuthInit()
 
   return (
     <html lang="en">
