@@ -1,20 +1,21 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { authClient } from '@/lib/auth-client'
 import useUserStore from '@/store/useUser'
 import { userSchema } from '@/schema/user.schema'
 import useJwtToken from '@/store/useJwtToken'
 import { useSessionStore } from '@/store/useSession'
+import { useNavigate } from '@tanstack/react-router'
 
-
-export const useAuthInit = () => {
+export const useAuthInit = (): { isLoading: boolean } => {
   const { setUser, clearUser } = useUserStore((state) => state)
   const { setToken, clearToken } = useJwtToken((state) => state)
   const { setSession, clearSession } = useSessionStore((state) => state)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
-    let cancelled = false
-
     const fetchAuthInit = async () => {
       try {
         const result = await authClient.getSession({
@@ -27,17 +28,21 @@ export const useAuthInit = () => {
                 clearToken()
               }
             },
+            onError: (error) => {
+              console.error('Failed to fetch session', error)
+              // router.push(ROUTES.SIGNIN)
+            },
           },
         })
-
-        if (cancelled) {
-          return
-        }
-
-        if (!('data' in result)) {
+        
+        
+        if (!result.data) {
           clearUser()
-          return
+          clearToken()
+          clearSession()
+          navigate({ to: '/auth' })
         }
+        
 
         const sessionUser = result.data?.user
 
@@ -59,6 +64,7 @@ export const useAuthInit = () => {
         } else {
           clearSession()
         }
+        setIsLoading(false)
       } catch (error) {
         console.error('Failed to fetch session', error)
 
@@ -74,6 +80,8 @@ export const useAuthInit = () => {
       cancelled = true
     }
   }, [clearUser, setUser])
+
+  return { isLoading }
 }
 
 
