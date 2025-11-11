@@ -14,8 +14,8 @@ build:
     #         dest: .
     #       - src: "src/**/*.json"
     #         dest: .
-    - image: sergeyarenzon/huddlehub-user
-      context: services/user
+    - image: sergeyarenzon/huddlehub-profile
+      context: services/profile
       docker:
         dockerfile: Dockerfile.dev
       sync: 
@@ -49,10 +49,10 @@ manifests:
         chartPath: k8s/helm/gateway/
         valuesFiles:
           - k8s/helm/gateway/values.yaml
-      - name: user-db
-        chartPath: k8s/helm/user-db/
+      - name: profile-db
+        chartPath: k8s/helm/profile-db/
         valuesFiles:
-          - k8s/helm/user-db/values.yaml
+          - k8s/helm/profile-db/values.yaml
       # - name: tour-db
       #   chartPath: k8s/helm/tour-db/
       #   valuesFiles:
@@ -74,10 +74,10 @@ manifests:
       #   chartPath: k8s/helm/auth/
       #   valuesFiles:
       #     - k8s/helm/auth/values.yaml
-      - name: user
-        chartPath: k8s/helm/user/
+      - name: profile
+        chartPath: k8s/helm/profile/
         valuesFiles:
-          - k8s/helm/user/values.yaml
+          - k8s/helm/profile/values.yaml
       # - name: tour
       #   chartPath: k8s/helm/tour/
       #   valuesFiles:
