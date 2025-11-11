@@ -1,19 +1,18 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
-
 import appCss from '../styles.css?url'
-
 import type { QueryClient } from '@tanstack/react-query'
 import { Error } from '@/components/Error'
 import { Sidebar } from '@/components/Sidebar'
-import { useSessionUser } from '@/hooks/use-session-user'
+import Loading from '@/components/Loading'
+import { useAuthInit } from '@/hooks/use-auth-init'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -40,19 +39,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
-
+  pendingComponent: () => <Loading />,
   notFoundComponent: () => <Error 
-  statusCode={404}
-  title="Page not found"
-  description="The page you're looking for doesn't exist."/>,
-  shellComponent: RootDocument,
+    statusCode={404}
+    title="Page not found"
+    description="The page you're looking for doesn't exist."/>,
+  component: RootComponent,
   
 })
 
 
 
-function RootDocument({ children }: { children: React.ReactNode }) {
-  useSessionUser()
+
+function RootComponent() {
+  const { token } = useAuthInit()
 
   return (
     <html lang="en">
@@ -68,7 +68,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <Sidebar />
           </aside>
           <main>
-            {children}
+            <Outlet />
           </main>
         </div>
 

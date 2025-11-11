@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { timeSchema } from '../src/time.dto';
+import { timeSchema } from '../time.dto';
 
 // Base schema that will be extended by create and response DTOs
 const guideSchema = timeSchema.extend({
   id: z.uuid(),
+  user_id: z.string().uuid(),
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   bio: z.string()
   .min(10, { message: "Bio must be at least 10 characters" })
