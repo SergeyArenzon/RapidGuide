@@ -65,4 +65,4 @@
 # cookie: accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OTdiZGI5Ny1iMGFiLTQ2ZTctYjNkMC1iNzNkOWM2Y2ZiYzMiLCJpc3MiOiJhdXRoIiwiYXVkIjoiY2xpZW50Iiwicm9sZXMiOlsiY2xpZW50Il0sInNjb3BlcyI6WyJ1c2VyOnJlYWQiLCJ1c2VyOndyaXRlIl0sImlhdCI6MTc1NjgzMzI2ODEyNiwiZXhwIjoxNzU2ODMzMjY5MDI2fQ.5LtOCitspMevigKYqXPYPmD1UcYdkzDceZ6qYRqT0fU
 
 
-GET http://localhost:80/api/v1/auth/health
+GET http://localhost:80/api/v1/profile/health

@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: '{{ include "profile.fullname" . }}-db-job'
+  labels:
+    app: {{ include "profile.fullname" . }}
+    job: database
+  # annotations:
+    # Add a skaffold annotation to force recreation
+    # "skaffold.dev/depends-on-image1": "{{ .Values.image.repository }}"
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: {{ include "profile.fullname" . }}
+        job: database
+    spec:
+      initContainers:
+        - name: check-profile-db-ready
+          image: busybox:latest
+          command: ['sh', '-c', 
+            'until nc -z -w1 {{ .Values.database.host }} {{ .Values.database.port }}; 
+            do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: database
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Running DB migrations..." &&
+              npx mikro-orm migration:up &&
+              echo "Running seeders..." &&
+              npx mikro-orm seeder:run
+          env:
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
+            - name: PROFILE_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ index .Values.configMaps "profile-db" "name" | quote }}
+                  key: POSTGRES_HOST
+      restartPolicy: Never 
