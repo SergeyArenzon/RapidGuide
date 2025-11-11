@@ -1,22 +1,21 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { microOrmConfig } from 'src/config';
-import { UserModule } from './user/user.module';
 import { AppController } from './app.controller';
 import { LanguagesModule } from './languages/languages.module';
 import { CountryModule } from './country/country.module';
 import { CityModule } from './city/city.module';
 import { GuideModule } from './guide/guide.module';
-import { JwtModule } from '@nestjs/jwt';
-import { jwtConfig } from './config';
+// import { JwtModule } from '@nestjs/jwt';
+// import { jwtConfig } from './config';
 import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(microOrmConfig),
-    JwtModule.registerAsync(jwtConfig.asProvider()),
-    UserModule,
+    // JwtModule.registerAsync(jwtConfig.asProvider()),
+    // UserModule,
     LanguagesModule,
     CountryModule,
     CityModule,

@@ -16,29 +16,29 @@ import {
   ScopePermission,
   ResponseSchema,
 } from '@rapid-guide-io/decorators';
-import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
+// import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
 
 @Controller('guide')
 export class GuideController {
   constructor(private readonly guideService: GuideService) {}
 
-  @Post()
-  @UseGuards(RolesGuard, ScopesGuard)
-  @ResponseSchema(userSchema)
-  @Roles(Role.CLIENT)
-  @Scopes([ScopePermission.GUIDE_CREATE])
-  async create(
-    @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-    @Subject() userId: string,
-  ): Promise<GuideDto> {
-    return await this.guideService.create(userId, body);
-  }
+  // @Post()
+  // // @UseGuards(RolesGuard, ScopesGuard)
+  // @ResponseSchema(userSchema)
+  // @Roles(Role.CLIENT)
+  // @Scopes([ScopePermission.GUIDE_CREATE])
+  // async create(
+  //   @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
+  //   @Subject() userId: string,
+  // ): Promise<GuideDto> {
+  //   return await this.guideService.create(userId, body);
+  // }
 
-  @Get()
-  @UseGuards(RolesGuard, ScopesGuard)
-  @Roles(Role.CLIENT)
-  @Scopes([ScopePermission.GUIDE_READ])
-  async getGuide(@Subject() userId: string): Promise<GuideDto> {
-    return await this.guideService.findByUserId(userId);
-  }
+  // @Get()
+  // // @UseGuards(RolesGuard, ScopesGuard)
+  // @Roles(Role.CLIENT)
+  // @Scopes([ScopePermission.GUIDE_READ])
+  // async getGuide(@Subject() userId: string): Promise<GuideDto> {
+  //   return await this.guideService.findByUserId(userId);
+  // }
 }

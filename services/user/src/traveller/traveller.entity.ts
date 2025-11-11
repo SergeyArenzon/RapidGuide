@@ -6,7 +6,7 @@ import {
   ManyToOne,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../entities/base.entity';
-import { User } from '../user/user.entity';
+// import { User } from '../user/user.entity';
 
 @Entity()
 export class Traveller extends BaseEntity {
@@ -30,6 +30,4 @@ export class Traveller extends BaseEntity {
     console.log('Deleted traveller with id', this.id);
   }
 
-  @ManyToOne(() => User)
-  user: User;
 }

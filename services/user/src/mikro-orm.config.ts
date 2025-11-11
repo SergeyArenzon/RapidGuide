@@ -1,6 +1,6 @@
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
-import { User } from './user/user.entity';
+// import { User } from './user/user.entity';
 import { Traveller } from './traveller/traveller.entity';
 import { Languages } from './languages/languages.entity';
 import { Guide } from './guide/entities/guide.entity';
@@ -9,12 +9,15 @@ import { Country } from './country/country.entity';
 import { City } from './city/city.entity';
 import { GuideSubcategory } from './guide/entities/guide-subcategory.entity';
 import { join } from 'path';
+import { BaseEntity, DateEntity } from './entities';
 
 const microOrmConfig: MikroOrmModuleSyncOptions = {
   clientUrl: process.env.USER_DB_HOST, // Connection URL
   entities: [
-    User,
-    Traveller,
+    // User,
+    // Traveller,
+    BaseEntity,
+    DateEntity,
     Languages,
     Guide,
     GuideSubcategory,

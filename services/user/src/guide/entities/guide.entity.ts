@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
-import { User } from '../../user/user.entity';
+// import { User } from '../../user/user.entity';
 import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';
@@ -23,6 +23,27 @@ export class Guide extends BaseEntity {
     super();
     Object.assign(this, guide);
   }
+
+  @Property({ type: 'uuid' })
+  user_id: string;
+
+  @Property({ type: 'text' })
+  name: string;
+
+  @Property({ type: 'text' })
+  bio: string;
+
+  @OneToMany(() => GuideSubcategory, (subcategory) => subcategory.guide)
+  subcategories = new Collection<GuideSubcategory>(this);
+
+  @ManyToMany(() => Languages)
+  languages = new Collection<Languages>(this);
+
+  @OneToOne(() => Country)
+  country!: Country;
+
+  @OneToOne(() => City)
+  city!: City;
 
   toDto(): GuideDto {
     return {
@@ -54,25 +75,4 @@ export class Guide extends BaseEntity {
   logDelete() {
     console.log('Deleted guide with id', this.id);
   }
-
-  @Property({ type: 'text' })
-  name: string;
-
-  @Property({ type: 'text' })
-  bio: string;
-
-  @OneToMany(() => GuideSubcategory, (subcategory) => subcategory.guide)
-  subcategories = new Collection<GuideSubcategory>(this);
-
-  @ManyToMany(() => Languages)
-  languages = new Collection<Languages>(this);
-
-  @OneToOne(() => Country)
-  country!: Country;
-
-  @OneToOne(() => City)
-  city!: City;
-
-  @OneToOne(() => User)
-  user!: User;
 }
