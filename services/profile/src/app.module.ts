@@ -15,7 +15,7 @@ import auth  from './better-auth';
 
 @Module({
   imports: [
-    AuthModule.forRoot({ auth }),
+    AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
     MikroOrmModule.forRoot(microOrmConfig),
     // JwtModule.registerAsync(jwtConfig.asProvider()),
     // UserModule,

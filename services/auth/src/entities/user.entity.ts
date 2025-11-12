@@ -19,9 +19,9 @@ export class User extends RecordSoft implements UserBase {
   @Property<User>({ type: 'boolean', default: false, nullable: false })
   emailVerified: Opt<boolean> = false;
 
-  @Property<User>({ type: 'string', persist: false })
+  @Property<User>({ type: 'string' })
   readonly name: Opt<string> = '';
 
-  @Property<User>({ type: 'string', persist: false })
+  @Property<User>({ type: 'string' })
   readonly image: Opt<string> = '';
 }

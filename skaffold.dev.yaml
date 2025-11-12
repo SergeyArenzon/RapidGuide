@@ -4,16 +4,16 @@ metadata:
   name: huddlehub-dev
 build:
   artifacts:
-    # - image: sergeyarenzon/huddlehub-auth
-    #   context: services/auth
-    #   docker:
-    #     dockerfile: Dockerfile.dev
-    #   sync: 
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    #       - src: "src/**/*.json"
-    #         dest: .
+    - image: sergeyarenzon/huddlehub-auth
+      context: services/auth
+      docker:
+        dockerfile: Dockerfile.dev
+      sync: 
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+          - src: "src/**/*.json"
+            dest: .
     - image: sergeyarenzon/huddlehub-profile
       context: services/profile
       docker:
@@ -53,14 +53,14 @@ manifests:
         chartPath: k8s/helm/profile-db/
         valuesFiles:
           - k8s/helm/profile-db/values.yaml
-      # - name: tour-db
-      #   chartPath: k8s/helm/tour-db/
-      #   valuesFiles:
-      #     - k8s/helm/tour-db/values.yaml
-      # - name: auth-db
-      #   chartPath: k8s/helm/auth-db/
-      #   valuesFiles:
-      #     - k8s/helm/auth-db/values.yaml
+      - name: tour-db
+        chartPath: k8s/helm/tour-db/
+        valuesFiles:
+          - k8s/helm/tour-db/values.yaml
+      - name: auth-db
+        chartPath: k8s/helm/auth-db/
+        valuesFiles:
+          - k8s/helm/auth-db/values.yaml
       - name: ingress-nginx
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
@@ -70,10 +70,10 @@ manifests:
       #   remoteChart: redis
       #   valuesFiles:
       #     - k8s/helm/redis/values.yaml
-      # - name: auth
-      #   chartPath: k8s/helm/auth/
-      #   valuesFiles:
-      #     - k8s/helm/auth/values.yaml
+      - name: auth
+        chartPath: k8s/helm/auth/
+        valuesFiles:
+          - k8s/helm/auth/values.yaml
       - name: profile
         chartPath: k8s/helm/profile/
         valuesFiles:

@@ -44,6 +44,11 @@ spec:
                 configMapKeyRef:
                   name: {{ index .Values.configMaps "profile-db" "name" | quote }}
                   key: POSTGRES_HOST
+            - name: BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: base-url
             {{- range .Values.env }}
             - name: {{ .name }}
               valueFrom:
