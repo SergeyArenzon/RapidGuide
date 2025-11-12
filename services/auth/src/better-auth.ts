@@ -9,7 +9,27 @@ export function createAuth(orm: MikroORM): AuthInstance {
   return betterAuth({
     database: mikroOrmAdapter(orm),
     basePath: '/auth',
-    plugins: [jwt()],
+    plugins: [
+      jwt({
+        jwt: {
+          issuer: 'auth-svc',
+          definePayload(session) {
+            return {
+              id: session.user.id,
+              sub: session.user.id,
+              exp: session.session.expiresAt,
+              email: session.user.email,
+              roles: ['user'],
+              iat: session.session.createdAt,
+              nbf: session.session.createdAt,
+              aud: ['profile-svc', 'tour-svc'],
+              scopes: ['profile:read', 'profile:write'],
+              jti: session.session.token,
+            };
+          },
+        },
+      }),
+    ],
     trustedOrigins: ['http://localhost:3000', 'http://localhost'],
     socialProviders: {
       google: {

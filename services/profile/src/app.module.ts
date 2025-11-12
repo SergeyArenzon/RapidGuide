@@ -6,19 +6,15 @@ import { LanguagesModule } from './languages/languages.module';
 import { CountryModule } from './country/country.module';
 import { CityModule } from './city/city.module';
 import { GuideModule } from './guide/guide.module';
-// import { JwtModule } from '@nestjs/jwt';
-// import { jwtConfig } from './config';
 import { APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
-import auth  from './better-auth';
+import auth from './better-auth';
 
 @Module({
   imports: [
     AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
     MikroOrmModule.forRoot(microOrmConfig),
-    // JwtModule.registerAsync(jwtConfig.asProvider()),
-    // UserModule,
     LanguagesModule,
     CountryModule,
     CityModule,

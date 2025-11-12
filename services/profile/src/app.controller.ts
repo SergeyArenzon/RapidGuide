@@ -1,11 +1,4 @@
-import { Controller, Get, HttpCode, Req, UseGuards } from '@nestjs/common';
-import {
-  AllowAnonymous,
-  AuthGuard,
-  Session,
-  Roles,
-  UserSession,
-} from '@thallesp/nestjs-better-auth';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from './guards/jwt.guard';
 
 @Controller()
