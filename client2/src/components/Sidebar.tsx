@@ -46,6 +46,8 @@ import { authClient } from '@/lib/auth-client';
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const [activeTab, setActiveTab] = React.useState("analytics");
   const { user } = useUserStore();
+  console.log({user});
+  
   const navigate = useNavigate();
 
   const handleLogout = async() => {

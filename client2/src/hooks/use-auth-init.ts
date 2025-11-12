@@ -34,6 +34,8 @@ export const useAuthInit = (): {
           fetchOptions: {
             onSuccess: (ctx) => {
               const jwt = ctx.response.headers.get('set-auth-jwt')
+              console.log({jwt});
+              
               if (jwt) {
                 setToken(jwt)
               } else {
