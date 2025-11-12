@@ -7,6 +7,7 @@ import {
   } from '@nestjs/common'
   import { createRemoteJWKSet, jwtVerify } from 'jose'
   
+  
   const JWKS = createRemoteJWKSet(new URL(`${process.env.BASE_URL}/auth/auth/.well-known/jwks.json`))   
   @Injectable()
   export class JwtAuthGuard implements CanActivate {
@@ -21,9 +22,7 @@ import {
       const token = authHeader.split(' ')[1]
   
       try {
-        const { payload } = await jwtVerify(token, JWKS, {
-          issuer: `${process.env.BASE_URL}`,
-        })
+        const { payload } = await jwtVerify(token, JWKS)
   
         req.user = payload
         return true

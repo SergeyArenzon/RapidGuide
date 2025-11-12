@@ -49,10 +49,10 @@ manifests:
         chartPath: k8s/helm/gateway/
         valuesFiles:
           - k8s/helm/gateway/values.yaml
-      - name: profile-db
-        chartPath: k8s/helm/profile-db/
-        valuesFiles:
-          - k8s/helm/profile-db/values.yaml
+      # - name: profile-db
+      #   chartPath: k8s/helm/profile-db/
+      #   valuesFiles:
+      #     - k8s/helm/profile-db/values.yaml
       # - name: tour-db
       #   chartPath: k8s/helm/tour-db/
       #   valuesFiles:

@@ -82,6 +82,11 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: JWT_REFRESH_EXPIRES_IN_MS
+            - name: BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: base-url
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:

@@ -32,9 +32,14 @@ export const useAuthInit = (): {
       try {
         const result = await authClient.getSession({
           fetchOptions: {
-            onSuccess: (ctx) => {
+            onSuccess: async(ctx) => {
               const jwt = ctx.response.headers.get('set-auth-jwt')
               console.log({jwt});
+              await fetch(`http://localhost:80/api/v1/profile`, {
+               headers: {
+                'Authorization': `Bearer ${jwt}`
+               }
+              })
               
               if (jwt) {
                 setToken(jwt)
