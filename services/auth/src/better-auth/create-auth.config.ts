@@ -15,7 +15,7 @@ export type AuthInstance = ReturnType<typeof betterAuth>;
 
 const fetchProfiles = async (userId: string, httpService: HttpService) => {
   const { data } = await firstValueFrom(
-    httpService.get<{ scopes: string[] }>(`http://profile:3000`, {
+    httpService.get<{ scopes: string[] }>(`http://profile:3000/${userId}`, {
       params: { userId },
     }),
   );
@@ -37,13 +37,13 @@ export function createAuth(
           definePayload: async (session) => {
             const scopes = ['profile:read', 'profile:write'];
 
-            // try {
-            //   const data = await fetchProfiles(session.user.id, httpService);
+            try {
+              const data = await fetchProfiles(session.user.id, httpService);
 
-            //   scopes = data.scopes ?? scopes;
-            // } catch {
-            //   // keep default scopes if the remote request fails
-            // }
+             
+            } catch {
+              // keep default scopes if the remote request fails
+            }
 
             return {
               id: session.user.id,

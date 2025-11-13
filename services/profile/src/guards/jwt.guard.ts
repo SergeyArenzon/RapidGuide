@@ -5,13 +5,26 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 
 const JWKS = createRemoteJWKSet(new URL(`http://auth:3000/auth/jwks`));
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isPublic) {
+      return true;
+    }
+
     const req = context.switchToHttp().getRequest();
     const authHeader = req.headers['authorization'];
 
