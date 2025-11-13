@@ -1,15 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { MikroORM } from '@mikro-orm/core';
+import { HttpModule, HttpService } from '@nestjs/axios';
 
-import { createAuth } from './create-auth';
+import { createAuth } from './create-auth.config';
 
 @Module({
   imports: [
+    HttpModule,
     AuthModule.forRootAsync({
-      inject: [MikroORM],
-      useFactory: (orm: MikroORM) => ({
-        auth: createAuth(orm),
+      imports: [HttpModule],
+      inject: [MikroORM, HttpService],
+      useFactory: (orm: MikroORM, httpService: HttpService) => ({
+        auth: createAuth(orm, httpService),
       }),
     }),
   ],

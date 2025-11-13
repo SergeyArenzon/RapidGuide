@@ -3,7 +3,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import mikroOrmConfig from 'src/mikro-orm.config';
-import { BetterAuthModule } from './better-auth';
+import { BetterAuthModule } from './better-auth/better-auth.module';
 
 @Module({
   imports: [

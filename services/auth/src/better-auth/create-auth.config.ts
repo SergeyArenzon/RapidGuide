@@ -1,11 +1,32 @@
-import { mikroOrmAdapter } from 'better-auth-mikro-orm';
 import { betterAuth } from 'better-auth';
-import { MikroORM } from '@mikro-orm/core';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 import { jwt } from 'better-auth/plugins';
+import { mikroOrmAdapter } from 'better-auth-mikro-orm';
+import { MikroORM } from '@mikro-orm/core';
+import {
+  ACCOUNT_FIELDS,
+  SESSION_FIELDS,
+  USER_FIELDS,
+  VERIFICATION_FIELDS,
+} from './better-auth.consts';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
-export function createAuth(orm: MikroORM): AuthInstance {
+const fetchProfiles = async (userId: string, httpService: HttpService) => {
+  const { data } = await firstValueFrom(
+    httpService.get<{ scopes: string[] }>(`http://profile:3000`, {
+      params: { userId },
+    }),
+  );
+
+  return data;
+};
+
+export function createAuth(
+  orm: MikroORM,
+  httpService: HttpService,
+): AuthInstance {
   return betterAuth({
     database: mikroOrmAdapter(orm),
     basePath: '/auth',
@@ -13,7 +34,17 @@ export function createAuth(orm: MikroORM): AuthInstance {
       jwt({
         jwt: {
           issuer: 'auth-svc',
-          definePayload(session) {
+          definePayload: async (session) => {
+            const scopes = ['profile:read', 'profile:write'];
+
+            // try {
+            //   const data = await fetchProfiles(session.user.id, httpService);
+
+            //   scopes = data.scopes ?? scopes;
+            // } catch {
+            //   // keep default scopes if the remote request fails
+            // }
+
             return {
               id: session.user.id,
               sub: session.user.id,
@@ -23,7 +54,7 @@ export function createAuth(orm: MikroORM): AuthInstance {
               iat: session.session.createdAt,
               nbf: session.session.createdAt,
               aud: ['profile-svc', 'tour-svc'],
-              scopes: ['profile:read', 'profile:write'],
+              scopes,
               jti: session.session.token,
             };
           },
@@ -39,56 +70,20 @@ export function createAuth(orm: MikroORM): AuthInstance {
       },
     },
     user: {
-      fields: {
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt',
-        removedAt: 'removedAt',
-        email: 'email',
-        emailVerified: 'emailVerified',
-        name: 'name',
-        image: 'image',
-      },
+      fields: USER_FIELDS,
     },
     account: {
-      fields: {
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt',
-        accountId: 'accountId',
-        providerId: 'providerId',
-        accessToken: 'accessToken',
-        refreshToken: 'refreshToken',
-        accessTokenExpiresAt: 'accessTokenExpiresAt',
-        refreshTokenExpiresAt: 'refreshTokenExpiresAt',
-        scope: 'scope',
-        password: 'password',
-        userId: 'userId',
-        idToken: 'idToken',
-      },
+      fields: ACCOUNT_FIELDS,
     },
     session: {
-      fields: {
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt',
-        token: 'token',
-        expiresAt: 'expiresAt',
-        ipAddress: 'ipAddress',
-        userAgent: 'userAgent',
-        userId: 'userId',
-      },
+      fields: SESSION_FIELDS,
       cookieCache: {
         enabled: true,
         maxAge: 5 * 60, // Cache duration in seconds
       },
     },
     verification: {
-      fields: {
-        createdAt: 'createdAt',
-        updatedAt: 'updatedAt',
-        identifier: 'identifier',
-        value: 'value',
-        expiresAt: 'expiresAt',
-        userId: 'userId',
-      },
+      fields: VERIFICATION_FIELDS,
     },
     // Don't forget to disable the ID generator if it is already managed by MikroORM
     advanced: {
@@ -98,4 +93,3 @@ export function createAuth(orm: MikroORM): AuthInstance {
     },
   });
 }
-
