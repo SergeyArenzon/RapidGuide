@@ -3,7 +3,7 @@ import { betterAuth } from 'better-auth';
 import { MikroORM } from '@mikro-orm/core';
 import { jwt } from 'better-auth/plugins';
 
-type AuthInstance = ReturnType<typeof betterAuth>;
+export type AuthInstance = ReturnType<typeof betterAuth>;
 
 export function createAuth(orm: MikroORM): AuthInstance {
   return betterAuth({
@@ -98,3 +98,4 @@ export function createAuth(orm: MikroORM): AuthInstance {
     },
   });
 }
+
