@@ -15,11 +15,17 @@ import {
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
 const fetchProfiles = async (userId: string, httpService: HttpService) => {
-  console.log(`http://profile:3000/${userId}`);
-  
+  console.log(
+    `http://profile:3000/${userId}`,
+    process.env.SERVICE_TO_SERVICE_TOKEN,
+  );
+
   const { data } = await firstValueFrom(
     httpService.get<{ scopes: string[] }>(`http://profile:3000/${userId}`, {
       params: { userId },
+      headers: {
+        'X-Service-Token': process.env.SERVICE_TO_SERVICE_TOKEN,
+      },
     }),
   );
 

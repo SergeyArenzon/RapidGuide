@@ -82,6 +82,11 @@ spec:
                 configMapKeyRef:
                   name: global-config
                   key: redis-db
+            - name: SERVICE_TO_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: SERVICE_TO_SERVICE_TOKEN
             - name: GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:

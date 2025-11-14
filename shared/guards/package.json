@@ -1,6 +1,6 @@
 {
 	"name": "@rapid-guide-io/guards",
-	"version": "1.0.0",
+	"version": "1.2.1",
 	"description": "Shared guards client modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -16,11 +16,12 @@
 		"@nestjs/common": "^11.1.6",
 		"@nestjs/core": "^11.1.6",
 		"@nestjs/jwt": "^11.0.0",
-		"@rapid-guide-io/decorators": "^1.0.1",
+		"@rapid-guide-io/decorators": "^1.2.0",
 		"express": "^5.1.0",
 		"jose": "^6.1.1"
 	},
 	"devDependencies": {
+		"@types/node": "^24.10.1",
 		"rimraf": "^5.0.10",
 		"typescript": "^5.1.0"
 	},

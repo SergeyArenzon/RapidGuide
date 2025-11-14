@@ -84,5 +84,9 @@ manifests:
       #     - k8s/helm/tour/values.yamldeploy:
   hooks:
     before:
+      # Create global-secrets from k8s/helm/secrets/.env
+      - host:
+          command: ["sh", "-c", "if [ -f k8s/helm/secrets/.env ]; then kubectl create secret generic global-secrets --from-env-file=k8s/helm/secrets/.env --dry-run=client -o yaml | kubectl apply -f -; else echo 'Warning: k8s/helm/secrets/.env not found - global-secrets will not be created'; fi"]
+      # Create auth-secrets from k8s/helm/auth/templates/.env
       - host:
           command: ["sh", "-c", "if [ -f k8s/helm/auth/templates/.env ]; then kubectl create secret generic auth-secrets --from-env-file=k8s/helm/auth/templates/.env --dry-run=client -o yaml | kubectl apply -f -; else echo 'Warning: k8s/helm/auth/templates/.env not found - auth-secrets will not be created'; fi"]

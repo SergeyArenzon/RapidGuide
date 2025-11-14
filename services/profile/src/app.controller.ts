@@ -1,7 +1,6 @@
-import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
-import { Public } from '@rapid-guide-io/decorators';
-import { ScopesGuard } from '@rapid-guide-io/guards';
-import { Scopes } from '@rapid-guide-io/decorators';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Public, Service } from '@rapid-guide-io/decorators';
+import { ServiceToServiceGuard } from '@rapid-guide-io/guards';
 
 @Controller()
 export class AppController {
@@ -10,9 +9,9 @@ export class AppController {
   async health() {}
 
   @Get('/:userId')
-  @Public()
+  @Service()
+  @UseGuards(ServiceToServiceGuard)
   root(@Param('userId') userId: string) {
-
-    return { message: userId};
+    return { message: userId };
   }
 }

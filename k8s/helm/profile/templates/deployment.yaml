@@ -49,6 +49,11 @@ spec:
                 configMapKeyRef:
                   name: global-config
                   key: base-url
+            - name: SERVICE_TO_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: SERVICE_TO_SERVICE_TOKEN
             {{- range .Values.env }}
             - name: {{ .name }}
               valueFrom:

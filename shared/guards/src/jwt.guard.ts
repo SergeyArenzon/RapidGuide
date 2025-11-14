@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { createRemoteJWKSet, jwtVerify, JWTVerifyOptions } from 'jose';
-import { IS_PUBLIC_KEY } from '@rapid-guide-io/decorators';
+import { IS_PUBLIC_KEY, IS_SERVICE_KEY } from '@rapid-guide-io/decorators';
 
 export interface JwtAuthGuardOptions {
   audience: string | string[];
@@ -38,6 +38,15 @@ export class JwtAuthGuard implements CanActivate {
     ]);
 
     if (isPublic) {
+      return true;
+    }
+
+    const isService = this.reflector.getAllAndOverride<boolean>(IS_SERVICE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (isService) {
       return true;
     }
 
