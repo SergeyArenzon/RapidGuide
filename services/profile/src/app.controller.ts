@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { Public } from '@rapid-guide-io/decorators';
 import { ScopesGuard } from '@rapid-guide-io/guards';
 import { Scopes } from '@rapid-guide-io/decorators';
@@ -9,13 +9,10 @@ export class AppController {
   @Public()
   async health() {}
 
-  @Get('/')
-  @Scopes(['profile:read'])
-  @UseGuards(ScopesGuard)
-  root(@Req() req: Request) {
-    const user = (req as any).user;
-    console.log({ user });
+  @Get('/:userId')
+  @Public()
+  root(@Param('userId') userId: string) {
 
-    return { message: user?.id };
+    return { message: userId};
   }
 }

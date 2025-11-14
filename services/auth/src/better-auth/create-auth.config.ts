@@ -1,3 +1,4 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { betterAuth } from 'better-auth';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -14,6 +15,8 @@ import {
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
 const fetchProfiles = async (userId: string, httpService: HttpService) => {
+  console.log(`http://profile:3000/${userId}`);
+  
   const { data } = await firstValueFrom(
     httpService.get<{ scopes: string[] }>(`http://profile:3000/${userId}`, {
       params: { userId },
@@ -40,9 +43,15 @@ export function createAuth(
             try {
               const data = await fetchProfiles(session.user.id, httpService);
 
-             
-            } catch {
+              console.log({ zzzzzzzzz: data });
+            } catch (error) {
+              console.log({ error });
+
               // keep default scopes if the remote request fails
+              throw new HttpException(
+                'asddasd',
+                HttpStatus.SERVICE_UNAVAILABLE,
+              );
             }
 
             return {
