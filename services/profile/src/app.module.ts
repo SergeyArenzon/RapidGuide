@@ -10,8 +10,7 @@ import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import auth from './better-auth';
-import { JwtAuthGuard } from './guards/jwt.guard';
-
+import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
 
 @Module({
   imports: [
@@ -26,7 +25,13 @@ import { JwtAuthGuard } from './guards/jwt.guard';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useFactory: (reflector: Reflector) => {
+        const options: JwtAuthGuardOptions = {
+          audience: 'profile-svc',
+        };
+        return new JwtAuthGuard(reflector, options);
+      },
+      inject: [Reflector],
     },
     {
       provide: APP_INTERCEPTOR,
@@ -37,7 +42,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
   ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
+  configure(_consumer: MiddlewareConsumer) {
     // consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }

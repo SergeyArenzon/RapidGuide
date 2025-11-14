@@ -6,14 +6,30 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { createRemoteJWKSet, jwtVerify } from 'jose';
-import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { createRemoteJWKSet, jwtVerify, JWTVerifyOptions } from 'jose';
+import { IS_PUBLIC_KEY } from '@rapid-guide-io/decorators';
 
-const JWKS = createRemoteJWKSet(new URL(`http://auth:3000/auth/jwks`));
+export interface JwtAuthGuardOptions {
+  audience: string | string[];
+  verifyOptions?: Omit<JWTVerifyOptions, 'audience' | 'issuer'>;
+}
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
+  private readonly verifyOptions: JWTVerifyOptions;
+
+  constructor(
+    private readonly reflector: Reflector,
+    private readonly options: JwtAuthGuardOptions,
+  ) {
+    this.jwks = createRemoteJWKSet(new URL('http://auth:3000/auth/jwks'));
+    this.verifyOptions = {
+      audience: options.audience,
+      issuer: 'auth-svc',
+      ...options.verifyOptions,
+    };
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -37,10 +53,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
 
     try {
-      const { payload } = await jwtVerify(token, JWKS, {
-        audience: 'profile-svc',
-        issuer: 'auth-svc',
-      });
+      const { payload } = await jwtVerify(token, this.jwks, this.verifyOptions);
       req.user = {
         id: payload.id,
         email: payload.email,

@@ -1,6 +1,6 @@
 {
 	"name": "@rapid-guide-io/decorators",
-	"version": "0.0.19",
+	"version": "1.0.1",
 	"description": "Shared decorators modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -13,8 +13,7 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@nestjs/common": "^11.1.6",
-		"zod": "^4.1.7"
+		"@nestjs/common": "^11.1.6"
 	},
 	"devDependencies": {
 		"rimraf": "^5.0.10",
