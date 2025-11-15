@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import mikroOrmConfig from 'src/mikro-orm.config';
 import { BetterAuthModule } from './better-auth/better-auth.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { BetterAuthModule } from './better-auth/better-auth.module';
     MikroOrmModule.forRoot(mikroOrmConfig),
     // Better Auth module
     BetterAuthModule,
+    RoleModule,
     // RedisModule.forRoot({
     //   host: process.env.REDIS_HOST,
     //   port: parseInt(process.env.REDIS_PORT),
