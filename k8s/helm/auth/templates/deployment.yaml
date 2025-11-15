@@ -62,26 +62,6 @@ spec:
               value: {{ .Values.database.password | quote }}
             - name: DATABASE_URL
               value: "postgresql://{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_USER" }}:{{ .Values.database.password }}@{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_HOST" }}:{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_PORT" }}/{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_DB" }}"
-            - name: JWT_MAX_AGE
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-config
-                  key: JWT_MAX_AGE
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: JWT_SECRET
-            - name: JWT_ACCESS_EXPIRES_IN_MS
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-config
-                  key: JWT_ACCESS_EXPIRES_IN_MS
-            - name: JWT_REFRESH_EXPIRES_IN_MS
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-config
-                  key: JWT_REFRESH_EXPIRES_IN_MS
             - name: REDIS_HOST
               valueFrom:
                 configMapKeyRef:
@@ -102,6 +82,11 @@ spec:
                 configMapKeyRef:
                   name: global-config
                   key: redis-db
+            - name: SERVICE_TO_SERVICE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: SERVICE_TO_SERVICE_TOKEN
             - name: GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:

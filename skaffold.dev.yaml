@@ -4,16 +4,16 @@ metadata:
   name: huddlehub-dev
 build:
   artifacts:
-    # - image: sergeyarenzon/huddlehub-auth
-    #   context: services/auth
-    #   docker:
-    #     dockerfile: Dockerfile.dev
-    #   sync: 
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    #       - src: "src/**/*.json"
-    #         dest: .
+    - image: sergeyarenzon/huddlehub-auth
+      context: services/auth
+      docker:
+        dockerfile: Dockerfile.dev
+      sync: 
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+          - src: "src/**/*.json"
+            dest: .
     - image: sergeyarenzon/huddlehub-profile
       context: services/profile
       docker:
@@ -53,14 +53,14 @@ manifests:
         chartPath: k8s/helm/profile-db/
         valuesFiles:
           - k8s/helm/profile-db/values.yaml
-      # - name: tour-db
-      #   chartPath: k8s/helm/tour-db/
-      #   valuesFiles:
-      #     - k8s/helm/tour-db/values.yaml
-      # - name: auth-db
-      #   chartPath: k8s/helm/auth-db/
-      #   valuesFiles:
-      #     - k8s/helm/auth-db/values.yaml
+      - name: tour-db
+        chartPath: k8s/helm/tour-db/
+        valuesFiles:
+          - k8s/helm/tour-db/values.yaml
+      - name: auth-db
+        chartPath: k8s/helm/auth-db/
+        valuesFiles:
+          - k8s/helm/auth-db/values.yaml
       - name: ingress-nginx
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
@@ -70,10 +70,10 @@ manifests:
       #   remoteChart: redis
       #   valuesFiles:
       #     - k8s/helm/redis/values.yaml
-      # - name: auth
-      #   chartPath: k8s/helm/auth/
-      #   valuesFiles:
-      #     - k8s/helm/auth/values.yaml
+      - name: auth
+        chartPath: k8s/helm/auth/
+        valuesFiles:
+          - k8s/helm/auth/values.yaml
       - name: profile
         chartPath: k8s/helm/profile/
         valuesFiles:
@@ -84,5 +84,9 @@ manifests:
       #     - k8s/helm/tour/values.yamldeploy:
   hooks:
     before:
+      # Create global-secrets from k8s/helm/secrets/.env
+      - host:
+          command: ["sh", "-c", "if [ -f k8s/helm/secrets/.env ]; then kubectl create secret generic global-secrets --from-env-file=k8s/helm/secrets/.env --dry-run=client -o yaml | kubectl apply -f -; else echo 'Warning: k8s/helm/secrets/.env not found - global-secrets will not be created'; fi"]
+      # Create auth-secrets from k8s/helm/auth/templates/.env
       - host:
           command: ["sh", "-c", "if [ -f k8s/helm/auth/templates/.env ]; then kubectl create secret generic auth-secrets --from-env-file=k8s/helm/auth/templates/.env --dry-run=client -o yaml | kubectl apply -f -; else echo 'Warning: k8s/helm/auth/templates/.env not found - auth-secrets will not be created'; fi"]

@@ -1,14 +1,17 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
-import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Public, Service } from '@rapid-guide-io/decorators';
+import { ServiceToServiceGuard } from '@rapid-guide-io/guards';
 
 @Controller()
-@AllowAnonymous()
 export class AppController {
-  constructor() {}
-
-  @HttpCode(200)
   @Get('/health')
-  health() {}
+  @Public()
+  async health() {}
 
-  
+  @Get('/:userId')
+  @Service()
+  @UseGuards(ServiceToServiceGuard)
+  root(@Param('userId') userId: string) {
+    return { message: userId };
+  }
 }

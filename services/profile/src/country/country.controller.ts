@@ -1,12 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { CountryService } from './country.service';
-import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
-import {
-  Role,
-  Roles,
-  ScopePermission,
-  Scopes,
-} from '@rapid-guide-io/decorators';
+// import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
 
 @Controller('country')
 export class CountryController {
