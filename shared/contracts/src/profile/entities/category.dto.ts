@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { timeSchema } from './time.dto';
+import { timeSchema } from '../../time.dto'; 
 
 // Base schema for category fields
 const categorySchema = timeSchema.extend({

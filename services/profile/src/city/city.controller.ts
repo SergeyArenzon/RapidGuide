@@ -1,13 +1,6 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import { CityService } from './city.service';
-import { CityDto } from '@rapid-guide-io/dto';
-import {
-  Role,
-  Roles,
-  ScopePermission,
-  Scopes,
-} from '@rapid-guide-io/decorators';
-
+import { CityDto } from '@rapid-guide-io/contracts';
 
 @Controller('city')
 export class CityController {

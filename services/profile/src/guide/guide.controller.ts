@@ -1,13 +1,7 @@
 import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
-import {
-  CreateGuideDto,
-  createGuideSchema,
-  GuideDto,
-  UserDto,
-  userSchema,
-} from '@rapid-guide-io/dto';
+
 // import {
 //   Subject,
 //   Roles,
