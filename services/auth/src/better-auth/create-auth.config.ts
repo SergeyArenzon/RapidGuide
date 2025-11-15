@@ -1,7 +1,5 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { betterAuth } from 'better-auth';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
 import { jwt } from 'better-auth/plugins';
 import { mikroOrmAdapter } from 'better-auth-mikro-orm';
 import { MikroORM } from '@mikro-orm/core';
@@ -11,28 +9,9 @@ import {
   USER_FIELDS,
   VERIFICATION_FIELDS,
 } from './better-auth.consts';
-import {
-  GetProfilesResponseDto,
-  getProfilesResponseSchema,
-} from '@rapid-guide-io/contracts';
+import { fetchProfiles, getRoles, getScopes } from './permission';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
-
-const fetchProfiles = async (
-  userId: string,
-  httpService: HttpService,
-): Promise<GetProfilesResponseDto> => {
-  const { data } = await firstValueFrom(
-    httpService.get<{ scopes: string[] }>(`http://profile:3000/${userId}`, {
-      params: { userId },
-      headers: {
-        'X-Service-Token': process.env.SERVICE_TO_SERVICE_TOKEN,
-      },
-    }),
-  );
-  const validatedData = getProfilesResponseSchema.parse(data);
-  return validatedData;
-};
 
 export function createAuth(
   orm: MikroORM,
@@ -46,29 +25,33 @@ export function createAuth(
         jwt: {
           issuer: 'auth-svc',
           definePayload: async (session) => {
-            const scopes = ['profile:read', 'profile:write'];
+            // Default scopes if profile fetch fails (empty array - user has no permissions)
+            let scopes: string[] = [];
+            let roles: string[] = [];
 
             try {
-              const data = await fetchProfiles(session.user.id, httpService);
+              const profiles = await fetchProfiles(
+                session.user.id,
+                httpService,
+              );
+              scopes = getScopes(profiles);
+              roles = getRoles(profiles);
             } catch (error) {
               console.error({ error });
-              // keep default scopes if the remote request fails
-              throw new HttpException(
-                'Failed to fetch profiles',
-                HttpStatus.BAD_REQUEST,
-              );
+              // Keep default scopes if the remote request fails
+              // In production, you might want to log this but not throw
             }
 
             return {
+              roles,
+              scopes, // Array of strings like ['guide:read', 'tour:create', ...]
               id: session.user.id,
               sub: session.user.id,
               exp: session.session.expiresAt,
               email: session.user.email,
-              roles: ['user'],
               iat: session.session.createdAt,
               nbf: session.session.createdAt,
               aud: ['profile-svc', 'tour-svc'],
-              scopes,
               jti: session.session.token,
             };
           },

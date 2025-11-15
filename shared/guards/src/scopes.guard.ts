@@ -30,9 +30,30 @@ export class ScopesGuard implements CanActivate {
       throw new ForbiddenException('No scopes on authenticated user');
     }
 
-    const hasAllRequiredScopes = requiredScopes.every((scope) =>
-      scopes.includes(scope),
-    );
+    const hasAllRequiredScopes = requiredScopes.every((requiredScope) => {
+      // Direct match
+      if (scopes.includes(requiredScope)) {
+        return true;
+      }
+
+      // Wildcard support: check if user has 'resource:*' when 'resource:action' is required
+      const [resource, action] = requiredScope.split(':');
+      if (resource && action) {
+        const wildcardScope = `${resource}:*`;
+        if (scopes.includes(wildcardScope)) {
+          return true;
+        }
+      }
+
+      // Reverse wildcard: check if user has 'resource:action' when 'resource:*' is required
+      // (less common, but useful for granular checks)
+      if (requiredScope.endsWith(':*')) {
+        const resourcePrefix = requiredScope.replace(':*', '');
+        return scopes.some((scope) => scope.startsWith(`${resourcePrefix}:`));
+      }
+
+      return false;
+    });
 
     if (!hasAllRequiredScopes) {
       throw new ForbiddenException('Insufficient scope');
