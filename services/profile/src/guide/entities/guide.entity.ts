@@ -15,7 +15,7 @@ import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';
 import { GuideSubcategory } from './guide-subcategory.entity';
-import { GuideDto } from '@rapid-guide-io/dto';
+import { GuideDto } from '@rapid-guide-io/contracts';
 
 @Entity()
 export class Guide extends BaseEntity {
@@ -48,6 +48,7 @@ export class Guide extends BaseEntity {
   toDto(): GuideDto {
     return {
       id: this.id,
+      user_id: this.user_id,
       name: this.name,
       bio: this.bio,
       country_code: this.country.code,

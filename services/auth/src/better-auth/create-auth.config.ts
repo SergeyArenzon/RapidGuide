@@ -11,15 +11,17 @@ import {
   USER_FIELDS,
   VERIFICATION_FIELDS,
 } from './better-auth.consts';
+import {
+  GetProfilesResponseDto,
+  getProfilesResponseSchema,
+} from '@rapid-guide-io/contracts';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
-const fetchProfiles = async (userId: string, httpService: HttpService) => {
-  console.log(
-    `http://profile:3000/${userId}`,
-    process.env.SERVICE_TO_SERVICE_TOKEN,
-  );
-
+const fetchProfiles = async (
+  userId: string,
+  httpService: HttpService,
+): Promise<GetProfilesResponseDto> => {
   const { data } = await firstValueFrom(
     httpService.get<{ scopes: string[] }>(`http://profile:3000/${userId}`, {
       params: { userId },
@@ -28,8 +30,8 @@ const fetchProfiles = async (userId: string, httpService: HttpService) => {
       },
     }),
   );
-
-  return data;
+  const validatedData = getProfilesResponseSchema.parse(data);
+  return validatedData;
 };
 
 export function createAuth(
@@ -48,15 +50,12 @@ export function createAuth(
 
             try {
               const data = await fetchProfiles(session.user.id, httpService);
-
-              console.log({ zzzzzzzzz: data });
             } catch (error) {
-              console.log({ error });
-
+              console.error({ error });
               // keep default scopes if the remote request fails
               throw new HttpException(
-                'asddasd',
-                HttpStatus.SERVICE_UNAVAILABLE,
+                'Failed to fetch profiles',
+                HttpStatus.BAD_REQUEST,
               );
             }
 

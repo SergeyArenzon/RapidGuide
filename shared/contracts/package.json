@@ -1,0 +1,24 @@
+{
+	"name": "@rapid-guide-io/contracts",
+	"version": "1.0.2",
+	"description": "Shared Contracts modules for Rapid Guide services",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "tsc",
+		"clean": "rimraf dist",
+		"prebuild": "pnpm run clean"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"dependencies": {
+		"zod": "^4.0.14"
+	},
+	"devDependencies": {
+		"rimraf": "^5.0.10",
+		"typescript": "^5.1.0"
+	},
+	"author": "",
+	"license": "ISC"
+}

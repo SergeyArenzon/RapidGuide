@@ -2,6 +2,7 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { microOrmConfig } from 'src/config';
 import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { LanguagesModule } from './languages/languages.module';
 import { CountryModule } from './country/country.module';
 import { CityModule } from './city/city.module';
@@ -23,6 +24,7 @@ import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
   ],
   controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useFactory: (reflector: Reflector) => {

@@ -1,20 +1,15 @@
-import { EntityManager } from '@mikro-orm/postgresql';
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
-import { CreateGuideDto, GuideDto } from '@rapid-guide-io/dto';
-// import { User } from 'src/user/user.entity';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityRepository } from '@mikro-orm/postgresql';
+import { GuideDto } from '@rapid-guide-io/contracts';
 import { Guide } from './entities/guide.entity';
-import { Country } from '../country/country.entity';
-import { City } from '../city/city.entity';
-import { Languages } from '../languages/languages.entity';
-import { GuideSubcategory } from './entities/guide-subcategory.entity';
 
 @Injectable()
 export class GuideService {
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    @InjectRepository(Guide)
+    private readonly guideRepository: EntityRepository<Guide>,
+  ) {}
 
   // async create(
   //   userId: string,
@@ -96,21 +91,11 @@ export class GuideService {
   //   return newGuide.toDto();
   // }
 
-  // async findByUserId(userId: string): Promise<GuideDto> {
-  //   const em = this.em.fork();
-
-  //   const guide = await em.findOne(
-  //     Guide,
-  //     { user: userId },
-  //     {
-  //       populate: ['country', 'city', 'languages', 'subcategories'],
-  //     },
-  //   );
-
-  //   if (!guide) {
-  //     throw new NotFoundException(`No guide found for user with ID ${userId}`);
-  //   }
-
-  //   return guide.toDto();
-  // }
+  async findByUserId(userId: string): Promise<GuideDto | null> {
+    const guide = await this.guideRepository.findOne({ user_id: userId });
+    if (!guide) {
+      return null;
+    }
+    return guide.toDto();
+  }
 }
