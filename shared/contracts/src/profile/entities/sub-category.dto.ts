@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { timeSchema } from 'src/time.dto';
+import { timeSchema } from '../../time.dto';
 
 // Sub-category schema
 const subCategorySchema = timeSchema.extend({

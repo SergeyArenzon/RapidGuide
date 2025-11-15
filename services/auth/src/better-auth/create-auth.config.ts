@@ -1,5 +1,4 @@
 import { betterAuth } from 'better-auth';
-import { HttpService } from '@nestjs/axios';
 import { jwt } from 'better-auth/plugins';
 import { mikroOrmAdapter } from 'better-auth-mikro-orm';
 import { MikroORM } from '@mikro-orm/core';
@@ -9,13 +8,13 @@ import {
   USER_FIELDS,
   VERIFICATION_FIELDS,
 } from './better-auth.consts';
-import { fetchProfiles, getRoles, getScopes } from './permission';
+import { PermissionService } from '../permission/permission.service';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
 export function createAuth(
   orm: MikroORM,
-  httpService: HttpService,
+  permissionService: PermissionService,
 ): AuthInstance {
   return betterAuth({
     database: mikroOrmAdapter(orm),
@@ -30,14 +29,13 @@ export function createAuth(
             let roles: string[] = [];
 
             try {
-              const profiles = await fetchProfiles(
+              const profiles = await permissionService.fetchProfiles(
                 session.user.id,
-                httpService,
               );
-              scopes = getScopes(profiles);
-              roles = getRoles(profiles);
-            } catch (error) {
-              console.error({ error });
+              scopes = permissionService.getScopes(profiles);
+              roles = permissionService.getRoles(profiles);
+            } catch {
+              // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
               // In production, you might want to log this but not throw
             }

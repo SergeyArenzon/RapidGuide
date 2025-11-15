@@ -174,10 +174,3 @@ export function getRolesFromProfiles(
   return roles;
 }
 
-/**
- * Legacy exports for backward compatibility.
- * @deprecated Use PermissionService methods or pure utility functions instead.
- */
-export const getScopes = getScopesFromProfiles;
-
-export const getRoles = getRolesFromProfiles;

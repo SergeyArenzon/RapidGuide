@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { timeSchema } from 'src/time.dto';
+import { timeSchema } from '../../time.dto';
 
 export const countrySchema = timeSchema.extend({
   code: z.string().length(2),
