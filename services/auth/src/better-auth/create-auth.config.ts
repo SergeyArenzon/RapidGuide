@@ -29,14 +29,13 @@ export function createAuth(
             let roles: string[] = [];
 
             try {
-              const profiles = await permissionService.fetchProfiles(
-                session.user.id,
-              );
-              scopes = permissionService.getScopes(profiles);
-              roles = permissionService.getRoles(profiles);
+              const permissions = await permissionService.getPermissions(session.user.id);
+              scopes = [...permissions.scopes];
+              roles = [...permissions.roles];
             } catch {
               // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
+
               // In production, you might want to log this but not throw
             }
 
