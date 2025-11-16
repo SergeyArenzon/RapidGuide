@@ -22,16 +22,11 @@ export function createAuth(
     plugins: [
       jwt({
         jwt: {
-          issuer: 'auth-svc',
-          definePayload: async (session) => {
+          definePayload: async ({ user, session }) => {
             // Default scopes if profile fetch fails (empty array - user has no permissions)
-            let scopes: string[] = [];
-            let roles: string[] = [];
-
             try {
-              const permissions = await permissionService.getPermissions(session.user.id);
-              scopes = [...permissions.scopes];
-              roles = [...permissions.roles];
+              const { roles, scopes } = await permissionService.getPermissions(user.id); 
+              return permissionService.createJwtTokenPayload(session, user, roles, scopes);
             } catch {
               // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
@@ -39,18 +34,6 @@ export function createAuth(
               // In production, you might want to log this but not throw
             }
 
-            return {
-              roles,
-              scopes, // Array of strings like ['guide:read', 'tour:create', ...]
-              id: session.user.id,
-              sub: session.user.id,
-              exp: session.session.expiresAt,
-              email: session.user.email,
-              iat: session.session.createdAt,
-              nbf: session.session.createdAt,
-              aud: ['profile-svc', 'tour-svc'],
-              jti: session.session.token,
-            };
           },
         },
       }),

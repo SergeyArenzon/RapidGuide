@@ -5,6 +5,7 @@ import { getProfilesResponseSchema } from '@rapid-guide-io/contracts';
 import { firstValueFrom } from 'rxjs';
 import { RoleService } from '../role/role.service';
 import { ScopeService } from '../scope/scope.service';
+import { Session, User } from 'better-auth/types';
 
 /**
  * Service responsible for fetching user profiles and generating
@@ -98,6 +99,23 @@ export class PermissionService {
       );
       throw error;
     }
+  }
+
+  createJwtTokenPayload(session: Session, user: User, roles: string[], scopes: string[]){
+    const payload = {
+      issuer: 'auth-svc',
+      aud: ['profile-svc', 'tour-svc'],
+      id: user.id,
+      sub: user.id,
+      email: user.email,
+      roles: roles,
+      scopes: scopes, // Array of strings like ['guide:read', 'tour:create', ...]
+      exp: session.expiresAt,
+      iat: session.createdAt,
+      nbf: session.createdAt,
+      jti: session.token,
+    };
+    return payload;
   }
 
 }
