@@ -36,7 +36,7 @@ export const useAuthInit = (): {
               const jwt = ctx.response.headers.get('set-auth-jwt')
               console.log(jwt);
               
-              const response = await fetch(`http://localhost/api/v1/profile`, {
+              const response = await fetch(`http://localhost/api/v1/profile/me`, {
                 headers: {
                   'Authorization': `Bearer ${jwt}`
                 }

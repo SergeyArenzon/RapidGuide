@@ -8,13 +8,13 @@ import {
   USER_FIELDS,
   VERIFICATION_FIELDS,
 } from './better-auth.consts';
-import { PermissionService } from '../permission/permission.service';
+import { JwtTokenPayloadService } from '../jwt-token-payload/jwt-token-payload.service';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
 export function createAuth(
   orm: MikroORM,
-  permissionService: PermissionService,
+  jwtTokenPayloadService: JwtTokenPayloadService,
 ): AuthInstance {
   return betterAuth({
     database: mikroOrmAdapter(orm),
@@ -22,18 +22,20 @@ export function createAuth(
     plugins: [
       jwt({
         jwt: {
+          issuer: 'auth-svc',
           definePayload: async ({ user, session }) => {
             // Default scopes if profile fetch fails (empty array - user has no permissions)
             try {
-              const { roles, scopes } = await permissionService.getPermissions(user.id); 
-              return permissionService.createJwtTokenPayload(session, user, roles, scopes);
+              const jwtTokenPayload = await jwtTokenPayloadService.create(
+                session,
+                user,
+              );
+              return jwtTokenPayload;
             } catch {
               // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
-
               // In production, you might want to log this but not throw
             }
-
           },
         },
       }),

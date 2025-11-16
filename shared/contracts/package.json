@@ -1,6 +1,6 @@
 {
 	"name": "@rapid-guide-io/contracts",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Shared Contracts modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

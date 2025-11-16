@@ -41,7 +41,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
-    "@rapid-guide-io/contracts": "^1.0.3",
+    "@rapid-guide-io/contracts": "^1.0.4",
     "@rapid-guide-io/decorators": "^0.0.19",
     "@rapid-guide-io/redis": "^0.0.1",
     "@thallesp/nestjs-better-auth": "^2.1.0",

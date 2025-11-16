@@ -3,16 +3,19 @@ import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { MikroORM } from '@mikro-orm/core';
 
 import { createAuth } from './create-auth.config';
-import { PermissionModule } from '../permission/permission.module';
-import { PermissionService } from '../permission/permission.service';
+import { JwtTokenPayloadModule } from '../jwt-token-payload/jwt-token-payload.module';
+import { JwtTokenPayloadService } from '../jwt-token-payload/jwt-token-payload.service';
 
 @Module({
   imports: [
-    PermissionModule,
+    JwtTokenPayloadModule,
     AuthModule.forRootAsync({
-      imports: [PermissionModule],
-      inject: [MikroORM, PermissionService],
-      useFactory: (orm: MikroORM, permissionService: PermissionService) => {
+      imports: [JwtTokenPayloadModule],
+      inject: [MikroORM, JwtTokenPayloadService],
+      useFactory: (
+        orm: MikroORM,
+        permissionService: JwtTokenPayloadService,
+      ) => {
         return {
           auth: createAuth(orm, permissionService),
         };
