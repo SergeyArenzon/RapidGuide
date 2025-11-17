@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
   });
-  app.enableCors({ credentials: true });
+  app.enableCors({ credentials: true, origin: 'http://localhost:3000' });
   // app.useGlobalPipes(new ZodValidationPipe());
   const logger = new Logger('Bootstrap');
   app.useLogger(logger);

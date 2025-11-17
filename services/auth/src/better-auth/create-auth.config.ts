@@ -8,13 +8,14 @@ import {
   USER_FIELDS,
   VERIFICATION_FIELDS,
 } from './better-auth.consts';
-import { PermissionService } from '../permission/permission.service';
+import { JwtTokenPayloadService } from '../jwt-token-payload/jwt-token-payload.service';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
 export function createAuth(
   orm: MikroORM,
-  permissionService: PermissionService,
+  jwtTokenPayloadService: JwtTokenPayloadService,
 ): AuthInstance {
   return betterAuth({
     database: mikroOrmAdapter(orm),
@@ -22,36 +23,20 @@ export function createAuth(
     plugins: [
       jwt({
         jwt: {
-          issuer: 'auth-svc',
-          definePayload: async (session) => {
+          definePayload: async ({ user, session }) => {
             // Default scopes if profile fetch fails (empty array - user has no permissions)
-            let scopes: string[] = [];
-            let roles: string[] = [];
-
             try {
-              const profiles = await permissionService.fetchProfiles(
-                session.user.id,
+              const jwtTokenPayload = await jwtTokenPayloadService.create(
+                session,
+                user,
               );
-              scopes = permissionService.getScopes(profiles);
-              roles = permissionService.getRoles(profiles);
+              return jwtTokenPayload;
             } catch {
+              throw new HttpException('Failed to create JWT token payload', HttpStatus.INTERNAL_SERVER_ERROR);
               // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
               // In production, you might want to log this but not throw
             }
-
-            return {
-              roles,
-              scopes, // Array of strings like ['guide:read', 'tour:create', ...]
-              id: session.user.id,
-              sub: session.user.id,
-              exp: session.session.expiresAt,
-              email: session.user.email,
-              iat: session.session.createdAt,
-              nbf: session.session.createdAt,
-              aud: ['profile-svc', 'tour-svc'],
-              jti: session.session.token,
-            };
           },
         },
       }),
