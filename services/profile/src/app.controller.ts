@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
 import { Public, Service } from '@rapid-guide-io/decorators';
-import { ServiceToServiceGuard } from '@rapid-guide-io/guards';
+import { InternalServiceGuard } from '@rapid-guide-io/guards';
 import { AppService } from './app.service';
 import { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
 
@@ -24,7 +24,7 @@ export class AppController {
 
   @Get('/:userId')
   @Service()
-  @UseGuards(ServiceToServiceGuard)
+  @UseGuards(InternalServiceGuard)
   async root(@Param('userId') userId: string): Promise<GetProfilesResponseDto> {
     const userProfiles = await this.appService.getProfilesByUserId(userId);
     return userProfiles;

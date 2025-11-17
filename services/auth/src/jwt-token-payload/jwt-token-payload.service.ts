@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import type { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
 import { getProfilesResponseSchema } from '@rapid-guide-io/contracts';
@@ -18,12 +18,12 @@ import { Session, User } from 'better-auth/types';
 export class JwtTokenPayloadService {
   private readonly logger = new Logger(JwtTokenPayloadService.name);
   private readonly profileServiceUrl: string;
-  private readonly serviceToken: string;
+  private readonly internalServiceToken: string;
 
   constructor(private readonly httpService: HttpService) {
     // Consider using ConfigService for these values in the future
     this.profileServiceUrl = 'http://profile:3000';
-    this.serviceToken = process.env.SERVICE_TO_SERVICE_TOKEN;
+    this.internalServiceToken = process.env.INTERNAL_SERVICE_TOKEN;
   }
 
   /**
@@ -42,12 +42,12 @@ export class JwtTokenPayloadService {
           {
             params: { userId: user.id },
             headers: {
-              'X-Service-Token': this.serviceToken,
+              'X-Service-Token': this.internalServiceToken,
             },
           },
         ),
       );
-      
+
       const validatedData = getProfilesResponseSchema.parse(data);
 
       let roles: string[] = [];
@@ -56,8 +56,8 @@ export class JwtTokenPayloadService {
       // create roles and scopes
       roles = this.getRoles(validatedData);
       scopes = this.getScopes(validatedData);
-      
-      return this.payload(session, user, roles, scopes);;
+
+      return this.payload(session, user, roles, scopes);
     } catch (error) {
       this.logger.error(error);
       // Handle HTTP errors (from axios/HttpService)
