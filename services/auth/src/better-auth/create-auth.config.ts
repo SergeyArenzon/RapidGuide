@@ -9,6 +9,7 @@ import {
   VERIFICATION_FIELDS,
 } from './better-auth.consts';
 import { JwtTokenPayloadService } from '../jwt-token-payload/jwt-token-payload.service';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export type AuthInstance = ReturnType<typeof betterAuth>;
 
@@ -22,7 +23,6 @@ export function createAuth(
     plugins: [
       jwt({
         jwt: {
-          issuer: 'auth-svc',
           definePayload: async ({ user, session }) => {
             // Default scopes if profile fetch fails (empty array - user has no permissions)
             try {
@@ -32,6 +32,7 @@ export function createAuth(
               );
               return jwtTokenPayload;
             } catch {
+              throw new HttpException('Failed to create JWT token payload', HttpStatus.INTERNAL_SERVER_ERROR);
               // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
               // In production, you might want to log this but not throw

@@ -36,8 +36,6 @@ export class JwtTokenPayloadService {
    */
   async create(session: Session, user: User) {
     try {
-      console.log(`${this.profileServiceUrl}/${user.id}`);
-
       const { data } = await firstValueFrom(
         this.httpService.get<GetProfilesResponseDto>(
           `${this.profileServiceUrl}/${user.id}`,
@@ -49,28 +47,29 @@ export class JwtTokenPayloadService {
           },
         ),
       );
-
+      
       const validatedData = getProfilesResponseSchema.parse(data);
+
       let roles: string[] = [];
       let scopes: string[] = [];
 
       // create roles and scopes
       roles = this.getRoles(validatedData);
       scopes = this.getScopes(validatedData);
-
-      // create payload
-      return this.payload(session, user, roles, scopes);
+      
+      return this.payload(session, user, roles, scopes);;
     } catch (error) {
+      this.logger.error(error);
       // Handle HTTP errors (from axios/HttpService)
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new Error(error);
     }
   }
 
   payload(session: Session, user: User, roles: string[], scopes: string[]) {
     const payload = {
       // iss is set by better-auth JWT plugin configuration
+      iss: 'auth-svc',
       aud: ['profile-svc', 'tour-svc'],
-      audience: ['profile-svc', 'tour-svc'],
       id: user.id,
       sub: user.id,
       email: user.email,
