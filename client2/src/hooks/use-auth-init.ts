@@ -4,7 +4,7 @@ import { useNavigate } from '@tanstack/react-router'
 import type { AuthUser } from '@/store/useUser'
 import type { SessionData } from '@/store/useSession'
 
-import type { GuideDto } from '@rapid-guide-io/contracts';
+import type { GetProfilesMeResponseDto, GuideDto } from '@rapid-guide-io/contracts';
 import { authClient } from '@/lib/auth-client'
 import { userSchema } from '@/schema/user.schema'
 import useJwtToken from '@/store/useJwtToken'
@@ -25,8 +25,12 @@ const fetchMeHandler = async (
   });
 
   if (me.ok) {
-    const meData = await me.json();
-    setGudeCB(meData.guide);
+    const meData: GetProfilesMeResponseDto = await me.json();
+    if (meData.guide) {
+      setGudeCB(meData.guide);
+    } else {
+      clearguideCB();
+    }
   } else {
     clearguideCB();
   }
