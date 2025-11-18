@@ -41,6 +41,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@rapid-guide-io/contracts':
+        specifier: ^1.0.5
+        version: 1.0.5
       '@rapid-guide-io/dto':
         specifier: ^0.0.5
         version: 0.0.5
@@ -1141,6 +1144,9 @@ packages:
 
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
+
+  '@rapid-guide-io/contracts@1.0.5':
+    resolution: {integrity: sha512-2WRLvQf2T60C2y8m48GDejRu96ezsUXjTn8bYPXfw1p/IL4tSfUsGLNy9NJBmB8L0gr6vmsT4DIYf98ApNSoJQ==}
 
   '@rapid-guide-io/dto@0.0.5':
     resolution: {integrity: sha512-7lHMa8j3PUkFS1K/n0h0bt08F/hVHnfC/sOImVqucGKYFdTrb/SXcr7s5a+kcgXkFPQaGlnP4XFwVmnd3LMifw==}
@@ -4653,6 +4659,10 @@ snapshots:
       '@types/react-dom': 19.2.2(@types/react@19.2.2)
 
   '@radix-ui/rect@1.1.1': {}
+
+  '@rapid-guide-io/contracts@1.0.5':
+    dependencies:
+      zod: 4.1.12
 
   '@rapid-guide-io/dto@0.0.5':
     dependencies:

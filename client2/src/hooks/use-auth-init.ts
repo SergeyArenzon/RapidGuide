@@ -4,26 +4,64 @@ import { useNavigate } from '@tanstack/react-router'
 import type { AuthUser } from '@/store/useUser'
 import type { SessionData } from '@/store/useSession'
 
+import type { GuideDto } from '@rapid-guide-io/contracts';
 import { authClient } from '@/lib/auth-client'
 import { userSchema } from '@/schema/user.schema'
 import useJwtToken from '@/store/useJwtToken'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
+import useGuideStore from '@/store/useGuide'
+
+
+
+const fetchMeHandler = async (
+  jwt: string, 
+  setGudeCB: (guide: GuideDto) => void, 
+  clearguideCB: () => void) => {
+  const me = await fetch(`http://localhost/api/v1/profile/me`, {
+    headers: {
+      'Authorization': `Bearer ${jwt}`
+    }
+  });
+
+  if (me.ok) {
+    const meData = await me.json();
+    setGudeCB(meData.guide);
+  } else {
+    clearguideCB();
+  }
+}
+
+const sessionUserHandler = (
+  sessionUser: any, 
+  setUserCB: (user) => void, 
+  clearUserCB: () => void) => {
+  
+  if (sessionUser) {
+    const parsed = userSchema.safeParse(sessionUser)
+
+    if (parsed.success) {
+      setUserCB(parsed.data)
+    } else {
+      console.error('Failed to parse session user', parsed.error)
+      clearUserCB()
+    }
+  } else {
+    clearUserCB()
+  }
+}
+
+
 
 export const useAuthInit = (): {
   session: SessionData
   user: AuthUser | null
   token: string | null
 } => {
-  const setUser = useUserStore((state) => state.setUser)
-  const clearUser = useUserStore((state) => state.clearUser)
-  const user = useUserStore((state) => state.user)
-  const setToken = useJwtToken((state) => state.setToken)
-  const clearToken = useJwtToken((state) => state.clearToken)
-  const token = useJwtToken((state) => state.token)
-  const setSession = useSessionStore((state) => state.setSession)
-  const clearSession = useSessionStore((state) => state.clearSession)
-  const session = useSessionStore((state) => state.session)
+  const { user, clearUser, setUser } = useUserStore((state) => state)
+  const { token, clearToken, setToken } = useJwtToken((state) => state)
+  const { session, clearSession, setSession } = useSessionStore((state) => state)
+  const { guide, clearGuide, setGuide } = useGuideStore((state) => state)
 
   const navigate = useNavigate()
 
@@ -33,21 +71,9 @@ export const useAuthInit = (): {
         const result = await authClient.getSession({
           fetchOptions: {
             onSuccess: async(ctx) => {
-              const jwt = ctx.response.headers.get('set-auth-jwt')
-              console.log(jwt);
-              
-              const response = await fetch(`http://localhost/api/v1/profile/me`, {
-                headers: {
-                  'Authorization': `Bearer ${jwt}`
-                }
-              });
-              if (response.ok) {
-                const data = await response.json();
-                setUser(data);
-              } else {
-                clearUser();
-              }
+              const jwt = ctx.response.headers.get('set-auth-jwt')   
               if (jwt) {
+                await fetchMeHandler(jwt, setGuide, clearGuide)   
                 setToken(jwt)
               } else {
                 clearToken()
@@ -67,31 +93,25 @@ export const useAuthInit = (): {
           navigate({ to: '/auth' })
         }
 
-        const sessionUser = result.data?.user
+        const { user, session } = result.data
 
-        if (sessionUser) {
-          const parsed = userSchema.safeParse(sessionUser)
+        if (user) {
+          await sessionUserHandler(user, setUser, clearUser)
+        } 
 
-          if (parsed.success) {
-            setUser(parsed.data)
-          } else {
-            console.error('Failed to parse session user', parsed.error)
-            clearUser()
-          }
-        } else {
-          clearUser()
-        }
-
-        if (result.data?.session) {
-          setSession(result.data.session)
+        if (session) {
+          setSession(session)
         } else {
           clearSession()
         }
+
+
       } catch (error) {
         console.error('Failed to fetch session', error)
         clearUser()
         clearToken()
         clearSession()
+        clearGuide()
         navigate({ to: '/auth' })
       }
     }
