@@ -6,16 +6,16 @@ import {
 } from '@nestjs/common';
 
 @Injectable()
-export class ServiceToServiceGuard implements CanActivate {
-  private readonly serviceToken: string;
+export class InternalServiceGuard implements CanActivate {
+  private readonly token: string;
 
   constructor() {
-    this.serviceToken = process.env.SERVICE_TO_SERVICE_TOKEN;
+    this.token = process.env.INTERNAL_SERVICE_TOKEN;
     
     
-    if (!this.serviceToken) {
+    if (!this.token) {
       console.warn(
-        'SERVICE_TO_SERVICE_TOKEN environment variable is not set. Service-to-service authentication will fail.',
+        'INTERNAL_SERVICE_TOKEN environment variable is not set. Service-to-service authentication will fail.',
       );
     }
   }
@@ -30,7 +30,7 @@ export class ServiceToServiceGuard implements CanActivate {
       );
     }
 
-    if (serviceTokenHeader !== this.serviceToken) {
+    if (serviceTokenHeader !== this.token) {
       throw new UnauthorizedException('Invalid service token');
     }
 
