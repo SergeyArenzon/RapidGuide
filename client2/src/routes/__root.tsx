@@ -1,6 +1,5 @@
 import {
   HeadContent,
-  Outlet,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
@@ -10,9 +9,7 @@ import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 import { Error } from '@/components/Error'
-import { Sidebar } from '@/components/Sidebar'
 import Loading from '@/components/Loading'
-import { useAuth } from '@/hooks/use-auth'
 import { AppLayout } from '@/components/AppLayout'
 
 interface MyRouterContext {
@@ -53,17 +50,13 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 function RootComponent() {
-  const { isLoading } = useAuth()
-  console.log({ isLoading });
-  
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body className="m-0 h-screen overflow-hidden">
-      {isLoading ? <Loading /> : <AppLayout />}
-
+        <AppLayout/>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
