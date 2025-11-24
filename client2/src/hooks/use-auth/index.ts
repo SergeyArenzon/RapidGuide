@@ -1,18 +1,15 @@
 import { useEffect } from 'react'
 
 import { useNavigate } from '@tanstack/react-router'
-import { userSchema } from '@rapid-guide-io/contracts';
-import type { GetProfilesMeResponseDto, GuideDto, UserDto} from '@rapid-guide-io/contracts';
-import type { AuthUser } from '@/store/useUser'
-import type { SessionData } from '@/store/useSession'
-
+import { sessionSchema, userSchema } from '@rapid-guide-io/contracts';
+import type { GuideDto, UserDto} from '@rapid-guide-io/contracts';
 
 import { authClient } from '@/lib/auth-client'
-import useJwtToken from '@/store/useJwtToken'
+import Api from '@/lib/api'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
+import { useJwtTokenStore } from '@/store/useJwtToken'
 import useGuideStore from '@/store/useGuide'
-
 
 
 
@@ -20,21 +17,17 @@ const fetchMeHandler = async (
   jwt: string, 
   setGudeCB: (guide: GuideDto) => void, 
   clearguideCB: () => void) => {
-  const me = await fetch(`http://localhost/api/v1/profile/me`, {
-    headers: {
-      'Authorization': `Bearer ${jwt}`
-    }
-  });
-
-  if (me.ok) {
-    const meData: GetProfilesMeResponseDto = await me.json();
+  try {
+    const api = new Api(jwt);
+    const meData = await api.getMe();
     
     if (meData.guide) {
       setGudeCB(meData.guide);
     } else {
       clearguideCB();
     }
-  } else {
+  } catch (error) {
+    console.error('Failed to fetch profile/me:', error);
     clearguideCB();
   }
 }
@@ -42,13 +35,10 @@ const fetchMeHandler = async (
 
 
 const sessionUserHandler = (
-  sessionUser: any, 
+  sessionUser: UserDto, 
   setUserCB: (user: UserDto) => void, 
   clearUserCB: () => void) => {
-  
-  if (sessionUser) {
-    console.log({sessionUser});
-    
+
     const parsed = userSchema.safeParse(sessionUser)
 
     if (parsed.success) {
@@ -57,22 +47,15 @@ const sessionUserHandler = (
       console.error('Failed to parse session user', parsed.error)
       clearUserCB()
     }
-  } else {
-    clearUserCB()
-  }
 }
 
 
 
-export const useAuthInit = (): {
-  session: SessionData
-  user: AuthUser | null
-  token: string | null
-} => {
-  const { user, clearUser, setUser } = useUserStore((state) => state)
-  const { token, clearToken, setToken } = useJwtToken((state) => state)
-  const { session, clearSession, setSession } = useSessionStore((state) => state)
-  const { guide, clearGuide, setGuide } = useGuideStore((state) => state)
+export const useAuth = () => {
+  const { clearUser, setUser } = useUserStore((state) => state)
+  const { clearSession, setSession } = useSessionStore((state) => state)
+  const { clearGuide, setGuide } = useGuideStore((state) => state)
+  const { setToken, clearToken } = useJwtTokenStore((state) => state)
 
   const navigate = useNavigate()
 
@@ -82,17 +65,16 @@ export const useAuthInit = (): {
         const result = await authClient.getSession({
           fetchOptions: {
             onSuccess: async(ctx) => {
-              const jwt = ctx.response.headers.get('set-auth-jwt')   
+              const jwt = ctx.response.headers.get('set-auth-jwt') 
               if (jwt) {
-                await fetchMeHandler(jwt, setGuide, clearGuide)   
                 setToken(jwt)
+                await fetchMeHandler(jwt, setGuide, clearGuide)   
               } else {
                 clearToken()
               }
             },
             onError: (error) => {
               console.error('Failed to fetch session', error)
-              // router.push(ROUTES.SIGNIN)
             },
           },
         })
@@ -103,19 +85,12 @@ export const useAuthInit = (): {
           clearSession()
           navigate({ to: '/auth' })
         }
+        
+       const user = userSchema.parse(result.data?.user)
+       const session = sessionSchema.parse(result.data?.session)
+       await sessionUserHandler(user, setUser, clearUser)
 
-        const { user, session } = result.data
-
-        if (user) {
-          await sessionUserHandler(user, setUser, clearUser)
-        } 
-
-        if (session) {
-          setSession(session)
-        } else {
-          clearSession()
-        }
-
+      setSession(session)
 
       } catch (error) {
         console.error('Failed to fetch session', error)
@@ -129,8 +104,6 @@ export const useAuthInit = (): {
 
     fetchAuthInit()
   }, [])
-
-  return { session, user, token }
 }
 
 

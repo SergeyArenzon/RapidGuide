@@ -8,6 +8,7 @@ import {
   languageSchema,
   subCategorySchema
 } from '@rapid-guide-io/dto';
+import { getProfilesMeResponseSchema } from '@rapid-guide-io/contracts';
 import type { 
   CategoryDto, 
   CityDto, 
@@ -17,6 +18,7 @@ import type {
   LanguageDto, 
   SubCategoryDto,
   UserDto} from '@rapid-guide-io/dto';
+import type { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 
 
@@ -24,10 +26,10 @@ export default class Api {
   private axios: AxiosInstance;
 
   constructor(accessToken: string) {
-    console.log({accessToken});
+    console.log({baseURL: process.env});
     
     this.axios = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      baseURL: import.meta.env.VITE_API_BASE_URL,
       withCredentials: true,
       timeout: 5000, // 5s timeout
       headers: {
@@ -78,61 +80,69 @@ export default class Api {
   
 
   
-  // 🛠 Fetch languages with validation
-  async getLanguages(): Promise<Array<LanguageDto>> {
-    return this.validateResponse(
-      () => this.axios.get('/user/languages'),
-      z.array(languageSchema)
-    );
-  }
+  // // 🛠 Fetch languages with validation
+  // async getLanguages(): Promise<Array<LanguageDto>> {
+  //   return this.validateResponse(
+  //     () => this.axios.get('/user/languages'),
+  //     z.array(languageSchema)
+  //   );
+  // }
   
-  async getCountries(): Promise<Array<CountryDto>> {
+  // async getCountries(): Promise<Array<CountryDto>> {
+  //   return this.validateResponse(
+  //     () => this.axios.get('/user/country'),
+  //     z.array(countrySchema)
+  //   );
+  // }
+
+  // async getCities(): Promise<Array<CityDto>> {
+  //   return this.validateResponse(
+  //     () => this.axios.get(`/user/city`),
+  //     z.array(citySchema)
+  //   );
+  // }
+
+  // async getSubCategories(): Promise<Array<SubCategoryDto>> {
+  //   return this.validateResponse(
+  //     () => this.axios.get('/tour/sub-category'),
+  //     z.array(subCategorySchema)
+  //   );
+  // }
+
+  // async getCategories(): Promise<Array<CategoryDto>> {
+  //   return this.validateResponse(
+  //     () => this.axios.get('/tour/category'),
+  //     z.array(categorySchema)
+  //   );
+  // }
+
+  // async createGuide(guide: CreateGuideDto): Promise<GuideDto> {
+  //   return this.validateResponse(
+  //     () => this.axios.post('/user/guide', guide),
+  //     guideSchema
+  //   );
+  // }
+  // async getGuide(userId: UserDto["id"]): Promise<GuideDto> {
+  //   return this.validateResponse(
+  //     () => this.axios.get(`/user/user/${userId}/guide`),
+  //     guideSchema
+  //   );
+  // }
+
+  async getMe(): Promise<GetProfilesMeResponseDto> {
     return this.validateResponse(
-      () => this.axios.get('/user/country'),
-      z.array(countrySchema)
+      () => this.axios.get('/profile/me'),
+      getProfilesMeResponseSchema
     );
   }
 
-  async getCities(): Promise<Array<CityDto>> {
-    return this.validateResponse(
-      () => this.axios.get(`/user/city`),
-      z.array(citySchema)
-    );
-  }
-
-  async getSubCategories(): Promise<Array<SubCategoryDto>> {
-    return this.validateResponse(
-      () => this.axios.get('/tour/sub-category'),
-      z.array(subCategorySchema)
-    );
-  }
-
-  async getCategories(): Promise<Array<CategoryDto>> {
-    return this.validateResponse(
-      () => this.axios.get('/tour/category'),
-      z.array(categorySchema)
-    );
-  }
-
-  async createGuide(guide: CreateGuideDto): Promise<GuideDto> {
-    return this.validateResponse(
-      () => this.axios.post('/user/guide', guide),
-      guideSchema
-    );
-  }
-  async getGuide(userId: UserDto["id"]): Promise<GuideDto> {
-    return this.validateResponse(
-      () => this.axios.get(`/user/user/${userId}/guide`),
-      guideSchema
-    );
-  }
-
-  async logout(): Promise<void> {
-    try {
-      await this.axios.post('/auth//logout');
-    } catch (error) {
-      console.error('Logout request failed:', error);
-      throw error;
-    }
-  }
+  // async logout(): Promise<void> {
+  //   try {
+  //     await this.axios.post('/auth//logout');
+  //   } catch (error) {
+  //     console.error('Logout request failed:', error);
+  //     throw error;
+  //   }
+  // }
 }
+

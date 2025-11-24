@@ -7,11 +7,9 @@ interface JwtTokenStore {
   getToken: () => string | null
 }
 
-const useJwtToken = create<JwtTokenStore>((set, get) => ({
+export const useJwtTokenStore = create<JwtTokenStore>((set, get) => ({
   token: null,
   setToken: (token: string) => set({ token }),
   clearToken: () => set({ token: null }),
   getToken: () => get().token,
 }))
-
-export default useJwtToken

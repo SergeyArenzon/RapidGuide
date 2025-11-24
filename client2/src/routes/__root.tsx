@@ -12,7 +12,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { Error } from '@/components/Error'
 import { Sidebar } from '@/components/Sidebar'
 import Loading from '@/components/Loading'
-import { useAuthInit } from '@/hooks/use-auth-init'
+import { useAuth } from '@/hooks/use-auth'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -52,8 +52,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 function RootComponent() {
-  const { token } = useAuthInit()
-
+  useAuth()
+  
   return (
     <html lang="en">
       <head>
