@@ -1,16 +1,18 @@
 import { useEffect } from 'react'
 
 import { useNavigate } from '@tanstack/react-router'
+import { userSchema } from '@rapid-guide-io/contracts';
+import type { GetProfilesMeResponseDto, GuideDto, UserDto} from '@rapid-guide-io/contracts';
 import type { AuthUser } from '@/store/useUser'
 import type { SessionData } from '@/store/useSession'
 
-import type { GetProfilesMeResponseDto, GuideDto } from '@rapid-guide-io/contracts';
+
 import { authClient } from '@/lib/auth-client'
-import { userSchema } from '@/schema/user.schema'
 import useJwtToken from '@/store/useJwtToken'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
 import useGuideStore from '@/store/useGuide'
+
 
 
 
@@ -26,6 +28,7 @@ const fetchMeHandler = async (
 
   if (me.ok) {
     const meData: GetProfilesMeResponseDto = await me.json();
+    
     if (meData.guide) {
       setGudeCB(meData.guide);
     } else {
@@ -36,12 +39,16 @@ const fetchMeHandler = async (
   }
 }
 
+
+
 const sessionUserHandler = (
   sessionUser: any, 
-  setUserCB: (user) => void, 
+  setUserCB: (user: UserDto) => void, 
   clearUserCB: () => void) => {
   
   if (sessionUser) {
+    console.log({sessionUser});
+    
     const parsed = userSchema.safeParse(sessionUser)
 
     if (parsed.success) {
