@@ -13,6 +13,7 @@ import { Error } from '@/components/Error'
 import { Sidebar } from '@/components/Sidebar'
 import Loading from '@/components/Loading'
 import { useAuth } from '@/hooks/use-auth'
+import { AppLayout } from '@/components/AppLayout'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -52,7 +53,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 function RootComponent() {
-  useAuth()
+  const { isLoading } = useAuth()
+  console.log({ isLoading });
   
   return (
     <html lang="en">
@@ -60,17 +62,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body className="m-0 h-screen overflow-hidden">
-        <div className="grid grid-cols-[1fr_200px] grid-rows-[50px_1fr] h-full w-full">
-          <nav>
-            DASHBOARD
-          </nav>
-          <aside>
-            <Sidebar />
-          </aside>
-          <main>
-            <Outlet />
-          </main>
-        </div>
+      {isLoading ? <Loading /> : <AppLayout />}
 
         <TanStackDevtools
           config={{

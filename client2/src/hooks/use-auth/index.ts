@@ -2,58 +2,17 @@ import { useEffect } from 'react'
 
 import { useNavigate } from '@tanstack/react-router'
 import { sessionSchema, userSchema } from '@rapid-guide-io/contracts';
-import type { GuideDto, UserDto} from '@rapid-guide-io/contracts';
-
+import { fetchMeHandler, sessionUserHandler } from './helpers';
 import { authClient } from '@/lib/auth-client'
-import Api from '@/lib/api'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
 import { useJwtTokenStore } from '@/store/useJwtToken'
 import useGuideStore from '@/store/useGuide'
 
 
-
-const fetchMeHandler = async (
-  jwt: string, 
-  setGudeCB: (guide: GuideDto) => void, 
-  clearguideCB: () => void) => {
-  try {
-    const api = new Api(jwt);
-    const meData = await api.getMe();
-    
-    if (meData.guide) {
-      setGudeCB(meData.guide);
-    } else {
-      clearguideCB();
-    }
-  } catch (error) {
-    console.error('Failed to fetch profile/me:', error);
-    clearguideCB();
-  }
-}
-
-
-
-const sessionUserHandler = (
-  sessionUser: UserDto, 
-  setUserCB: (user: UserDto) => void, 
-  clearUserCB: () => void) => {
-
-    const parsed = userSchema.safeParse(sessionUser)
-
-    if (parsed.success) {
-      setUserCB(parsed.data)
-    } else {
-      console.error('Failed to parse session user', parsed.error)
-      clearUserCB()
-    }
-}
-
-
-
 export const useAuth = () => {
   const { clearUser, setUser } = useUserStore((state) => state)
-  const { clearSession, setSession } = useSessionStore((state) => state)
+  const { clearSession, setSession, setLoading, isLoading } = useSessionStore((state) => state)
   const { clearGuide, setGuide } = useGuideStore((state) => state)
   const { setToken, clearToken } = useJwtTokenStore((state) => state)
 
@@ -61,6 +20,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     const fetchAuthInit = async () => {
+      setLoading(true)
       try {
         const result = await authClient.getSession({
           fetchOptions: {
@@ -99,11 +59,14 @@ export const useAuth = () => {
         clearSession()
         clearGuide()
         navigate({ to: '/auth' })
+      } finally {
+        setLoading(false)
       }
     }
 
     fetchAuthInit()
   }, [])
+  return { isLoading }
 }
 
 
