@@ -1,11 +1,14 @@
 
 import { Outlet } from '@tanstack/react-router'
 import { Sidebar } from './Sidebar'
-import { useAuth } from '@/hooks/use-auth'
 import Loading from './Loading'
+import { useAuth } from '@/hooks/use-auth'
 
 export const AppLayout = () => {
-  const { isLoading } = useAuth()
+  const { isLoading, user } = useAuth()
+  
+
+
   if (isLoading) {
     return <Loading />
   }

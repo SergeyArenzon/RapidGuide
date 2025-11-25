@@ -8,10 +8,9 @@ type GuideStore = {
   clearGuide: () => void
 }
 
-const useGuideStore = create<GuideStore>((set) => ({
+export const useGuideStore = create<GuideStore>((set) => ({
   guide: null,
   setGuide: (guide: GuideDto) => set({ guide }),
   clearGuide: () => set({ guide: null }),
 }))
 
-export default useGuideStore
