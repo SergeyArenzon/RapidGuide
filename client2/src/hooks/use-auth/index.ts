@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 
 import { sessionSchema, userSchema } from '@rapid-guide-io/contracts';
 import { fetchMeHandler, sessionUserHandler } from './helpers';
-import type { UserDto} from '@rapid-guide-io/contracts';
 import { authClient } from '@/lib/auth-client'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
@@ -11,8 +10,8 @@ import { useGuideStore } from '@/store/useGuide'
 
 
 export const useAuth = (): { isLoading: boolean } => {
-  const { user, clearUser, setUser } = useUserStore((state) => state)
-  const { session, clearSession, setSession, setLoading, isLoading } = useSessionStore((state) => state)
+  const { clearUser, setUser } = useUserStore((state) => state)
+  const { clearSession, setSession, setLoading, isLoading } = useSessionStore((state) => state)
   const { clearGuide, setGuide } = useGuideStore((state) => state)
   const { setToken, clearToken } = useJwtTokenStore((state) => state)
 
