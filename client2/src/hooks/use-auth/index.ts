@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-import { useNavigate } from '@tanstack/react-router'
 import { sessionSchema, userSchema } from '@rapid-guide-io/contracts';
 import { fetchMeHandler, sessionUserHandler } from './helpers';
 import type { UserDto} from '@rapid-guide-io/contracts';
@@ -8,18 +7,15 @@ import { authClient } from '@/lib/auth-client'
 import useUserStore from '@/store/useUser'
 import { useSessionStore } from '@/store/useSession'
 import { useJwtTokenStore } from '@/store/useJwtToken'
-import useGuideStore from '@/store/useGuide'
+import { useGuideStore } from '@/store/useGuide'
 
 
-export const useAuth = (): { isLoading: boolean, user: UserDto | null } => {
+export const useAuth = (): { isLoading: boolean } => {
   const { user, clearUser, setUser } = useUserStore((state) => state)
-  const { clearSession, setSession, setLoading, isLoading } = useSessionStore((state) => state)
+  const { session, clearSession, setSession, setLoading, isLoading } = useSessionStore((state) => state)
   const { clearGuide, setGuide } = useGuideStore((state) => state)
   const { setToken, clearToken } = useJwtTokenStore((state) => state)
 
-
-
-  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchAuthInit = async () => {
@@ -41,12 +37,12 @@ export const useAuth = (): { isLoading: boolean, user: UserDto | null } => {
             },
           },
         })
-
+        
         if (!result.data) {
           clearUser()
           clearToken()
           clearSession()
-          navigate({ to: '/auth' })
+          clearGuide()
         }
         
        const user = userSchema.parse(result.data?.user)
@@ -61,7 +57,6 @@ export const useAuth = (): { isLoading: boolean, user: UserDto | null } => {
         clearToken()
         clearSession()
         clearGuide()
-        navigate({ to: '/auth' })
       } finally {
         setLoading(false)
       }
@@ -69,7 +64,7 @@ export const useAuth = (): { isLoading: boolean, user: UserDto | null } => {
 
     fetchAuthInit()
   }, [])
-  return { isLoading, user }
+  return { isLoading }
 }
 
 
