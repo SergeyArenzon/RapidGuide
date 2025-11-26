@@ -9,7 +9,7 @@ function RouteComponent() {
   return (
     <div className='container'>
         <Button variant="link">Create Traveller</Button>
-        <Button variant="link"><Link to="/signup/guide">Create Guide</Link></Button>
+        <Button variant="link"><Link to="/auth/signup/guide">Create Guide</Link></Button>
     </div>
   ) 
 }

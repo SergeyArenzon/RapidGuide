@@ -4,21 +4,19 @@ import {
   categorySchema, 
   citySchema,
   countrySchema,
+  getProfilesMeResponseSchema,
   guideSchema,
-  languageSchema,
-  subCategorySchema
-} from '@rapid-guide-io/dto';
-import { getProfilesMeResponseSchema } from '@rapid-guide-io/contracts';
+  languageSchema, subCategorySchema 
+} from '@rapid-guide-io/contracts';
 import type { 
   CategoryDto, 
   CityDto, 
   CountryDto, 
   CreateGuideDto, 
+  GetProfilesMeResponseDto, 
   GuideDto, 
-  LanguageDto, 
-  SubCategoryDto,
-  UserDto} from '@rapid-guide-io/dto';
-import type { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
+  LanguageDto,
+  SubCategoryDto, UserDto } from '@rapid-guide-io/contracts';
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 
 
@@ -80,13 +78,13 @@ export default class Api {
   
 
   
-  // // 🛠 Fetch languages with validation
-  // async getLanguages(): Promise<Array<LanguageDto>> {
-  //   return this.validateResponse(
-  //     () => this.axios.get('/user/languages'),
-  //     z.array(languageSchema)
-  //   );
-  // }
+  // 🛠 Fetch languages with validation
+  async getLanguages(): Promise<Array<LanguageDto>> {
+    return this.validateResponse(
+      () => this.axios.get('/profile/languages'),
+      z.array(languageSchema)
+    );
+  }
   
   // async getCountries(): Promise<Array<CountryDto>> {
   //   return this.validateResponse(

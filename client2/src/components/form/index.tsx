@@ -79,7 +79,7 @@ export default function Form<T extends FieldValues>({
   
   // Handle form submission
   const onSubmitHandler = (data: T) => {
-    onSubmit(data as T)
+    onSubmit(data)
   }
 
   // Render field based on type

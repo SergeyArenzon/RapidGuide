@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { createGuideSchema } from '@rapid-guide-io/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router'
-import type { CreateGuideDto} from '@rapid-guide-io/contracts';
+import {  createGuideSchema } from '@rapid-guide-io/contracts';
+import type {CreateGuideDto} from '@rapid-guide-io/contracts';
 import { Error } from '@/components/Error';
 import Form from '@/components/form';
 import Loading from '@/components/Loading';
 import Api from '@/lib/api';
 import { useJwtTokenStore } from '@/store/useJwtToken';
+import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
+import z from 'zod';
 
 export const Route = createFileRoute('/auth/signup/guide')({
   component: RouteComponent,
@@ -24,20 +26,20 @@ function RouteComponent() {
       country_code: '',
       city_id: 0
     });
-    // const [isSubmitting, setIsSubmitting] = useState(false);
-    // const [submitError, setSubmitError] = useState<string | null>(null);
-    // const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState<string | null>(null);
+    const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
     const api = new Api(token!);
   
-    // const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
-    //   setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
-    // };
+    const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
+      setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
+    };
     
     // Queries
-    // const { data: languages, isLoading: isLoadingLanguages, error: errorLanguages, refetch: refetchLanguages } = useQuery({
-    //   retry: false,  
-    //   queryKey: ['languages'], 
-    //   queryFn:() => api.getLanguages() });
+    const { data: languages, isLoading: isLoadingLanguages, error: errorLanguages, refetch: refetchLanguages } = useQuery({
+      retry: false,  
+      queryKey: ['languages'], 
+      queryFn:() => api.getLanguages() });
   
     // const { data: subCategories, isLoading: isLoadingSubCategories, error: errorSubCategories, refetch: refetchSubCategories } = useQuery({
     //   retry: false,  
@@ -92,17 +94,17 @@ function RouteComponent() {
     //   }
     // }
       
-    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
+    // if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
   
     if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
-    if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
-    if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
-    if (errorCities) return <Error retryAction={() => refetchCities()}/>
-    if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
+    // if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
+    // if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
+    // if (errorCities) return <Error retryAction={() => refetchCities()}/>
+    // if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
     
     return (
       <>
-        {/* <AlertDialog
+        <AlertDialog
           open={dialogState.open}
           onOpenChange={(open) => setDialogState(prev => ({ ...prev, open }))}
           title={dialogState.title}
@@ -112,8 +114,7 @@ function RouteComponent() {
           onCancel={dialogState.onCancel}
           cancelText={dialogState.cancelText}
           variant={dialogState.variant}
-        /> */}
-  
+        /> 
         <Form
           title="Profile Information"
           description="Complete your profile information below"
@@ -126,13 +127,13 @@ function RouteComponent() {
               placeholder: "Enter guide name",
               helperText: "Your full name as it appears on your ID.",
             },
-            // {
-            //   type: "textarea",
-            //   name: "bio",
-            //   label: "Bio",
-            //   placeholder: "Tell us about yourself...",
-            //   helperText: "Write a short bio to introduce yourself to others.",
-            // },
+            {
+              type: "textarea",
+              name: "bio",
+              label: "Bio",
+              placeholder: "Tell us about yourself...",
+              helperText: "Write a short bio to introduce yourself to others.",
+            },
             // {
             //   type: "categorized-checkbox",
             //   name: "subcategories_id",
@@ -148,14 +149,14 @@ function RouteComponent() {
             //   placeholder: "Select categories",
             //   helperText: "Select the categories that interest you.",
             // },
-            // {
-            //   type: "checkbox",
-            //   name: "languages_code",
-            //   label: "Languages",
-            //   options: languages?.map((lang) => ({ value: lang.code, label: lang.name })) || [],
-            //   placeholder: "Select languages",
-            //   helperText: "Select the languages you speak.",
-            // },
+            {
+              type: "checkbox",
+              name: "languages_code",
+              label: "Languages",
+              options: languages?.map((lang) => ({ value: lang.code, label: lang.name })) || [],
+              placeholder: "Select languages",
+              helperText: "Select the languages you speak.",
+            },
             // {
             //   type: "select",
             //   name: "country_code",
@@ -176,9 +177,11 @@ function RouteComponent() {
             // },
           ]}
         //   onSubmit={handleSubmit}
-          onChange={handleFormChange} 
+        //   onChange={handleFormChange} 
+        onSubmit={()=>{}}
+          onChange={()=>{}} 
           submitButtonText="Save Profile"
-          isSubmitting={isSubmitting}
+        //   isSubmitting={isSubmitting}
         />
       </>
     )
