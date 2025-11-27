@@ -38,7 +38,7 @@ export class JwtTokenPayloadService {
     try {
       const { data } = await firstValueFrom(
         this.httpService.get<GetProfilesResponseDto>(
-          `${this.profileServiceUrl}/${user.id}`,
+          `${this.profileServiceUrl}/profile/${user.id}`,
           {
             params: { userId: user.id },
             headers: {

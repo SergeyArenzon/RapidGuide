@@ -22,10 +22,7 @@ import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 
 export default class Api {
   private axios: AxiosInstance;
-
   constructor(accessToken: string) {
-    console.log({baseURL: process.env});
-    
     this.axios = axios.create({
       baseURL: import.meta.env.VITE_API_BASE_URL,
       withCredentials: true,
@@ -129,7 +126,7 @@ export default class Api {
 
   async getMe(): Promise<GetProfilesMeResponseDto> {
     return this.validateResponse(
-      () => this.axios.get('/profile/me'),
+      () => this.axios.get('/profile/profile/me'),
       getProfilesMeResponseSchema
     );
   }
