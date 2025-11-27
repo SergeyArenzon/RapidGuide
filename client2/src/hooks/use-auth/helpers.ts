@@ -1,6 +1,6 @@
 import { userSchema } from "@rapid-guide-io/contracts";
 import type { GuideDto, UserDto} from "@rapid-guide-io/contracts";
-import Api from "@/lib/api";
+import Api from "@/lib/api/index";
 
 export const fetchMeHandler = async (
     jwt: string, 

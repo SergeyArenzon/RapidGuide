@@ -6,7 +6,7 @@ import type {CreateGuideDto} from '@rapid-guide-io/contracts';
 import { Error } from '@/components/Error';
 import Form from '@/components/form';
 import Loading from '@/components/Loading';
-import Api from '@/lib/api';
+import Api from '@/lib/api/index';
 import { useJwtTokenStore } from '@/store/useJwtToken';
 import { AlertDialog, AlertDialogState, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 import z from 'zod';
@@ -52,15 +52,15 @@ function RouteComponent() {
     //   queryFn:() => api.getCategories() });
   
   
-    // const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
-    //   retry: false,  
-    //   queryKey: ['countries'], 
-    //   queryFn:() => api.getCountries() });
+    const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
+      retry: false,  
+      queryKey: ['countries'], 
+      queryFn:() => api.getCountries() });
       
-    // const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
-    //   retry: false,  
-    //   queryKey: ['cities'], 
-    //   queryFn:() => api.getCities()});
+    const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
+      retry: false,  
+      queryKey: ['cities'], 
+      queryFn:() => api.getCities()});
       
   
     // const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
@@ -98,7 +98,7 @@ function RouteComponent() {
   
     if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
     // if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
-    // if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
+    if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
     // if (errorCities) return <Error retryAction={() => refetchCities()}/>
     // if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
     
@@ -157,24 +157,24 @@ function RouteComponent() {
               placeholder: "Select languages",
               helperText: "Select the languages you speak.",
             },
-            // {
-            //   type: "select",
-            //   name: "country_code",
-            //   label: "Country",
-            //   options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
-            //   placeholder: "Select country",
-            //   helperText: "Select the country you live in.",
-            // },
-            // {
-            //   type: "select",
-            //   name: "city_id",
-            //   label: "City",
-            //   options: cities?.filter(city => city.country_code === formState?.country_code).map(city => ({ value: Number(city.id), label: city.name })) || [],
-            //   placeholder: "Select city",
-            //   disabled: !formState.country_code,
-            //   helperText: "Select the city you live in.",
-            //   isLoading: isLoadingCities
-            // },
+            {
+              type: "select",
+              name: "country_code",
+              label: "Country",
+              options: countries?.map(country => ({ value: country.code, label: country.name })) || [],
+              placeholder: "Select country",
+              helperText: "Select the country you live in.",
+            },
+            {
+              type: "select",
+              name: "city_id",
+              label: "City",
+              options: cities?.filter(city => city.country_code === formState?.country_code).map(city => ({ value: Number(city.id), label: city.name })) || [],
+              placeholder: "Select city",
+              disabled: !formState.country_code,
+              helperText: "Select the city you live in.",
+              isLoading: isLoadingCities
+            },
           ]}
         //   onSubmit={handleSubmit}
         //   onChange={handleFormChange} 
