@@ -1,6 +1,6 @@
 apiVersion: v2
 name: tour-db
-description: A Helm chart for Tour Service PostgreSQL Database
+description: A Helm chart for PostgreSQL database used by the tour service
 type: application
 version: 0.1.0
-appVersion: "15.3" 
+appVersion: "1.0.0"

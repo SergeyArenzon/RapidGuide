@@ -41,15 +41,15 @@ function RouteComponent() {
       queryKey: ['languages'], 
       queryFn:() => api.getLanguages() });
   
-    // const { data: subCategories, isLoading: isLoadingSubCategories, error: errorSubCategories, refetch: refetchSubCategories } = useQuery({
-    //   retry: false,  
-    //   queryKey: ['subCategories'], 
-    //   queryFn:() => api.getSubCategories() });
+    const { data: subCategories, isLoading: isLoadingSubCategories, error: errorSubCategories, refetch: refetchSubCategories } = useQuery({
+      retry: false,  
+      queryKey: ['subCategories'], 
+      queryFn:() => api.getSubCategories() });
     
-    //   const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
-    //   retry: false,  
-    //   queryKey: ['categories'], 
-    //   queryFn:() => api.getCategories() });
+      const { data: categories, isLoading: isLoadingCategories, error: errorCategories, refetch: refetchCategories } = useQuery({
+      retry: false,  
+      queryKey: ['categories'], 
+      queryFn:() => api.getCategories() });
   
   
     const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
@@ -94,13 +94,13 @@ function RouteComponent() {
     //   }
     // }
       
-    // if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
+    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
   
     if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
     // if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
     if (errorCountries) return <Error retryAction={() => refetchCountries()}/>
-    // if (errorCities) return <Error retryAction={() => refetchCities()}/>
-    // if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
+    if (errorCities) return <Error retryAction={() => refetchCities()}/>
+    if (errorSubCategories) return <Error retryAction={() => refetchSubCategories()}/>
     
     return (
       <>
@@ -134,21 +134,21 @@ function RouteComponent() {
               placeholder: "Tell us about yourself...",
               helperText: "Write a short bio to introduce yourself to others.",
             },
-            // {
-            //   type: "categorized-checkbox",
-            //   name: "subcategories_id",
-            //   label: "Categories",
-            //   options: categories?.map((cat) => ({ 
-            //     value: cat.id, 
-            //     label: cat.name,
-            //     subcategories: subCategories?.filter(subcat => subcat.category_id === cat.id).map(subcat => ({
-            //       value: subcat.id,
-            //       label: subcat.name
-            //     })) || []
-            //   })) || [],
-            //   placeholder: "Select categories",
-            //   helperText: "Select the categories that interest you.",
-            // },
+            {
+              type: "categorized-checkbox",
+              name: "subcategories_id",
+              label: "Categories",
+              options: categories?.map((cat) => ({ 
+                value: cat.id, 
+                label: cat.name,
+                subcategories: subCategories?.filter(subcat => subcat.category_id === cat.id).map(subcat => ({
+                  value: subcat.id,
+                  label: subcat.name
+                })) || []
+              })) || [],
+              placeholder: "Select categories",
+              helperText: "Select the categories that interest you.",
+            },
             {
               type: "checkbox",
               name: "languages_code",

@@ -46,13 +46,13 @@ export default class Api extends BaseApi {
   }
 
   // Tour methods (commented out in original, keeping for future use)
-  // async getSubCategories() {
-  //   return this.tour.getSubCategories();
-  // }
+  async getSubCategories() {
+    return this.tour.getSubCategories();
+  }
 
-  // async getCategories() {
-  //   return this.tour.getCategories();
-  // }
+  async getCategories() {
+    return this.tour.getCategories();
+  }
 
   // User methods (commented out in original, keeping for future use)
   // async createGuide(guide: CreateGuideDto) {

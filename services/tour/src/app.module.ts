@@ -2,20 +2,41 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import microOrmConfig from './mikro-orm.config';
-import { JwtModule } from '@nestjs/jwt';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { CategoryModule } from './category/category.module';
 import { SubCategoryModule } from './sub-category/sub-category.module';
-import { jwtConfig } from './config';
+import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
+import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
+import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
+import auth from './better-auth';
+import { AuthModule } from '@thallesp/nestjs-better-auth';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(microOrmConfig),
-    JwtModule.registerAsync(jwtConfig.asProvider()),
+    AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
     CategoryModule,
     SubCategoryModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useFactory: (reflector: Reflector) => {
+        const options: JwtAuthGuardOptions = {
+          audience: 'tour-svc',
+        };
+        return new JwtAuthGuard(reflector, options);
+      },
+      inject: [Reflector],
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: (reflector: Reflector) =>
+        new ZodResponseInterceptor(reflector),
+      inject: [Reflector],
+    },
+  ],
 })
 export class AppModule {}

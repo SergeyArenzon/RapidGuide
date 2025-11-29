@@ -1,36 +1,52 @@
-## Official PostgreSQL chart configuration for tour service
-global:
-  storageClass: ""
-
-## Override the name of the chart
-fullnameOverride: "tour-db"
-
 image:
   repository: postgres
-  tag: 15.3 
+  tag: 15.3
   pullPolicy: IfNotPresent
 
-auth:
-  username: postgres
-  password: postgres
-  database: tour
-  postgresPassword: postgres
+nameOverride: ""
+fullnameOverride: ""
 
-primary:
-  persistence:
-    size: 1Gi
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 100m
-      memory: 150Mi
+replicaCount: 1
 
-# Use default PostgreSQL port 5432
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 150Mi
+
+persistence:
+  enabled: true
+  storageClass: tour-db-storage-class
+  size: 1Gi
+  accessMode: ReadWriteOnce
+  hostPath: /var/lib/postgresql/data
+
+config:
+  POSTGRES_HOST: postgresql://postgres:postgres@tour-db.default.svc.cluster.local:5432/postgres?schema=public
+  POSTGRES_PORT: "5432"
+  POSTGRES_MAX_CONNECTIONS: "100"
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRESS_DB: tour
+  
+  PGDATA: "/var/lib/postgresql/data/tour"
+
 service:
-  ports:
-    postgresql: 5432
+  type: ClusterIP
+  port: 5432
 
-metrics:
-  enabled: false 
+probes:
+  readiness:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 2
+    successThreshold: 1
+    failureThreshold: 3
+  liveness:
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 3 
