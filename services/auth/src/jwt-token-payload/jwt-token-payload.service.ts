@@ -102,19 +102,13 @@ export class JwtTokenPayloadService {
    */
   getScopes(profiles: GetProfilesResponseDto): string[] {
     const scopes: string[] = [];
-
     // Guide profile scopes - use wildcards for full access
     if (profiles.guide) {
       scopes.push(
         'guide:*', // Full guide access (read, create, update, delete)
         'tour:*', // Full tour access
-        'category:read',
-        'subcategory:read',
-        'language:read',
-        'country:read',
-        'city:read',
       );
-    }
+    } 
 
     // Traveller profile scopes (if you have a traveller profile)
     // if (profiles.traveller) {
@@ -123,6 +117,17 @@ export class JwtTokenPayloadService {
     //     'tour:read', // Travellers can only read tours, not create
     //   );
     // }
+
+    // no guide or traveller profile scopes, so we need to add the default scopes
+    else {
+      scopes.push(
+        'category:read',
+        'subcategory:read',
+        'language:read',
+        'country:read',
+        'city:read',
+      );
+    }
 
     // Remove duplicates and return
     return [...new Set(scopes)];
