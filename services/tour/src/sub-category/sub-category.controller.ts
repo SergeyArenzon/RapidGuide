@@ -2,10 +2,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { SubCategoryService } from './sub-category.service';
 import { SubCategoryDto } from '@rapid-guide-io/dto';
 import { ScopesGuard } from '@rapid-guide-io/guards';
-import {
-  ScopePermission,
-  Scopes,
-} from '@rapid-guide-io/decorators';
+import { Scopes, ScopePermission } from '@rapid-guide-io/decorators';
 
 @Controller('sub-category')
 export class SubCategoryController {
@@ -13,7 +10,7 @@ export class SubCategoryController {
 
   @Get()
   @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.SUBCATEGORY_READ])
+  @Scopes(ScopePermission.SUBCATEGORY_READ)
   findAll(): Promise<SubCategoryDto[]> {
     return this.subCategoryService
       .findAll()

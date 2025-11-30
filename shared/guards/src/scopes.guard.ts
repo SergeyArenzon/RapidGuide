@@ -12,14 +12,18 @@ export class ScopesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredScopes =
-      this.reflector.getAllAndOverride<string[]>(SCOPES_KEY, [
+    let requiredScopes =
+      this.reflector.getAllAndOverride<string | string[]>(SCOPES_KEY, [
         context.getHandler(),
         context.getClass(),
       ]) ?? [];
 
     if (requiredScopes.length === 0) {
       return true;
+    }
+
+    if (typeof requiredScopes === 'string') {
+      requiredScopes = [requiredScopes];
     }
 
     const request = context.switchToHttp().getRequest();
