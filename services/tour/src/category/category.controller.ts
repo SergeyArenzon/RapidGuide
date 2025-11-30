@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryDto } from '@rapid-guide-io/dto';
-import { ROLES_KEY, Scopes } from '@rapid-guide-io/decorators';
+import { Public, Scopes } from '@rapid-guide-io/decorators';
 import { ScopesGuard } from '@rapid-guide-io/guards';
 
 
@@ -10,6 +10,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
+  @Public()
   @UseGuards(ScopesGuard)
   @Scopes(['category:read'])
   findAll(): Promise<CategoryDto[]> {
