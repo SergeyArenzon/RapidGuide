@@ -61,6 +61,10 @@ manifests:
         chartPath: k8s/helm/profile-db/
         valuesFiles:
           - k8s/helm/profile-db/values.yaml
+      - name: tour-db
+        chartPath: k8s/helm/tour-db/
+        valuesFiles:
+          - k8s/helm/tour-db/values.yaml
       - name: auth
         chartPath: k8s/helm/auth/
         valuesFiles:
@@ -69,19 +73,16 @@ manifests:
         chartPath: k8s/helm/profile/
         valuesFiles:
           - k8s/helm/profile/values.yaml
-      - name: tour-db
-        chartPath: k8s/helm/tour-db/
+      - name: tour
+        chartPath: k8s/helm/tour/
         valuesFiles:
-          - k8s/helm/tour-db/values.yaml
+          - k8s/helm/tour/values.yaml
       # - name: redis
       #   repo: https://charts.bitnami.com/bitnami
       #   remoteChart: redis
       #   valuesFiles:
       #     - k8s/helm/redis/values.yaml
-      # - name: tour
-      #   chartPath: k8s/helm/tour/
-      #   valuesFiles:
-      #     - k8s/helm/tour/values.yamldeploy:
+
   hooks:
     before:
       # Create global-secrets from k8s/helm/secrets/.env
