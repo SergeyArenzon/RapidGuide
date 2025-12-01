@@ -8,7 +8,7 @@ export const fetchMeHandler = async (
     clearguideCB: () => void) => {
     try {
       const api = new Api(jwt);
-      const meData = await api.getMe();
+      const meData = await api.profile.getMe();
       
       if (meData.guide) {
         setGudeCB(meData.guide);

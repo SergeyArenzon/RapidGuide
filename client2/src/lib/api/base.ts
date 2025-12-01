@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 
 export class BaseApi {

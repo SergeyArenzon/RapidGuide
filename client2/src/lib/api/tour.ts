@@ -10,16 +10,18 @@ import type {
 import { BaseApi } from './base';
 
 export class TourApi extends BaseApi {
+  static readonly baseUrl = '/tour';
+
   async getSubCategories(): Promise<Array<SubCategoryDto>> {
     return this.validateResponse(
-      () => this.axios.get('/tour/sub-category'),
+      () => this.axios.get(`${TourApi.baseUrl}/sub-category`),
       z.array(subCategorySchema)
     );
   }
 
   async getCategories(): Promise<Array<CategoryDto>> {
     return this.validateResponse(
-      () => this.axios.get('/tour/category'),
+      () => this.axios.get(`${TourApi.baseUrl}/category`),
       z.array(categorySchema)
     );
   }
