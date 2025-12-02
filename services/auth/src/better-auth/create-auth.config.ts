@@ -32,7 +32,10 @@ export function createAuth(
               );
               return jwtTokenPayload;
             } catch {
-              throw new HttpException('Failed to create JWT token payload', HttpStatus.INTERNAL_SERVER_ERROR);
+              throw new HttpException(
+                'Failed to create JWT token payload',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+              );
               // Error is already logged by PermissionService
               // Keep default scopes if the remote request fails
               // In production, you might want to log this but not throw

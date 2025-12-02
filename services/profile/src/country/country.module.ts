@@ -10,5 +10,6 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
   ],
   controllers: [CountryController],
   providers: [CountryService],
+  exports: [CountryService],
 })
 export class CountryModule {}

@@ -96,5 +96,4 @@ export class JwtTokenPayloadService {
 
     return roles;
   }
-
 }

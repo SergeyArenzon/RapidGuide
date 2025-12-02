@@ -7,10 +7,16 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 // import { JwtModule } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 // import { jwtConfig } from '../config';
+import { CountryModule } from '../country/country.module';
+import { CityModule } from '../city/city.module';
+import { LanguagesModule } from '../languages/languages.module';
 
 @Module({
   imports: [
     MikroOrmModule.forFeature([Guide, GuideSubcategory]),
+    CountryModule,
+    CityModule,
+    LanguagesModule,
     // JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
   controllers: [GuideController],
