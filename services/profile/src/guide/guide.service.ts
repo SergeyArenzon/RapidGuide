@@ -1,14 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
-import { GuideDto } from '@rapid-guide-io/contracts';
+import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
+import { CreateGuideDto, GuideDto } from '@rapid-guide-io/contracts';
 import { Guide } from './entities/guide.entity';
+import { GuideSubcategory } from './entities/guide-subcategory.entity';
 
 @Injectable()
 export class GuideService {
   constructor(
     @InjectRepository(Guide)
     private readonly guideRepository: EntityRepository<Guide>,
+    private readonly em: EntityManager,
   ) {}
 
   // async create(

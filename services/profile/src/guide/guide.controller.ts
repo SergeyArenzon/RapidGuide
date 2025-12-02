@@ -1,9 +1,24 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
-import { ScopePermission, Scopes } from '@rapid-guide-io/decorators';
+import {
+  ScopePermission,
+  Scopes,
+  CurrentUser,
+} from '@rapid-guide-io/decorators';
 import { ScopesGuard } from '@rapid-guide-io/guards';
-import { GuideDto } from '@rapid-guide-io/contracts';
+import {
+  GuideDto,
+  createGuideSchema,
+  CreateGuideDto,
+} from '@rapid-guide-io/contracts';
 
 // import {
 //   Subject,
@@ -23,9 +38,13 @@ export class GuideController {
   @UseGuards(ScopesGuard)
   @Scopes([ScopePermission.GUIDE_CREATE])
   async create(
+    @CurrentUser() user,
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-  ): Promise<GuideDto> {
-    return await this.guideService.create(userId, body);
+  // ): Promise<GuideDto> {
+  ): Promise<any> {
+    console.log({ user });
+
+    // return await this.guideService.create(user.id, body);
   }
 
   // @Get()
