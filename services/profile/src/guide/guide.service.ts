@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { CreateGuideDto, GuideDto } from '@rapid-guide-io/contracts';
@@ -23,6 +23,14 @@ export class GuideService {
     userId: string,
     createGuideDto: CreateGuideDto,
   ): Promise<GuideDto> {
+    // Check if user already has a guide - fail fast before querying other entities
+    const existingGuide = await this.guideRepository.findOne({
+      user_id: userId,
+    });
+    if (existingGuide) {
+      throw new ConflictException('User already has a guide profile');
+    }
+
     // Fork the EntityManager for this request to get a clean context
     const em = this.em.fork();
     // Validate country using CountryService

@@ -24,7 +24,7 @@ export class Guide extends BaseEntity {
     Object.assign(this, guide);
   }
 
-  @Property({ type: 'uuid' })
+  @Property({ type: 'uuid', unique: true })
   user_id: string;
 
   @Property({ type: 'text' })
