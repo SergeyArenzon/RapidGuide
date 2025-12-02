@@ -63,12 +63,15 @@ export class GuideService {
 
     // Use the forked em for both persist and flush
     await em.persist(newGuide).flush();
-    
+
     return newGuide.toDto();
   }
 
   async findByUserId(userId: string): Promise<GuideDto | null> {
-    const guide = await this.guideRepository.findOne({ user_id: userId });
+    const guide = await this.guideRepository.findOne(
+      { user_id: userId },
+      { populate: ['languages', 'subcategories', 'country', 'city'] },
+    );
     if (!guide) {
       return null;
     }

@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Request,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
 import {

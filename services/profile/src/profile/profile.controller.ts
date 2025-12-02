@@ -4,7 +4,7 @@ import { InternalServiceGuard } from '@rapid-guide-io/guards';
 import { ProfileService } from './profile.service';
 import { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
 
-@Controller("profile")
+@Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
@@ -21,9 +21,10 @@ export class ProfileController {
   @Get('/:userId')
   @Service()
   @UseGuards(InternalServiceGuard)
-  async root(@Param('userId') userId: string): Promise<GetProfilesResponseDto> {
+  async getProfile(
+    @Param('userId') userId: string,
+  ): Promise<GetProfilesResponseDto> {
     const userProfiles = await this.profileService.getProfilesByUserId(userId);
     return userProfiles;
   }
 }
-

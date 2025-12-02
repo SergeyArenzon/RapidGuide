@@ -3,7 +3,7 @@ import {
   AfterDelete,
   AfterUpdate,
   Entity,
-  OneToOne,
+  ManyToOne,
   Property,
   ManyToMany,
   Collection,
@@ -39,10 +39,10 @@ export class Guide extends BaseEntity {
   @ManyToMany(() => Languages)
   languages = new Collection<Languages>(this);
 
-  @OneToOne(() => Country)
+  @ManyToOne(() => Country)
   country!: Country;
 
-  @OneToOne(() => City)
+  @ManyToOne(() => City)
   city!: City;
 
   toDto(): GuideDto {

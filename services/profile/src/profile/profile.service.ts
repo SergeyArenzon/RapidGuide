@@ -15,7 +15,8 @@ export class ProfileService {
 
   async getProfilesByUserId(userId: string): Promise<GetProfilesResponseDto> {
     const guide = await this.guideService.findByUserId(userId);
-    // const traveller = await this.travellerService.findByUserId(userId);
+    console.log({ guide });
+    
 
     return {
       guide,
@@ -23,4 +24,3 @@ export class ProfileService {
     };
   }
 }
-
