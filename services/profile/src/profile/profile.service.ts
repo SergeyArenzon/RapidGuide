@@ -15,8 +15,6 @@ export class ProfileService {
 
   async getProfilesByUserId(userId: string): Promise<GetProfilesResponseDto> {
     const guide = await this.guideService.findByUserId(userId);
-    console.log({ guide });
-    
 
     return {
       guide,
