@@ -36,14 +36,14 @@ export class GuideController {
 
   @Post()
   @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.GUIDE_CREATE])
+  @Scopes(ScopePermission.GUIDE_WRITE)
   async create(
     @CurrentUser() user,
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
   // ): Promise<GuideDto> {
   ): Promise<any> {
     console.log({ user });
-
+    return { message: 'Guide created', user };
     // return await this.guideService.create(user.id, body);
   }
 

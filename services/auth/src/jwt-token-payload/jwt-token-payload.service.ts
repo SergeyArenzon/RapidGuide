@@ -4,6 +4,7 @@ import type { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
 import { getProfilesResponseSchema } from '@rapid-guide-io/contracts';
 import { firstValueFrom } from 'rxjs';
 import { Session, User } from 'better-auth/types';
+import { ScopeService } from '../scope/scope.service';
 
 /**
  * Service responsible for fetching user profiles and generating
@@ -20,7 +21,10 @@ export class JwtTokenPayloadService {
   private readonly profileServiceUrl: string;
   private readonly internalServiceToken: string;
 
-  constructor(private readonly httpService: HttpService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly scopeService: ScopeService,
+  ) {
     // Consider using ConfigService for these values in the future
     this.profileServiceUrl = 'http://profile:3000';
     this.internalServiceToken = process.env.INTERNAL_SERVICE_TOKEN;
@@ -55,7 +59,7 @@ export class JwtTokenPayloadService {
 
       // create roles and scopes
       roles = this.getRoles(validatedData);
-      scopes = this.getScopes(validatedData);
+      scopes = this.scopeService.getScopes(validatedData);
 
       return this.payload(session, user, roles, scopes);
     } catch (error) {
@@ -93,43 +97,4 @@ export class JwtTokenPayloadService {
     return roles;
   }
 
-  /**
-   * Pure utility function for scope generation.
-   * Can be used independently of the service for testing or other use cases.
-   *
-   * Optimized scope generation using wildcards to reduce JWT size.
-   * Instead of listing every action, use wildcards for full resource access.
-   */
-  getScopes(profiles: GetProfilesResponseDto): string[] {
-    const scopes: string[] = [];
-    // Guide profile scopes - use wildcards for full access
-    if (profiles.guide) {
-      scopes.push(
-        'guide:*', // Full guide access (read, create, update, delete)
-        'tour:*', // Full tour access
-      );
-    } 
-
-    // Traveller profile scopes (if you have a traveller profile)
-    // if (profiles.traveller) {
-    //   scopes.push(
-    //     'traveller:*', // Full traveller access
-    //     'tour:read', // Travellers can only read tours, not create
-    //   );
-    // }
-
-    // no guide or traveller profile scopes, so we need to add the default scopes
-    else {
-      scopes.push(
-        'category:read',
-        'subcategory:read',
-        'language:read',
-        'country:read',
-        'city:read',
-      );
-    }
-
-    // Remove duplicates and return
-    return [...new Set(scopes)];
-  }
 }
