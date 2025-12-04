@@ -1,98 +1,85 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
-import { GuideDto } from '@rapid-guide-io/contracts';
+import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
+import { CreateGuideDto, GuideDto } from '@rapid-guide-io/contracts';
 import { Guide } from './entities/guide.entity';
+import { CountryService } from '../country/country.service';
+import { CityService } from '../city/city.service';
+import { LanguagesService } from '../languages/languages.service';
+import { GuideSubcategory } from './entities/guide-subcategory.entity';
 
 @Injectable()
 export class GuideService {
   constructor(
     @InjectRepository(Guide)
     private readonly guideRepository: EntityRepository<Guide>,
+    private readonly em: EntityManager,
+    private readonly countryService: CountryService,
+    private readonly cityService: CityService,
+    private readonly languagesService: LanguagesService,
   ) {}
 
-  // async create(
-  //   userId: string,
-  //   createGuideDto: CreateGuideDto,
-  // ): Promise<GuideDto> {
-  //   // Start a new transaction with EntityManager
-  //   const em = this.em.fork();
+  async create(
+    userId: string,
+    createGuideDto: CreateGuideDto,
+  ): Promise<GuideDto> {
+    // Check if user already has a guide - fail fast before querying other entities
+    const existingGuide = await this.guideRepository.findOne({
+      user_id: userId,
+    });
+    if (existingGuide) {
+      throw new ConflictException('User already has a guide profile');
+    }
 
-  //   // Check if guide already exists for this user
-  //   const existingGuide = await em.findOne(Guide, { user: userId });
-  //   if (existingGuide) {
-  //     throw new ConflictException(
-  //       `Guide already exists for user with ID ${userId}`,
-  //     );
-  //   }
+    // Fork the EntityManager for this request to get a clean context
+    const em = this.em.fork();
+    // Validate country using CountryService
+    const country = await this.countryService.findByCode(
+      createGuideDto.country_code,
+    );
 
-  //   // Find the user
-  //   const user = await em.findOne(User, {
-  //     id: userId,
-  //   });
-  //   if (!user) {
-  //     throw new NotFoundException(`User with ID ${userId} not found`);
-  //   }
+    // Validate city using CityService
+    const city = await this.cityService.findById(createGuideDto.city_id);
 
-  //   // Find the country
-  //   const country = await em.findOne(Country, {
-  //     code: createGuideDto.country_code,
-  //   });
-  //   if (!country) {
-  //     throw new NotFoundException(
-  //       `Country with code ${createGuideDto.country_code} not found`,
-  //     );
-  //   }
+    // Validate languages using LanguagesService
+    const languages = await this.languagesService.findByCodes(
+      createGuideDto.languages_code,
+    );
 
-  //   // Find the city
-  //   const city = await em.findOne(City, {
-  //     id: createGuideDto.city_id,
-  //   });
-  //   if (!city) {
-  //     throw new NotFoundException(
-  //       `City with ID ${createGuideDto.city_id} not found`,
-  //     );
-  //   }
+    // Create a new Guide entity
+    const newGuide = new Guide({
+      ...createGuideDto,
+      user_id: userId,
+      country,
+      city,
+    });
 
-  //   // Find languages
-  //   const languages = await em.find(Languages, {
-  //     code: { $in: createGuideDto.languages_code },
-  //   });
-  //   if (languages.length !== createGuideDto.languages_code.length) {
-  //     throw new NotFoundException('Some languages were not found');
-  //   }
+    // Add languages to the guide
+    newGuide.languages.set(languages);
 
-  //   // Create a new Guide entity
-  //   const newGuide = new Guide({
-  //     ...createGuideDto,
-  //     user,
-  //     country,
-  //     city,
-  //   });
+    // Create guide subcategories
+    const guideSubcategories = createGuideDto.subcategories_id.map(
+      (subcategoryId) =>
+        new GuideSubcategory({
+          guide: newGuide,
+          subcategory_id: subcategoryId,
+        }),
+    );
 
-  //   // Add languages to the guide
-  //   newGuide.languages.set(languages);
+    // Add subcategories to the guide
+    newGuide.subcategories.set(guideSubcategories);
 
-  //   // Create guide subcategories
-  //   const guideSubcategories = createGuideDto.subcategories_id.map(
-  //     (subcategoryId) =>
-  //       new GuideSubcategory({
-  //         guide: newGuide,
-  //         subcategory_id: subcategoryId,
-  //       }),
-  //   );
+    // Use the forked em for both persist and flush
+    await em.persist(newGuide).flush();
 
-  //   // Add subcategories to the guide
-  //   newGuide.subcategories.set(guideSubcategories);
-
-  //   // Persist the guide and subcategories in the transaction
-  //   await em.persistAndFlush([newGuide, ...guideSubcategories]);
-
-  //   return newGuide.toDto();
-  // }
+    return newGuide.toDto();
+  }
 
   async findByUserId(userId: string): Promise<GuideDto | null> {
-    const guide = await this.guideRepository.findOne({ user_id: userId });
+    const guide = await this.guideRepository.findOne(
+      { user_id: userId },
+      { populate: ['languages', 'subcategories', 'country', 'city'] },
+    );
     if (!guide) {
       return null;
     }

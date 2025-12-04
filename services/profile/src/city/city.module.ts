@@ -5,10 +5,9 @@ import { City } from './city.entity';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 @Module({
-  imports: [
-    MikroOrmModule.forFeature([City]),
-  ],
+  imports: [MikroOrmModule.forFeature([City])],
   controllers: [CityController],
   providers: [CityService],
+  exports: [CityService],
 })
 export class CityModule {}

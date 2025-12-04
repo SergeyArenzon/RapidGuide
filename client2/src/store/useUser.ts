@@ -1,20 +1,12 @@
 import { create } from 'zustand'
+import type { UserDto } from '@rapid-guide-io/contracts'
 
-export type AuthUser = {
-  id: string
-  name: string | null
-  email: string
-  emailVerified: boolean
-  image: string | null
-  createdAt: string
-  updatedAt: string
-}
 
 type UserStore = {
-  user: AuthUser | null
+  user: UserDto | null
   accessToken: string | null
   isLogged: boolean
-  setUser: (user: AuthUser, accessToken?: string | null) => void
+  setUser: (user: UserDto, accessToken?: string | null) => void
   clearUser: () => void
 }
 

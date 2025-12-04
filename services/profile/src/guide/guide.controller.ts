@@ -1,32 +1,32 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
-
-// import {
-//   Subject,
-//   Roles,
-//   Scopes,
-//   Role,
-//   ScopePermission,
-//   ResponseSchema,
-// } from '@rapid-guide-io/decorators';
-// import { RolesGuard, ScopesGuard } from '@rapid-guide-io/guards';
+import {
+  ScopePermission,
+  Scopes,
+  CurrentUser,
+} from '@rapid-guide-io/decorators';
+import { ScopesGuard } from '@rapid-guide-io/guards';
+import {
+  GuideDto,
+  createGuideSchema,
+  CreateGuideDto,
+} from '@rapid-guide-io/contracts';
 
 @Controller('guide')
 export class GuideController {
   constructor(private readonly guideService: GuideService) {}
 
-  // @Post()
-  // // @UseGuards(RolesGuard, ScopesGuard)
-  // @ResponseSchema(userSchema)
-  // @Roles(Role.CLIENT)
-  // @Scopes([ScopePermission.GUIDE_CREATE])
-  // async create(
-  //   @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-  //   @Subject() userId: string,
-  // ): Promise<GuideDto> {
-  //   return await this.guideService.create(userId, body);
-  // }
+  @Post()
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.GUIDE_WRITE])
+  async create(
+    @CurrentUser() user,
+    @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
+  ): Promise<GuideDto> {
+    
+    return await this.guideService.create(user.id, body);
+  }
 
   // @Get()
   // // @UseGuards(RolesGuard, ScopesGuard)

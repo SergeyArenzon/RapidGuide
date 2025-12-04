@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { timeSchema } from '../../time.dto';
 
 // Base schema that will be extended by create and response DTOs
-const guideSchema = timeSchema.extend({
+export const guideSchema = timeSchema.extend({
   id: z.uuid(),
-  user_id: z.string().uuid(),
+  user_id: z.uuid(),
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   bio: z.string()
   .min(10, { message: "Bio must be at least 10 characters" })
@@ -15,8 +15,14 @@ const guideSchema = timeSchema.extend({
   subcategories_id: z.array(z.uuid()).min(1, { message: "At least one sub category is required" }),
 });
 
+export const createGuideSchema = guideSchema.omit({
+  id: true,
+  user_id: true,
+  created_at: true,
+  updated_at: true,
+});
 
-// Schema for guide response - includes all fields
-export { guideSchema };
+
 // Create DTOs from schemas
 export type GuideDto = z.infer<typeof guideSchema>;
+export type CreateGuideDto = z.infer<typeof createGuideSchema>;

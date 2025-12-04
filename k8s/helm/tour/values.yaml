@@ -9,12 +9,6 @@ service:
   type: ClusterIP
   port: 3000
 
-env:
-  - name: JWT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: global-secrets
-        key: jwt-secret
 
 database:
   url: "postgresql://postgres:postgres@tour-db:5432/postgres?schema=public"

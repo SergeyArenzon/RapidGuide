@@ -2,11 +2,11 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { microOrmConfig } from 'src/config';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LanguagesModule } from './languages/languages.module';
 import { CountryModule } from './country/country.module';
 import { CityModule } from './city/city.module';
 import { GuideModule } from './guide/guide.module';
+import { ProfileModule } from './profile/profile.module';
 import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
@@ -21,10 +21,10 @@ import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
     CountryModule,
     CityModule,
     GuideModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [
-    AppService,
     {
       provide: APP_GUARD,
       useFactory: (reflector: Reflector) => {
