@@ -15,19 +15,23 @@ import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialo
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
   beforeLoad: ({ context }) => {
     const auth = context.auth
+    console.log("signup/guide");
     
-    // If not authenticated, redirect to sign in
-    if (!auth.isAuthenticated) {
-      throw redirect({
-        to: '/signin',
-      })
-    }
-    
-    // If already has guide profile, redirect to dashboard
-    if (auth.guide) {
-      throw redirect({
-        to: '/dashboard',
-      })
+    // Only make redirect decisions after auth has finished loading
+    if (!auth.isLoading) {
+      // If not authenticated, redirect to sign in
+      if (!auth.isAuthenticated) {
+        throw redirect({
+          to: '/signin',
+        })
+      }
+      
+      // If already has guide profile, redirect to dashboard
+      if (auth.guide) {
+        throw redirect({
+          to: '/dashboard',
+        })
+      }
     }
   },
   component: RouteComponent,

@@ -31,8 +31,6 @@ export const Route = createFileRoute('/_unauthenticated/signin')({
 })
 
 function RouteComponent() {
-  const { redirect: redirectUrl } = Route.useSearch()
-  
   const handleSignInWithGoogle = async () => {
     console.log("sign in with google");
     await authClient.signIn.social({
