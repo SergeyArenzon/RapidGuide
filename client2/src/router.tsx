@@ -5,22 +5,7 @@ import { routeTree } from './routeTree.gen'
 import { useSessionStore } from './store/useSession'
 import useUserStore from './store/useUser'
 import { useGuideStore } from './store/useGuide'
-import type { AuthState } from './lib/auth-context'
-
-// Helper to get current auth state from Zustand stores
-export const getAuthState = (): AuthState => {
-  const { session, isLoading } = useSessionStore.getState()
-  const { user } = useUserStore.getState()
-  const { guide } = useGuideStore.getState()
-
-  return {
-    isAuthenticated: !!session,
-    isLoading,
-    user,
-    session,
-    guide,
-  }
-}
+import { getAuthState } from './lib/auth-state'
 
 // Create a new router instance
 export const getRouter = () => {

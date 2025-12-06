@@ -9,17 +9,21 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
-import type { AuthState } from '@/lib/auth-context'
+import type { AuthState } from '@/lib/auth-state'
 import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useAuth } from '@/hooks/use-auth'
 
-interface MyRouterContext {
+export interface AuthContext {
+  auth: AuthState
+}
+
+interface RouterContext {
   auth: AuthState
   queryClient: QueryClient
 }
 
-export const Route = createRootRouteWithContext<MyRouterContext>()({
+export const Route = createRootRouteWithContext<RouterContext>()({
   head: () => ({
     meta: [
       {
@@ -46,8 +50,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     title="Page not found"
     description="The page you're looking for doesn't exist."/>,
   component: RootComponent,
-  beforeLoad: ({ context }) => {
-    const auth = context.auth
+  beforeLoad: () => {
     console.log("root");
   },
   
