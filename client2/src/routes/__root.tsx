@@ -9,12 +9,13 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
+import type { AuthState } from '@/lib/auth-context'
 import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useAuth } from '@/hooks/use-auth'
-import { useInitRouter } from '@/hooks/use-init-router'
 
 interface MyRouterContext {
+  auth: AuthState
   queryClient: QueryClient
 }
 
@@ -52,8 +53,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 
 function RootComponent() {
-  const { isLoading: isSessionLoading} = useAuth()
-  useInitRouter()
+  const { isLoading: isSessionLoading } = useAuth()
   
   return (
     <html lang="en">

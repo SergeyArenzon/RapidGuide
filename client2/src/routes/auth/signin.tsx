@@ -1,21 +1,44 @@
-
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import bgImage from '/images/guilherme-stecanella-_dH-oQF9w-Y-unsplash.jpg'
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { authClient } from '@/lib/auth-client';
 
+const searchSchema = z.object({
+  redirect: z.string().optional(),
+})
 
 export const Route = createFileRoute('/auth/signin')({
+  validateSearch: searchSchema,
+  beforeLoad: ({ context }) => {
+    const auth = context.auth
+    
+    // If already authenticated with a guide profile, redirect to dashboard
+    if (auth.isAuthenticated && auth.guide) {
+      throw redirect({
+        to: '/dashboard',
+      })
+    }
+    
+    // If authenticated but no guide, redirect to signup to complete profile
+    if (auth.isAuthenticated && !auth.guide) {
+      throw redirect({
+        to: '/auth/signup',
+      })
+    }
+  },
   component: RouteComponent,
 })
 
-function RouteComponent() {   
+function RouteComponent() {
+  const { redirect: redirectUrl } = Route.useSearch()
+  
   const handleSignInWithGoogle = async () => {
     console.log("sign in with google");
     await authClient.signIn.social({
       provider: 'google',
-      newUserCallbackURL: "http://localhost:3000/welcome",
-      callbackURL: "http://localhost:3000"
+      newUserCallbackURL: "http://localhost:3000/auth/signup",
+      callbackURL: redirectUrl || "http://localhost:3000/dashboard"
     })
   }
 
