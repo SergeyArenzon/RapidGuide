@@ -1,1 +1,0 @@
-export { CategorySchema } from './category.schema';
