@@ -1,14 +1,14 @@
 import { Link, createFileRoute, redirect } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 
-export const Route = createFileRoute('/auth/signup/')({
+export const Route = createFileRoute('/_unauthenticated/signup/')({
   beforeLoad: ({ context }) => {
     const auth = context.auth
     
     // If not authenticated, redirect to sign in
     if (!auth.isAuthenticated) {
       throw redirect({
-        to: '/auth/signin',
+        to: '/signin',
       })
     }
     
@@ -26,7 +26,8 @@ function RouteComponent() {
   return (
     <div className='container'>
         <Button variant="link">Create Traveller</Button>
-        <Button variant="link"><Link to="/auth/signup/guide">Create Guide</Link></Button>
+        <Button variant="link"><Link to="/signup/guide">Create Guide</Link></Button>
     </div>
   ) 
 }
+

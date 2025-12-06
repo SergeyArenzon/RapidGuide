@@ -1,7 +1,4 @@
-## Official PostgreSQL chart configuration for tour service
-global:
-  storageClass: ""
-
+## Official PostgreSQL chart configuration for auth service
 ## Override the name of the chart
 fullnameOverride: "auth-db"
 
@@ -16,9 +13,14 @@ auth:
   database: auth
   postgresPassword: postgres
 
+persistence:
+  enabled: true
+  storageClass: auth-db-storage-class
+  size: 1Gi
+  accessMode: ReadWriteOnce
+  hostPath: /var/lib/postgresql/auth-data
+
 primary:
-  persistence:
-    size: 1Gi
   resources:
     limits:
       cpu: 500m

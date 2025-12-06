@@ -8,7 +8,7 @@ const searchSchema = z.object({
   redirect: z.string().optional(),
 })
 
-export const Route = createFileRoute('/auth/signin')({
+export const Route = createFileRoute('/_unauthenticated/signin')({
   validateSearch: searchSchema,
   beforeLoad: ({ context }) => {
     const auth = context.auth
@@ -23,7 +23,7 @@ export const Route = createFileRoute('/auth/signin')({
     // If authenticated but no guide, redirect to signup to complete profile
     if (auth.isAuthenticated && !auth.guide) {
       throw redirect({
-        to: '/auth/signup',
+        to: '/signup',
       })
     }
   },
@@ -37,8 +37,8 @@ function RouteComponent() {
     console.log("sign in with google");
     await authClient.signIn.social({
       provider: 'google',
-      newUserCallbackURL: "http://localhost:3000/auth/signup",
-      callbackURL: redirectUrl || "http://localhost:3000/dashboard"
+      newUserCallbackURL: "http://localhost:3000/signup",
+      callbackURL: "http://localhost:3000/dashboard"
     })
   }
 
@@ -58,4 +58,3 @@ function RouteComponent() {
               </div>
     </div>
 }
-

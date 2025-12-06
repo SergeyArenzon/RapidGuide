@@ -1,15 +1,18 @@
 {{- if .Values.persistence.enabled }}
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolume
 metadata:
-  name: {{ .Release.Name }}-pvc
+  name: {{ .Release.Name }}-pv
   labels:
     app: {{ .Release.Name }}
 spec:
   storageClassName: {{ .Values.persistence.storageClass }}
+  capacity:
+    storage: {{ .Values.persistence.size }}
   accessModes:
     - {{ .Values.persistence.accessMode }}
-  resources:
-    requests:
-      storage: {{ .Values.persistence.size }}
-{{- end }} 
+  hostPath:
+    path: {{ .Values.persistence.hostPath }}
+    type: DirectoryOrCreate
+{{- end }}
+

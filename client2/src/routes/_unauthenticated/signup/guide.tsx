@@ -12,14 +12,14 @@ import Api from '@/lib/api/index';
 import { useJwtTokenStore } from '@/store/useJwtToken';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 
-export const Route = createFileRoute('/auth/signup/guide')({
+export const Route = createFileRoute('/_unauthenticated/signup/guide')({
   beforeLoad: ({ context }) => {
     const auth = context.auth
     
     // If not authenticated, redirect to sign in
     if (!auth.isAuthenticated) {
       throw redirect({
-        to: '/auth/signin',
+        to: '/signin',
       })
     }
     
@@ -205,5 +205,4 @@ function RouteComponent() {
       </>
     )
   }
-  
   

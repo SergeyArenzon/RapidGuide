@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_authenticated')({
     // If not authenticated, redirect to sign in
     if (!auth.isAuthenticated) {
       throw redirect({
-        to: '/auth/signin',
+        to: '/signin',
         search: {
           redirect: location.href,
         },
@@ -25,7 +25,7 @@ export const Route = createFileRoute('/_authenticated')({
     // If authenticated but no guide profile, redirect to signup to complete profile
     if (!auth.guide) {
       throw redirect({
-        to: '/auth/signup',
+        to: '/signup',
       })
     }
   },
