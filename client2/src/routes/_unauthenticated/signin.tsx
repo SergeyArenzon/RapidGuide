@@ -11,20 +11,12 @@ const searchSchema = z.object({
 export const Route = createFileRoute('/_unauthenticated/signin')({
   validateSearch: searchSchema,
   beforeLoad: ({ context }) => {
-    const auth = context.auth
-    
-    // If already authenticated with a guide profile, redirect to dashboard
-    if (auth.isAuthenticated && auth.guide) {
-      throw redirect({
-        to: '/dashboard',
-      })
-    }
-    
-    // If authenticated but no guide, redirect to signup to complete profile
+    const { auth } = context
+
     if (auth.isAuthenticated && !auth.guide) {
-      throw redirect({
-        to: '/signup',
-      })
+        throw redirect({
+            to: '/signup',
+        })
     }
   },
   component: RouteComponent,

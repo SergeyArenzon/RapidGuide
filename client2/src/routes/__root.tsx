@@ -46,6 +46,10 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     title="Page not found"
     description="The page you're looking for doesn't exist."/>,
   component: RootComponent,
+  beforeLoad: ({ context }) => {
+    const auth = context.auth
+    console.log("root");
+  },
   
 })
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import {  createGuideSchema } from '@rapid-guide-io/contracts';
 import type z from 'zod';
 import type {CreateGuideDto} from '@rapid-guide-io/contracts';
@@ -13,27 +13,6 @@ import { useJwtTokenStore } from '@/store/useJwtToken';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
-  beforeLoad: ({ context }) => {
-    const auth = context.auth
-    console.log("signup/guide");
-    
-    // Only make redirect decisions after auth has finished loading
-    if (!auth.isLoading) {
-      // If not authenticated, redirect to sign in
-      if (!auth.isAuthenticated) {
-        throw redirect({
-          to: '/signin',
-        })
-      }
-      
-      // If already has guide profile, redirect to dashboard
-      if (auth.guide) {
-        throw redirect({
-          to: '/dashboard',
-        })
-      }
-    }
-  },
   component: RouteComponent,
 })
 
