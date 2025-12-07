@@ -20,11 +20,11 @@ export class JwtTokenPayloadService {
   private readonly logger = new Logger(JwtTokenPayloadService.name);
   private readonly profileServiceUrl: string;
   private readonly internalServiceToken: string;
+  private readonly jwtExpirationTime: number;
 
   constructor(
     private readonly httpService: HttpService,
     private readonly scopeService: ScopeService,
-    private readonly jwtExpirationTime: number,
   ) {
     // Consider using ConfigService for these values in the future
     this.profileServiceUrl = 'http://profile:3000';

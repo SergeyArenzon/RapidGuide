@@ -9,7 +9,6 @@ import { Error } from '@/components/Error';
 import Form from '@/components/form';
 import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
-import { useJwtTokenStore } from '@/store/useJwtToken';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
