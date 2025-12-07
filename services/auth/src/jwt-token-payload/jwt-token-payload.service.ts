@@ -74,10 +74,11 @@ export class JwtTokenPayloadService {
   payload(session: Session, user: User, roles: string[], scopes: string[]) {
     const now = Math.floor(Date.now() / 1000); // Current time in seconds (Unix timestamp)
     // Convert Date objects to Unix timestamps (seconds)
-    const iat = session.createdAt instanceof Date 
-      ? Math.floor(session.createdAt.getTime() / 1000)
-      : session.createdAt;
-    
+    const iat =
+      session.createdAt instanceof Date
+        ? Math.floor(session.createdAt.getTime() / 1000)
+        : session.createdAt;
+
     const payload = {
       // iss is set by better-auth JWT plugin configuration
       iss: 'auth-svc',
