@@ -24,10 +24,12 @@ export class JwtTokenPayloadService {
   constructor(
     private readonly httpService: HttpService,
     private readonly scopeService: ScopeService,
+    private readonly jwtExpirationTime: number,
   ) {
     // Consider using ConfigService for these values in the future
     this.profileServiceUrl = 'http://profile:3000';
     this.internalServiceToken = process.env.INTERNAL_SERVICE_TOKEN;
+    this.jwtExpirationTime = 15 * 60;
   }
 
   /**
@@ -71,7 +73,6 @@ export class JwtTokenPayloadService {
 
   payload(session: Session, user: User, roles: string[], scopes: string[]) {
     const now = Math.floor(Date.now() / 1000); // Current time in seconds (Unix timestamp)
-    const jwtExpirationTime = 15 * 60; // 15 minutes in seconds
     // Convert Date objects to Unix timestamps (seconds)
     const iat = session.createdAt instanceof Date 
       ? Math.floor(session.createdAt.getTime() / 1000)
@@ -86,7 +87,7 @@ export class JwtTokenPayloadService {
       email: user.email,
       roles: roles,
       scopes: scopes, // Array of strings like ['guide:read', 'tour:create', ...]
-      exp: now + jwtExpirationTime, // JWT expires in 15 minutes
+      exp: now + this.jwtExpirationTime, // JWT expires in 15 minutes
       iat: iat, // Issued at time (Unix timestamp in seconds)
       nbf: iat, // Not before time (same as issued at)
       jti: session.token,
