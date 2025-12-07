@@ -9,7 +9,6 @@ import { Error } from '@/components/Error';
 import Form from '@/components/form';
 import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
-import { useJwtTokenStore } from '@/store/useJwtToken';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
@@ -30,10 +29,9 @@ function RouteComponent() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
   
-  const { token } = useJwtTokenStore((state) => state);
   const navigate = useNavigate()
     
-    const api = new Api(token!);
+    const api = new Api();
   
     const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
       setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));

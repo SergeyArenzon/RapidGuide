@@ -14,10 +14,6 @@ import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useAuth } from '@/hooks/use-auth'
 
-export interface AuthContext {
-  auth: AuthState
-}
-
 interface RouterContext {
   auth: AuthState
   queryClient: QueryClient

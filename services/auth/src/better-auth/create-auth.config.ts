@@ -60,6 +60,7 @@ export function createAuth(
     },
     session: {
       fields: SESSION_FIELDS,
+
       cookieCache: {
         enabled: true,
         maxAge: 5 * 60, // Cache duration in seconds

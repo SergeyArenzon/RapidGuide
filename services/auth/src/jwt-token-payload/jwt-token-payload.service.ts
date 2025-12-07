@@ -20,6 +20,7 @@ export class JwtTokenPayloadService {
   private readonly logger = new Logger(JwtTokenPayloadService.name);
   private readonly profileServiceUrl: string;
   private readonly internalServiceToken: string;
+  private readonly jwtExpirationTime: number;
 
   constructor(
     private readonly httpService: HttpService,
@@ -28,6 +29,7 @@ export class JwtTokenPayloadService {
     // Consider using ConfigService for these values in the future
     this.profileServiceUrl = 'http://profile:3000';
     this.internalServiceToken = process.env.INTERNAL_SERVICE_TOKEN;
+    this.jwtExpirationTime = 15 * 60;
   }
 
   /**
@@ -70,6 +72,13 @@ export class JwtTokenPayloadService {
   }
 
   payload(session: Session, user: User, roles: string[], scopes: string[]) {
+    const now = Math.floor(Date.now() / 1000); // Current time in seconds (Unix timestamp)
+    // Convert Date objects to Unix timestamps (seconds)
+    const iat =
+      session.createdAt instanceof Date
+        ? Math.floor(session.createdAt.getTime() / 1000)
+        : session.createdAt;
+
     const payload = {
       // iss is set by better-auth JWT plugin configuration
       iss: 'auth-svc',
@@ -79,9 +88,9 @@ export class JwtTokenPayloadService {
       email: user.email,
       roles: roles,
       scopes: scopes, // Array of strings like ['guide:read', 'tour:create', ...]
-      exp: session.expiresAt,
-      iat: session.createdAt,
-      nbf: session.createdAt,
+      exp: now + this.jwtExpirationTime, // JWT expires in 15 minutes
+      iat: iat, // Issued at time (Unix timestamp in seconds)
+      nbf: iat, // Not before time (same as issued at)
       jti: session.token,
     };
     return payload;

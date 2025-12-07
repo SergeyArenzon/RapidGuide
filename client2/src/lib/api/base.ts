@@ -1,6 +1,7 @@
 import axios from 'axios';
-import type { z } from 'zod';
+import { setupRefreshTokenInterceptor } from './refresh-token.interception';
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
+import type { z } from 'zod';
 
 export class BaseApi {
   protected axios: AxiosInstance;
@@ -19,13 +20,11 @@ export class BaseApi {
         },
       });
 
-      // Attach response interceptor
-      this.axios.interceptors.response.use(
-        (response) => response,
-        (error) => this.handleError(error)
-      );
+      // Set up refresh token interceptor with error handler
+      setupRefreshTokenInterceptor(this.axios, this.handleError.bind(this));
     }
   }
+
 
   // 🔒 Generic validation wrapper
   protected async validateResponse<T>(
@@ -44,7 +43,7 @@ export class BaseApi {
   }
   
   // 🛑 Handle API errors globally
-  private handleError(error: AxiosError) {
+  protected handleError(error: AxiosError) {
     if (error.response) {
       const errorMessage = (error.response.data as { message?: string }).message || 'Something went wrong.';
       console.error('API Error:', errorMessage);
