@@ -26,7 +26,7 @@ export const useAuth = (): { isLoading: boolean } => {
               const jwt = ctx.response.headers.get('set-auth-jwt') 
               if (jwt) {
                 setToken(jwt)
-                await fetchMeHandler(jwt, setGuide, clearGuide)   
+                await fetchMeHandler(setGuide, clearGuide)   
               } else {
                 clearToken()
               }

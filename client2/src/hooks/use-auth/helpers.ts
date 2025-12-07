@@ -3,11 +3,10 @@ import type { GuideDto, UserDto} from "@rapid-guide-io/contracts";
 import Api from "@/lib/api/index";
 
 export const fetchMeHandler = async (
-    jwt: string, 
     setGudeCB: (guide: GuideDto) => void, 
     clearguideCB: () => void) => {
     try {
-      const api = new Api(jwt);
+      const api = new Api();
       const meData = await api.profile.getMe();
       
       if (meData.guide) {

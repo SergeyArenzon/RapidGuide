@@ -30,10 +30,9 @@ function RouteComponent() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
   
-  const { token } = useJwtTokenStore((state) => state);
   const navigate = useNavigate()
     
-    const api = new Api(token!);
+    const api = new Api();
   
     const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
       setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
