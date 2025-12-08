@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 
+// --- Type Definitions ---
+
 export type CheckboxDropdownProps = {
   name: string
   label: string
@@ -28,7 +30,10 @@ export type CheckboxDropdownProps = {
   maxListHeight?: number
 }
 
-const ITEM_HEIGHT = 36 // Consistent estimated height
+// Ensure this height matches the visual height of a CommandItem, including padding/margin
+const ITEM_HEIGHT = 36 
+
+// --- Component ---
 
 export function CheckboxDropdown({
   name,
@@ -41,7 +46,7 @@ export function CheckboxDropdown({
   disabled = false,
   className = "",
   maxBadges = 3,
-  maxListHeight = 256,
+  maxListHeight = 256, // Default max height
 }: CheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState("")
@@ -87,6 +92,32 @@ export function CheckboxDropdown({
     )
   }, [options, searchValue])
 
+  // --- TanStack Virtualizer Logic ---
+  const parentRef = React.useRef<HTMLDivElement>(null)
+
+  const virtualizer = useVirtualizer({
+    count: filteredOptions.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ITEM_HEIGHT,
+    overscan: 5,
+    enabled: open,
+  })
+
+  // FIX: Use setTimeout to ensure the CommandList height is stable before measuring
+  React.useLayoutEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        virtualizer.measure() 
+      }, 0);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [open, virtualizer])
+
+
+  const virtualItems = open ? virtualizer.getVirtualItems() : []
+  const totalSize = open ? virtualizer.getTotalSize() : 0
+  
   // --- Display Logic ---
   const displayBadges = selectedItems.slice(0, maxBadges)
   const remainingCount = selectedItems.length - maxBadges
@@ -131,118 +162,57 @@ export function CheckboxDropdown({
         </Button>
       </PopoverTrigger>
       
-      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+      <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
         <Command>
           <CommandInput
             placeholder={`Search ${label.toLowerCase()}...`}
             value={searchValue}
             onValueChange={setSearchValue}
           />
-          
-          <CommandListRenderer
-            // Key forces remount/reset on open/close
-            key={open ? 'open' : 'closed'}
-            open={open}
-            filteredOptions={filteredOptions}
-            selectedItems={selectedItems}
-            maxListHeight={maxListHeight}
-            handleItemToggle={handleItemToggle}
-            name={name}
-            label={label}
-          />
 
+          {/* CommandList is the scrollable container, holding the ref and scroll styles */}
+          <CommandList
+          className="relative"
+            ref={parentRef}
+            style={{ height: totalSize }}>
+            {/* Display empty state if filtering yields no results */}
+            {filteredOptions.length === 0 && <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>}
+            
+            {/* Conditional rendering for virtualized content, only when open */}
+            {open && filteredOptions.length > 0 && (
+              <CommandGroup>
+                {/* Container for total height and relative positioning context */}
+
+                  {virtualItems.map((virtualRow) => {
+                    const option = filteredOptions[virtualRow.index]
+                    
+                    return (
+                      <CommandItem
+                        key={option.value}
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
+                        onSelect={() => handleItemToggle(option.value)}
+                        className="flex items-center gap-2 cursor-pointer w-full absolute"
+                        // Use absolute positioning and transform: translateY for accurate row placement
+                        style={{ transform: `translateY(${virtualRow.start}px)` }}>
+                        <Checkbox
+                          checked={selectedItems.includes(option.value)}
+                          onCheckedChange={() => handleItemToggle(option.value)}
+                          id={`${name}-${option.value}`}
+                          className="mr-2"
+                        />
+                        <Label htmlFor={`${name}-${option.value}`} onClick={(e) => e.stopPropagation()} className="flex-grow cursor-pointer">
+                          {option.label}
+                        </Label>
+                        {selectedItems.includes(option.value) && <Check className="h-4 w-4 text-primary" />}
+                      </CommandItem>
+                    )
+                  })}
+              </CommandGroup>
+            )}
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
-  )
-}
-
-// --- NEW COMPONENT FOR VIRTUALIZED RENDERING ---
-interface CommandListRendererProps {
-  open: boolean;
-  filteredOptions: Array<{ value: string; label: string }>;
-  selectedItems: string[];
-  maxListHeight: number;
-  handleItemToggle: (value: string) => void;
-  name: string;
-  label: string;
-}
-
-function CommandListRenderer({
-  open,
-  filteredOptions,
-  selectedItems,
-  maxListHeight,
-  handleItemToggle,
-  name,
-  label,
-}: CommandListRendererProps) {
-  
-  const parentRef = React.useRef<HTMLDivElement>(null)
-
-  const virtualizer = useVirtualizer({
-    count: filteredOptions.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => ITEM_HEIGHT,
-    overscan: 5,
-    enabled: open, 
-  })
-
-  // AGGRESSIVE FIX: Force measurement using scrollToIndex(0) after mounting
-  React.useEffect(() => {
-      if (parentRef.current && open) {
-          // Use setTimeout 0ms to ensure the call runs after the Popover's initial mount/transition is settled.
-          const timer = setTimeout(() => {
-              virtualizer.scrollToIndex(0, { align: 'start' });
-          }, 0); 
-          return () => clearTimeout(timer);
-      }
-  }, [open, virtualizer]); 
-
-  // --- Virtualization Data ---
-  const virtualItems = virtualizer.getVirtualItems()
-  // const totalSize = virtualizer.getTotalSize()
-  const paddingTop = virtualItems.length > 0 ? virtualItems[0]?.start || 0 : 0
-  // const paddingBottom = virtualItems.length > 0 ? totalSize - (virtualItems[virtualItems.length - 1]?.end || 0) : 0
-
-  if (filteredOptions.length === 0) {
-    return (
-      <CommandList>
-        <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>
-      </CommandList>
-    )
-  }
-
-  // Render the virtualized list
-  return (
-    <CommandList ref={parentRef} >
-      <CommandGroup 
-      style={{ paddingTop }}>
-            {virtualItems.map((virtualRow) => {
-              const option = filteredOptions[virtualRow.index]
-              
-              return (
-                <CommandItem
-                  key={option.value}
-                  data-index={virtualRow.index}
-                  ref={virtualizer.measureElement}
-                  onSelect={() => handleItemToggle(option.value)}
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <Checkbox
-                    checked={selectedItems.includes(option.value)}
-                    onCheckedChange={() => handleItemToggle(option.value)}
-                    id={`${name}-${option.value}`}
-                    className="mr-2"
-                  />
-                  <Label htmlFor={`${name}-${option.value}`} onClick={(e) => e.stopPropagation()} className="flex-grow cursor-pointer">
-                    {option.label}
-                  </Label>
-                  {selectedItems.includes(option.value) && <Check className="h-4 w-4 text-primary" />}
-                </CommandItem>
-              )
-            })}
-      </CommandGroup>
-    </CommandList>
   )
 }
