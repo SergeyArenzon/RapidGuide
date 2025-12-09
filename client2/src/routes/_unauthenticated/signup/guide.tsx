@@ -137,7 +137,7 @@ function RouteComponent() {
               helperText: "Write a short bio to introduce yourself to others.",
             },
             {
-              type: "categorized-checkbox",
+              type: "checkbox",
               name: "subcategories_id",
               label: "Categories",
               options: categories?.map((cat) => ({ 

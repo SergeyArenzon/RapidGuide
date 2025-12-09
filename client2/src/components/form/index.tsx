@@ -6,7 +6,6 @@ import { Textarea } from "../ui/textarea"
 import { CheckboxDropdown } from "../CheckboxDropdown"
 import SelectDropdown from "../SelectDropdown"
 import { Input } from "../ui/input"
-import { CategorizedCheckboxDropdown } from "../CategorizedCheckboxDropdown"
 import { FormFieldBase } from "./FormFieldBase"
 import type * as z from "zod"
 import type { DefaultValues, FieldValues, Path} from "react-hook-form";
@@ -141,31 +140,6 @@ export default function Form<T extends FieldValues>({
                 options={field.options}
                 placeholder={field.placeholder}
                 helperText={field.helperText}
-                register={register}
-                watch={watch}
-                required={field.required}
-                setValue={setValue}
-                control={control}
-                disabled={field.disabled || isSubmitting}/>
-
-          </FormFieldBase>
-        )
-      case 'categorized-checkbox':
-        return (
-          <FormFieldBase
-            key={field.name}
-            name={field.name}
-            label={field.label}
-            helperText={field.helperText}
-            errors={errors}
-            required={field.required}
-            disabled={field.disabled}>
-              <CategorizedCheckboxDropdown
-                key={field.name}
-                name={field.name}
-                label={field.label}
-                options={field.options}
-                placeholder={field.placeholder}
                 register={register}
                 watch={watch}
                 required={field.required}

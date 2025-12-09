@@ -5,7 +5,7 @@ import type { Control, UseFormRegister, UseFormSetValue, UseFormWatch } from "re
 import { useVirtualizer } from "@tanstack/react-virtual"
 
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -13,10 +13,21 @@ import { Badge } from "@/components/ui/badge"
 
 // --- Type Definitions ---
 
+export type FlatOption = {
+  value: string
+  label: string
+}
+
+export type CategoryOption = {
+  value: string
+  label: string
+  subcategories?: Array<{ value: string; label: string }>
+}
+
 export type CheckboxDropdownProps = {
   name: string
   label: string
-  options: Array<{ value: string; label: string }>
+  options: Array<FlatOption | CategoryOption>
   placeholder?: string
   helperText?: string
   register: UseFormRegister<any>
@@ -31,14 +42,20 @@ export type CheckboxDropdownProps = {
 }
 
 // Ensure this height matches the visual height of a CommandItem, including padding/margin
-const ITEM_HEIGHT = 36 
+const ITEM_HEIGHT = 36
+
+type FlatItem = {
+  type: "category-header" | "subcategory"
+  category: CategoryOption | { value: string; label: string }
+  subcategory?: { value: string; label: string }
+} 
 
 // --- Component ---
 
 export function CheckboxDropdown({
   name,
   label,
-  options,
+  options = [],
   placeholder,
   register,
   setValue,
@@ -51,8 +68,128 @@ export function CheckboxDropdown({
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState("")
   const selectedItems = (useWatch({ control, name }) as Array<string>) || []
+  const parentRef = React.useRef<HTMLDivElement>(null)
+
+  // Check if options are categorized (have subcategories) or flat
+  const isCategorized = React.useMemo(() => {
+    if (!options || !Array.isArray(options) || options.length === 0) return false
+    return options.some((opt) => 'subcategories' in opt && opt.subcategories && opt.subcategories.length > 0)
+  }, [options])
+
+  // Flatten all items: category headers + subcategories (if categorized) or just items (if flat)
+  const flatItems = React.useMemo(() => {
+    if (!options || !Array.isArray(options) || options.length === 0) {
+      return [] as FlatItem[]
+    }
+
+    if (!isCategorized) {
+      // Flat mode: just return the options as subcategories
+      return (options as FlatOption[]).map((option) => ({
+        type: "subcategory" as const,
+        category: { value: "", label: "" },
+        subcategory: option,
+      })) as FlatItem[]
+    }
+
+    // Categorized mode: category headers + subcategories
+    const items = [] as FlatItem[]
+    
+    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+      // Only add category header if it has subcategories
+      if (category.subcategories && category.subcategories.length > 0) {
+        items.push({
+          type: "category-header",
+          category,
+        })
+        
+        // Add all subcategories
+        category.subcategories.forEach((subcategory: { value: string; label: string }) => {
+          items.push({
+            type: "subcategory",
+            category,
+            subcategory,
+          })
+        })
+      }
+    })
+    
+    return items
+  }, [options, isCategorized])
+
+  // Filter flatItems based on search
+  const filteredFlatItems = React.useMemo(() => {
+    if (!searchValue.trim()) return flatItems
+    
+    const lowerSearch = searchValue.toLowerCase()
+    
+    if (!isCategorized) {
+      // Flat mode: simple filter
+      return flatItems.filter((item: FlatItem) => 
+        item.subcategory?.label.toLowerCase().includes(lowerSearch)
+      )
+    }
+
+    // Categorized mode: filter by category and subcategory
+    const filtered = [] as FlatItem[]
+    
+    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+      const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
+      const matchingSubcategories = category.subcategories?.filter((sub: { value: string; label: string }) =>
+        sub.label.toLowerCase().includes(lowerSearch)
+      ) || []
+      
+      // If category matches or has matching subcategories, include it
+      if (matchesCategory || matchingSubcategories.length > 0) {
+        // Add category header
+        filtered.push({
+          type: "category-header",
+          category,
+        })
+        
+        // Add subcategories: all if category matches, otherwise only matching ones
+        const subcategoriesToAdd = matchesCategory ? category.subcategories! : matchingSubcategories
+        subcategoriesToAdd.forEach((subcategory: { value: string; label: string }) => {
+          filtered.push({
+            type: "subcategory",
+            category,
+            subcategory,
+          })
+        })
+      }
+    })
+    
+    return filtered
+  }, [flatItems, options, searchValue, isCategorized])
 
   // --- Utility Functions ---
+  const getCategorySubcategories = (categoryValue: string) => {
+    if (!isCategorized) return []
+    const category = (options as CategoryOption[]).find((cat) => cat.value === categoryValue)
+    return category?.subcategories?.map((sub) => sub.value) || []
+  }
+
+  const isCategoryFullySelected = (categoryValue: string) => {
+    if (!isCategorized) return false
+    const subcategories = getCategorySubcategories(categoryValue)
+    return subcategories.length > 0 && subcategories.every((sub) => selectedItems.includes(sub))
+  }
+
+  const handleCategoryToggle = (categoryValue: string) => {
+    if (!isCategorized) return
+    const subcategories = getCategorySubcategories(categoryValue)
+    const currentValues = [...selectedItems]
+
+    if (isCategoryFullySelected(categoryValue)) {
+      // Uncheck all subcategories
+      const newValues = currentValues.filter((item) => !subcategories.includes(item))
+      setValue(name, newValues, { shouldValidate: true })
+    } else {
+      // Check all subcategories
+      const newValues = [...new Set([...currentValues, ...subcategories])]
+      setValue(name, newValues, { shouldValidate: true })
+    }
+  }
+
   const handleItemToggle = (value: string) => {
     const currentValues = [...selectedItems]
     setValue(
@@ -67,38 +204,81 @@ export function CheckboxDropdown({
   }, [register, name])
 
   const getLabelForValue = (value: string) => {
-    const option = options.find(opt => opt.value === value)
-    return option ? option.label : value
+    if (isCategorized) {
+      for (const category of options as CategoryOption[]) {
+        const subcategory = category.subcategories?.find((sub) => sub.value === value)
+        if (subcategory) return subcategory.label
+      }
+    } else {
+      const option = (options as FlatOption[]).find(opt => opt.value === value)
+      if (option) return option.label
+    }
+    return value
   }
 
-  const removeItem = (value: string, e?: React.MouseEvent) => {
+  const removeItem = (value: string, type: "category" | "item", e?: React.MouseEvent) => {
     if (e) {
       e.stopPropagation()
     }
 
-    const currentValues = [...selectedItems]
-    setValue(
-      name,
-      currentValues.filter((item) => item !== value),
-      { shouldValidate: true },
-    )
+    if (type === "category" && isCategorized) {
+      handleCategoryToggle(value)
+    } else {
+      const currentValues = [...selectedItems]
+      setValue(
+        name,
+        currentValues.filter((item) => item !== value),
+        { shouldValidate: true },
+      )
+    }
   }
-  
-  // --- Filtering Logic ---
-  const filteredOptions = React.useMemo(() => {
-    const lowerSearch = searchValue.toLowerCase()
-    return options.filter(option =>
-      option.label.toLowerCase().includes(lowerSearch)
-    )
-  }, [options, searchValue])
+
+  // Get badges to display (categories when fully selected, individual items otherwise)
+  const getBadgesToDisplay = () => {
+    if (!isCategorized || !options || !Array.isArray(options)) {
+      return selectedItems.map((value) => ({
+        value,
+        label: getLabelForValue(value),
+        type: "item" as const,
+      }))
+    }
+
+    const badges: Array<{ value: string; label: string; type: "category" | "item" }> = []
+    const processedItems = [] as string[]
+
+    // First, check for fully selected categories
+    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+      if (isCategoryFullySelected(category.value)) {
+        badges.push({ value: category.value, label: category.label, type: "category" })
+        // Mark all subcategories as processed
+        category.subcategories?.forEach((sub: { value: string; label: string }) => {
+          if (!processedItems.includes(sub.value)) {
+            processedItems.push(sub.value)
+          }
+        })
+      }
+    })
+
+    // Then add individual items that aren't part of fully selected categories
+    selectedItems.forEach((item) => {
+      if (!processedItems.includes(item)) {
+        badges.push({ value: item, label: getLabelForValue(item), type: "item" })
+      }
+    })
+
+    return badges
+  }
 
   // --- TanStack Virtualizer Logic ---
-  const parentRef = React.useRef<HTMLDivElement>(null)
+  const CATEGORY_HEADER_HEIGHT = 28
 
   const virtualizer = useVirtualizer({
-    count: filteredOptions.length,
+    count: filteredFlatItems.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => ITEM_HEIGHT,
+    estimateSize: (index) => {
+      const item = filteredFlatItems[index]
+      return item?.type === "category-header" ? CATEGORY_HEADER_HEIGHT : ITEM_HEIGHT
+    },
     overscan: 5,
     enabled: open,
   })
@@ -107,20 +287,20 @@ export function CheckboxDropdown({
   React.useLayoutEffect(() => {
     if (open) {
       const timer = setTimeout(() => {
-        virtualizer.measure() 
-      }, 0);
-      
-      return () => clearTimeout(timer);
+        virtualizer.measure()
+      }, 0)
+
+      return () => clearTimeout(timer)
     }
   }, [open, virtualizer])
-
 
   const virtualItems = open ? virtualizer.getVirtualItems() : []
   const totalSize = open ? virtualizer.getTotalSize() : 0
   
   // --- Display Logic ---
-  const displayBadges = selectedItems.slice(0, maxBadges)
-  const remainingCount = selectedItems.length - maxBadges
+  const badgesToDisplay = getBadgesToDisplay()
+  const displayBadges = badgesToDisplay.slice(0, maxBadges)
+  const remainingCount = badgesToDisplay.length - maxBadges
   
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -133,16 +313,16 @@ export function CheckboxDropdown({
           disabled={disabled}>
           {selectedItems.length > 0 ? (
             <div className="flex flex-wrap gap-1 max-w-full">
-              {displayBadges.map((value) => (
+              {displayBadges.map((badge) => (
                 <Badge
-                  key={value}
-                  variant="secondary"
+                  key={`${badge.type}-${badge.value}`}
+                  variant={badge.type === "category" ? "default" : "secondary"}
                   className="text-xs flex items-center gap-1 max-w-[150px]"
                 >
-                  <span className="truncate">{getLabelForValue(value)}</span>
+                  <span className="truncate">{badge.label}</span>
                   <span
                     role="button"
-                    onClick={(e) => removeItem(value, e)}
+                    onClick={(e) => removeItem(badge.value, badge.type, e)}
                     className="hover:bg-muted-foreground/20 rounded-full p-0.5 cursor-pointer"
                   >
                     <X className="h-3 w-3" />
@@ -163,7 +343,7 @@ export function CheckboxDropdown({
       </PopoverTrigger>
       
       <PopoverContent className="w-(--radix-popover-trigger-width) p-0">
-        <Command>
+        <Command shouldFilter={false}>
           <CommandInput
             placeholder={`Search ${label.toLowerCase()}...`}
             value={searchValue}
@@ -172,43 +352,59 @@ export function CheckboxDropdown({
 
           {/* CommandList is the scrollable container, holding the ref and scroll styles */}
           <CommandList
-          className="relative"
+            className="relative"
             ref={parentRef}
             style={{ height: totalSize }}>
             {/* Display empty state if filtering yields no results */}
-            {filteredOptions.length === 0 && <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>}
+            {filteredFlatItems.length === 0 && <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>}
             
             {/* Conditional rendering for virtualized content, only when open */}
-            {open && filteredOptions.length > 0 && (
-              <CommandGroup>
-                {/* Container for total height and relative positioning context */}
-
-                  {virtualItems.map((virtualRow) => {
-                    const option = filteredOptions[virtualRow.index]
-                    
+            {open && filteredFlatItems.length > 0 && (
+              <>
+                {virtualItems.map((virtualRow) => {
+                  const item = filteredFlatItems[virtualRow.index]
+                  
+                  if (item.type === "category-header") {
                     return (
-                      <CommandItem
-                        key={option.value}
+                      <div
+                        key={`header-${item.category.value}`}
                         data-index={virtualRow.index}
                         ref={virtualizer.measureElement}
-                        onSelect={() => handleItemToggle(option.value)}
-                        className="flex items-center gap-2 cursor-pointer w-full absolute"
-                        // Use absolute positioning and transform: translateY for accurate row placement
-                        style={{ transform: `translateY(${virtualRow.start}px)` }}>
+                        className="px-2 py-1.5 text-sm font-semibold text-muted-foreground bg-background w-full absolute"
+                        style={{ transform: `translateY(${virtualRow.start}px)` }}
+                      >
+                        {item.category.label}
+                      </div>
+                    )
+                  }
+                  
+                  if (item.type === "subcategory" && item.subcategory) {
+                    return (
+                      <CommandItem
+                        key={item.subcategory.value}
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
+                        onSelect={() => handleItemToggle(item.subcategory!.value)}
+                        className="flex items-center gap-2 cursor-pointer pl-6 w-full absolute"
+                        style={{ transform: `translateY(${virtualRow.start}px)` }}
+                      >
                         <Checkbox
-                          checked={selectedItems.includes(option.value)}
-                          onCheckedChange={() => handleItemToggle(option.value)}
-                          id={`${name}-${option.value}`}
+                          checked={selectedItems.includes(item.subcategory.value)}
+                          onCheckedChange={() => handleItemToggle(item.subcategory!.value)}
+                          id={`${name}-${item.subcategory.value}`}
                           className="mr-2"
                         />
-                        <Label htmlFor={`${name}-${option.value}`} onClick={(e) => e.stopPropagation()} className="flex-grow cursor-pointer">
-                          {option.label}
+                        <Label htmlFor={`${name}-${item.subcategory.value}`} onClick={(e) => e.stopPropagation()} className="flex-grow cursor-pointer">
+                          {item.subcategory.label}
                         </Label>
-                        {selectedItems.includes(option.value) && <Check className="h-4 w-4 text-primary" />}
+                        {selectedItems.includes(item.subcategory.value) && <Check className="h-4 w-4 text-primary" />}
                       </CommandItem>
                     )
-                  })}
-              </CommandGroup>
+                  }
+                  
+                  return null
+                })}
+              </>
             )}
           </CommandList>
         </Command>
