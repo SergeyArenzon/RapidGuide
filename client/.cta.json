@@ -1,5 +1,5 @@
 {
-  "projectName": "client2",
+  "projectName": "client",
   "mode": "file-router",
   "typescript": true,
   "tailwind": true,
