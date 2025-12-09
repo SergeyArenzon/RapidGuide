@@ -8,6 +8,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { useVirtualizer } from "@tanstack/react-virtual"
+
 
 export type CategoryOption = {
   value: string
@@ -45,7 +47,102 @@ export function CategorizedCheckboxDropdown({
   maxBadges = 3,
 }: CategorizedCheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
+  const [searchValue, setSearchValue] = React.useState("")
   const selectedItems = (useWatch({ control, name }) as Array<string>) || []
+  const parentRef = React.useRef<HTMLDivElement>(null)
+
+  // Flatten all items: category headers + subcategories
+  const flatItems = React.useMemo(() => {
+    const items: Array<{
+      type: "category-header" | "subcategory"
+      category: CategoryOption
+      subcategory?: { value: string; label: string }
+    }> = []
+    
+    options.forEach((category) => {
+      // Add category header
+      items.push({
+        type: "category-header",
+        category,
+      })
+      
+      // Add all subcategories
+      category.subcategories.forEach((subcategory) => {
+        items.push({
+          type: "subcategory",
+          category,
+          subcategory,
+        })
+      })
+    })
+    
+    return items
+  }, [options])
+
+  // Filter flatItems based on search
+  const filteredFlatItems = React.useMemo(() => {
+    if (!searchValue.trim()) return flatItems
+    
+    const lowerSearch = searchValue.toLowerCase()
+    const filtered: typeof flatItems = []
+    
+    // Iterate through categories to build filtered list
+    options.forEach((category) => {
+      const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
+      const matchingSubcategories = category.subcategories.filter((sub) =>
+        sub.label.toLowerCase().includes(lowerSearch)
+      )
+      
+      // If category matches or has matching subcategories, include it
+      if (matchesCategory || matchingSubcategories.length > 0) {
+        // Add category header
+        filtered.push({
+          type: "category-header",
+          category,
+        })
+        
+        // Add subcategories: all if category matches, otherwise only matching ones
+        const subcategoriesToAdd = matchesCategory ? category.subcategories : matchingSubcategories
+        subcategoriesToAdd.forEach((subcategory) => {
+          filtered.push({
+            type: "subcategory",
+            category,
+            subcategory,
+          })
+        })
+      }
+    })
+    
+    return filtered
+  }, [options, searchValue])
+
+  const ITEM_HEIGHT = 36 // Height for each subcategory item
+  const CATEGORY_HEADER_HEIGHT = 28 // Height for category header
+
+  const virtualizer = useVirtualizer({
+    count: filteredFlatItems.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: (index) => {
+      const item = filteredFlatItems[index]
+      return item?.type === "category-header" ? CATEGORY_HEADER_HEIGHT : ITEM_HEIGHT
+    },
+    overscan: 5,
+    enabled: open,
+  })
+
+  // FIX: Use setTimeout to ensure the CommandList height is stable before measuring
+  React.useLayoutEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        virtualizer.measure()
+      }, 0)
+
+      return () => clearTimeout(timer)
+    }
+  }, [open, virtualizer])
+
+  const virtualItems = open ? virtualizer.getVirtualItems() : []
+  const totalSize = open ? virtualizer.getTotalSize() : 0
 
   // Get all subcategory values for a category
   const getCategorySubcategories = (categoryValue: string) => {
@@ -59,11 +156,6 @@ export function CategorizedCheckboxDropdown({
     return subcategories.length > 0 && subcategories.every((sub) => selectedItems.includes(sub))
   }
 
-  // Check if a category is partially selected (some subcategories selected)
-  const isCategoryPartiallySelected = (categoryValue: string) => {
-    const subcategories = getCategorySubcategories(categoryValue)
-    return subcategories.some((sub) => selectedItems.includes(sub)) && !isCategoryFullySelected(categoryValue)
-  }
 
   // Handle category toggle
   const handleCategoryToggle = (categoryValue: string) => {
@@ -159,7 +251,6 @@ export function CategorizedCheckboxDropdown({
         <Button
           variant="outline"
           role="combobox"
-          aria-expanded={open}
           className={`w-full justify-start h-auto min-h-11 ${selectedItems.length > 0 ? "pl-3 pr-3" : ""} ${className}`}
           disabled={disabled}
         >
@@ -194,55 +285,63 @@ export function CategorizedCheckboxDropdown({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
-          <CommandInput placeholder={`Search options...`} />
-          <CommandList>
-            <CommandEmpty>No options found.</CommandEmpty>
+        <Command shouldFilter={false}>
+          <CommandInput 
+            placeholder={`Search options...`}
+            value={searchValue}
+            onValueChange={setSearchValue}
+          />
+          <CommandList
+            ref={parentRef}
+            className="relative"
+            style={{ height: totalSize }}>
+            {filteredFlatItems.length === 0 && <CommandEmpty>No options found.</CommandEmpty>}
 
-            {options.map((category) => (
-              <CommandGroup key={category.value} heading={category.label}>
-                {/* Category header with checkbox */}
-                <CommandItem
-                  onSelect={() => handleCategoryToggle(category.value)}
-                  className="flex items-center gap-2 cursor-pointer font-medium"
-                >
-                  <Checkbox
-                    checked={isCategoryFullySelected(category.value)}
-                    ref={(el) => {
-                      if (el) {
-                        // @ts-ignore - indeterminate is a valid DOM property but not in the TypeScript types
-                        el.indeterminate = isCategoryPartiallySelected(category.value)
-                      }
-                    }}
-                    onCheckedChange={() => handleCategoryToggle(category.value)}
-                    id={`${name}-category-${category.value}`}
-                    className="mr-2"
-                  />
-                  <span className="flex-grow cursor-pointer font-medium">{category.label}</span>
-                  {isCategoryFullySelected(category.value) && <Check className="h-4 w-4 text-primary" />}
-                </CommandItem>
-
-                <Separator className="my-1" />
-
-                {/* Subcategories */}
-                {category.subcategories.map((subcategory) => (
-                  <CommandItem
-                    key={subcategory.value}
-                    onSelect={() => handleItemToggle(subcategory.value)}
-                    className="flex items-center gap-2 cursor-pointer pl-6"
-                  >
-                    <Checkbox
-                      checked={selectedItems.includes(subcategory.value)}
-                      onCheckedChange={() => handleItemToggle(subcategory.value)}
-                      id={`${name}-${subcategory.value}`}
-                      className="mr-2"
-                    />
-                    <span className="flex-grow cursor-pointer">{subcategory.label}</span>
-                    {selectedItems.includes(subcategory.value) && <Check className="h-4 w-4 text-primary" />}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            ))}
+            {open && filteredFlatItems.length > 0 && (
+              <>
+                {virtualItems.map((virtualRow) => {
+                  const item = filteredFlatItems[virtualRow.index]
+                  
+                  if (item.type === "category-header") {
+                    return (
+                      <div
+                        key={`header-${item.category.value}`}
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
+                        className="px-2 py-1.5 text-sm font-semibold text-muted-foreground bg-background w-full absolute"
+                        style={{ transform: `translateY(${virtualRow.start}px)` }}
+                      >
+                        {item.category.label}
+                      </div>
+                    )
+                  }
+                  
+                  if (item.type === "subcategory" && item.subcategory) {
+                    return (
+                      <CommandItem
+                        key={item.subcategory.value}
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
+                        onSelect={() => handleItemToggle(item.subcategory!.value)}
+                        className="flex items-center gap-2 cursor-pointer pl-6 w-full absolute"
+                        style={{ transform: `translateY(${virtualRow.start}px)` }}
+                      >
+                        <Checkbox
+                          checked={selectedItems.includes(item.subcategory.value)}
+                          onCheckedChange={() => handleItemToggle(item.subcategory!.value)}
+                          id={`${name}-${item.subcategory.value}`}
+                          className="mr-2"
+                        />
+                        <span className="flex-grow cursor-pointer">{item.subcategory.label}</span>
+                        {selectedItems.includes(item.subcategory.value) && <Check className="h-4 w-4 text-primary" />}
+                      </CommandItem>
+                    )
+                  }
+                  
+                  return null
+                })}
+              </>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>
