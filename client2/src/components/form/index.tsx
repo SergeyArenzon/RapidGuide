@@ -20,7 +20,7 @@ type FormProps<T extends FieldValues> = {
   submitButtonText?: string
   title?: string
   description?: string
-  isSubmitting?: boolean
+  isLoading?: boolean
   error?: string | null
   schema: z.ZodSchema<T>
 } & (
@@ -41,7 +41,7 @@ export default function Form<T extends FieldValues>({
   submitButtonText = "Submit",
   title,
   description,
-  isSubmitting = false,
+  isLoading = false,
   schema,
 }: FormProps<T>) {
   
@@ -75,12 +75,6 @@ export default function Form<T extends FieldValues>({
   }, [watch, onChange]);
 
 
-  
-  // Handle form submission
-  const onSubmitHandler = (data: T) => {
-    onSubmit(data)
-  }
-
   // Render field based on type
   const renderField = (field: FieldConfig) => {
     switch (field.type) {
@@ -97,7 +91,7 @@ export default function Form<T extends FieldValues>({
               <Input 
                 id={field.name} type={field.inputType || 'text'} 
                 placeholder={field.placeholder} 
-                disabled={field.disabled || isSubmitting} 
+                disabled={field.disabled || isLoading} 
                 {...register(field.name as Path<T>)} />
             </FormFieldBase>
           
@@ -117,7 +111,7 @@ export default function Form<T extends FieldValues>({
               id={field.name}
               className={`min-h-[${6 * 24}px]`}
               placeholder={field.placeholder}
-              disabled={field.disabled || isSubmitting}
+              disabled={field.disabled || isLoading}
               {...register(field.name as Path<T>)} 
             />
           </FormFieldBase>
@@ -145,7 +139,7 @@ export default function Form<T extends FieldValues>({
                 required={field.required}
                 setValue={setValue}
                 control={control}
-                disabled={field.disabled || isSubmitting}/>
+                disabled={field.disabled || isLoading}/>
 
           </FormFieldBase>
         )
@@ -169,7 +163,7 @@ export default function Form<T extends FieldValues>({
                 register={register}
                 watch={watch}
                 setValue={setValue}
-                disabled={field.disabled || isSubmitting}
+                disabled={field.disabled || isLoading}
                 isLoading={field.isLoading}/>
           </FormFieldBase>
         )
@@ -180,7 +174,7 @@ export default function Form<T extends FieldValues>({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full max-w-2xl mx-auto space-y-6 px-6 bg-white  max-h-min  py-10">
+    <form onSubmit={handleSubmit(onSubmit as any)} className="w-full max-w-2xl mx-auto space-y-6 px-6 bg-white  max-h-min  py-10">
       {(title || description) && (
         <div className="space-y-2">
           {title && <h2 className="text-2xl font-bold">{title}</h2>}
@@ -190,9 +184,9 @@ export default function Form<T extends FieldValues>({
 
       {fields.map(renderField)}
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
-        {isSubmitting ? "Submitting..." : submitButtonText}
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
+        {isLoading ? "Submitting..." : submitButtonText}
       </Button>
     </form>
   )

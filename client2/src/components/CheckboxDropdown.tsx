@@ -1,8 +1,8 @@
 import * as React from "react"
 import { Check, ChevronsUpDown, X } from "lucide-react"
 import { useWatch } from "react-hook-form"
-import type { Control, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 import { useVirtualizer } from "@tanstack/react-virtual"
+import type { Control, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -65,34 +65,33 @@ export function CheckboxDropdown({
 }: CheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState("")
-  const selectedItems = (useWatch({ control, name }) as Array<string>) || []
+  const selectedItems = useWatch({ control, name }) as Array<string>
   const parentRef = React.useRef<HTMLDivElement>(null)
 
   // Check if options are categorized (have subcategories) or flat
-  const isCategorized = !options || !Array.isArray(options) || options.length === 0
-    ? false
-    : options.some((opt) => 'subcategories' in opt && opt.subcategories && opt.subcategories.length > 0)
+  const isCategorized = Array.isArray(options) && options.length > 0 &&
+    options.some((opt) => 'subcategories' in opt && Array.isArray((opt as any).subcategories) && (opt as any).subcategories.length > 0)
 
   // Flatten all items: category headers + subcategories (if categorized) or just items (if flat)
   // React Compiler automatically memoizes this based on dependencies (options, isCategorized)
-  function computeFlatItems(): FlatItem[] {
-    if (!options || !Array.isArray(options) || options.length === 0) {
+  function computeFlatItems(): Array<FlatItem> {
+    if (options.length === 0) {
       return []
     }
 
     if (!isCategorized) {
       // Flat mode: just return the options as subcategories
-      return (options as FlatOption[]).map((option) => ({
+      return (options as Array<FlatOption>).map((option) => ({
         type: "subcategory" as const,
         category: { value: "", label: "" },
         subcategory: option,
-      })) as FlatItem[]
+      })) as Array<FlatItem>
     }
 
     // Categorized mode: category headers + subcategories
-    const items = [] as FlatItem[]
+    const items = [] as Array<FlatItem>
     
-    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+    (options as Array<CategoryOption>).forEach((category: CategoryOption) => {
       // Only add category header if it has subcategories
       if (category.subcategories && category.subcategories.length > 0) {
         items.push({
@@ -118,7 +117,7 @@ export function CheckboxDropdown({
 
   // Filter flatItems based on search
   // React Compiler automatically memoizes this based on dependencies (flatItems, searchValue, options, isCategorized)
-  function computeFilteredFlatItems(): FlatItem[] {
+  function computeFilteredFlatItems(): Array<FlatItem> {
     if (!searchValue.trim()) return flatItems
     
     const lowerSearch = searchValue.toLowerCase()
@@ -131,9 +130,9 @@ export function CheckboxDropdown({
     }
 
     // Categorized mode: filter by category and subcategory
-    const filtered = [] as FlatItem[]
+    const filtered = [] as Array<FlatItem>
     
-    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+    (options as Array<CategoryOption>).forEach((category: CategoryOption) => {
       const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
       const matchingSubcategories = category.subcategories?.filter((sub: { value: string; label: string }) =>
         sub.label.toLowerCase().includes(lowerSearch)
@@ -167,7 +166,7 @@ export function CheckboxDropdown({
   // --- Utility Functions ---
   const getCategorySubcategories = (categoryValue: string) => {
     if (!isCategorized) return []
-    const category = (options as CategoryOption[]).find((cat) => cat.value === categoryValue)
+    const category = (options as Array<CategoryOption>).find((cat) => cat.value === categoryValue)
     return category?.subcategories?.map((sub) => sub.value) || []
   }
 
@@ -208,12 +207,12 @@ export function CheckboxDropdown({
 
   const getLabelForValue = (value: string) => {
     if (isCategorized) {
-      for (const category of options as CategoryOption[]) {
+      for (const category of options as Array<CategoryOption>) {
         const subcategory = category.subcategories?.find((sub) => sub.value === value)
         if (subcategory) return subcategory.label
       }
     } else {
-      const option = (options as FlatOption[]).find(opt => opt.value === value)
+      const option = (options as Array<FlatOption>).find(opt => opt.value === value)
       if (option) return option.label
     }
     return value
@@ -238,7 +237,7 @@ export function CheckboxDropdown({
 
   // Get badges to display (categories when fully selected, individual items otherwise)
   const getBadgesToDisplay = () => {
-    if (!isCategorized || !options || !Array.isArray(options)) {
+    if (!isCategorized) {
       return selectedItems.map((value) => ({
         value,
         label: getLabelForValue(value),
@@ -247,10 +246,10 @@ export function CheckboxDropdown({
     }
 
     const badges: Array<{ value: string; label: string; type: "category" | "item" }> = []
-    const processedItems = [] as string[]
+    const processedItems = [] as Array<string>
 
     // First, check for fully selected categories
-    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+    (options as Array<CategoryOption>).forEach((category: CategoryOption) => {
       if (isCategoryFullySelected(category.value)) {
         badges.push({ value: category.value, label: category.label, type: "category" })
         // Mark all subcategories as processed
@@ -280,7 +279,7 @@ export function CheckboxDropdown({
     getScrollElement: () => parentRef.current,
     estimateSize: (index) => {
       const item = filteredFlatItems[index]
-      return item?.type === "category-header" ? CATEGORY_HEADER_HEIGHT : ITEM_HEIGHT
+      return item.type === "category-header" ? CATEGORY_HEADER_HEIGHT : ITEM_HEIGHT
     },
     overscan: 5,
     enabled: open,
@@ -373,20 +372,18 @@ export function CheckboxDropdown({
                       <CommandGroup
                         key={`group-${item.category.value}`}
                         heading={item.category.label}
+                        data-index={virtualRow.index}
+                        ref={virtualizer.measureElement}
                         className="w-full absolute"
-                        style={{ transform: `translateY(${virtualRow.start}px)` }}
-                      >
-                        {/* Invisible spacer for virtualization measurement */}
-                        <div
-                          data-index={virtualRow.index}
-                          ref={virtualizer.measureElement}
-                          className="h-0"
-                        />
-                      </CommandGroup>
+                        style={{ 
+                          transform: `translateY(${virtualRow.start}px)`,
+                          height: `${CATEGORY_HEADER_HEIGHT}px`
+                        }}
+                      />
                     )
                   }
                   
-                  if (item.type === "subcategory" && item.subcategory) {
+                  if (item.subcategory) {
                     return (
                       <CommandItem
                         key={item.subcategory.value}
