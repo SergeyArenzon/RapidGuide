@@ -10,6 +10,7 @@ import Form from '@/components/form';
 import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
+import { useGuideStore } from '@/store/useGuide';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
   component: RouteComponent,
@@ -25,14 +26,13 @@ function RouteComponent() {
     country_code: '',
     city_id: 0
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
   
   const navigate = useNavigate()
     
     const api = new Api();
-  
+    const { setGuide } = useGuideStore(state => state);
     const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
       setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
     };
@@ -66,15 +66,18 @@ function RouteComponent() {
   
     const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
       try {
-        setIsSubmitting(true);
-        setSubmitError(null);
+        setIsLoading(true);
         await api.profile.createGuide(data);
         setDialogState({
           open: true,
           title: 'Guide Profile Created',
           description: 'Your guide profile has been created successfully.',
           approveText: 'OK',
-          onApprove: () => {
+          onApprove: async () => {
+            const meData = await api.profile.getMe();
+            if (meData.guide) {
+              setGuide(meData.guide);
+            }
             navigate({ to: '/dashboard' });
           },
         }); 
@@ -88,10 +91,9 @@ function RouteComponent() {
           variant: 'destructive',
           onApprove: () => {},
         }); 
-        setSubmitError(error.message || 'Failed to create guide profile. Please try again.');
         console.error('Failed to create guide:', error);
       } finally {
-        setIsSubmitting(false);
+        setIsLoading(false);
       }
     }
       
@@ -137,7 +139,7 @@ function RouteComponent() {
               helperText: "Write a short bio to introduce yourself to others.",
             },
             {
-              type: "categorized-checkbox",
+              type: "checkbox",
               name: "subcategories_id",
               label: "Categories",
               options: categories?.map((cat) => ({ 
@@ -181,7 +183,7 @@ function RouteComponent() {
           onSubmit={handleSubmit}
           onChange={handleFormChange} 
           submitButtonText="Save Profile"
-          isSubmitting={isSubmitting}
+          isLoading={isLoading}
         />
       </>
     )

@@ -27,12 +27,10 @@ type BaseFieldConfig = {
   
   type CheckboxFieldConfig = BaseFieldConfig & {
     type: 'checkbox'
-    options: Array<{ value: string; label: string }>
-    placeholder?: string
-  }
-  type CategorizedCheckboxFieldConfig = BaseFieldConfig & {
-    type: 'categorized-checkbox'
-    options: Array<{ value: string; label: string, subcategories: Array<{ value: string; label: string }> }>
+    options: Array<
+      | { value: string; label: string }
+      | { value: string; label: string; subcategories?: Array<{ value: string; label: string }> }
+    >
     placeholder?: string
   }
   
@@ -45,6 +43,6 @@ type BaseFieldConfig = {
   
   
   
-type FieldConfig = TextFieldConfig | TextareaFieldConfig | CheckboxFieldConfig | SelectFieldConfig | CategorizedCheckboxFieldConfig
+type FieldConfig = TextFieldConfig | TextareaFieldConfig | CheckboxFieldConfig | SelectFieldConfig
   
-export type { FieldConfig, TextFieldConfig, TextareaFieldConfig, CheckboxFieldConfig, SelectFieldConfig, CategorizedCheckboxFieldConfig }
+export type { FieldConfig, TextFieldConfig, TextareaFieldConfig, CheckboxFieldConfig, SelectFieldConfig }
