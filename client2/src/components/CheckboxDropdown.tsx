@@ -38,7 +38,6 @@ export type CheckboxDropdownProps = {
   required?: boolean
   className?: string
   maxBadges?: number
-  maxListHeight?: number
 }
 
 // Ensure this height matches the visual height of a CommandItem, including padding/margin
@@ -62,8 +61,7 @@ export function CheckboxDropdown({
   control,
   disabled = false,
   className = "",
-  maxBadges = 3,
-  maxListHeight = 256, // Default max height
+  maxBadges = 3
 }: CheckboxDropdownProps) {
   const [open, setOpen] = React.useState(false)
   const [searchValue, setSearchValue] = React.useState("")
@@ -71,95 +69,92 @@ export function CheckboxDropdown({
   const parentRef = React.useRef<HTMLDivElement>(null)
 
   // Check if options are categorized (have subcategories) or flat
-  const isCategorized = React.useMemo(() => {
-    if (!options || !Array.isArray(options) || options.length === 0) return false
-    return options.some((opt) => 'subcategories' in opt && opt.subcategories && opt.subcategories.length > 0)
-  }, [options])
+  const isCategorized = !options || !Array.isArray(options) || options.length === 0
+    ? false
+    : options.some((opt) => 'subcategories' in opt && opt.subcategories && opt.subcategories.length > 0)
 
   // Flatten all items: category headers + subcategories (if categorized) or just items (if flat)
-  const flatItems = React.useMemo(() => {
-    if (!options || !Array.isArray(options) || options.length === 0) {
-      return [] as FlatItem[]
-    }
-
+  // React Compiler automatically memoizes this based on dependencies (options, isCategorized)
+  let flatItems: FlatItem[] = []
+  if (options && Array.isArray(options) && options.length > 0) {
     if (!isCategorized) {
       // Flat mode: just return the options as subcategories
-      return (options as FlatOption[]).map((option) => ({
+      flatItems = (options as FlatOption[]).map((option) => ({
         type: "subcategory" as const,
         category: { value: "", label: "" },
         subcategory: option,
       })) as FlatItem[]
-    }
-
-    // Categorized mode: category headers + subcategories
-    const items = [] as FlatItem[]
-    
-    (options as CategoryOption[]).forEach((category: CategoryOption) => {
-      // Only add category header if it has subcategories
-      if (category.subcategories && category.subcategories.length > 0) {
-        items.push({
-          type: "category-header",
-          category,
-        })
-        
-        // Add all subcategories
-        category.subcategories.forEach((subcategory: { value: string; label: string }) => {
+    } else {
+      // Categorized mode: category headers + subcategories
+      const items = [] as FlatItem[]
+      
+      (options as CategoryOption[]).forEach((category: CategoryOption) => {
+        // Only add category header if it has subcategories
+        if (category.subcategories && category.subcategories.length > 0) {
           items.push({
-            type: "subcategory",
+            type: "category-header",
             category,
-            subcategory,
           })
-        })
-      }
-    })
-    
-    return items
-  }, [options, isCategorized])
+          
+          // Add all subcategories
+          category.subcategories.forEach((subcategory: { value: string; label: string }) => {
+            items.push({
+              type: "subcategory",
+              category,
+              subcategory,
+            })
+          })
+        }
+      })
+      
+      flatItems = items
+    }
+  }
 
   // Filter flatItems based on search
-  const filteredFlatItems = React.useMemo(() => {
-    if (!searchValue.trim()) return flatItems
-    
+  // React Compiler automatically memoizes this based on dependencies (flatItems, searchValue, options, isCategorized)
+  let filteredFlatItems: FlatItem[] = flatItems
+  if (searchValue.trim()) {
     const lowerSearch = searchValue.toLowerCase()
     
     if (!isCategorized) {
       // Flat mode: simple filter
-      return flatItems.filter((item: FlatItem) => 
+      filteredFlatItems = flatItems.filter((item: FlatItem) => 
         item.subcategory?.label.toLowerCase().includes(lowerSearch)
       )
-    }
-
-    // Categorized mode: filter by category and subcategory
-    const filtered = [] as FlatItem[]
-    
-    (options as CategoryOption[]).forEach((category: CategoryOption) => {
-      const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
-      const matchingSubcategories = category.subcategories?.filter((sub: { value: string; label: string }) =>
-        sub.label.toLowerCase().includes(lowerSearch)
-      ) || []
+    } else {
+      // Categorized mode: filter by category and subcategory
+      const filtered = [] as FlatItem[]
       
-      // If category matches or has matching subcategories, include it
-      if (matchesCategory || matchingSubcategories.length > 0) {
-        // Add category header
-        filtered.push({
-          type: "category-header",
-          category,
-        })
+      (options as CategoryOption[]).forEach((category: CategoryOption) => {
+        const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
+        const matchingSubcategories = category.subcategories?.filter((sub: { value: string; label: string }) =>
+          sub.label.toLowerCase().includes(lowerSearch)
+        ) || []
         
-        // Add subcategories: all if category matches, otherwise only matching ones
-        const subcategoriesToAdd = matchesCategory ? category.subcategories! : matchingSubcategories
-        subcategoriesToAdd.forEach((subcategory: { value: string; label: string }) => {
+        // If category matches or has matching subcategories, include it
+        if (matchesCategory || matchingSubcategories.length > 0) {
+          // Add category header
           filtered.push({
-            type: "subcategory",
+            type: "category-header",
             category,
-            subcategory,
           })
-        })
-      }
-    })
-    
-    return filtered
-  }, [flatItems, options, searchValue, isCategorized])
+          
+          // Add subcategories: all if category matches, otherwise only matching ones
+          const subcategoriesToAdd = matchesCategory ? category.subcategories! : matchingSubcategories
+          subcategoriesToAdd.forEach((subcategory: { value: string; label: string }) => {
+            filtered.push({
+              type: "subcategory",
+              category,
+              subcategory,
+            })
+          })
+        }
+      })
+      
+      filteredFlatItems = filtered
+    }
+  }
 
   // --- Utility Functions ---
   const getCategorySubcategories = (categoryValue: string) => {
