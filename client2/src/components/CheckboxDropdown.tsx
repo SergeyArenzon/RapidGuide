@@ -5,7 +5,7 @@ import type { Control, UseFormRegister, UseFormSetValue, UseFormWatch } from "re
 import { useVirtualizer } from "@tanstack/react-virtual"
 
 import { Button } from "@/components/ui/button"
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -75,7 +75,7 @@ export function CheckboxDropdown({
 
   // Flatten all items: category headers + subcategories (if categorized) or just items (if flat)
   // React Compiler automatically memoizes this based on dependencies (options, isCategorized)
-  const flatItems: FlatItem[] = (() => {
+  function computeFlatItems(): FlatItem[] {
     if (!options || !Array.isArray(options) || options.length === 0) {
       return []
     }
@@ -90,7 +90,7 @@ export function CheckboxDropdown({
     }
 
     // Categorized mode: category headers + subcategories
-    const items: FlatItem[] = []
+    const items = [] as FlatItem[]
     
     (options as CategoryOption[]).forEach((category: CategoryOption) => {
       // Only add category header if it has subcategories
@@ -112,11 +112,13 @@ export function CheckboxDropdown({
     })
     
     return items
-  })()
+  }
+  
+  const flatItems = computeFlatItems()
 
   // Filter flatItems based on search
   // React Compiler automatically memoizes this based on dependencies (flatItems, searchValue, options, isCategorized)
-  const filteredFlatItems: FlatItem[] = (() => {
+  function computeFilteredFlatItems(): FlatItem[] {
     if (!searchValue.trim()) return flatItems
     
     const lowerSearch = searchValue.toLowerCase()
@@ -129,7 +131,7 @@ export function CheckboxDropdown({
     }
 
     // Categorized mode: filter by category and subcategory
-    const filtered: FlatItem[] = []
+    const filtered = [] as FlatItem[]
     
     (options as CategoryOption[]).forEach((category: CategoryOption) => {
       const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
@@ -158,7 +160,9 @@ export function CheckboxDropdown({
     })
     
     return filtered
-  })()
+  }
+  
+  const filteredFlatItems = computeFilteredFlatItems()
 
   // --- Utility Functions ---
   const getCategorySubcategories = (categoryValue: string) => {
@@ -364,16 +368,21 @@ export function CheckboxDropdown({
                   const item = filteredFlatItems[virtualRow.index]
                   
                   if (item.type === "category-header") {
+                    // Use CommandGroup with heading for category headers
                     return (
-                      <div
-                        key={`header-${item.category.value}`}
-                        data-index={virtualRow.index}
-                        ref={virtualizer.measureElement}
-                        className="px-2 py-1.5 text-sm font-semibold text-muted-foreground bg-background w-full absolute"
+                      <CommandGroup
+                        key={`group-${item.category.value}`}
+                        heading={item.category.label}
+                        className="w-full absolute"
                         style={{ transform: `translateY(${virtualRow.start}px)` }}
                       >
-                        {item.category.label}
-                      </div>
+                        {/* Invisible spacer for virtualization measurement */}
+                        <div
+                          data-index={virtualRow.index}
+                          ref={virtualizer.measureElement}
+                          className="h-0"
+                        />
+                      </CommandGroup>
                     )
                   }
                   
