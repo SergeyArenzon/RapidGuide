@@ -75,86 +75,90 @@ export function CheckboxDropdown({
 
   // Flatten all items: category headers + subcategories (if categorized) or just items (if flat)
   // React Compiler automatically memoizes this based on dependencies (options, isCategorized)
-  let flatItems: FlatItem[] = []
-  if (options && Array.isArray(options) && options.length > 0) {
+  const flatItems: FlatItem[] = (() => {
+    if (!options || !Array.isArray(options) || options.length === 0) {
+      return []
+    }
+
     if (!isCategorized) {
       // Flat mode: just return the options as subcategories
-      flatItems = (options as FlatOption[]).map((option) => ({
+      return (options as FlatOption[]).map((option) => ({
         type: "subcategory" as const,
         category: { value: "", label: "" },
         subcategory: option,
       })) as FlatItem[]
-    } else {
-      // Categorized mode: category headers + subcategories
-      const items = [] as FlatItem[]
-      
-      (options as CategoryOption[]).forEach((category: CategoryOption) => {
-        // Only add category header if it has subcategories
-        if (category.subcategories && category.subcategories.length > 0) {
-          items.push({
-            type: "category-header",
-            category,
-          })
-          
-          // Add all subcategories
-          category.subcategories.forEach((subcategory: { value: string; label: string }) => {
-            items.push({
-              type: "subcategory",
-              category,
-              subcategory,
-            })
-          })
-        }
-      })
-      
-      flatItems = items
     }
-  }
+
+    // Categorized mode: category headers + subcategories
+    const items: FlatItem[] = []
+    
+    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+      // Only add category header if it has subcategories
+      if (category.subcategories && category.subcategories.length > 0) {
+        items.push({
+          type: "category-header",
+          category,
+        })
+        
+        // Add all subcategories
+        category.subcategories.forEach((subcategory: { value: string; label: string }) => {
+          items.push({
+            type: "subcategory",
+            category,
+            subcategory,
+          })
+        })
+      }
+    })
+    
+    return items
+  })()
 
   // Filter flatItems based on search
   // React Compiler automatically memoizes this based on dependencies (flatItems, searchValue, options, isCategorized)
-  let filteredFlatItems: FlatItem[] = flatItems
-  if (searchValue.trim()) {
+  const filteredFlatItems: FlatItem[] = (() => {
+    if (!searchValue.trim()) return flatItems
+    
     const lowerSearch = searchValue.toLowerCase()
     
     if (!isCategorized) {
       // Flat mode: simple filter
-      filteredFlatItems = flatItems.filter((item: FlatItem) => 
+      return flatItems.filter((item: FlatItem) => 
         item.subcategory?.label.toLowerCase().includes(lowerSearch)
       )
-    } else {
-      // Categorized mode: filter by category and subcategory
-      const filtered = [] as FlatItem[]
-      
-      (options as CategoryOption[]).forEach((category: CategoryOption) => {
-        const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
-        const matchingSubcategories = category.subcategories?.filter((sub: { value: string; label: string }) =>
-          sub.label.toLowerCase().includes(lowerSearch)
-        ) || []
-        
-        // If category matches or has matching subcategories, include it
-        if (matchesCategory || matchingSubcategories.length > 0) {
-          // Add category header
-          filtered.push({
-            type: "category-header",
-            category,
-          })
-          
-          // Add subcategories: all if category matches, otherwise only matching ones
-          const subcategoriesToAdd = matchesCategory ? category.subcategories! : matchingSubcategories
-          subcategoriesToAdd.forEach((subcategory: { value: string; label: string }) => {
-            filtered.push({
-              type: "subcategory",
-              category,
-              subcategory,
-            })
-          })
-        }
-      })
-      
-      filteredFlatItems = filtered
     }
-  }
+
+    // Categorized mode: filter by category and subcategory
+    const filtered: FlatItem[] = []
+    
+    (options as CategoryOption[]).forEach((category: CategoryOption) => {
+      const matchesCategory = category.label.toLowerCase().includes(lowerSearch)
+      const matchingSubcategories = category.subcategories?.filter((sub: { value: string; label: string }) =>
+        sub.label.toLowerCase().includes(lowerSearch)
+      ) || []
+      
+      // If category matches or has matching subcategories, include it
+      if (matchesCategory || matchingSubcategories.length > 0) {
+        // Add category header
+        filtered.push({
+          type: "category-header",
+          category,
+        })
+        
+        // Add subcategories: all if category matches, otherwise only matching ones
+        const subcategoriesToAdd = matchesCategory ? category.subcategories! : matchingSubcategories
+        subcategoriesToAdd.forEach((subcategory: { value: string; label: string }) => {
+          filtered.push({
+            type: "subcategory",
+            category,
+            subcategory,
+          })
+        })
+      }
+    })
+    
+    return filtered
+  })()
 
   // --- Utility Functions ---
   const getCategorySubcategories = (categoryValue: string) => {
