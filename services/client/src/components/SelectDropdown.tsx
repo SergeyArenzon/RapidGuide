@@ -68,53 +68,53 @@ export default function SelectDropdown({
   return (
     <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-        <Button
-            id="select-dropdown"
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            disabled={disabled || isLoading}
-            className={cn(
-              "w-full justify-between",
-              isLoading && "opacity-80 cursor-not-allowed"
-            )}>
-            <span className="truncate">
-              {isLoading ? "Loading..." : selected ? options.find((item) => item.value === selected)?.label : placeholder}
-            </span>
-            {isLoading ? (
-              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-            ) : (
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            )}
-        </Button>
+          <Button
+              id="select-dropdown"
+              variant="outline"
+              role="combobox"
+              aria-expanded={open}
+              disabled={disabled || isLoading}
+              className={cn(
+                "w-full justify-between",
+                isLoading && "opacity-80 cursor-not-allowed"
+              )}>
+              <span className="truncate">
+                {isLoading ? "Loading..." : selected ? options.find((item) => item.value === selected)?.label : placeholder}
+              </span>
+              {isLoading ? (
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              ) : (
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              )}
+          </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0">
-        <Command>
-            <CommandInput placeholder={`Search...`} />
-            <CommandList>
-            {isLoading ? (
-              <CommandEmpty>Loading...</CommandEmpty>
-            ) : options.length === 0 ? (
-              <CommandEmpty>No options available.</CommandEmpty>
-            ) : (
-              <>
-                <CommandEmpty>No options found.</CommandEmpty>
-                <CommandGroup>
-                    {options.map((option) => (
-                    <CommandItem 
-                        id={option.value.toString()} 
-                        key={option.value} 
-                        value={option.label} 
-                        onSelect={() => handleSelect(option.value.toString())}>
-                        <Check className={cn("mr-2 h-4 w-4 text-primary", selected === option.value ? "opacity-100" : "opacity-0")} />
-                        <Label htmlFor={`${option.value}`} className="grow cursor-pointer">{option.label}</Label>
-                    </CommandItem>
-                    ))}
-                </CommandGroup>
-              </>
-            )}
-            </CommandList>
-        </Command>
+          <Command>
+              <CommandInput placeholder={`Search...`} />
+              <CommandList>
+              {isLoading ? (
+                <CommandEmpty>Loading...</CommandEmpty>
+              ) : options.length === 0 ? (
+                <CommandEmpty>No options available.</CommandEmpty>
+              ) : (
+                <>
+                  <CommandEmpty>No options found.</CommandEmpty>
+                  <CommandGroup>
+                      {options.map((option) => (
+                      <CommandItem 
+                          id={option.value.toString()} 
+                          key={option.value} 
+                          value={option.label} 
+                          onSelect={() => handleSelect(option.value.toString())}>
+                          <Check className={cn("mr-2 h-4 w-4 text-primary", selected === option.value ? "opacity-100" : "opacity-0")} />
+                          <Label htmlFor={`${option.value}`} className="grow cursor-pointer">{option.label}</Label>
+                      </CommandItem>
+                      ))}
+                  </CommandGroup>
+                </>
+              )}
+              </CommandList>
+          </Command>
         </PopoverContent>
     </Popover>)
 }

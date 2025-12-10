@@ -42,7 +42,7 @@ export default function Form<T extends FieldValues>({
   title,
   description,
   isLoading = false,
-  schema,
+  schema
 }: FormProps<T>) {
   
   // Setup form
@@ -55,7 +55,7 @@ export default function Form<T extends FieldValues>({
     formState: { errors }
   } = useForm<T>({
     resolver: zodResolver(schema),
-    defaultValues: fields.reduce((acc, field) => {
+    defaultValues: fields.filter(field => !field.hide).reduce((acc, field) => {
       (acc as any)[field.name] = field.type === 'checkbox' ? [] : '';
       return acc;
     }, {} as DefaultValues<T>)
@@ -182,7 +182,7 @@ export default function Form<T extends FieldValues>({
         </div>
       )}
 
-      {fields.map(renderField)}
+      {fields.filter(field => !field.hide).map(renderField)}
 
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
