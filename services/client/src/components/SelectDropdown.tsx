@@ -44,7 +44,7 @@ export default function SelectDropdown({
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState<string | number | null>(defaultValue)
   
-  const handleSelect = (currentValue: string) => {
+  const handleSelect = (currentValue: string | number) => {
     // Convert to number if the selected option's value is a number
     const selectedOption = options.find(opt => opt.value.toString() === currentValue);
     const finalValue = typeof selectedOption?.value === 'number' ? Number(currentValue) : currentValue;
@@ -104,8 +104,8 @@ export default function SelectDropdown({
                     <CommandItem 
                         id={option.value.toString()} 
                         key={option.value} 
-                        value={option.value.toString()} 
-                        onSelect={handleSelect}>
+                        value={option.label} 
+                        onSelect={() => handleSelect(option.value.toString())}>
                         <Check className={cn("mr-2 h-4 w-4 text-primary", selected === option.value ? "opacity-100" : "opacity-0")} />
                         <Label htmlFor={`${option.value}`} className="grow cursor-pointer">{option.label}</Label>
                     </CommandItem>
