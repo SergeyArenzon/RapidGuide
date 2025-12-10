@@ -5,6 +5,7 @@ type BaseFieldConfig = {
     helperText?: string
     required?: boolean
     disabled?: boolean
+    hide?: boolean
     validation?: {
       min?: number
       max?: number

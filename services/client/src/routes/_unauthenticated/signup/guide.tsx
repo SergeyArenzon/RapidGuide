@@ -175,7 +175,7 @@ function RouteComponent() {
               label: "City",
               options: cities?.filter(city => city.country_code === formState.country_code).map(city => ({ value: Number(city.id), label: city.name })) || [],
               placeholder: "Select city",
-              disabled: !formState.country_code,
+              hide: !formState.country_code,
               helperText: "Select the city you live in.",
               isLoading: isLoadingCities
             },
