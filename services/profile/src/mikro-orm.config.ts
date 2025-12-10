@@ -8,6 +8,7 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { Country } from './country/country.entity';
 import { City } from './city/city.entity';
 import { GuideSubcategory } from './guide/entities/guide-subcategory.entity';
+import { TravellerSubcategory } from './traveller/traveller-subcategory.entity';
 import { join } from 'path';
 import { BaseEntity, DateEntity } from './entities';
 
@@ -15,7 +16,8 @@ const microOrmConfig: MikroOrmModuleSyncOptions = {
   clientUrl: process.env.PROFILE_DB_HOST, // Connection URL
   entities: [
     // User,
-    // Traveller,
+    Traveller,
+    TravellerSubcategory,
     BaseEntity,
     DateEntity,
     Languages,

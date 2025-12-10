@@ -8,11 +8,11 @@ export const Route = createFileRoute('/_unauthenticated')({
       return
     }
     // Only make redirect decisions after auth has finished loading
-    // if (auth.isAuthenticated && auth.guide) {
-    //   throw redirect({
-    //     to: '/dashboard',
-    //   })
-    // }
+    if (auth.isAuthenticated && auth.guide) {
+      throw redirect({
+        to: '/dashboard',
+      })
+    }
 
     // Redirect unauthenticated users to signin if they're trying to access other routes
     if (!auth.isAuthenticated && location.pathname !== '/signin') {

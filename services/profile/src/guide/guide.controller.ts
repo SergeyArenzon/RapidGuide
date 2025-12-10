@@ -24,7 +24,6 @@ export class GuideController {
     @CurrentUser() user,
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
   ): Promise<GuideDto> {
-    
     return await this.guideService.create(user.id, body);
   }
 

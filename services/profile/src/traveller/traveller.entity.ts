@@ -4,15 +4,57 @@ import {
   AfterUpdate,
   Entity,
   ManyToOne,
+  Property,
+  ManyToMany,
+  Collection,
+  OneToMany,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../entities/base.entity';
 // import { User } from '../user/user.entity';
+import { City } from '../city/city.entity';
+import { Country } from '../country/country.entity';
+import { Languages } from '../languages/languages.entity';
+import { TravellerSubcategory } from './traveller-subcategory.entity';
 
 @Entity()
 export class Traveller extends BaseEntity {
   constructor(traveller: Partial<Traveller>) {
     super();
     Object.assign(this, traveller);
+  }
+
+  @Property({ type: 'uuid', unique: true })
+  user_id: string;
+
+  @Property({ type: 'text' })
+  bio: string;
+
+  @OneToMany(() => TravellerSubcategory, (subcategory) => subcategory.traveller)
+  subcategories = new Collection<TravellerSubcategory>(this);
+
+  @ManyToMany(() => Languages)
+  languages = new Collection<Languages>(this);
+
+  @ManyToOne(() => Country)
+  country!: Country;
+
+  @ManyToOne(() => City)
+  city!: City;
+
+  toDto() {
+    return {
+      id: this.id,
+      user_id: this.user_id,
+      bio: this.bio,
+      country_code: this.country.code,
+      city_id: this.city.id,
+      languages_code: this.languages.getItems().map((lang) => lang.code),
+      subcategories_id: this.subcategories
+        .getItems()
+        .map((sub) => sub.subcategory_id),
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+    };
   }
 
   @AfterCreate()
@@ -29,5 +71,4 @@ export class Traveller extends BaseEntity {
   logDelete() {
     console.log('Deleted traveller with id', this.id);
   }
-
 }
