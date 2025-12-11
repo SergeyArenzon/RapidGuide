@@ -102,6 +102,9 @@ export class JwtTokenPayloadService {
     if (profiles.guide) {
       roles.push('guide');
     }
+    if (profiles.traveller) {
+      roles.push('traveller');
+    }
 
     return roles;
   }

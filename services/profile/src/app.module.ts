@@ -17,10 +17,6 @@ import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
   imports: [
     AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
     MikroOrmModule.forRoot(microOrmConfig),
-    LanguagesModule,
-    CountryModule,
-    CityModule,
-    GuideModule,
     ProfileModule,
   ],
   controllers: [AppController],

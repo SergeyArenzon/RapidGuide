@@ -1,16 +1,16 @@
 import { create } from 'zustand'
-import type { GuideDto } from '@rapid-guide-io/contracts'
+import type { TravellerDto } from '@rapid-guide-io/contracts'
 
 
 type TravellerStore = {
-  traveller: GuideDto | null
-  setTraveller: (traveller: GuideDto) => void
+  traveller: TravellerDto | null
+  setTraveller: (traveller: TravellerDto) => void
   clearTraveller: () => void
 }
 
 export const useTravellerStore = create<TravellerStore>((set) => ({
   traveller: null,
-  setTraveller: (traveller: GuideDto) => set({ traveller }),
+  setTraveller: (traveller: TravellerDto) => set({ traveller }),
   clearTraveller: () => set({ traveller: null }),
 }))
 

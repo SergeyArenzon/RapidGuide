@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import {  createGuideSchema } from '@rapid-guide-io/contracts';
+import { createTravellerSchema } from '@rapid-guide-io/contracts';
 import type z from 'zod';
-import type {CreateGuideDto} from '@rapid-guide-io/contracts';
+import type { CreateTravellerDto } from '@rapid-guide-io/contracts';
 import type { AlertDialogState} from '@/components/AlertDialog';
 import { Error } from '@/components/Error';
 import Form from '@/components/form';
@@ -18,11 +18,10 @@ export const Route = createFileRoute('/_unauthenticated/signup/traveller')({
 
 
 function RouteComponent() {
-  const [formState, setFormState] = useState<CreateGuideDto>({
+  const [formState, setFormState] = useState<CreateTravellerDto>({
     bio: '',
     subcategories_id: [],
     languages_code: [],
-    name: '',
     country_code: '',
     city_id: 0
   });
@@ -33,8 +32,8 @@ function RouteComponent() {
     
     const api = new Api();
     const { setTraveller } = useTravellerStore(state => state);
-    const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
-      setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
+    const handleFormChange = (currentState: Partial<z.infer<typeof createTravellerSchema>>) => {
+      setFormState((prev: CreateTravellerDto) => ({ ...prev, ...currentState }));
     };
     
     // Queries
@@ -64,11 +63,10 @@ function RouteComponent() {
       queryFn:() => api.profile.getCities()});
       
   
-    const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
+    const handleSubmit = async (data: z.infer<typeof createTravellerSchema>) => {
       try {
         setIsLoading(true);
-        // TODO: Replace with api.profile.createTraveller(data) when available
-        const travellerData = await api.profile.createGuide(data);
+        const travellerData = await api.profile.createTraveller(data);
         setTraveller(travellerData);
         setDialogState({
           open: true,
@@ -123,17 +121,10 @@ function RouteComponent() {
           variant={dialogState.variant}
         /> 
         <Form
-          title="Profile Information"
-          description="Complete your profile information below"
-          schema={createGuideSchema}
+          title="Traveller Profile Information"
+          description="Complete your traveller profile information below"
+          schema={createTravellerSchema}
           fields={[
-            {
-              type: "text",
-              name: "name",
-              label: "Traveller Name",
-              placeholder: "Enter traveller name",
-              helperText: "Your full name as it appears on your ID.",
-            },
             {
               type: "textarea",
               name: "bio",
@@ -153,7 +144,7 @@ function RouteComponent() {
                   label: subcat.name
                 })) || []
               })) || [],
-              placeholder: "Select categories",
+              placeholder: "Select your favorite categories",
               helperText: "Select the categories that interest you.",
             },
             {

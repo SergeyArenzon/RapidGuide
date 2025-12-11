@@ -11,15 +11,25 @@ export class ScopeService {
     'country:read',
     'city:read',
     'guide:write',
+    'traveller:write',
   ];
 
   // Guide-specific scopes (inherits DEFAULT_SCOPES)
-  static readonly GUIDE_SCOPES = [...ScopeService.DEFAULT_SCOPES, 'tour:*'];
+  static readonly GUIDE_SCOPE = 'tour:*';
+  static readonly TRAVELLER_SCOPE = 'tour:*';
 
   getScopes(profile: GetProfilesMeResponseDto) {
-    if (profile.guide) {
-      return ScopeService.GUIDE_SCOPES;
+    const scopes: string[] = [...ScopeService.DEFAULT_SCOPES];
+    if (profile.traveller) {
+      scopes.push(ScopeService.TRAVELLER_SCOPE);
+      const travellerWriteIndex = scopes.indexOf('traveller:write');
+      scopes.splice(travellerWriteIndex, 1);
     }
-    return ScopeService.DEFAULT_SCOPES;
+    if (profile.guide) {
+      scopes.push(ScopeService.GUIDE_SCOPE);
+      const guideWriteIndex = scopes.indexOf('guide:write');
+      scopes.splice(guideWriteIndex, 1);
+    }
+    return scopes;
   }
 }

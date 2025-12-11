@@ -3,7 +3,7 @@ import { ScopePermission, Scopes, CurrentUser } from '@rapid-guide-io/decorators
 import { ScopesGuard } from '@rapid-guide-io/guards';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
 import { TravellerService } from './traveller.service';
-import { CreateGuideDto, createGuideSchema, GuideDto } from '@rapid-guide-io/contracts';
+import { CreateGuideDto, createGuideSchema, CreateTravellerDto, createTravellerSchema, GuideDto, TravellerDto } from '@rapid-guide-io/contracts';
 
 @Controller('traveller')
 export class TravellerController {
@@ -13,11 +13,11 @@ export class TravellerController {
 
   @Post()
   @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.GUIDE_WRITE])
+  @Scopes([ScopePermission.TRAVELLER_WRITE])
   async create(
     @CurrentUser() user,
-    @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
-  ): Promise<GuideDto> {
+    @Body(new ZodValidationPipe(createTravellerSchema)) body: CreateTravellerDto,
+  ): Promise<TravellerDto> {
     return await this.travellerService.create(user.id, body);
   }
 

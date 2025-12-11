@@ -4,6 +4,7 @@ import {
   countrySchema,
   getProfilesMeResponseSchema,
   guideSchema,
+  travellerSchema,
   languageSchema
 } from '@rapid-guide-io/contracts';
 import { BaseApi } from './base';
@@ -11,8 +12,10 @@ import type {
   CityDto, 
   CountryDto, 
   CreateGuideDto, 
+  CreateTravellerDto,
   GetProfilesMeResponseDto, 
   GuideDto, 
+  TravellerDto,
   LanguageDto
 } from '@rapid-guide-io/contracts';
 
@@ -52,6 +55,13 @@ export class ProfileApi extends BaseApi {
     return this.validateResponse(
       () => this.axios.post(`${ProfileApi.baseUrl}/guide`, guide),
       guideSchema
+    );
+  }
+
+  async createTraveller(traveller: CreateTravellerDto): Promise<TravellerDto> {
+    return this.validateResponse(
+      () => this.axios.post(`${ProfileApi.baseUrl}/traveller`, traveller),
+      travellerSchema
     );
   }
 }
