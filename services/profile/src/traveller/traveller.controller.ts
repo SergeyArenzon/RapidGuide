@@ -3,6 +3,7 @@ import { ScopePermission, Scopes, CurrentUser } from '@rapid-guide-io/decorators
 import { ScopesGuard } from '@rapid-guide-io/guards';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
 import { TravellerService } from './traveller.service';
+import { CreateGuideDto, createGuideSchema, GuideDto } from '@rapid-guide-io/contracts';
 
 @Controller('traveller')
 export class TravellerController {

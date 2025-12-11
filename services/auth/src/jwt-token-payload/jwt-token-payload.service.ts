@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import type { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
-import { getProfilesResponseSchema } from '@rapid-guide-io/contracts';
+import type { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
+import { getProfilesMeResponseSchema } from '@rapid-guide-io/contracts';
 import { firstValueFrom } from 'rxjs';
 import { Session, User } from 'better-auth/types';
 import { ScopeService } from '../scope/scope.service';
@@ -43,7 +43,7 @@ export class JwtTokenPayloadService {
   async create(session: Session, user: User) {
     try {
       const { data } = await firstValueFrom(
-        this.httpService.get<GetProfilesResponseDto>(
+        this.httpService.get<GetProfilesMeResponseDto>(
           `${this.profileServiceUrl}/profile/${user.id}`,
           {
             params: { userId: user.id },
@@ -54,7 +54,7 @@ export class JwtTokenPayloadService {
         ),
       );
 
-      const validatedData = getProfilesResponseSchema.parse(data);
+      const validatedData = getProfilesMeResponseSchema.parse(data);
 
       let roles: string[] = [];
       let scopes: string[] = [];
@@ -96,7 +96,7 @@ export class JwtTokenPayloadService {
     return payload;
   }
 
-  getRoles(profiles: GetProfilesResponseDto): string[] {
+  getRoles(profiles: GetProfilesMeResponseDto): string[] {
     const roles: string[] = [];
 
     if (profiles.guide) {

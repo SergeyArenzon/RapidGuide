@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
+import { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
 
 @Injectable()
 export class ScopeService {
@@ -16,7 +16,7 @@ export class ScopeService {
   // Guide-specific scopes (inherits DEFAULT_SCOPES)
   static readonly GUIDE_SCOPES = [...ScopeService.DEFAULT_SCOPES, 'tour:*'];
 
-  getScopes(profile: GetProfilesResponseDto) {
+  getScopes(profile: GetProfilesMeResponseDto) {
     if (profile.guide) {
       return ScopeService.GUIDE_SCOPES;
     }

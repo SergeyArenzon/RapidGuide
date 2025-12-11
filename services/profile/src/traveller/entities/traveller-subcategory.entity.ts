@@ -7,7 +7,7 @@ import {
   ManyToOne,
 } from '@mikro-orm/core';
 import { Traveller } from './traveller.entity';
-import { BaseEntity } from '../entities/base.entity';
+import { BaseEntity } from '../../entities/base.entity';
 
 @Entity()
 export class TravellerSubcategory extends BaseEntity {

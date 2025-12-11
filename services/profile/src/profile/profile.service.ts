@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GuideService } from '../guide/guide.service';
-import { GetProfilesResponseDto } from '@rapid-guide-io/contracts';
+import { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
 
 @Injectable()
 export class ProfileService {
@@ -13,7 +13,7 @@ export class ProfileService {
     return { userId };
   }
 
-  async getProfilesByUserId(userId: string): Promise<GetProfilesResponseDto> {
+  async getProfilesByUserId(userId: string): Promise<GetProfilesMeResponseDto> {
     const guide = await this.guideService.findByUserId(userId);
 
     return {
