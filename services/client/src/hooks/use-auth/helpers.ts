@@ -6,41 +6,46 @@ import useUserStore from '@/store/useUser';
 import { useSessionStore } from '@/store/useSession';
 import { useJwtTokenStore } from '@/store/useJwtToken';
 import { useGuideStore } from '@/store/useGuide';
+import { useTravellerStore } from "@/store/useTraveller";
 
-export const fetchMeHandler = async (
-    setGudeCB: (guide: GuideDto) => void, 
-    clearguideCB: () => void) => {
-    try {
+export const fetchMeHandler = async () => {
+  const { clearTraveller, setTraveller } = useTravellerStore.getState();
+  const { clearGuide, setGuide } = useGuideStore.getState();
+  try {
+
       const api = new Api();
       const meData = await api.profile.getMe();
       
       if (meData.guide) {
-        setGudeCB(meData.guide);
+        setGuide(meData.guide);
       } else {
-        clearguideCB();
+        clearGuide();
+      }
+      if (meData.traveller) {
+        setTraveller(meData.traveller);
+      } else {
+        clearTraveller();
       }
     } catch (error) {
       console.error('Failed to fetch profile/me:', error);
-      clearguideCB();
+      clearGuide();
+      clearTraveller();
     }
   }
   
   
   
- export const sessionUserHandler = (
-    sessionUser: UserDto, 
-    setUserCB: (user: UserDto) => void, 
-    clearUserCB: () => void) => {
-  
-      const parsed = userSchema.safeParse(sessionUser)
-  
-      if (parsed.success) {
-        setUserCB(parsed.data)
-      } else {
-        console.error('Failed to parse session user', parsed.error)
-        clearUserCB()
-      }
+export const sessionUserHandler = (sessionUser: UserDto) => {
+  const { clearUser, setUser } = useUserStore.getState();
+  const parsed = userSchema.safeParse(sessionUser)
+
+  if (parsed.success) {
+    setUser(parsed.data)
+  } else {
+    console.error('Failed to parse session user', parsed.error)
+    clearUser();
   }
+}
 
 /**
  * Refresh session using Better Auth's getSession
@@ -55,7 +60,7 @@ export const refreshSession = async (): Promise<string | null> => {
   const { clearSession, setSession } = useSessionStore.getState();
   const { setToken, clearToken } = useJwtTokenStore.getState();
   const { clearGuide, setGuide } = useGuideStore.getState();
-
+  const { clearTraveller, setTraveller } = useTravellerStore.getState();
   try {
     const result = await authClient.getSession({
       fetchOptions: {
@@ -63,7 +68,7 @@ export const refreshSession = async (): Promise<string | null> => {
           const jwt = ctx.response.headers.get('set-auth-jwt');
           if (jwt) {
             setToken(jwt);
-            await fetchMeHandler(setGuide, clearGuide);
+            await fetchMeHandler();
           } else {
             clearToken();
           }
@@ -86,7 +91,7 @@ export const refreshSession = async (): Promise<string | null> => {
     // Update user and session stores
     const user = userSchema.parse(result.data.user);
     const session = sessionSchema.parse(result.data.session);
-    await sessionUserHandler(user, setUser, clearUser);
+    await sessionUserHandler(user);
     setSession(session);
 
     // Return the new token

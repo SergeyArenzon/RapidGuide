@@ -73,12 +73,12 @@ function RouteComponent() {
           title: 'Traveller Profile Created',
           description: 'Your traveller profile has been created successfully.',
           approveText: 'OK',
-          onApprove: () => {
+          onApprove: async() => {
             // TODO: Update when getMe response includes traveller property
-            // const meData = await api.profile.getMe();
-            // if (meData.traveller) {
-            //   setTraveller(meData.traveller);
-            // }
+            const meData = await api.profile.getMe();
+            if (meData.traveller) {
+              setTraveller(meData.traveller);
+            }
             navigate({ to: '/dashboard' });
           },
         }); 

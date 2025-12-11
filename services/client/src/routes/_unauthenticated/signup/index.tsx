@@ -10,7 +10,7 @@ export const Route = createFileRoute('/_unauthenticated/signup/')({
 function RouteComponent() {
   const { guide } = useGuideStore(state => state)
   const { traveller } = useTravellerStore(state => state)
-
+  
   return (
     <div className='container'>
         {!traveller && <Button variant="link">
