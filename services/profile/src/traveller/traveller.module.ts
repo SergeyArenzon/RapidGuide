@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TravellerController } from './traveller.controller';
-import { Traveller } from './traveller.entity';
+import { Traveller } from './entities/traveller.entity';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 @Module({
