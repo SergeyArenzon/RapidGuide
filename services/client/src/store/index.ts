@@ -1,2 +1,4 @@
 import userStore from "./useUser";
-export { userStore };
+import roleStore from "./useRole";
+export { userStore, roleStore };
+export type { LayoutMode } from "./useRole";
