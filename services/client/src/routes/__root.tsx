@@ -9,13 +9,13 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
-import type { AuthState } from '@/lib/auth-state'
+import type { AuthContext } from '@/context/auth-context'
 import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useAuth } from '@/hooks/use-auth'
 
 interface RouterContext {
-  auth: AuthState
+  auth: AuthContext
   queryClient: QueryClient
 }
 

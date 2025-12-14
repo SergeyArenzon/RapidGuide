@@ -5,7 +5,7 @@ import { routeTree } from './routeTree.gen'
 import { useSessionStore } from './store/useSession'
 import useUserStore from './store/useUser'
 import { useGuideStore } from './store/useGuide'
-import { getAuthState } from './lib/auth-state'
+import { getAuthContext } from './context/auth-context'
 
 // Create a new router instance
 export const getRouter = () => {
@@ -17,7 +17,7 @@ export const getRouter = () => {
     context: {
       ...rqContext,
       get auth() {
-        return getAuthState()
+        return getAuthContext()
       },
     },
     defaultPreload: 'intent',

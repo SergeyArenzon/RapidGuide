@@ -31,7 +31,8 @@ export function createAuth(
                 user,
               );
               return jwtTokenPayload;
-            } catch {
+            } catch(error) {
+              console.error(error);
               throw new HttpException(
                 'Failed to create JWT token payload',
                 HttpStatus.INTERNAL_SERVER_ERROR,

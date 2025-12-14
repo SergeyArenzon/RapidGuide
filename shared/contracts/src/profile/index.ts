@@ -15,5 +15,6 @@ export * from './entities/language.dto';
 
 export * from './endpoints/post-guide.dto';
 
-export * from './endpoints/get-profiles.dto';
+export * from './entities/traveller.dto';
+
 export * from  './endpoints/get-me.dto'
