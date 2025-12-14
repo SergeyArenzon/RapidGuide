@@ -1,5 +1,5 @@
 import { sessionSchema, userSchema } from "@rapid-guide-io/contracts";
-import type { GuideDto, UserDto} from "@rapid-guide-io/contracts";
+import type { UserDto } from "@rapid-guide-io/contracts";
 import Api from "@/lib/api/index";
 import { authClient } from '@/lib/auth-client';
 import useUserStore from '@/store/useUser';
@@ -56,11 +56,11 @@ export const sessionUserHandler = (sessionUser: UserDto) => {
  * @returns The new JWT token if successful, null if session expired
  */
 export const refreshSession = async (): Promise<string | null> => {
-  const { clearUser, setUser } = useUserStore.getState();
+  const { clearUser } = useUserStore.getState();
   const { clearSession, setSession } = useSessionStore.getState();
   const { setToken, clearToken } = useJwtTokenStore.getState();
-  const { clearGuide, setGuide } = useGuideStore.getState();
-  const { clearTraveller, setTraveller } = useTravellerStore.getState();
+  const { clearGuide } = useGuideStore.getState();
+
   try {
     const result = await authClient.getSession({
       fetchOptions: {
