@@ -2,19 +2,17 @@ import * as React from "react"
 import {
   BarChart3,
   Bell,
-  ChevronUp,
-  CreditCard,
+  Compass,
   FileText,
-  LogOut,
+  MapPin,
   MessageSquare,
   Search,
   Settings,
-  User,
   Users,
 } from "lucide-react"
 
-import { useNavigate } from '@tanstack/react-router';
-import Logo from "./Logo"
+import Logo from "../Logo"
+import { UserDropdown } from "./UserDropdown"
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -30,37 +28,12 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import useUserStore from "@/store/useUser"
-import { authClient } from '@/lib/auth-client';
 
+type LayoutMode = "guide" | "traveller"
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
-  const [activeTab, setActiveTab] = React.useState("analytics");
-  const { user } = useUserStore();
-  const navigate = useNavigate();
-
-  const handleLogout = async() => {
-    try {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            navigate({ to: '/auth', replace: false});
-          },
-        },
-      })
-    } catch (error) {
-    } finally {
-    }
-  };
+  const [activeTab, setActiveTab] = React.useState("analytics")
+  const [layoutMode, setLayoutMode] = React.useState<LayoutMode>("guide")
 
   const tabs = [
     { id: "analytics", label: "Analytics", icon: BarChart3 },
@@ -135,47 +108,39 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="border-t p-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-md p-2 text-left hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? undefined} referrerPolicy="no-referrer"/>
-                  <AvatarFallback>{`${user?.name?.charAt(0)}${user?.name?.charAt(0)}`}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-medium leading-none truncate">{`${user?.name}`}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                </div>
-                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+        <SidebarFooter className="border-t p-4 space-y-3">
+          <div className="px-2">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Layout Mode</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setLayoutMode("guide")}
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  layoutMode === "guide"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80"
+                }`}
+              >
+                <MapPin className="h-4 w-4" />
+                <span>Guide</span>
               </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Billing</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              <button
+                onClick={() => setLayoutMode("traveller")}
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  layoutMode === "traveller"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-sidebar-accent text-sidebar-accent-foreground hover:bg-sidebar-accent/80"
+                }`}
+              >
+                <Compass className="h-4 w-4" />
+                <span>Traveller</span>
+              </button>
+            </div>
+          </div>
+
+          <UserDropdown />
         </SidebarFooter>
         <SidebarRail />
       </ShadcnSidebar>
     </SidebarProvider>
   )
 }
-

@@ -12,3 +12,7 @@ Use the latest version of Shadcn to install new components, like this command to
 ```bash
 pnpx shadcn@latest add button
 ```
+
+
+# react instructions
+Dont add "use client"; it isnt nextjs app
