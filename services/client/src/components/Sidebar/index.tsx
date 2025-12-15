@@ -27,19 +27,20 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
+import Tabs from "./tabs"
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
-  const [activeTab, setActiveTab] = React.useState("analytics")
+//   const [activeTab, setActiveTab] = React.useState("analytics")
 
-  const tabs = [
-    { id: "analytics", label: "Analytics", icon: BarChart3 },
-    { id: "customers", label: "Customers", icon: Users },
-    { id: "documents", label: "Documents", icon: FileText },
-    { id: "messages", label: "Messages", icon: MessageSquare, badge: 5 },
-    { id: "notifications", label: "Notifications", icon: Bell, badge: 3 },
-    { id: "settings", label: "Settings", icon: Settings },
-  ]
+//   const tabs = [
+//     { id: "analytics", label: "Analytics", icon: BarChart3 },
+//     { id: "customers", label: "Customers", icon: Users },
+//     { id: "documents", label: "Documents", icon: FileText },
+//     { id: "messages", label: "Messages", icon: MessageSquare, badge: 5 },
+//     { id: "notifications", label: "Notifications", icon: Bell, badge: 3 },
+//     { id: "settings", label: "Settings", icon: Settings },
+//   ]
 
   return (
     <SidebarProvider>
@@ -55,7 +56,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
           <SidebarGroup>
             <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
+              {/* <SidebarMenu>
                 {tabs.slice(0, 3).map((tab) => (
                   <SidebarMenuItem key={tab.id}>
                     <SidebarMenuButton isActive={activeTab === tab.id} onClick={() => setActiveTab(tab.id)}>
@@ -64,7 +65,8 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
-              </SidebarMenu>
+              </SidebarMenu> */}
+              <Tabs />
             </SidebarGroupContent>
           </SidebarGroup>
 
@@ -72,7 +74,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
             <SidebarGroupLabel>Notifications</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {tabs.slice(3, 5).map((tab) => (
+                {/* {tabs.slice(3, 5).map((tab) => (
                   <SidebarMenuItem key={tab.id}>
                     <SidebarMenuButton isActive={activeTab === tab.id} onClick={() => setActiveTab(tab.id)}>
                       <tab.icon className="h-4 w-4" />
@@ -84,7 +86,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
                       )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                ))} */}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -93,14 +95,14 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
             <SidebarGroupLabel>Preferences</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {tabs.slice(5).map((tab) => (
+                {/* {tabs.slice(5).map((tab) => (
                   <SidebarMenuItem key={tab.id}>
                     <SidebarMenuButton isActive={activeTab === tab.id} onClick={() => setActiveTab(tab.id)}>
                       <tab.icon className="h-4 w-4" />
                       <span>{tab.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                ))} */}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>

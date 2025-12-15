@@ -7,7 +7,7 @@ export const Route = createFileRoute('/_authenticated/guide')({
 
 function GuideLayout() {
   return (
-    <div className="grid grid-cols-[1fr_200px] grid-rows-[50px_1fr] h-full w-full">
+    <div className="grid grid-cols-[200px_1fr] h-full w-full">
       <aside>
         <Sidebar />
       </aside>

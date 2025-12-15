@@ -46,9 +46,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     title="Page not found"
     description="The page you're looking for doesn't exist."/>,
   component: RootComponent,
-  beforeLoad: () => {
-    console.log("root");
-  },
+  beforeLoad: () => {},
   
 })
 
