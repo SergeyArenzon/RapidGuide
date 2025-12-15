@@ -19,7 +19,7 @@ const Tabs = () => {
       {sidebarTabs[role].map((tab: any) => (
         <SidebarMenuItem key={tab.id}>
           <SidebarMenuButton
-            isActive={pathname===tab.route}
+            isActive={pathname === tab.route}
             onClick={() => router.navigate({ to: tab.route })}
           >
             <tab.icon className="h-4 w-4" />
