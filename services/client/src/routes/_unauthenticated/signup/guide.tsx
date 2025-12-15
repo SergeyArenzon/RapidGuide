@@ -11,6 +11,7 @@ import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 import { useGuideStore } from '@/store/useGuide';
+import { useRoleStore } from '@/store/useRole';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
   component: RouteComponent,
@@ -33,6 +34,7 @@ function RouteComponent() {
     
     const api = new Api();
     const { setGuide } = useGuideStore(state => state);
+    const { setRole } = useRoleStore(state => state);
     const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
       setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
     };
@@ -68,6 +70,7 @@ function RouteComponent() {
       try {
         setIsLoading(true);
         await api.profile.createGuide(data);
+        setRole("guide");
         setDialogState({
           open: true,
           title: 'Guide Profile Created',
@@ -78,7 +81,7 @@ function RouteComponent() {
             if (meData.guide) {
               setGuide(meData.guide);
             }
-            navigate({ to: '/dashboard' });
+            navigate({ to: '/guide' });
           },
         }); 
       } catch (err) {

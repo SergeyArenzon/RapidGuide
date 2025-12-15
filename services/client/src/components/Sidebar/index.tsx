@@ -2,19 +2,16 @@ import * as React from "react"
 import {
   BarChart3,
   Bell,
-  ChevronUp,
-  CreditCard,
   FileText,
-  LogOut,
   MessageSquare,
   Search,
   Settings,
-  User,
   Users,
 } from "lucide-react"
 
-import { useNavigate } from '@tanstack/react-router';
-import Logo from "./Logo"
+import Logo from "../Logo"
+import { RoleSwitch } from "./RoleSwitch"
+import { UserDropdown } from "./UserDropdown"
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -30,37 +27,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import useUserStore from "@/store/useUser"
-import { authClient } from '@/lib/auth-client';
 
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
-  const [activeTab, setActiveTab] = React.useState("analytics");
-  const { user } = useUserStore();
-  const navigate = useNavigate();
-
-  const handleLogout = async() => {
-    try {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            navigate({ to: '/auth', replace: false});
-          },
-        },
-      })
-    } catch (error) {
-    } finally {
-    }
-  };
+  const [activeTab, setActiveTab] = React.useState("analytics")
 
   const tabs = [
     { id: "analytics", label: "Analytics", icon: BarChart3 },
@@ -135,47 +105,12 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        <SidebarFooter className="border-t p-4">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-md p-2 text-left hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
-                <Avatar className="h-9 w-9">
-                  <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? undefined} referrerPolicy="no-referrer"/>
-                  <AvatarFallback>{`${user?.name?.charAt(0)}${user?.name?.charAt(0)}`}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 overflow-hidden">
-                  <p className="text-sm font-medium leading-none truncate">{`${user?.name}`}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                </div>
-                <ChevronUp className="h-4 w-4 text-muted-foreground" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Profile</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard className="mr-2 h-4 w-4" />
-                <span>Billing</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <SidebarFooter className="border-t p-4 space-y-3">
+          <RoleSwitch />
+          <UserDropdown />
         </SidebarFooter>
         <SidebarRail />
       </ShadcnSidebar>
     </SidebarProvider>
   )
 }
-

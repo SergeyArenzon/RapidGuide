@@ -11,6 +11,7 @@ import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 import { useTravellerStore } from '@/store/useTraveller';
+import { useRoleStore } from '@/store/useRole';
 
 export const Route = createFileRoute('/_unauthenticated/signup/traveller')({
   component: RouteComponent,
@@ -27,7 +28,8 @@ function RouteComponent() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
-  
+  const { setRole } = useRoleStore(state => state);
+
   const navigate = useNavigate()
     
     const api = new Api();
@@ -68,6 +70,7 @@ function RouteComponent() {
         setIsLoading(true);
         const travellerData = await api.profile.createTraveller(data);
         setTraveller(travellerData);
+        setRole("traveller");
         setDialogState({
           open: true,
           title: 'Traveller Profile Created',
@@ -79,7 +82,7 @@ function RouteComponent() {
             if (meData.traveller) {
               setTraveller(meData.traveller);
             }
-            navigate({ to: '/dashboard' });
+            navigate({ to: '/traveller' });
           },
         }); 
       } catch (err) {
