@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { AuthenticatedLayout } from '@/components/AuthenticatedLayout'
+import { AuthenticatedLayout } from '@/routes/_authenticated/Layout'
 
 export const Route = createFileRoute('/_authenticated/guide')({
   component: GuideLayout,
