@@ -8,8 +8,9 @@ type SidebarTab = Array<{
   route: FileRouteTypes["to"];
 }>
 
+export type SidebarTabs = Record<Role, SidebarTab>
 
-export const sidebarTabs = {
+export const sidebarTabs: Record<Role, SidebarTab> = {
   guide: [
     { label: "Dashboard", icon: LayoutDashboard, route: "/guide" as FileRouteTypes["to"] },
     { label: "Tours", icon: Route, route: "/guide/tours" as FileRouteTypes["to"] },
@@ -18,4 +19,4 @@ export const sidebarTabs = {
     { label: "Dashboard", icon: LayoutDashboard, route: "/traveller" as FileRouteTypes["to"] },
     { label: "Tours", icon: Route, route: "/traveller/tours" as FileRouteTypes["to"] },
   ],
-} satisfies Record<Role, SidebarTab>
+} 
