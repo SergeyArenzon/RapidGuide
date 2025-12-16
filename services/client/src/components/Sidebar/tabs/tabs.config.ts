@@ -2,11 +2,13 @@ import { LayoutDashboard, Route } from "lucide-react";
 import type { FileRouteTypes } from "@/routeTree.gen";
 import type { Role } from "@/store/useRole";
 
-type SidebarTab = Array<{
+export type SidebarTabItem = {
   label: string;
   icon: typeof Route;
   route: FileRouteTypes["to"];
-}>
+}
+
+type SidebarTab = Array<SidebarTabItem>
 
 export type SidebarTabs = Record<Role, SidebarTab>
 

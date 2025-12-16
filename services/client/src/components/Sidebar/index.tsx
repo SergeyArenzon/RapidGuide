@@ -28,7 +28,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
 
   return (
     <SidebarProvider>
-      <ShadcnSidebar side="right" className="h-full" {...props}>
+      <ShadcnSidebar side="left" className="h-full" {...props}>
         <SidebarHeader>
           <Logo />
           <div className="relative px-4 py-2">
