@@ -114,7 +114,7 @@ function RouteComponent() {
 
       const handleSubmit = (data: FormValues) => {
         console.log('Form submit', data)
-        toast.success('Tour created successfully')
+
         // Close dialog on successful save
         setDialogOpen(false)
       }

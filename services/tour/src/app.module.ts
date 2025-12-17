@@ -10,6 +10,10 @@ import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 import auth from './better-auth';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
+import { TourModule } from './tour/tour.module';
+import { BookingModule } from './booking/booking.module';
+import { TourSubcategoryModule } from './tour-subcategory/tour-subcategory.module';
+import { TourTimeSlotModule } from './tour-time-slot/tour-time-slot.module';
 
 @Module({
   imports: [
@@ -17,6 +21,10 @@ import { AuthModule } from '@thallesp/nestjs-better-auth';
     AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
     CategoryModule,
     SubCategoryModule,
+    TourModule,
+    BookingModule,
+    TourSubcategoryModule,
+    TourTimeSlotModule,
   ],
   controllers: [AppController],
   providers: [
