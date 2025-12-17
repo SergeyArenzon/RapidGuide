@@ -12,6 +12,7 @@ import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/Dialog'
+import { toast } from 'sonner'
 
 export const Route = createFileRoute('/_authenticated/guide/tours')({
   component: RouteComponent,
@@ -113,6 +114,7 @@ function RouteComponent() {
 
       const handleSubmit = (data: FormValues) => {
         console.log('Form submit', data)
+        toast.success('Tour created successfully')
         // Close dialog on successful save
         setDialogOpen(false)
       }

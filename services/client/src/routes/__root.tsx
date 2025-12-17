@@ -13,6 +13,7 @@ import type { AuthContext } from '@/context/auth-context'
 import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { useAuth } from '@/hooks/use-auth'
+import { Toaster } from '@/components/ui/sonner'
 
 interface RouterContext {
   auth: AuthContext
@@ -62,6 +63,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body className="m-0 h-screen overflow-hidden">
+        <Toaster />
         {isSessionLoading ? <Loading /> : <Outlet />}
         <TanStackDevtools
           config={{
