@@ -2,8 +2,10 @@ import {
   Dialog as DialogBase,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
-  DialogTrigger,
+  DialogTitle,
+  DialogTrigger
 } from "@/components/ui/dialog"
 
 type DialogProps = {
@@ -11,6 +13,10 @@ type DialogProps = {
   contentComponent: React.ReactNode
   cancelComponent?: React.ReactNode
   submitComponent?: React.ReactNode
+  title?: string
+  description?: string
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export function Dialog({
@@ -18,21 +24,27 @@ export function Dialog({
   contentComponent,
   cancelComponent,
   submitComponent,
+  title,
+  description,
+  open,
+  onOpenChange,
 }: DialogProps) {
   return (
-    <DialogBase>
-      <DialogTrigger asChild>
-        {triggerComponent}
-      </DialogTrigger>
-      <DialogContent>
-        {contentComponent}
-        <DialogFooter>
-          <DialogClose asChild>
-            {cancelComponent && cancelComponent}
-          </DialogClose>
-          {submitComponent && submitComponent}
-        </DialogFooter>
-      </DialogContent>
-    </DialogBase>
+    <DialogBase open={open} onOpenChange={onOpenChange}>
+        <DialogTrigger asChild>
+          {triggerComponent}
+        </DialogTrigger>
+        <DialogContent>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+          {contentComponent}
+          <DialogFooter>
+            <DialogClose asChild>
+              {cancelComponent && cancelComponent}
+            </DialogClose>
+            {submitComponent && submitComponent}
+          </DialogFooter>
+        </DialogContent>
+      </DialogBase>
   )
 }

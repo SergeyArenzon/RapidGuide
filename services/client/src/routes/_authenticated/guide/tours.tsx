@@ -109,8 +109,12 @@ function RouteComponent() {
         },
       ]
 
+      const [dialogOpen, setDialogOpen] = React.useState(false)
+
       const handleSubmit = (data: FormValues) => {
         console.log('Form submit', data)
+        // Close dialog on successful save
+        setDialogOpen(false)
       }
   
   return <div>
@@ -164,6 +168,10 @@ function RouteComponent() {
     Rerender
   </button> */}
   <Dialog
+    open={dialogOpen}
+    onOpenChange={setDialogOpen}
+    title="Create New Tour"
+    description="Create a new tour by filling in the details below."
     triggerComponent={
       <Button>
         <CirclePlus />
