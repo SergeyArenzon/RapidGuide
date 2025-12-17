@@ -1,13 +1,17 @@
 import {
-    createColumnHelper,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-  } from '@tanstack/react-table'
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
 import { createFileRoute } from '@tanstack/react-router'
 import React from 'react'
+import * as z from 'zod'
+import { CirclePlus } from 'lucide-react'
+import type { FieldConfig } from '@/components/form/types'
+import Form from '@/components/form'
 import { Button } from '@/components/ui/button'
-import { CirclePlus } from 'lucide-react';
+import { Dialog } from '@/components/Dialog'
 
 export const Route = createFileRoute('/_authenticated/guide/tours')({
   component: RouteComponent,
@@ -21,7 +25,7 @@ type Person = {
   status: string
   progress: number
 }
-const defaultData: Person[] = [
+const defaultData: Array<Person> = [
   {
     firstName: 'tanner',
     lastName: 'linsley',
@@ -88,7 +92,27 @@ function RouteComponent() {
         columns,
         getCoreRowModel: getCoreRowModel(),
       })
-    
+
+      const schema = z.object({
+        name: z.string().min(1, 'Name is required'),
+      })
+
+      type FormValues = z.infer<typeof schema>
+
+      const fields: Array<FieldConfig & { name: keyof FormValues }> = [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Name',
+          placeholder: 'Enter name',
+          required: true,
+        },
+      ]
+
+      const handleSubmit = (data: FormValues) => {
+        console.log('Form submit', data)
+      }
+  
   return <div>
   {/* <table>
     <thead>
@@ -139,6 +163,21 @@ function RouteComponent() {
   <button onClick={() => rerender()} className="border p-2">
     Rerender
   </button> */}
-  <Button><CirclePlus />Create New Tour</Button>
+  <Dialog
+    triggerComponent={
+      <Button>
+        <CirclePlus />
+        Create New Tour
+      </Button>
+    }
+    contentComponent={
+      <Form<FormValues>
+        fields={fields}
+        schema={schema}
+        onSubmit={handleSubmit}
+        submitButtonText="Save"
+      />
+    }
+  />
 </div>
 }
