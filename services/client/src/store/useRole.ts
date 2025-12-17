@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type Roles = "guide" | "traveller"
+export type Role = "guide" | "traveller"
 
 type RoleStore = {
-  role: Roles | null
-  setRole: (mode: Roles) => void
+  role: Role | null
+  setRole: (mode: Role) => void
 }
 
 export const useRoleStore = create<RoleStore>()(
