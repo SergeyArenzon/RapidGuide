@@ -1,0 +1,39 @@
+replicaCount: 1
+
+image:
+  repository: sergeyarenzon/huddlehub-booking
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 3000
+
+
+database:
+  url: "postgresql://postgres:postgres@tour-db:5432/postgres?schema=public"
+  host: "tour-db"
+  port: 5432
+  name: "tour"
+  user: "postgres"
+  password: "postgres"
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 150Mi
+
+healthCheck:
+  liveness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3

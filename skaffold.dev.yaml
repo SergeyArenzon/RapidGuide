@@ -34,6 +34,16 @@ build:
             dest: .
           - src: "src/**/*.json"
             dest: .
+    - image: sergeyarenzon/huddlehub-booking
+      context: services/booking
+      docker:
+        dockerfile: Dockerfile.dev
+      sync: 
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+          - src: "src/**/*.json"
+            dest: .
   tagPolicy:
     gitCommit: {}
   local:
@@ -77,6 +87,10 @@ manifests:
         chartPath: k8s/helm/tour/
         valuesFiles:
           - k8s/helm/tour/values.yaml
+      - name: booking
+        chartPath: k8s/helm/booking/
+        valuesFiles:
+          - k8s/helm/booking/values.yaml
       # - name: redis
       #   repo: https://charts.bitnami.com/bitnami
       #   remoteChart: redis
