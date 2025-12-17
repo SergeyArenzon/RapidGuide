@@ -6,6 +6,8 @@ import {
   } from '@tanstack/react-table'
 import { createFileRoute } from '@tanstack/react-router'
 import React from 'react'
+import { Button } from '@/components/ui/button'
+import { CirclePlus } from 'lucide-react';
 
 export const Route = createFileRoute('/_authenticated/guide/tours')({
   component: RouteComponent,
@@ -87,8 +89,8 @@ function RouteComponent() {
         getCoreRowModel: getCoreRowModel(),
       })
     
-  return <div className="p-2">
-  <table>
+  return <div>
+  {/* <table>
     <thead>
       {table.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
@@ -132,10 +134,11 @@ function RouteComponent() {
         </tr>
       ))}
     </tfoot>
-  </table>
-  <div className="h-4" />
+  </table> */}
+  {/* <div className="h-4" />
   <button onClick={() => rerender()} className="border p-2">
     Rerender
-  </button>
+  </button> */}
+  <Button><CirclePlus />Create New Tour</Button>
 </div>
 }
