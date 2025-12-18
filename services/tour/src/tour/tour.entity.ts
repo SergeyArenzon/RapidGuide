@@ -8,7 +8,6 @@ import {
   OneToMany,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../entities/base.entity';
-import { TourTimeSlot } from '../tour-time-slot/entities/tour-time-slot.entity';
 import { TourSubcategory } from '../tour-subcategory/entities/tour-subcategory.entity';
 
 @Entity()
@@ -69,7 +68,6 @@ export class Tour extends BaseEntity {
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-
   /**
    * Duration of the tour in minutes
    */
@@ -81,12 +79,6 @@ export class Tour extends BaseEntity {
    */
   @OneToMany(() => TourSubcategory, (tourSubcategory) => tourSubcategory.tour)
   tourSubcategories = new Collection<TourSubcategory>(this);
-
-  /**
-   * Time slots available for this tour
-   */
-  @OneToMany(() => TourTimeSlot, (timeSlot) => timeSlot.tour)
-  timeSlots = new Collection<TourTimeSlot>(this);
 
   /**
    * Bookings for this tour (pending, approved, rejected, cancelled)
