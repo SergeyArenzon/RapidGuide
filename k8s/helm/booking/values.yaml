@@ -11,10 +11,10 @@ service:
 
 
 database:
-  url: "postgresql://postgres:postgres@tour-db:5432/postgres?schema=public"
-  host: "tour-db"
+  url: "postgresql://postgres:postgres@booking-db:5432/postgres?schema=public"
+  host: "booking-db"
   port: 5432
-  name: "tour"
+  name: "booking"
   user: "postgres"
   password: "postgres"
 
