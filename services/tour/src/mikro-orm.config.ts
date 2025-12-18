@@ -5,18 +5,11 @@ import { Category } from './category/entities/category.entity';
 import { SubCategory } from './sub-category/entities/sub-category';
 import { Tour } from './tour/tour.entity';
 import { TourSubcategory } from './tour-subcategory/entities/tour-subcategory.entity';
-import { TourTimeSlot } from './tour-time-slot/entities/tour-time-slot.entity';
 import { join } from 'path';
 
 const microOrmConfig: MikroOrmModuleSyncOptions = {
   clientUrl: process.env.DATABASE_URL, // Connection URL
-  entities: [
-    Category,
-    SubCategory,
-    Tour,
-    TourSubcategory,
-    TourTimeSlot,
-  ],
+  entities: [Category, SubCategory, Tour, TourSubcategory],
   driver: PostgreSqlDriver, // Specify PostgreSQL driver
   migrations: {
     path: join(__dirname, 'database/migrations'), // Ensure migrations are inside src

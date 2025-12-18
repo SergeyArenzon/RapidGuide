@@ -8,15 +8,21 @@ import { SubCategoryModule } from './sub-category/sub-category.module';
 import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
-import auth from './better-auth';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { TourModule } from './tour/tour.module';
 import { TourSubcategoryModule } from './tour-subcategory/tour-subcategory.module';
+import { betterAuth } from 'better-auth';
+import { jwt } from 'better-auth/plugins';
 
 @Module({
   imports: [
     MikroOrmModule.forRoot(microOrmConfig),
-    AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
+    AuthModule.forRoot({
+      auth: betterAuth({
+        plugins: [jwt()],
+      }),
+      disableGlobalAuthGuard: true,
+    }),
     CategoryModule,
     SubCategoryModule,
     TourModule,

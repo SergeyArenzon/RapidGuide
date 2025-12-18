@@ -75,7 +75,7 @@ manifests:
         chartPath: k8s/helm/tour-db/
         valuesFiles:
           - k8s/helm/tour-db/values.yaml
-      - name: tour-db
+      - name: booking-db
         chartPath: k8s/helm/booking-db/
         valuesFiles:
           - k8s/helm/booking-db/values.yaml

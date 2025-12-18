@@ -29,7 +29,7 @@ config:
   POSTGRES_MAX_CONNECTIONS: "100"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  POSTGRESS_DB: tour
+  POSTGRESS_DB: booking
   
   PGDATA: "/var/lib/postgresql/data/booking"
 
