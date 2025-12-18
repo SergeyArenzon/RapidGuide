@@ -1,5 +1,6 @@
-import { Entity, Property } from '@mikro-orm/core';
+import { Entity, Property, OneToMany, Collection } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
+import { BookingTraveller } from './booking-traveller.entity';
 
 /**
  * Represents a booking made by a traveller for a tour
@@ -28,13 +29,8 @@ export class Booking extends BaseEntity {
    * Traveller's user_id who made this booking
    */
   @Property({ type: 'uuid' })
-  traveller_user_id: string;
+  traveller_id: string;
 
-  /**
-   * Whether this is a private tour booking
-   */
-  @Property({ default: false })
-  is_private: boolean;
 
   /**
    * Number of travellers in this booking
@@ -43,7 +39,14 @@ export class Booking extends BaseEntity {
   number_of_travellers: number;
 
   /**
-   * Total price for this booking
+   * Price per traveller (snapshot from Tour.group_price at booking time)
+   * All travellers in a booking pay the same price
+   */
+  @Property({ type: 'decimal', precision: 10, scale: 2 })
+  price_per_traveller: number;
+
+  /**
+   * Total price for this booking (price_per_traveller * number_of_travellers)
    */
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   total_price: number;
@@ -69,4 +72,10 @@ export class Booking extends BaseEntity {
    */
   @Property({ type: 'datetime', nullable: true })
   reviewed_at?: Date;
+
+  /**
+   * All travellers in this booking
+   */
+  @OneToMany(() => BookingTraveller, (traveller) => traveller.booking)
+  travellers = new Collection<BookingTraveller>(this);
 }

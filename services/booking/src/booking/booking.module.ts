@@ -3,9 +3,10 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { BookingService } from './booking.service';
 import { BookingController } from './booking.controller';
 import { Booking } from './entities/booking.entity';
+import { BookingTraveller } from './entities/booking-traveller.entity';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Booking])],
+  imports: [MikroOrmModule.forFeature([Booking, BookingTraveller])],
   controllers: [BookingController],
   providers: [BookingService],
 })

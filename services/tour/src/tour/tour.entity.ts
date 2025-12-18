@@ -70,6 +70,12 @@ export class Tour extends BaseEntity {
   max_travellers?: number;
 
   /**
+   * Price per person for the tour
+   */
+  @Property({ type: 'decimal', precision: 10, scale: 2 })
+  price: number;
+
+  /**
    * Price per person for private tour
    */
   @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
