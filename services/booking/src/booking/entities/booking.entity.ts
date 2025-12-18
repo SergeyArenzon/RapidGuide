@@ -1,7 +1,5 @@
-import { Entity, Property, ManyToOne } from '@mikro-orm/core';
+import { Entity, Property } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
-import { Tour } from '../../tour/tour.entity';
-import { TourTimeSlot } from '../../tour-time-slot/entities/tour-time-slot.entity';
 
 /**
  * Represents a booking made by a traveller for a tour
@@ -14,11 +12,17 @@ export class Booking extends BaseEntity {
     this.assign(booking as Partial<this>);
   }
 
-  @ManyToOne(() => Tour, { deleteRule: 'cascade' })
-  tour!: Tour;
+  /**
+   * ID of the tour this booking belongs to (owned by tour service)
+   */
+  @Property({ type: 'uuid' })
+  tour_id: string;
 
-  @ManyToOne(() => TourTimeSlot, { deleteRule: 'cascade' })
-  time_slot!: TourTimeSlot;
+  /**
+   * ID of the tour time slot for this booking (owned by tour service)
+   */
+  @Property({ type: 'uuid' })
+  time_slot_id: string;
 
   /**
    * Traveller's user_id who made this booking
