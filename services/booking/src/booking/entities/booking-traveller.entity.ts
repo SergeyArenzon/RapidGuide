@@ -24,13 +24,6 @@ export class BookingTraveller extends BaseEntity {
    * (references user in user service)
    */
   @Property({ type: 'uuid' })
-  user_id: string;
-
-  /**
-   * Whether this traveller is the one who made the booking
-   * (the booker/payer)
-   */
-  @Property({ default: false })
-  is_booker: boolean;
+  traveller_id: string;
 }
 

@@ -52,12 +52,6 @@ export class Tour extends BaseEntity {
   description: string;
 
   /**
-   * Whether this tour can be booked as a private tour
-   */
-  @Property({ default: false })
-  is_private_available: boolean;
-
-  /**
    * Minimum number of travellers required for group booking
    */
   @Property({ nullable: true })
@@ -75,17 +69,6 @@ export class Tour extends BaseEntity {
   @Property({ type: 'decimal', precision: 10, scale: 2 })
   price: number;
 
-  /**
-   * Price per person for private tour
-   */
-  @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  private_price?: number;
-
-  /**
-   * Price per person for group tour
-   */
-  @Property({ type: 'decimal', precision: 10, scale: 2, nullable: true })
-  group_price?: number;
 
   /**
    * Duration of the tour in minutes

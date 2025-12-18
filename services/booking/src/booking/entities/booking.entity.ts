@@ -26,20 +26,15 @@ export class Booking extends BaseEntity {
   time_slot_id: string;
 
   /**
-   * Traveller's user_id who made this booking
-   */
-  @Property({ type: 'uuid' })
-  traveller_id: string;
-
-
-  /**
-   * Number of travellers in this booking
+   * Number of travellers in this booking (denormalized for performance)
+   * Should always match the count of travellers in the travellers collection
+   * Use syncTravellerCount() to keep this in sync
    */
   @Property({ default: 1 })
   number_of_travellers: number;
 
   /**
-   * Price per traveller (snapshot from Tour.group_price at booking time)
+   * Price per traveller (snapshot from Tour.price at booking time)
    * All travellers in a booking pay the same price
    */
   @Property({ type: 'decimal', precision: 10, scale: 2 })

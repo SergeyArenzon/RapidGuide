@@ -12,7 +12,6 @@ import auth from './better-auth';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
 import { TourModule } from './tour/tour.module';
 import { TourSubcategoryModule } from './tour-subcategory/tour-subcategory.module';
-import { TourTimeSlotModule } from './tour-time-slot/tour-time-slot.module';
 
 @Module({
   imports: [
@@ -22,7 +21,6 @@ import { TourTimeSlotModule } from './tour-time-slot/tour-time-slot.module';
     SubCategoryModule,
     TourModule,
     TourSubcategoryModule,
-    TourTimeSlotModule,
   ],
   controllers: [AppController],
   providers: [
