@@ -10,12 +10,18 @@ import { ProfileModule } from './profile/profile.module';
 import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
-import auth from './better-auth';
+import { betterAuth } from 'better-auth';
+import { jwt } from 'better-auth/plugins';
 import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
 
 @Module({
   imports: [
-    AuthModule.forRoot({ auth, disableGlobalAuthGuard: true }),
+    AuthModule.forRoot({
+      auth: betterAuth({
+        plugins: [jwt()],
+      }),
+      disableGlobalAuthGuard: true,
+    }),
     MikroOrmModule.forRoot(microOrmConfig),
     ProfileModule,
   ],

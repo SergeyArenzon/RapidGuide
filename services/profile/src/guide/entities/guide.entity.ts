@@ -15,6 +15,7 @@ import { City } from '../../city/city.entity';
 import { Country } from '../../country/country.entity';
 import { Languages } from '../../languages/languages.entity';
 import { GuideSubcategory } from './guide-subcategory.entity';
+import { GuideSchedule } from './guide-schedule.entity';
 import { GuideDto } from '@rapid-guide-io/contracts';
 
 @Entity()
@@ -35,6 +36,9 @@ export class Guide extends BaseEntity {
 
   @OneToMany(() => GuideSubcategory, (subcategory) => subcategory.guide)
   subcategories = new Collection<GuideSubcategory>(this);
+
+  @OneToMany(() => GuideSchedule, (schedule) => schedule.guide)
+  schedules = new Collection<GuideSchedule>(this);
 
   @ManyToMany(() => Languages)
   languages = new Collection<Languages>(this);

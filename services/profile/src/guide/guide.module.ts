@@ -3,6 +3,7 @@ import { GuideController } from './guide.controller';
 import { GuideService } from './guide.service';
 import { Guide } from './entities/guide.entity';
 import { GuideSubcategory } from './entities/guide-subcategory.entity';
+import { GuideSchedule } from './entities/guide-schedule.entity';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 // import { JwtModule } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
@@ -13,7 +14,7 @@ import { LanguagesModule } from '../languages/languages.module';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Guide, GuideSubcategory]),
+    MikroOrmModule.forFeature([Guide, GuideSubcategory, GuideSchedule]),
     CountryModule,
     CityModule,
     LanguagesModule,
