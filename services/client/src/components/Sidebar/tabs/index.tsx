@@ -14,12 +14,32 @@ const Tabs = () => {
   
   if (!role) return null
   
+  // Get all routes for the current role, sorted by length (longest first) to prioritize more specific routes
+  const allRoutes = sidebarTabs[role].map(tab => tab.route).sort((a, b) => b.length - a.length)
+  
+  const isActive = (tabRoute: string) => {
+    // Check if this route matches the current pathname
+    const matches = pathname === tabRoute || pathname.startsWith(tabRoute + '/')
+    
+    if (!matches) return false
+    
+    // Check if there's a more specific route that also matches
+    // If so, this route should not be active
+    const moreSpecificRoute = allRoutes.find(route => 
+      route !== tabRoute && 
+      route.length > tabRoute.length &&
+      (pathname === route || pathname.startsWith(route + '/'))
+    )
+    
+    return !moreSpecificRoute
+  }
+  
   return (
     <SidebarMenu>
       {sidebarTabs[role].map((tab) => (
         <SidebarMenuItem key={tab.label}>
           <SidebarMenuButton
-            isActive={pathname === tab.route}
+            isActive={isActive(tab.route)}
             onClick={() => router.navigate({ to: tab.route })}
           >
             <tab.icon className="h-4 w-4" />

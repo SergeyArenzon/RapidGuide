@@ -10,6 +10,9 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute('/_unauthenticated/signin')({
   validateSearch: searchSchema,
+  staticData: {
+    label: 'Sign In',
+  },
   beforeLoad: ({ context }) => {
     const { auth } = context
 

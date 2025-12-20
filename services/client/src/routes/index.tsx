@@ -3,6 +3,9 @@ import { useRoleStore } from '@/store/useRole'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
+  staticData: {
+    label: 'Home',
+  },
   beforeLoad: ({ context }) => {
     const { auth } = context
     const { role } = useRoleStore.getState()

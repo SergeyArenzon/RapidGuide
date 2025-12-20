@@ -15,6 +15,9 @@ import { useRoleStore } from '@/store/useRole';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide')({
   component: RouteComponent,
+  staticData: {
+    label: 'Create Guide Profile',
+  },
 })
 
 

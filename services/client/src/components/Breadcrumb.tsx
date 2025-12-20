@@ -22,14 +22,6 @@ export function Breadcrumb() {
   return (
     <BreadcrumbComponent>
       <BreadcrumbList>
-        {/* Home link */}
-        {/* <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <Link to="/">Home</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        {breadcrumbItems.length > 0 && <BreadcrumbSeparator />} */}
-        
         {breadcrumbItems.map((item, index) => (
           <React.Fragment key={item.path}>
             <BreadcrumbItem>

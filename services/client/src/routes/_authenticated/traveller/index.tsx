@@ -2,6 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated/traveller/')({
   component: TravellerDashboard,
+  staticData: {
+    label: 'Dashboard',
+  },
 })
 
 function TravellerDashboard() {

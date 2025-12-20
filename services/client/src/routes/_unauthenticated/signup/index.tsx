@@ -5,6 +5,9 @@ import { useTravellerStore } from '@/store/useTraveller'
 
 export const Route = createFileRoute('/_unauthenticated/signup/')({
   component: RouteComponent,
+  staticData: {
+    label: 'Sign Up',
+  },
 })
 
 function RouteComponent() {

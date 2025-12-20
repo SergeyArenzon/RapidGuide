@@ -10,6 +10,9 @@ import Api from '@/lib/api'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/new')({
   component: CreateTourComponent,
+  staticData: {
+    label: 'Create Tour',
+  },
 })
 
 function CreateTourComponent() {

@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
+  staticData: {
+    label: 'Tours',
+  },
 })
 
 function RouteComponent() {
