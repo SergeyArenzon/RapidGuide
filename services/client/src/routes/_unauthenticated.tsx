@@ -12,6 +12,10 @@ export const Route = createFileRoute('/_unauthenticated')({
     // Only make redirect decisions after auth has finished loading
     // Users with both guide and traveller should be redirected based on their selected role
     if (auth.isAuthenticated && auth.guide && auth.traveller) {
+      // Allow access to signup pages even if they have both profiles
+      if (location.pathname.startsWith('/signup')) {
+        return
+      }
       if (role) {
         throw redirect({
           to: `/${role}`,
@@ -23,15 +27,20 @@ export const Route = createFileRoute('/_unauthenticated')({
       })
     }
 
-    // Redirect authenticated guides away from signin page
-    if (auth.isAuthenticated && auth.guide && !auth.traveller) {
+    // Allow authenticated users to access signup pages if they're missing a profile
+    if (auth.isAuthenticated && location.pathname.startsWith('/signup')) {
+      return
+    }
+
+    // Redirect authenticated guides away from signin page (but allow signup)
+    if (auth.isAuthenticated && auth.guide && !auth.traveller && location.pathname === '/signin') {
       throw redirect({
         to: '/guide',
       })
     }
 
-    // Redirect authenticated travellers away from signin page
-    if (auth.isAuthenticated && auth.traveller && !auth.guide) {
+    // Redirect authenticated travellers away from signin page (but allow signup)
+    if (auth.isAuthenticated && auth.traveller && !auth.guide && location.pathname === '/signin') {
       throw redirect({
         to: '/traveller',
       })
