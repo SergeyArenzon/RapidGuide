@@ -1,9 +1,9 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
-import * as z from 'zod'
 import { toast } from 'sonner'
-import type { CategoryDto, SubCategoryDto } from '@rapid-guide-io/contracts'
-import type { CreateTourDto } from '@/lib/api/tour'
+import type { TourDto , tourSchema} from '@rapid-guide-io/contracts'
+import type * as z from 'zod'
 import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
 import Api from '@/lib/api'
@@ -15,33 +15,40 @@ export const Route = createFileRoute('/_authenticated/guide/tours/new')({
   },
 })
 
+type FormValues = z.infer<typeof tourSchema>
+
 function CreateTourComponent() {
   const navigate = useNavigate()
-  const [categories, setCategories] = React.useState<Array<CategoryDto>>([])
-  const [subcategories, setSubcategories] = React.useState<Array<SubCategoryDto>>([])
-  const [isLoading, setIsLoading] = React.useState(false)
   const api = React.useMemo(() => new Api(), [])
+  const queryClient = useQueryClient()
 
-  // Fetch categories and subcategories on mount
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true)
-        const [categoriesData, subcategoriesData] = await Promise.all([
-          api.tour.getCategories().catch(() => []),
-          api.tour.getSubCategories().catch(() => []),
-        ])
-        setCategories(categoriesData)
-        setSubcategories(subcategoriesData)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-        toast.error('Failed to load categories')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    fetchData()
-  }, [api])
+  // Fetch categories and subcategories using TanStack Query
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => api.tour.getCategories(),
+    retry: false,
+  })
+
+  const { data: subcategories = [], isLoading: isLoadingSubcategories } = useQuery({
+    queryKey: ['subcategories'],
+    queryFn: () => api.tour.getSubCategories(),
+    retry: false,
+  })
+
+  // Mutation for creating a tour
+  const createTourMutation = useMutation({
+    mutationFn: (tour: TourDto) => api.tour.createTour(tour),
+    onSuccess: () => {
+      toast.success('Tour created successfully!')
+      // Invalidate tours query to refetch the list
+      queryClient.invalidateQueries({ queryKey: ['tour', 'tours'] })
+      navigate({ to: '/guide/tours' })
+    },
+    onError: (error: Error) => {
+      console.error('Error creating tour:', error)
+      toast.error(error.message || 'Failed to create tour')
+    },
+  })
 
   // Prepare subcategory options grouped by category
   const subcategoryOptions = React.useMemo(() => {
@@ -56,18 +63,6 @@ function CreateTourComponent() {
         })),
     }))
   }, [categories, subcategories])
-
-  const schema = z.object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    description: z.string().min(10, 'Description must be at least 10 characters'),
-    price: z.coerce.number().positive('Price must be a positive number'),
-    duration_minutes: z.coerce.number().int().positive().optional().or(z.literal('')),
-    min_travellers: z.coerce.number().int().positive().optional().or(z.literal('')),
-    max_travellers: z.coerce.number().int().positive().optional().or(z.literal('')),
-    subcategory_ids: z.array(z.string().uuid()).min(1, 'At least one subcategory is required'),
-  })
-
-  type FormValues = z.infer<typeof schema>
 
   const fields: Array<FieldConfig & { name: keyof FormValues }> = [
     {
@@ -127,29 +122,21 @@ function CreateTourComponent() {
     },
   ]
 
-  const handleSubmit = async (data: FormValues) => {
-    try {
-      setIsLoading(true)
-      const createTourDto: CreateTourDto = {
-        name: data.name,
-        description: data.description,
-        price: data.price,
-        duration_minutes: data.duration_minutes === '' ? undefined : data.duration_minutes,
-        min_travellers: data.min_travellers === '' ? undefined : data.min_travellers,
-        max_travellers: data.max_travellers === '' ? undefined : data.max_travellers,
-        subcategory_ids: data.subcategory_ids,
-      }
-
-      await api.tour.createTour(createTourDto)
-      toast.success('Tour created successfully!')
-      navigate({ to: '/guide/tours' })
-    } catch (error) {
-      console.error('Error creating tour:', error)
-      toast.error(error instanceof Error ? error.message : 'Failed to create tour')
-    } finally {
-      setIsLoading(false)
+  const handleSubmit = (data: FormValues) => {
+    const createTourDto: TourDto = {
+      name: data.name,
+      description: data.description,
+      price: data.price,
+      duration_minutes: data.duration_minutes,
+      min_travellers: data.min_travellers,
+      max_travellers: data.max_travellers,
+      subcategory_ids: data.subcategory_ids,
     }
+
+    createTourMutation.mutate(createTourDto)
   }
+
+  const isLoading = isLoadingCategories || isLoadingSubcategories || createTourMutation.isPending
 
   return (
     <div className="space-y-6">
@@ -161,7 +148,7 @@ function CreateTourComponent() {
 
       <Form<FormValues>
         fields={fields}
-        schema={schema}
+        schema={tourSchema}
         onSubmit={handleSubmit}
         submitButtonText="Create Tour"
         isLoading={isLoading}
