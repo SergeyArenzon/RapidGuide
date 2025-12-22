@@ -28,7 +28,7 @@ function RouteComponent() {
     await authClient.signIn.social({
       provider: 'google',
       newUserCallbackURL: "http://localhost:3000/signup",
-      callbackURL: "http://localhost:3000/dashboard"
+      callbackURL: "http://localhost:3000/"
     })
   }
 
