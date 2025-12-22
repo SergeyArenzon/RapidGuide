@@ -1,12 +1,14 @@
-import { useRoleStore } from '@/store/useRole'
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { useRoleStore } from '@/store/useRole'
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
+  staticData: {
+    label: 'Home',
+  },
   beforeLoad: ({ context }) => {
     const { auth } = context
     const { role } = useRoleStore.getState()
-    console.log({auth});
     
     if (auth.isLoading) {
       return

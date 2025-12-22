@@ -9,6 +9,7 @@ import {
 } from '@mikro-orm/core';
 import { BaseEntity } from '../entities/base.entity';
 import { TourSubcategory } from '../tour-subcategory/entities/tour-subcategory.entity';
+import { TourDto } from '@rapid-guide-io/contracts';
 
 @Entity()
 export class Tour extends BaseEntity {
@@ -85,4 +86,22 @@ export class Tour extends BaseEntity {
    */
   //   @OneToMany(() => Booking, (booking) => booking.tour)
   //   bookings = new Collection<Booking>(this);
+
+  toDto(): TourDto {
+    return {
+      id: this.id,
+      guide_id: this.guide_id,
+      name: this.name,
+      description: this.description,
+      min_travellers: this.min_travellers,
+      max_travellers: this.max_travellers,
+      price: this.price,
+      duration_minutes: this.duration_minutes,
+      subcategory_ids: this.tourSubcategories
+        ? this.tourSubcategories.getItems().map((tsc) => tsc.subcategory.id)
+        : [],
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+    };
+  }
 }
