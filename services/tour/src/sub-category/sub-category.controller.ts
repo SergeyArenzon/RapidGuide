@@ -10,7 +10,7 @@ export class SubCategoryController {
 
   @Get()
   @UseGuards(ScopesGuard)
-  @Scopes(ScopePermission.SUBCATEGORY_READ)
+  @Scopes([ScopePermission.SUBCATEGORY_READ])
   findAll(): Promise<SubCategoryDto[]> {
     return this.subCategoryService
       .findAll()

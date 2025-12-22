@@ -68,6 +68,8 @@ export class JwtAuthGuard implements CanActivate {
         email: payload.email,
         scopes: payload.scopes,
         roles: payload.roles,
+        guide_id: payload.guide_id as string | undefined,
+        traveller_id: payload.traveller_id as string | undefined,
       };
       return true;
     } catch (err) {

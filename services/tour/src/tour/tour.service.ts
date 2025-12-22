@@ -12,9 +12,12 @@ export class TourService {
     private readonly em: EntityManager,
   ) {}
 
-  async create(createTourDto: CreateTourDto): Promise<TourDto> {
+  async create(guideId: string, createTourDto: CreateTourDto): Promise<TourDto> {
     const em = this.em.fork();
-    const newTour = new Tour(createTourDto);
+    const newTour = new Tour({
+      ...createTourDto,
+      guide_id: guideId,
+    });
     await em.persist(newTour).flush();
     return newTour.toDto();
   }

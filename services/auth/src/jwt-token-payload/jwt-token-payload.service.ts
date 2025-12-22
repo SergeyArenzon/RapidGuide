@@ -54,16 +54,20 @@ export class JwtTokenPayloadService {
         ),
       );
 
-      const validatedData = getProfilesMeResponseSchema.parse(data);
+      const getProfileResponse = getProfilesMeResponseSchema.parse(data);
 
       let roles: string[] = [];
       let scopes: string[] = [];
 
       // create roles and scopes
-      roles = this.getRoles(validatedData);
-      scopes = this.scopeService.getScopes(validatedData);
+      roles = this.getRoles(getProfileResponse);
+      scopes = this.scopeService.getScopes(getProfileResponse);
 
-      return this.payload(session, user, roles, scopes);
+      // Extract guide_id and traveller_id if they exist
+      const guide_id = getProfileResponse.guide?.id;
+      const traveller_id = getProfileResponse.traveller?.id;
+
+      return this.payload(session, user, roles, scopes, guide_id, traveller_id);
     } catch (error) {
       this.logger.error(error);
       // Handle HTTP errors (from axios/HttpService)
@@ -71,7 +75,14 @@ export class JwtTokenPayloadService {
     }
   }
 
-  payload(session: Session, user: User, roles: string[], scopes: string[]) {
+  payload(
+    session: Session,
+    user: User,
+    roles: string[],
+    scopes: string[],
+    guide_id?: string,
+    traveller_id?: string,
+  ) {
     const now = Math.floor(Date.now() / 1000); // Current time in seconds (Unix timestamp)
     // Convert Date objects to Unix timestamps (seconds)
     const iat =
@@ -79,7 +90,7 @@ export class JwtTokenPayloadService {
         ? Math.floor(session.createdAt.getTime() / 1000)
         : session.createdAt;
 
-    const payload = {
+    const payload: Record<string, any> = {
       // iss is set by better-auth JWT plugin configuration
       iss: 'auth-svc',
       aud: ['profile-svc', 'tour-svc'],
@@ -92,7 +103,10 @@ export class JwtTokenPayloadService {
       iat: iat, // Issued at time (Unix timestamp in seconds)
       nbf: iat, // Not before time (same as issued at)
       jti: session.token,
+      ...(guide_id && { guide_id }),
+      ...(traveller_id && { traveller_id }),
     };
+
     return payload;
   }
 

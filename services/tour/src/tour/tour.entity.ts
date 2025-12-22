@@ -90,7 +90,6 @@ export class Tour extends BaseEntity {
   toDto(): TourDto {
     return {
       id: this.id,
-      guide_id: this.guide_id,
       name: this.name,
       description: this.description,
       min_travellers: this.min_travellers,
