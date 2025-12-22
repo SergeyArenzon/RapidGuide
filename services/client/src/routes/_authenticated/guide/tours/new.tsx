@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { toast } from 'sonner'
-import type { TourDto , tourSchema} from '@rapid-guide-io/contracts'
-import type * as z from 'zod'
+import { createTourSchema} from '@rapid-guide-io/contracts'
+import type { CreateTourDto } from '@rapid-guide-io/contracts';
 import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
 import Api from '@/lib/api'
@@ -15,7 +15,6 @@ export const Route = createFileRoute('/_authenticated/guide/tours/new')({
   },
 })
 
-type FormValues = z.infer<typeof tourSchema>
 
 function CreateTourComponent() {
   const navigate = useNavigate()
@@ -37,11 +36,11 @@ function CreateTourComponent() {
 
   // Mutation for creating a tour
   const createTourMutation = useMutation({
-    mutationFn: (tour: TourDto) => api.tour.createTour(tour),
+    mutationFn: (tour: CreateTourDto) => api.tour.createTour(tour),
     onSuccess: () => {
       toast.success('Tour created successfully!')
       // Invalidate tours query to refetch the list
-      queryClient.invalidateQueries({ queryKey: ['tour', 'tours'] })
+      queryClient.invalidateQueries({ queryKey: ['tours'] })
       navigate({ to: '/guide/tours' })
     },
     onError: (error: Error) => {
@@ -64,7 +63,7 @@ function CreateTourComponent() {
     }))
   }, [categories, subcategories])
 
-  const fields: Array<FieldConfig & { name: keyof FormValues }> = [
+  const fields: Array<FieldConfig & { name: keyof CreateTourDto }> = [
     {
       name: 'name',
       type: 'text',
@@ -122,20 +121,6 @@ function CreateTourComponent() {
     },
   ]
 
-  const handleSubmit = (data: FormValues) => {
-    const createTourDto: TourDto = {
-      name: data.name,
-      description: data.description,
-      price: data.price,
-      duration_minutes: data.duration_minutes,
-      min_travellers: data.min_travellers,
-      max_travellers: data.max_travellers,
-      subcategory_ids: data.subcategory_ids,
-    }
-
-    createTourMutation.mutate(createTourDto)
-  }
-
   const isLoading = isLoadingCategories || isLoadingSubcategories || createTourMutation.isPending
 
   return (
@@ -146,10 +131,10 @@ function CreateTourComponent() {
         </p>
       </div>
 
-      <Form<FormValues>
+      <Form<CreateTourDto>
         fields={fields}
-        schema={tourSchema}
-        onSubmit={handleSubmit}
+        schema={createTourSchema}
+        onSubmit={(data) => createTourMutation.mutate(data)}
         submitButtonText="Create Tour"
         isLoading={isLoading}
         onCancel={() => navigate({ to: '/guide/tours' })}
