@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import React from 'react'
 import { toast } from 'sonner'
 import { createTourSchema} from '@rapid-guide-io/contracts'
 import type { CreateTourDto } from '@rapid-guide-io/contracts';
 import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
 import Api from '@/lib/api'
+import Loading from '@/components/Loading';
+import { Error } from '@/components/Error';
 
 export const Route = createFileRoute('/_authenticated/guide/tours/new')({
   component: CreateTourComponent,
@@ -18,20 +19,28 @@ export const Route = createFileRoute('/_authenticated/guide/tours/new')({
 
 function CreateTourComponent() {
   const navigate = useNavigate()
-  const api = React.useMemo(() => new Api(), [])
+  const api = new Api()
   const queryClient = useQueryClient()
 
   // Fetch categories and subcategories using TanStack Query
-  const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.tour.getCategories(),
-    retry: false,
+  const { 
+    data: categories = [], 
+    isLoading: isLoadingCategories, 
+    isError: isErrorCategories, 
+    refetch: refetchCategories } = useQuery({
+      queryKey: ['categories'],
+      queryFn: () => api.tour.getCategories(),
+      retry: false,
   })
 
-  const { data: subcategories = [], isLoading: isLoadingSubcategories } = useQuery({
-    queryKey: ['subcategories'],
-    queryFn: () => api.tour.getSubCategories(),
-    retry: false,
+  const { 
+    data: subcategories = [], 
+    isLoading: isLoadingSubcategories, 
+    isError: isErrorSubcategories, 
+    refetch: refetchSubcategories } = useQuery({
+      queryKey: ['subcategories'],
+      queryFn: () => api.tour.getSubCategories(),
+      retry: false,
   })
 
   // Mutation for creating a tour
@@ -50,18 +59,16 @@ function CreateTourComponent() {
   })
 
   // Prepare subcategory options grouped by category
-  const subcategoryOptions = React.useMemo(() => {
-    return categories.map((category) => ({
-      value: category.id,
-      label: category.name,
-      subcategories: subcategories
-        .filter((sub) => sub.category_id === category.id)
-        .map((sub) => ({
-          value: sub.id,
-          label: sub.name,
-        })),
-    }))
-  }, [categories, subcategories])
+  const subcategoryOptions = categories.map((category) => ({
+    value: category.id,
+    label: category.name,
+    subcategories: subcategories
+      .filter((sub) => sub.category_id === category.id)
+      .map((sub) => ({
+        value: sub.id,
+        label: sub.name,
+      })),
+  }))
 
   const fields: Array<FieldConfig & { name: keyof CreateTourDto }> = [
     {
@@ -123,6 +130,24 @@ function CreateTourComponent() {
 
   const isLoading = isLoadingCategories || isLoadingSubcategories || createTourMutation.isPending
 
+  if (isLoading) return <Loading />
+
+  if (isErrorCategories) return <Error
+    title="Failed to load categories or subcategories"
+    description="Please try again later"
+    retryAction={() => refetchCategories()}
+  />
+  if (isErrorSubcategories) return <Error
+    title="Failed to load subcategories"
+    description="Please try again later"
+    retryAction={() => refetchSubcategories()}
+  />
+  if (createTourMutation.isError) return <Error
+    title="Failed to create tour"
+    description="Please try again later"
+    retryAction={() => createTourMutation.reset()}
+  />
+  
   return (
     <div className="space-y-6">
       <div>
