@@ -14,6 +14,13 @@ export class TourService {
     private readonly em: EntityManager,
   ) {}
 
+  async findAll(): Promise<TourDto[]> {
+    const tours = await this.tourRepository.findAll({
+      populate: ['tourSubcategories.subcategory'],
+    });
+    return tours.map((tour) => tour.toDto());
+  }
+
   async create(
     guideId: string,
     createTourDto: CreateTourDto,
