@@ -1,12 +1,15 @@
+import * as React from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { CirclePlus, MapPin } from 'lucide-react'
+import type { ColumnDef } from '@tanstack/react-table'
+import type { TourDto } from '@rapid-guide-io/contracts'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import Api from '@/lib/api'
 import Loading from '@/components/Loading'
 import { Error } from '@/components/Error'
+import { DataTable } from '@/components/DataTable'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -19,7 +22,7 @@ function RouteComponent() {
   const api = new Api()
 
   const {
-    data: tours = [],
+    data: tours = [] as Array<TourDto>,
     isLoading,
     isError,
     refetch,
@@ -27,8 +30,51 @@ function RouteComponent() {
     queryKey: ['tours'],
     queryFn: () => api.tour.getTours(),
     retry: false,
-  })
+  });
+
   const isFirstTour = tours.length === 0;
+
+  const columns = React.useMemo<Array<ColumnDef<TourDto>>>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: 'Name',
+        cell: (info) => (
+          <span className="font-medium text-foreground">
+            {info.getValue<string>()}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'duration_minutes',
+        header: 'Duration',
+        cell: (info) => (
+          <span className="text-sm text-muted-foreground">
+            {info.getValue<number>()} min
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'price',
+        header: 'Price',
+        cell: (info) => (
+          <span className="text-sm text-muted-foreground">
+            ${info.getValue<number>().toFixed(2)}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'description',
+        header: 'Description',
+        cell: (info) => (
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {info.getValue<string>()}
+          </p>
+        ),
+      },
+    ],
+    [],
+  )
 
   if (isLoading) return <Loading />
   if (isError) return <Error
@@ -57,25 +103,13 @@ function RouteComponent() {
           buttonLink="/guide/tours/new"
         />
       ) : (
-        <div className="space-y-3">
-          {tours.map((tour) => (
-            <Card key={tour.id}>
-              <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>{tour.name}</CardTitle>
-                  <span className="text-sm text-muted-foreground">
-                    {tour.duration_minutes} min • ${tour.price}
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="line-clamp-2">
-                  {tour.description}
-                </CardDescription>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <DataTable
+          columns={columns}
+          data={tours}
+          emptyMessage="No tours found."
+          filterColumnId="name"
+          filterPlaceholder="Filter tours..."
+        />
       )}
     </div>
   )
