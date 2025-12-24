@@ -19,7 +19,7 @@ export class GuideController {
 
   @Post()
   @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.GUIDE_WRITE])
+  @Scopes([ScopePermission.GUIDE_CREATE])
   async create(
     @CurrentUser() user,
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,

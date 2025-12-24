@@ -16,3 +16,5 @@ pnpx shadcn@latest add button
 
 # react instructions
 Dont add "use client"; it isnt nextjs app
+I am using react compiler
+always use shadcn as ui components and lucid-icons for icons

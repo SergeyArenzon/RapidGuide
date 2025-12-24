@@ -5,9 +5,7 @@ import { SubCategory } from './entities/sub-category';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 @Module({
-  imports: [
-      MikroOrmModule.forFeature([SubCategory]),
-    ],
+  imports: [MikroOrmModule.forFeature([SubCategory])],
   controllers: [SubCategoryController],
   providers: [SubCategoryService],
 })

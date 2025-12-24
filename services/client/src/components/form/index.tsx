@@ -80,21 +80,30 @@ export default function Form<T extends FieldValues>({
     switch (field.type) {
       case 'text':
         return (
-            <FormFieldBase
-              key={field.name}
-              name={field.name}
-              label={field.label}
-              helperText={field.helperText}
-              errors={errors}
-              required={field.required}
-              disabled={field.disabled}>
-              <Input 
-                id={field.name} type={field.inputType || 'text'} 
-                placeholder={field.placeholder} 
-                disabled={field.disabled || isLoading} 
-                {...register(field.name as Path<T>)} />
-            </FormFieldBase>
-          
+          <FormFieldBase
+            key={field.name}
+            name={field.name}
+            label={field.label}
+            helperText={field.helperText}
+            errors={errors}
+            required={field.required}
+            disabled={field.disabled}
+          >
+            <Input
+              id={field.name}
+              type={field.inputType || 'text'}
+              placeholder={field.placeholder}
+              disabled={field.disabled || isLoading}
+              {
+                ...register(
+                  field.name as Path<T>,
+                  field.inputType === 'number'
+                    ? { valueAsNumber: true }
+                    : undefined
+                )
+              }
+            />
+          </FormFieldBase>
         )
 
       case 'textarea':

@@ -16,13 +16,13 @@ import { jwt } from 'better-auth/plugins';
 
 @Module({
   imports: [
-    MikroOrmModule.forRoot(microOrmConfig),
     AuthModule.forRoot({
       auth: betterAuth({
         plugins: [jwt()],
       }),
       disableGlobalAuthGuard: true,
     }),
+    MikroOrmModule.forRoot(microOrmConfig),
     CategoryModule,
     SubCategoryModule,
     TourModule,

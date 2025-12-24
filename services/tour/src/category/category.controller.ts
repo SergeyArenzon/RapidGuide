@@ -10,7 +10,7 @@ export class CategoryController {
 
   @Get()
   @UseGuards(ScopesGuard)
-  @Scopes(ScopePermission.CATEGORY_READ)
+  @Scopes([ScopePermission.CATEGORY_READ])
   findAll(): Promise<CategoryDto[]> {
     return this.categoryService
       .findAll()
