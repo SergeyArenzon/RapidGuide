@@ -14,7 +14,7 @@ import { DataTable } from '@/components/DataTable'
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
   staticData: {
-    label: 'Tours',
+    label: 'Tours index',
   },
 })
 

@@ -1,9 +1,10 @@
 import { Outlet, useMatches } from '@tanstack/react-router'
 import { Breadcrumb } from '../Breadcrumb';
-import { Sidebar } from '@/components/Sidebar'
+import { Sidebar } from '@/components/Sidebar';
 
 export function AuthenticatedLayout() {
   const matches = useMatches()
+  
   // Get the label from the last match (the specific page)
   const lastMatch = matches[matches.length - 1]
   const currentLabel = (lastMatch.staticData as { label?: string } | undefined)?.label
@@ -14,7 +15,9 @@ export function AuthenticatedLayout() {
         <Sidebar />
       </aside>
       <main className="overflow-auto p-4 gap-2 flex flex-col">
-        <Breadcrumb />
+        <nav className="flex items-center gap-2">
+          <Breadcrumb />
+        </nav>
         {currentLabel && <h1 className="text-2xl font-semibold">{currentLabel}</h1>}
         <Outlet />
       </main>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useRouterState } from "@tanstack/react-router"
+import { Link, useMatches, useRouterState } from "@tanstack/react-router"
 import {
   Breadcrumb as BreadcrumbComponent,
   BreadcrumbItem,
@@ -11,14 +11,19 @@ import {
 
 export function Breadcrumb() {
   const { location } = useRouterState()
+  
+  const matches = useMatches()
   const pathname = location.pathname.split('/').filter(Boolean)
 
-  // Build breadcrumb items with cumulative paths
   const breadcrumbItems = pathname.map((item, index) => {
-    const path = '/' + pathname.slice(0, index + 1).join('/')
-    return { label: item, path }
-  })
+    const path = "/" + pathname.slice(0, index + 1).join('/') 
+    // get the staticData.label from the matches array by pathname === path
+    const match = matches.find(m => m.pathname === path)
 
+    const label = (match?.staticData as { label?: string } | undefined)?.label
+    return { label, path }
+  })
+  
   return (
     <BreadcrumbComponent>
       <BreadcrumbList>
@@ -26,10 +31,10 @@ export function Breadcrumb() {
           <React.Fragment key={item.path}>
             <BreadcrumbItem>
               {index === breadcrumbItems.length - 1 ? (
-                <BreadcrumbPage>{item.label.charAt(0).toUpperCase() + item.label.slice(1)}</BreadcrumbPage>
+                <BreadcrumbPage>{item.label}</BreadcrumbPage>
               ) : (
                 <BreadcrumbLink asChild>
-                  <Link to={item.path}>{item.label.charAt(0).toUpperCase() + item.label.slice(1)}</Link>
+                  <Link to={item.path}>{item.label}</Link>
                 </BreadcrumbLink>
               )}
             </BreadcrumbItem>
