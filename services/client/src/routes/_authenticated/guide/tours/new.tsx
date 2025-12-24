@@ -13,6 +13,7 @@ export const Route = createFileRoute('/_authenticated/guide/tours/new')({
   component: CreateTourComponent,
   staticData: {
     label: 'Create Tour',
+    description: 'Fill in the details below to create a new tour.',
   },
 })
 
@@ -150,12 +151,6 @@ function CreateTourComponent() {
   
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-muted-foreground mt-2">
-          Fill in the details below to create a new tour.
-        </p>
-      </div>
-
       <Form<CreateTourDto>
         fields={fields}
         schema={createTourSchema}
