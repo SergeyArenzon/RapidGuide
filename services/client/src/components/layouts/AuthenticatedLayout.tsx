@@ -14,12 +14,15 @@ export function AuthenticatedLayout() {
       <aside>
         <Sidebar />
       </aside>
-      <main className="overflow-auto p-4 gap-2 flex flex-col">
-        <nav className="flex items-center gap-2">
-          <Breadcrumb />
-        </nav>
-        {currentLabel && <h1 className="text-2xl font-semibold">{currentLabel}</h1>}
-        <Outlet />
+      <main className="flex flex-col h-full overflow-hidden">
+          <nav className="flex flex-col  items-left gap-2 flex-shrink-0 p-4 pb-2">
+            <Breadcrumb />
+            {currentLabel && <h1 className="text-2xl font-semibold mt-2">{currentLabel}</h1>}
+          </nav>
+
+        <div className="flex-1 overflow-auto p-4 pt-2">
+          <Outlet />
+        </div>
       </main>
     </div>
   )
