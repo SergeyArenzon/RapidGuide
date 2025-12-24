@@ -14,6 +14,10 @@ spec:
       labels:
         app: {{ include "tour.fullname" . }}
     spec:
+      initContainers:
+        - name: wait-for-tour-db
+          image: busybox
+          command: ["/bin/sh", "-c", "until nc -z -v -w30 {{ .Values.database.host }} {{ .Values.database.port }}; do echo 'Waiting for PostgreSQL...'; sleep 5; done"]
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
