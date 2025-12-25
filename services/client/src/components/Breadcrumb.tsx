@@ -8,19 +8,26 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+// Import router types to ensure declaration merging is applied
+import '@/types/router'
 
 export function Breadcrumb() {
   const { location } = useRouterState()
   
   const matches = useMatches()
   const pathname = location.pathname.split('/').filter(Boolean)
-
-  const breadcrumbItems = pathname.map((item, index) => {
+  
+  // Helper to normalize paths by removing trailing slashes for comparison
+  const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
+  
+  const breadcrumbItems = pathname.map((_, index) => {
     const path = "/" + pathname.slice(0, index + 1).join('/') 
-    // get the staticData.label from the matches array by pathname === path
-    const match = matches.find(m => m.pathname === path)
+    // get the staticData.label from the matches array by comparing normalized paths
+    const match = matches.find(m => normalizePath(m.pathname) === normalizePath(path))
 
-    const label = (match?.staticData as { label?: string } | undefined)?.label
+    // TypeScript now knows the type of staticData from declaration merging
+    const label = match?.staticData?.label
+    
     return { label, path }
   })
   

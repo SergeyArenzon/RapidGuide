@@ -1,14 +1,17 @@
 import { Outlet, useMatches } from '@tanstack/react-router'
 import { Breadcrumb } from '../Breadcrumb';
 import { Sidebar } from '@/components/Sidebar';
+// Import router types to ensure declaration merging is applied
+import '@/types/router'
 
 export function AuthenticatedLayout() {
   const matches = useMatches()
   
   // Get the label from the last match (the specific page)
   const lastMatch = matches[matches.length - 1]
-  const currentLabel = (lastMatch.staticData as { label?: string } | undefined)?.label
-  const currentDescription = (lastMatch.staticData as { description?: string } | undefined)?.description
+  // TypeScript now knows the type of staticData from declaration merging
+  const currentLabel = lastMatch.staticData?.label
+  const currentDescription = lastMatch.staticData?.description
 
 
   return (
