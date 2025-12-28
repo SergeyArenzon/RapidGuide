@@ -1,5 +1,5 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Tour } from './tour.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { CreateTourDto, TourDto } from '@rapid-guide-io/contracts';
@@ -19,6 +19,17 @@ export class TourService {
       populate: ['tourSubcategories.subcategory'],
     });
     return tours.map((tour) => tour.toDto());
+  }
+
+  async findOne(id: string): Promise<TourDto> {
+    const tour = await this.tourRepository.findOne(
+      { id },
+      { populate: ['tourSubcategories.subcategory'] },
+    );
+    if (!tour) {
+      throw new NotFoundException(`Tour with id ${id} not found`);
+    }
+    return tour.toDto();
   }
 
   async create(

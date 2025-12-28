@@ -43,5 +43,12 @@ export class TourApi extends BaseApi {
       z.array(tourSchema),
     );
   }
+
+  async getTour(tourId: string): Promise<TourDto> {
+    return this.validateResponse(
+      () => this.axios.get(`${TourApi.baseUrl}/tour/${tourId}`),
+      tourSchema
+    );
+  }
 }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { TourService } from './tour.service';
 import { CreateTourDto, TourDto } from '@rapid-guide-io/contracts';
 import { ScopesGuard } from '@rapid-guide-io/guards';
@@ -13,6 +13,13 @@ export class TourController {
   @Scopes([ScopePermission.TOUR_READ])
   findAll(): Promise<TourDto[]> {
     return this.tourService.findAll();
+  }
+
+  @Get(':id')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.TOUR_READ])
+  findOne(@Param('id') id: string): Promise<TourDto> {
+    return this.tourService.findOne(id);
   }
 
   @Post()

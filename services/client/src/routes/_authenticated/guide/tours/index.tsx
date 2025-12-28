@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { MapPin } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -59,12 +59,13 @@ function RouteComponent() {
         cell: (info) => {
           const tour = info.row.original
           return (
-            <button
-              onClick={() => navigate({ to: `/guide/tours/${tour.id}` })}
+            <Link
+              to="/guide/tours/$tourId"
+              params={{ tourId: tour.id }}
               className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer text-left"
             >
               {info.getValue<string>()}
-            </button>
+            </Link>
           )
         },
       },
