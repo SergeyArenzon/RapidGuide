@@ -1,4 +1,4 @@
-import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import type { CreateTourDto } from '@rapid-guide-io/contracts'
@@ -19,6 +19,18 @@ export function useTourFormData() {
     retry: false,
   })
 
+  const { data: countries } = useSuspenseQuery({
+    queryKey: ['countries'],
+    queryFn: () => api.profile.getCountries(),
+    retry: false,
+  })
+
+  const { data: cities } = useSuspenseQuery({
+    queryKey: ['cities'],
+    queryFn: () => api.profile.getCities(),
+    retry: false,
+  })
+
   // Prepare subcategory options grouped by category
   const subcategoryOptions = categories.map((category) => ({
     value: category.id,
@@ -31,7 +43,7 @@ export function useTourFormData() {
       })),
   }))
 
-  return { subcategoryOptions }
+  return { subcategoryOptions, countries, cities }
 }
 
 export function useCreateTourMutation() {

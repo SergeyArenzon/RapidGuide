@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { MapPin } from 'lucide-react'
+import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
@@ -8,7 +9,6 @@ import Api from '@/lib/api'
 import Loading from '@/components/Loading'
 import { Error } from '@/components/Error'
 import { DataTable } from '@/components/DataTable'
-import { useMemo } from 'react'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
