@@ -1,7 +1,7 @@
+import { useMemo } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { MapPin } from 'lucide-react'
-import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
@@ -33,6 +33,22 @@ function RouteComponent() {
     retry: false,
   });
 
+  const {
+    data: countries = [],
+  } = useQuery({
+    queryKey: ['countries'],
+    queryFn: () => api.profile.getCountries(),
+    retry: false,
+  });
+
+  const {
+    data: cities = [],
+  } = useQuery({
+    queryKey: ['cities'],
+    queryFn: () => api.profile.getCities(),
+    retry: false,
+  });
+
   const isFirstTour = tours.length === 0;
 
   const columns = useMemo<Array<ColumnDef<TourDto>>>(
@@ -40,11 +56,43 @@ function RouteComponent() {
       {
         accessorKey: 'name',
         header: 'Name',
-        cell: (info) => (
-          <span className="font-medium text-foreground">
-            {info.getValue<string>()}
-          </span>
-        ),
+        cell: (info) => {
+          const tour = info.row.original
+          return (
+            <button
+              onClick={() => navigate({ to: `/guide/tours/${tour.id}` })}
+              className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer text-left"
+            >
+              {info.getValue<string>()}
+            </button>
+          )
+        },
+      },
+      {
+        accessorKey: 'country_code',
+        header: 'Country',
+        cell: (info) => {
+          const countryCode = info.getValue<string>()
+          const country = countries.find(c => c.code === countryCode)
+          return (
+            <span className="text-sm text-muted-foreground">
+              {country?.name || countryCode}
+            </span>
+          )
+        },
+      },
+      {
+        accessorKey: 'city_id',
+        header: 'City',
+        cell: (info) => {
+          const cityId = info.getValue<number>()
+          const city = cities.find(c => c.id === cityId)
+          return (
+            <span className="text-sm text-muted-foreground">
+              {city?.name || cityId}
+            </span>
+          )
+        },
       },
       {
         accessorKey: 'duration_minutes',
@@ -74,7 +122,7 @@ function RouteComponent() {
         ),
       },
     ],
-    [],
+    [countries, cities, navigate],
   )
 
   if (isLoading) return <Loading />
