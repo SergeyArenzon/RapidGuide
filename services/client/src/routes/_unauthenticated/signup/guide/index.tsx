@@ -7,13 +7,13 @@ import type {CreateGuideDto} from '@rapid-guide-io/contracts';
 import type { AlertDialogState} from '@/components/AlertDialog';
 import { Error } from '@/components/Error';
 import Form from '@/components/form';
-import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
+import { GuideSignupSkeleton } from './-skeleton';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 import { useGuideStore } from '@/store/useGuide';
 import { useRoleStore } from '@/store/useRole';
 
-export const Route = createFileRoute('/_unauthenticated/signup/guide')({
+export const Route = createFileRoute('/_unauthenticated/signup/guide/')({
   component: RouteComponent,
   staticData: {
     label: 'Create Guide Profile',
@@ -103,7 +103,7 @@ function RouteComponent() {
       }
     }
       
-    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
+    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <GuideSignupSkeleton/>
   
     if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
     if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
