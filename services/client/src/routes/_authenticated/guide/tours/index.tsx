@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { MapPin } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
