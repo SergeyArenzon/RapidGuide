@@ -5,8 +5,8 @@ import type { CreateTourDto } from '@rapid-guide-io/contracts';
 import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
 import { Error } from '@/components/Error';
-import { useTourFormData, useCreateTourMutation } from './hooks';
-import { CreateTourSkeleton } from './skeleton';
+import { useTourFormData, useCreateTourMutation } from './-hooks';
+import { CreateTourSkeleton } from './-skeleton';
 
 export const Route = createFileRoute('/_authenticated/guide/tours/new/')({
   component: () => (

@@ -7,13 +7,13 @@ import type { CreateTravellerDto } from '@rapid-guide-io/contracts';
 import type { AlertDialogState} from '@/components/AlertDialog';
 import { Error } from '@/components/Error';
 import Form from '@/components/form';
-import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
 import { useTravellerStore } from '@/store/useTraveller';
 import { useRoleStore } from '@/store/useRole';
+import { TravellerSignupSkeleton } from './-skeleton';
 
-export const Route = createFileRoute('/_unauthenticated/signup/traveller')({
+export const Route = createFileRoute('/_unauthenticated/signup/traveller/')({
   component: RouteComponent,
   staticData: {
     label: 'Create Traveller Profile',
@@ -104,7 +104,7 @@ function RouteComponent() {
       }
     }
       
-    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
+    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <TravellerSignupSkeleton/>
   
     if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
     if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
