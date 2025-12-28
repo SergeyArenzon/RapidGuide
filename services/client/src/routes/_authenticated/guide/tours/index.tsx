@@ -86,15 +86,6 @@ function RouteComponent() {
 
   return (
     <div>
-      {!isFirstTour && <div className="flex justify-between items-center">
-        <Button asChild>
-          <Link to="/guide/tours/new">
-            <CirclePlus className="mr-2 h-4 w-4" />
-            Create New Tour
-          </Link>
-        </Button>
-      </div>}
-
       {isFirstTour ? (
         <FirstTimeCreation
           title="Create Your First Tour"
@@ -110,6 +101,10 @@ function RouteComponent() {
           emptyMessage="No tours found."
           filterColumnId="name"
           filterPlaceholder="Filter tours..."
+          name="Tour"
+          onCreate={() => {
+            alert()
+          }}
         />
       )}
     </div>
