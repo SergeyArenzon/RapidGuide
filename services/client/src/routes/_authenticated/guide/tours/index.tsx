@@ -1,15 +1,14 @@
-import * as React from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { CirclePlus, MapPin } from 'lucide-react'
+import { MapPin } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
-import { Button } from '@/components/ui/button'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import Api from '@/lib/api'
 import Loading from '@/components/Loading'
 import { Error } from '@/components/Error'
 import { DataTable } from '@/components/DataTable'
+import { useMemo } from 'react'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -20,6 +19,7 @@ export const Route = createFileRoute('/_authenticated/guide/tours/')({
 })
 
 function RouteComponent() {
+  const navigate = useNavigate()
   const api = new Api()
 
   const {
@@ -35,7 +35,7 @@ function RouteComponent() {
 
   const isFirstTour = tours.length === 0;
 
-  const columns = React.useMemo<Array<ColumnDef<TourDto>>>(
+  const columns = useMemo<Array<ColumnDef<TourDto>>>(
     () => [
       {
         accessorKey: 'name',
@@ -86,15 +86,6 @@ function RouteComponent() {
 
   return (
     <div>
-      {!isFirstTour && <div className="flex justify-between items-center">
-        <Button asChild>
-          <Link to="/guide/tours/new">
-            <CirclePlus className="mr-2 h-4 w-4" />
-            Create New Tour
-          </Link>
-        </Button>
-      </div>}
-
       {isFirstTour ? (
         <FirstTimeCreation
           title="Create Your First Tour"
@@ -110,6 +101,8 @@ function RouteComponent() {
           emptyMessage="No tours found."
           filterColumnId="name"
           filterPlaceholder="Filter tours..."
+          name="Tour"
+          onCreate={() => navigate({ to: '/guide/tours/new' })}
         />
       )}
     </div>

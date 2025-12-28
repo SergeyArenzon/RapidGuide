@@ -14,6 +14,7 @@ import {
   ChevronsRight,
   MoreHorizontal,
   Settings2,
+  CirclePlus,
 } from 'lucide-react'
 import type {
   ColumnDef,
@@ -63,6 +64,10 @@ export interface DataTableProps<TData> {
   onShowRow?: (row: TData) => void
   onEditRow?: (row: TData) => void
   onDeleteRow?: (row: TData) => void
+  /** Optional handler for creation button */
+  onCreate?: () => void
+  /** Optional name to display in the create button (e.g. "Tour", "User") */
+  name?: string
 }
 
 export function DataTable<TData>({
@@ -75,6 +80,8 @@ export function DataTable<TData>({
   onShowRow,
   onEditRow,
   onDeleteRow,
+  onCreate,
+  name,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -120,17 +127,28 @@ export function DataTable<TData>({
           />
         )}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <div className="ml-auto flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="inline-flex h-8 items-center gap-1"
+              >
+                <Settings2 className="h-4 w-4" />
+                View
+              </Button>
+            </DropdownMenuTrigger>
+            {onCreate && (
             <Button
-              variant="outline"
               size="sm"
-              className="ml-auto inline-flex h-8 items-center gap-1"
+              className="inline-flex h-8 items-center gap-1"
+              onClick={onCreate}
             >
-              <Settings2 className="h-4 w-4" />
-              View
+              <CirclePlus className="h-4 w-4" />
+              {name ? `Create ${name}` : 'Create'}
             </Button>
-          </DropdownMenuTrigger>
+          )}
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -151,6 +169,7 @@ export function DataTable<TData>({
               ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       </div>
 
       <Table>
