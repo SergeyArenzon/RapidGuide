@@ -1,45 +1,44 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import {  createGuideSchema } from '@rapid-guide-io/contracts';
+import { createTravellerSchema } from '@rapid-guide-io/contracts';
 import type z from 'zod';
-import type {CreateGuideDto} from '@rapid-guide-io/contracts';
+import type { CreateTravellerDto } from '@rapid-guide-io/contracts';
 import type { AlertDialogState} from '@/components/AlertDialog';
 import { Error } from '@/components/Error';
 import Form from '@/components/form';
-import Loading from '@/components/Loading';
 import Api from '@/lib/api/index';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
-import { useGuideStore } from '@/store/useGuide';
+import { useTravellerStore } from '@/store/useTraveller';
 import { useRoleStore } from '@/store/useRole';
+import { TravellerSignupSkeleton } from './-skeleton';
 
-export const Route = createFileRoute('/_unauthenticated/signup/guide')({
+export const Route = createFileRoute('/_unauthenticated/signup/traveller/')({
   component: RouteComponent,
   staticData: {
-    label: 'Create Guide Profile',
+    label: 'Create Traveller Profile',
   },
 })
 
 
 function RouteComponent() {
-  const [formState, setFormState] = useState<CreateGuideDto>({
+  const [formState, setFormState] = useState<CreateTravellerDto>({
     bio: '',
     subcategories_id: [],
     languages_code: [],
-    name: '',
     country_code: '',
     city_id: 0
   });
   const [isLoading, setIsLoading] = useState(false);
   const [dialogState, setDialogState] = useState<AlertDialogState>(INITIAL_ALERT_DIALOG_STATE);
-  
+  const { setRole } = useRoleStore(state => state);
+
   const navigate = useNavigate()
     
     const api = new Api();
-    const { setGuide } = useGuideStore(state => state);
-    const { setRole } = useRoleStore(state => state);
-    const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
-      setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
+    const { setTraveller } = useTravellerStore(state => state);
+    const handleFormChange = (currentState: Partial<z.infer<typeof createTravellerSchema>>) => {
+      setFormState((prev: CreateTravellerDto) => ({ ...prev, ...currentState }));
     };
     
     // Queries
@@ -69,41 +68,43 @@ function RouteComponent() {
       queryFn:() => api.profile.getCities()});
       
   
-    const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
+    const handleSubmit = async (data: z.infer<typeof createTravellerSchema>) => {
       try {
         setIsLoading(true);
-        await api.profile.createGuide(data);
-        setRole("guide");
+        const travellerData = await api.profile.createTraveller(data);
+        setTraveller(travellerData);
+        setRole("traveller");
         setDialogState({
           open: true,
-          title: 'Guide Profile Created',
-          description: 'Your guide profile has been created successfully.',
+          title: 'Traveller Profile Created',
+          description: 'Your traveller profile has been created successfully.',
           approveText: 'OK',
-          onApprove: async () => {
+          onApprove: async() => {
+            // TODO: Update when getMe response includes traveller property
             const meData = await api.profile.getMe();
-            if (meData.guide) {
-              setGuide(meData.guide);
+            if (meData.traveller) {
+              setTraveller(meData.traveller);
             }
-            navigate({ to: '/guide' });
+            navigate({ to: '/traveller' });
           },
         }); 
       } catch (err) {
         const error = err as Error;
         setDialogState({
           open: true,
-          title: 'Failed to create guide profile',
+          title: 'Failed to create traveller profile',
           description: error.message,
           approveText: 'Try again',
           variant: 'destructive',
           onApprove: () => {},
         }); 
-        console.error('Failed to create guide:', error);
+        console.error('Failed to create traveller:', error);
       } finally {
         setIsLoading(false);
       }
     }
       
-    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <Loading/>
+    if (isLoadingLanguages || isLoadingCategories || isLoadingCountries || isLoadingCities || isLoadingSubCategories) return <TravellerSignupSkeleton/>
   
     if (errorLanguages) return <Error retryAction={() => refetchLanguages()}/>
     if (errorCategories) return <Error retryAction={() => refetchCategories()}/>
@@ -126,17 +127,10 @@ function RouteComponent() {
           variant={dialogState.variant}
         /> 
         <Form
-          title="Profile Information"
-          description="Complete your profile information below"
-          schema={createGuideSchema}
+          title="Traveller Profile Information"
+          description="Complete your traveller profile information below"
+          schema={createTravellerSchema}
           fields={[
-            {
-              type: "text",
-              name: "name",
-              label: "Guide Name",
-              placeholder: "Enter guide name",
-              helperText: "Your full name as it appears on your ID.",
-            },
             {
               type: "textarea",
               name: "bio",
@@ -156,7 +150,7 @@ function RouteComponent() {
                   label: subcat.name
                 })) || []
               })) || [],
-              placeholder: "Select categories",
+              placeholder: "Select your favorite categories",
               helperText: "Select the categories that interest you.",
             },
             {

@@ -15,6 +15,7 @@ export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
   staticData: {
     label: 'Tours index',
+    description: 'View all your tours and manage them.',
   },
 })
 
