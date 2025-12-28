@@ -71,22 +71,8 @@ export default function Form<T extends FieldValues>({
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
 
-  // Helper function to convert colSpan to Tailwind class
-  const getColSpanClass = (colSpan?: number | 'full') => {
-    if (!colSpan) return '';
-    if (colSpan === 'full') return 'col-span-full';
-    return `col-span-${colSpan}`;
-  };
-
   // Render field based on type
   const renderField = (field: FieldConfig, index: number) => {
-    const colSpanClass = 'colSpan' in field ? getColSpanClass(field.colSpan) : '';
-    const combinedClassName = [
-      'colSpan' in field && field.className ? field.className : '',
-      colSpanClass,
-      'colSpan' in field && !field.className && colSpanClass ? '' : ''
-    ].filter(Boolean).join(' ');
-    
     switch (field.type) {
       case 'text':
         return (

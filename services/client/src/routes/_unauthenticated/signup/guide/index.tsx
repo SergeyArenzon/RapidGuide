@@ -185,10 +185,13 @@ function RouteComponent() {
               helperText: "Select the city you live in.",
               isLoading: isLoadingCities
             },
+            {
+              type: 'submit',
+              label: 'Save Profile',
+            },
           ]}
           onSubmit={handleSubmit}
           onChange={handleFormChange} 
-          submitButtonText="Save Profile"
           isLoading={isLoading}
         />
       </>
