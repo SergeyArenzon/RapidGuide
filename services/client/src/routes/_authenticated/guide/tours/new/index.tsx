@@ -24,8 +24,9 @@ function CreateTourComponent() {
   const navigate = useNavigate()
   const { subcategoryOptions } = useTourFormData()
   const createTourMutation = useCreateTourMutation()
+  const formClassName = "grid grid-cols-2 gap-6 items-center"
 
-  const fields: Array<FieldConfig & { name: keyof CreateTourDto }> = [
+  const fields: Array<FieldConfig | (FieldConfig & { name: keyof CreateTourDto })> = [
     {
       name: 'name',
       type: 'text',
@@ -39,7 +40,7 @@ function CreateTourComponent() {
       label: 'Description',
       placeholder: 'Enter tour description',
       required: true,
-      rows: 4,
+      rows: 4
     },
     {
       name: 'price',
@@ -80,6 +81,16 @@ function CreateTourComponent() {
       placeholder: 'Select subcategories',
       options: subcategoryOptions,
       required: true,
+      className: 'col-span-2',
+    },
+    {
+      type: 'submit',
+      label: 'Create Tour',
+    },
+    {
+      type: 'cancel',
+      label: 'Cancel',
+      onClick: () => navigate({ to: '/guide/tours' }),
     },
   ]
 
@@ -90,16 +101,15 @@ function CreateTourComponent() {
   />
   
   return (
-    <div className="space-y-6">
+    <div className="flex justify-center"> 
       <Form<CreateTourDto>
         fields={fields}
         schema={createTourSchema}
         onSubmit={(data) => createTourMutation.mutate(data)}
-        submitButtonText="Create Tour"
         isLoading={createTourMutation.isPending}
-        onCancel={() => navigate({ to: '/guide/tours' })}
-        cancelButtonText="Cancel"
+        formClassName={formClassName}
       />
-    </div>
+      </div>
+    
   )
 }

@@ -26,9 +26,9 @@ export function AuthenticatedLayout() {
             {currentDescription && <p className="text-muted-foreground">{currentDescription}</p>}
           </nav>
 
-        <div className="flex-1 overflow-auto">
+        <section className="flex-1 overflow-auto">
           <Outlet />
-        </div>
+        </section>
       </main>
     </div>
   )

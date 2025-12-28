@@ -6,6 +6,7 @@ type BaseFieldConfig = {
     required?: boolean
     disabled?: boolean
     hide?: boolean
+    className?: string
     validation?: {
       min?: number
       max?: number
@@ -41,9 +42,24 @@ type BaseFieldConfig = {
     placeholder?: string
     isLoading?: boolean
   }
+
+  type SubmitButtonFieldConfig = {
+    type: 'submit'
+    label: string
+    className?: string
+    disabled?: boolean
+  }
+
+  type CancelButtonFieldConfig = {
+    type: 'cancel'
+    label: string
+    onClick: () => void
+    className?: string
+    disabled?: boolean
+  }
   
   
   
-type FieldConfig = TextFieldConfig | TextareaFieldConfig | CheckboxFieldConfig | SelectFieldConfig
+type FieldConfig = TextFieldConfig | TextareaFieldConfig | CheckboxFieldConfig | SelectFieldConfig | SubmitButtonFieldConfig | CancelButtonFieldConfig
   
-export type { FieldConfig, TextFieldConfig, TextareaFieldConfig, CheckboxFieldConfig, SelectFieldConfig }
+export type { FieldConfig, TextFieldConfig, TextareaFieldConfig, CheckboxFieldConfig, SelectFieldConfig, SubmitButtonFieldConfig, CancelButtonFieldConfig }
