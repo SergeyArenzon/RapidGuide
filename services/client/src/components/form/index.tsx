@@ -23,6 +23,7 @@ type FormProps<T extends FieldValues> = {
   error?: string | null
   schema: z.ZodSchema<T>
   formClassName?: string
+  defaultValues?: Partial<T>
 }
 
 export default function Form<T extends FieldValues>({
@@ -33,7 +34,8 @@ export default function Form<T extends FieldValues>({
   description,
   isLoading = false,
   schema,
-  formClassName
+  formClassName,
+  defaultValues
 }: FormProps<T>) {
   
   // Setup form
@@ -43,10 +45,11 @@ export default function Form<T extends FieldValues>({
     setValue,
     watch,
     control,
+    reset,
     formState: { errors }
   } = useForm<T>({
     resolver: zodResolver(schema),
-    defaultValues: fields.filter(field => {
+    defaultValues: defaultValues || fields.filter(field => {
       if (field.type === 'submit' || field.type === 'cancel') return false;
       if ('hide' in field && (field as any).hide) return false;
       return 'name' in field;
@@ -57,6 +60,13 @@ export default function Form<T extends FieldValues>({
       return acc;
     }, {} as DefaultValues<T>)
   })
+
+  // Reset form when defaultValues change
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues as T)
+    }
+  }, [defaultValues, reset])
 
   // Set up subscription to form changes instead of watching all values
   useEffect(() => {

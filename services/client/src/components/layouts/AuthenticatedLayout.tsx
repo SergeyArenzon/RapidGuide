@@ -10,6 +10,7 @@ export function AuthenticatedLayout() {
   // Get the label from the last match (the specific page)
   const lastMatch = matches[matches.length - 1]
   // TypeScript now knows the type of staticData from declaration merging
+  console.log({lastMatch});
   const currentLabel = lastMatch.staticData.label
   const currentDescription = lastMatch.staticData.description
 

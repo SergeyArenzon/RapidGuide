@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/_authenticated/guide/')({
   component: GuideDashboard,
   staticData: {
+    description: 'Manage your tours, bookings, and guide profile.',
     label: 'Guide Dashboard',
   },
 })
