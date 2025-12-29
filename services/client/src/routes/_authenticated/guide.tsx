@@ -5,6 +5,7 @@ export const Route = createFileRoute('/_authenticated/guide')({
   component: GuideLayout,
   staticData: {
     label: 'Guide Dashboard',
+    showBreadcrumb: true,
   },
 })
 

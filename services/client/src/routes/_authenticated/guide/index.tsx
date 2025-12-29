@@ -5,6 +5,7 @@ export const Route = createFileRoute('/_authenticated/guide/')({
   staticData: {
     description: 'Manage your tours, bookings, and guide profile.',
     label: 'Guide Dashboard',
+    showBreadcrumb: false,
   },
 })
 

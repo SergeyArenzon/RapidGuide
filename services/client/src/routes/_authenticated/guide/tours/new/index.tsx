@@ -17,6 +17,7 @@ export const Route = createFileRoute('/_authenticated/guide/tours/new/')({
   staticData: {
     label: 'Create Tour',
     description: 'Fill in the details below to create a new tour.',
+    showBreadcrumb: true,
   },
 })
 
@@ -29,6 +30,9 @@ function CreateTourComponent() {
     country_code: '',
     city_id: undefined,
   })
+
+  console.log({formState});
+  
 
   const handleFormChange = (currentState: Partial<CreateTourDto>) => setFormState((prev) => ({ ...prev, ...currentState }))
 

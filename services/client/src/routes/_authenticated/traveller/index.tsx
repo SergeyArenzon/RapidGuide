@@ -4,6 +4,7 @@ export const Route = createFileRoute('/_authenticated/traveller/')({
   component: TravellerDashboard,
   staticData: {
     label: 'Dashboard',
+    showBreadcrumb: true,
   },
 })
 

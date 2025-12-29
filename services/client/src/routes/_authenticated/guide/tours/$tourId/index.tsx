@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, Clock, DollarSign, Edit, MapPin, MoreHorizontal, Trash2, Users } from 'lucide-react'
+import { Clock, DollarSign, Edit, MapPin, MoreHorizontal, Trash2, Users } from 'lucide-react'
 import { useTourDetail } from './-hooks'
 import Loading from '@/components/Loading'
 import { Error } from '@/components/Error'
@@ -15,6 +15,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/$tourId/')({
+  staticData: {
+    label: 'Tour Details',
+    description: 'View tour details.',
+    showBreadcrumb: false,
+  },
   component: RouteComponent,
 })
 

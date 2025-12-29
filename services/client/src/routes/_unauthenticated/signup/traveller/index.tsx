@@ -17,6 +17,7 @@ export const Route = createFileRoute('/_unauthenticated/signup/traveller/')({
   component: RouteComponent,
   staticData: {
     label: 'Create Traveller Profile',
+    showBreadcrumb: false,
   },
 })
 

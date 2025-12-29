@@ -10,17 +10,25 @@ import {
 } from "@/components/ui/breadcrumb"
 // Import router types to ensure declaration merging is applied
 import '@/types/router'
+import { extractNameFromLoaderData } from '@/lib/route-utils'
 
 export function Breadcrumb() {
   const matches = useMatches()
-  
-  // Filter matches that have labels and map them to breadcrumb items
+  console.log({matches});
+  // Filter matches that have labels, map them to breadcrumb items
   const breadcrumbItems = matches
-    .filter(match => match.staticData.label)
-    .map(match => ({
-      label: match.staticData.label!,
-      path: match.pathname,
-    }))
+    .filter(match => match.staticData.showBreadcrumb)
+    .map(match => {
+      // Try to extract name from loader data (works for tour, booking, or any entity with a name)
+      const dynamicName = extractNameFromLoaderData(match.loaderData)
+      const label = dynamicName || match.staticData.label!
+      return {
+        label,
+        path: match.pathname,
+      }
+    })
+    console.log({breadcrumbItems});
+    
   
   return (
     <BreadcrumbComponent>

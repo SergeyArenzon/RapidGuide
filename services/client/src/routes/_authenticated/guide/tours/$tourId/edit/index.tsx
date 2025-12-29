@@ -19,6 +19,7 @@ export const Route = createFileRoute('/_authenticated/guide/tours/$tourId/edit/'
   staticData: {
     label: 'Edit Tour',
     description: 'Update tour details.',
+    showBreadcrumb: true,
   },
 })
 

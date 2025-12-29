@@ -3,6 +3,7 @@ import { Breadcrumb } from '../Breadcrumb';
 import { Sidebar } from '@/components/Sidebar';
 // Import router types to ensure declaration merging is applied
 import '@/types/router'
+import { extractNameFromLoaderData } from '@/lib/route-utils'
 
 export function AuthenticatedLayout() {
   const matches = useMatches()
@@ -11,7 +12,9 @@ export function AuthenticatedLayout() {
   const lastMatch = matches[matches.length - 1]
   // TypeScript now knows the type of staticData from declaration merging
   console.log({lastMatch});
-  const currentLabel = lastMatch.staticData.label
+  // Try to extract name from loader data (works for tour, booking, or any entity with a name)
+  const dynamicName = extractNameFromLoaderData(lastMatch.loaderData)
+  const currentLabel = dynamicName || lastMatch.staticData.label
   const currentDescription = lastMatch.staticData.description
 
 

@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_unauthenticated/signin')({
   validateSearch: searchSchema,
   staticData: {
     label: 'Sign In',
+    showBreadcrumb: false,
   },
   beforeLoad: ({ context }) => {
     const { auth } = context

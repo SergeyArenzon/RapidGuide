@@ -5,6 +5,7 @@ export const Route = createFileRoute('/_authenticated/guide/tours')({
   staticData: {
     label: 'Tours',
     description: 'View all your tours and manage them.',
+    showBreadcrumb: true,
   },
 })
 
