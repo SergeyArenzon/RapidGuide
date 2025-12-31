@@ -1,51 +1,30 @@
-import { useMemo } from 'react'
+import { Suspense, useMemo } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
 import { MapPin } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
-import Api from '@/lib/api'
-import Loading from '@/components/Loading'
-import { Error } from '@/components/Error'
 import { DataTable } from '@/components/DataTable'
+import { ToursListSkeleton } from './-skeleton'
+import { useTours } from './-hooks'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
+  return (
+    <Suspense fallback={<ToursListSkeleton />}>
+      <ToursListContent />
+    </Suspense>
+  )
+}
+
+function ToursListContent() {
   const navigate = useNavigate()
-  const api = new Api()
+  const { tours, countries, cities } = useTours()
 
-  const {
-    data: tours = [] as Array<TourDto>,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ['tours'],
-    queryFn: () => api.tour.getTours(),
-    retry: false,
-  });
-
-  const {
-    data: countries = [],
-  } = useQuery({
-    queryKey: ['countries'],
-    queryFn: () => api.profile.getCountries(),
-    retry: false,
-  });
-
-  const {
-    data: cities = [],
-  } = useQuery({
-    queryKey: ['cities'],
-    queryFn: () => api.profile.getCities(),
-    retry: false,
-  });
-
-  const isFirstTour = tours.length === 0;
+  const isFirstTour = tours.length === 0
 
   const columns = useMemo<Array<ColumnDef<TourDto>>>(
     () => [
@@ -119,15 +98,8 @@ function RouteComponent() {
         ),
       },
     ],
-    [countries, cities, navigate],
+    [countries, cities],
   )
-
-  if (isLoading) return <Loading />
-  if (isError) return <Error
-    title="Failed to load tours"
-    description="Please try again later"
-    retryAction={() => refetch()}
-  />
 
   return (
     <div>

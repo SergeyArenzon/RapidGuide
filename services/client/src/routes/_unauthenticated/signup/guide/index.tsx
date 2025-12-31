@@ -10,7 +10,6 @@ import Form from '@/components/form';
 import Api from '@/lib/api/index';
 import { GuideSignupSkeleton } from './-skeleton';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
-import { useGuideStore } from '@/store/useGuide';
 import { useRoleStore } from '@/store/useRole';
 
 export const Route = createFileRoute('/_unauthenticated/signup/guide/')({
@@ -36,7 +35,6 @@ function RouteComponent() {
   const navigate = useNavigate()
     
     const api = new Api();
-    const { setGuide } = useGuideStore(state => state);
     const { setRole } = useRoleStore(state => state);
     const handleFormChange = (currentState: Partial<z.infer<typeof createGuideSchema>>) => {
       setFormState((prev: CreateGuideDto) => ({ ...prev, ...currentState }));
@@ -80,10 +78,6 @@ function RouteComponent() {
           description: 'Your guide profile has been created successfully.',
           approveText: 'OK',
           onApprove: async () => {
-            const meData = await api.profile.getMe();
-            if (meData.guide) {
-              setGuide(meData.guide);
-            }
             navigate({ to: '/guide' });
           },
         }); 

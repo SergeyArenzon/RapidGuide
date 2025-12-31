@@ -1,8 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Suspense } from 'react'
 import { Clock, DollarSign, Edit, MapPin, MoreHorizontal, Trash2, Users } from 'lucide-react'
 import { useTourDetail } from './-hooks'
-import Loading from '@/components/Loading'
-import { Error } from '@/components/Error'
+import { TourDetailSkeleton } from './-skeleton'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -24,24 +24,20 @@ export const Route = createFileRoute('/_authenticated/guide/tours/$tourId/')({
 })
 
 function RouteComponent() {
+  return (
+    <Suspense fallback={<TourDetailSkeleton />}>
+      <TourDetailContent />
+    </Suspense>
+  )
+}
+
+function TourDetailContent() {
   const navigate = useNavigate()
   const { tourId } = Route.useParams()
-  const { tour, isLoading, isError, refetch, country, city } = useTourDetail(tourId)
-
-  if (isLoading) return <Loading />
-  if (isError) return (
-    <Error
-      title="Failed to load tour"
-      description="Please try again later"
-      retryAction={() => refetch()}
-    />
-  )
-  if (!tour) return null
+  const { tour, country, city } = useTourDetail(tourId)
 
   return (
     <div className="space-y-6">
-      {/* Header with back button */}
-
       {/* Tour Information Card */}
       <Card>
         <CardHeader>

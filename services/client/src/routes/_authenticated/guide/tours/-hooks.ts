@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import Api from '@/lib/api'
+import type { TourDto } from '@rapid-guide-io/contracts'
 
-export function useTourDetail(tourId: string) {
+export function useTours() {
   const api = new Api()
 
-  const { data: tour } = useSuspenseQuery({
-    queryKey: ['tour', tourId],
-    queryFn: () => api.tour.getTour(tourId),
+  const { data: tours = [] as Array<TourDto> } = useSuspenseQuery({
+    queryKey: ['tours'],
+    queryFn: () => api.tour.getTours(),
     retry: false,
   })
 
@@ -22,13 +23,10 @@ export function useTourDetail(tourId: string) {
     retry: false,
   })
 
-  const country = countries.find(c => c.code === tour?.country_code)
-  const city = cities.find(c => c.id === tour?.city_id)
-
   return {
-    tour,
-    country,
-    city,
+    tours,
+    countries,
+    cities,
   }
 }
 

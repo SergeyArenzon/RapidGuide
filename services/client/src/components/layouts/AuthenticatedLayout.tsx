@@ -4,6 +4,8 @@ import { Sidebar } from '@/components/Sidebar';
 // Import router types to ensure declaration merging is applied
 import '@/types/router'
 import { extractNameFromLoaderData } from '@/lib/route-utils'
+import { useRoleStore } from '@/store/useRole';
+import Loading from '../Loading';
 
 export function AuthenticatedLayout() {
   const matches = useMatches()
@@ -11,12 +13,17 @@ export function AuthenticatedLayout() {
   // Get the label from the last match (the specific page)
   const lastMatch = matches[matches.length - 1]
   // TypeScript now knows the type of staticData from declaration merging
-  console.log({lastMatch});
   // Try to extract name from loader data (works for tour, booking, or any entity with a name)
-  const dynamicName = extractNameFromLoaderData(lastMatch.loaderData)
-  const currentLabel = dynamicName || lastMatch.staticData.label
-  const currentDescription = lastMatch.staticData.description
+  // Guard against undefined lastMatch during initial render
+  const dynamicName = lastMatch ? extractNameFromLoaderData(lastMatch.loaderData) : undefined
+  const currentLabel = dynamicName || lastMatch?.staticData?.label
+  const currentDescription = lastMatch?.staticData?.description
 
+  const { role } = useRoleStore((state) => state)
+
+  if (!role) {
+    return <Loading />
+  }
 
   return (
     <div className="grid grid-cols-[auto_1fr] h-full w-full p-4">

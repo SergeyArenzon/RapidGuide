@@ -14,7 +14,6 @@ import { extractNameFromLoaderData } from '@/lib/route-utils'
 
 export function Breadcrumb() {
   const matches = useMatches()
-  console.log({matches});
   // Filter matches that have labels, map them to breadcrumb items
   const breadcrumbItems = matches
     .filter(match => match.staticData.showBreadcrumb)
@@ -27,7 +26,6 @@ export function Breadcrumb() {
         path: match.pathname,
       }
     })
-    console.log({breadcrumbItems});
     
   
   return (

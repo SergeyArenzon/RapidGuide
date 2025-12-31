@@ -2,11 +2,15 @@ import axios from 'axios';
 import { setupRefreshTokenInterceptor } from './refresh-token.interception';
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import type { z } from 'zod';
+import { useJwtTokenStore } from '@/store/useJwtToken';
 
 export class BaseApi {
   protected axios: AxiosInstance;
 
-  constructor(accessToken: string, axiosInstance?: AxiosInstance) {
+  constructor(accessToken?: string | null, axiosInstance?: AxiosInstance) {
+    // Choose between provided token and zustand state
+    const token = accessToken ?? useJwtTokenStore.getState().getToken() ?? '';
+    
     if (axiosInstance) {
       this.axios = axiosInstance;
     } else {
@@ -16,12 +20,12 @@ export class BaseApi {
         timeout: 5000, // 5s timeout
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
+          'Authorization': `Bearer ${token}`
         },
       });
 
       // Set up refresh token interceptor with error handler
-      setupRefreshTokenInterceptor(this.axios, this.handleError.bind(this));
+      // setupRefreshTokenInterceptor(this.axios, this.handleError.bind(this));
     }
   }
 

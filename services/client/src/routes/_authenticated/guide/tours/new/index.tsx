@@ -30,12 +30,9 @@ function CreateTourComponent() {
     country_code: '',
     city_id: undefined,
   })
-
-  console.log({formState});
   
 
   const handleFormChange = (currentState: Partial<CreateTourDto>) => setFormState((prev) => ({ ...prev, ...currentState }))
-
 
   const fields: Array<FieldConfig | (FieldConfig & { name: keyof CreateTourDto })> = [
     {
