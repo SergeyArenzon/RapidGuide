@@ -1,17 +1,14 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
-import Api from '@/lib/api'
+import { tourQueries } from '@/lib/query'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/$tourId')({
   loader: async ({ params, context }) => {    
     const { tourId } = params
-    const queryKey = ['tour', tourId]
     
     // Only fetch if not in cache
-    const api = new Api(context.jwt!)
-    const tour = await context.queryClient.ensureQueryData({
-      queryKey,
-      queryFn: () =>  api.tour.getTour(tourId)
-    })
+    const tour = await context.queryClient.ensureQueryData(
+      tourQueries.detail(tourId, context.jwt)
+    )
     return { tour }
   },
   staticData: {

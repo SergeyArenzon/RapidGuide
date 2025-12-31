@@ -3,33 +3,13 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import type { CreateTourDto } from '@rapid-guide-io/contracts'
 import Api from '@/lib/api'
+import { tourQueries, profileQueries, tourQueryKeys } from '@/lib/query'
 
 export function useTourFormData() {
-  const api = new Api()
-
-  const { data: categories } = useSuspenseQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.tour.getCategories(),
-    retry: false,
-  })
-
-  const { data: subcategories } = useSuspenseQuery({
-    queryKey: ['subcategories'],
-    queryFn: () => api.tour.getSubCategories(),
-    retry: false,
-  })
-
-  const { data: countries } = useSuspenseQuery({
-    queryKey: ['countries'],
-    queryFn: () => api.profile.getCountries(),
-    retry: false,
-  })
-
-  const { data: cities } = useSuspenseQuery({
-    queryKey: ['cities'],
-    queryFn: () => api.profile.getCities(),
-    retry: false,
-  })
+  const { data: categories } = useSuspenseQuery(tourQueries.categories())
+  const { data: subcategories } = useSuspenseQuery(tourQueries.subcategories())
+  const { data: countries } = useSuspenseQuery(profileQueries.countries())
+  const { data: cities } = useSuspenseQuery(profileQueries.cities())
 
   // Prepare subcategory options grouped by category
   const subcategoryOptions = categories.map((category) => ({
@@ -47,13 +27,7 @@ export function useTourFormData() {
 }
 
 export function useTourDetail(tourId: string) {
-  const api = new Api()
-
-  const tourQuery = useQuery({
-    queryKey: ['tour', tourId],
-    queryFn: () => api.tour.getTour(tourId),
-    retry: false,
-  })
+  const tourQuery = useQuery(tourQueries.detail(tourId))
 
   return {
     tour: tourQuery.data,
@@ -72,8 +46,8 @@ export function useUpdateTourMutation(tourId: string) {
     mutationFn: (tour: CreateTourDto) => api.tour.updateTour(tourId, tour),
     onSuccess: () => {
       toast.success('Tour updated successfully!')
-      queryClient.invalidateQueries({ queryKey: ['tours'] })
-      queryClient.invalidateQueries({ queryKey: ['tour', tourId] })
+      queryClient.invalidateQueries({ queryKey: tourQueryKeys.all() })
+      queryClient.invalidateQueries({ queryKey: tourQueryKeys.detail(tourId) })
       navigate({ to: `/guide/tours/${tourId}` })
     },
     onError: (error: Error) => {

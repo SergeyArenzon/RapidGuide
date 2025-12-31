@@ -29,7 +29,9 @@ export const getSessionFn = createServerFn({ method: "GET" })
     return await getSessionQueryFn(headers.get("cookie"));
   });
 
-export const getSessionQueryKey = ['session'] as const;
+import { queryKeys } from '@/lib/query';
+
+export const getSessionQueryKey = queryKeys.session();
 
 export const getSessionQuery = {
   queryKey: getSessionQueryKey,

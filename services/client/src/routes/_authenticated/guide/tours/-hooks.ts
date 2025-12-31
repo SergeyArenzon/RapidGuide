@@ -1,27 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import Api from '@/lib/api'
 import type { TourDto } from '@rapid-guide-io/contracts'
+import { profileQueries, tourQueries } from '@/lib/query'
 
 export function useTours() {
-  const api = new Api()
-
-  const { data: tours = [] as Array<TourDto> } = useSuspenseQuery({
-    queryKey: ['tours'],
-    queryFn: () => api.tour.getTours(),
-    retry: false,
-  })
-
-  const { data: countries = [] } = useSuspenseQuery({
-    queryKey: ['countries'],
-    queryFn: () => api.profile.getCountries(),
-    retry: false,
-  })
-
-  const { data: cities = [] } = useSuspenseQuery({
-    queryKey: ['cities'],
-    queryFn: () => api.profile.getCities(),
-    retry: false,
-  })
+  const { data: tours = [] as Array<TourDto> } = useSuspenseQuery(tourQueries.all())
+  const { data: countries = [] } = useSuspenseQuery(profileQueries.countries())
+  const { data: cities = [] } = useSuspenseQuery(profileQueries.cities())
 
   return {
     tours,

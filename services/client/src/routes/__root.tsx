@@ -15,9 +15,9 @@ import Loading from '@/components/Loading'
 import { Toaster } from '@/components/ui/sonner'
 import { getSessionQuery } from '@/lib/auth.server'
 import { userSchema, sessionSchema } from '@rapid-guide-io/contracts'
-import { ProfileApi } from '@/lib/api/profile'
 import { useEffect } from 'react'
 import { useJwtTokenStore } from '@/store/useJwtToken'
+import { profileQueries } from '@/lib/query'
 
 
 interface RouterContext extends AuthContext {
@@ -52,8 +52,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     description="The page you're looking for doesn't exist."/>,
   component: RootComponent,
   beforeLoad: async ({ context }) => {
-    console.log("context", context);
-    
     if (context.session) {
       return; // Don't return anything, keeps existing context
     }
@@ -80,11 +78,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       
       if (result.jwt) {
         try {
-          const profileApi = new ProfileApi(result.jwt);
-          const meData = await context.queryClient.ensureQueryData({
-            queryKey: ['profile', 'me', result.jwt],
-            queryFn: () => profileApi.getMe(),
-          });
+          const meData = await context.queryClient.ensureQueryData(
+            profileQueries.me(result.jwt)
+          );
           guide = meData.guide || null;
           traveller = meData.traveller || null;
         } catch (error) {

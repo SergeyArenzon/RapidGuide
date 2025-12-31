@@ -3,33 +3,13 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import type { CreateTourDto } from '@rapid-guide-io/contracts'
 import Api from '@/lib/api'
+import { profileQueries, tourQueries, tourQueryKeys } from '@/lib/query'
 
 export function useTourFormData() {
-  const api = new Api()
-
-  const { data: categories } = useSuspenseQuery({
-    queryKey: ['categories'],
-    queryFn: () => api.tour.getCategories(),
-    retry: false,
-  })
-
-  const { data: subcategories } = useSuspenseQuery({
-    queryKey: ['subcategories'],
-    queryFn: () => api.tour.getSubCategories(),
-    retry: false,
-  })
-
-  const { data: countries } = useSuspenseQuery({
-    queryKey: ['countries'],
-    queryFn: () => api.profile.getCountries(),
-    retry: false,
-  })
-
-  const { data: cities } = useSuspenseQuery({
-    queryKey: ['cities'],
-    queryFn: () => api.profile.getCities(),
-    retry: false,
-  })
+  const { data: categories } = useSuspenseQuery(tourQueries.categories())
+  const { data: subcategories } = useSuspenseQuery(tourQueries.subcategories())
+  const { data: countries } = useSuspenseQuery(profileQueries.countries())
+  const { data: cities } = useSuspenseQuery(profileQueries.cities())
 
   // Prepare subcategory options grouped by category
   const subcategoryOptions = categories.map((category) => ({
@@ -55,7 +35,7 @@ export function useCreateTourMutation() {
     mutationFn: (tour: CreateTourDto) => api.tour.createTour(tour),
     onSuccess: () => {
       toast.success('Tour created successfully!')
-      queryClient.invalidateQueries({ queryKey: ['tours'] })
+      queryClient.invalidateQueries({ queryKey: tourQueryKeys.all() })
       navigate({ to: '/guide/tours' })
     },
     onError: (error: Error) => {
