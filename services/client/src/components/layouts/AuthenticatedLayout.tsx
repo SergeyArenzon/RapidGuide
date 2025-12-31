@@ -25,6 +25,8 @@ export function AuthenticatedLayout() {
     return <Loading />
   }
 
+  console.log({lastMatch, dynamicName, currentLabel, currentDescription});
+  
   return (
     <div className="grid grid-cols-[auto_1fr] h-full w-full p-4">
       <aside>

@@ -13,7 +13,7 @@ import type { AuthContext } from '@/context/auth-context'
 import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { Toaster } from '@/components/ui/sonner'
-import { getSessionFn } from '@/lib/auth.server'
+import { getSessionQuery } from '@/lib/auth.server'
 import { userSchema, sessionSchema } from '@rapid-guide-io/contracts'
 import { ProfileApi } from '@/lib/api/profile'
 import { useEffect } from 'react'
@@ -51,8 +51,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     title="Page not found"
     description="The page you're looking for doesn't exist."/>,
   component: RootComponent,
-  beforeLoad: async () => {
-    const result = await getSessionFn();
+  beforeLoad: async ({ context }) => {
+    console.log("context", context);
+    
+    if (context.session) {
+      return; // Don't return anything, keeps existing context
+    }
+    const result = await context.queryClient.ensureQueryData(getSessionQuery);
 
     if (!result?.data) {
       return {
@@ -75,10 +80,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       
       if (result.jwt) {
         try {
-          // Create ProfileApi instance with the JWT token directly
-          
           const profileApi = new ProfileApi(result.jwt);
-          const meData = await profileApi.getMe();
+          const meData = await context.queryClient.ensureQueryData({
+            queryKey: ['profile', 'me', result.jwt],
+            queryFn: () => profileApi.getMe(),
+          });
           guide = meData.guide || null;
           traveller = meData.traveller || null;
         } catch (error) {
