@@ -22,8 +22,8 @@ export function useTourDetail(tourId: string) {
     retry: false,
   })
 
-  const country = countries.find(c => c.code === tour?.country_code)
-  const city = cities.find(c => c.id === tour?.city_id)
+  const country = countries.find(c => c.code === tour.country_code)
+  const city = cities.find(c => c.id === tour.city_id)
 
   return {
     tour,

@@ -1,5 +1,4 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { refreshSession } from '@/lib/auth-client';
 import { useJwtTokenStore } from '@/store/useJwtToken';
 
 /**

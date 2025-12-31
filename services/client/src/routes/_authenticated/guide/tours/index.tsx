@@ -1,12 +1,12 @@
 import { Suspense, useMemo } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
+import { ToursListSkeleton } from './-skeleton'
+import { useTours } from './-hooks'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import { DataTable } from '@/components/DataTable'
-import { ToursListSkeleton } from './-skeleton'
-import { useTours } from './-hooks'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
