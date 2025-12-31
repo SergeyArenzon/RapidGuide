@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import type { CreateTourDto } from '@rapid-guide-io/contracts'
@@ -46,21 +46,39 @@ export function useTourFormData() {
   return { subcategoryOptions, countries, cities }
 }
 
-export function useCreateTourMutation() {
+export function useTourDetail(tourId: string) {
+  const api = new Api()
+
+  const tourQuery = useQuery({
+    queryKey: ['tour', tourId],
+    queryFn: () => api.tour.getTour(tourId),
+    retry: false,
+  })
+
+  return {
+    tour: tourQuery.data,
+    isLoading: tourQuery.isLoading,
+    isError: tourQuery.isError,
+    refetch: tourQuery.refetch,
+  }
+}
+
+export function useUpdateTourMutation(tourId: string) {
   const navigate = useNavigate()
   const api = new Api()
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (tour: CreateTourDto) => api.tour.createTour(tour),
+    mutationFn: (tour: CreateTourDto) => api.tour.updateTour(tourId, tour),
     onSuccess: () => {
-      toast.success('Tour created successfully!')
+      toast.success('Tour updated successfully!')
       queryClient.invalidateQueries({ queryKey: ['tours'] })
-      navigate({ to: '/guide/tours' })
+      queryClient.invalidateQueries({ queryKey: ['tour', tourId] })
+      navigate({ to: `/guide/tours/${tourId}` })
     },
     onError: (error: Error) => {
-      console.error('Error creating tour:', error)
-      toast.error(error.message || 'Failed to create tour')
+      console.error('Error updating tour:', error)
+      toast.error(error.message || 'Failed to update tour')
     },
   })
 }

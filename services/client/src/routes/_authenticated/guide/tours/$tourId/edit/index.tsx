@@ -1,38 +1,52 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Suspense, useState } from 'react'
-import { createTourSchema} from '@rapid-guide-io/contracts'
-import { useCreateTourMutation, useTourFormData } from './-hooks';
-import { CreateTourSkeleton } from './-skeleton';
-import type { CreateTourDto } from '@rapid-guide-io/contracts';
+import { createTourSchema } from '@rapid-guide-io/contracts'
+import { ArrowLeft } from 'lucide-react'
+import { useTourDetail, useTourFormData, useUpdateTourMutation } from './-hooks'
+import { EditTourSkeleton } from './-skeleton'
+import type { CreateTourDto } from '@rapid-guide-io/contracts'
 import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
-import { Error } from '@/components/Error';
+import { Error } from '@/components/Error'
+import { Button } from '@/components/ui/button'
 
-export const Route = createFileRoute('/_authenticated/guide/tours/new/')({
+export const Route = createFileRoute('/_authenticated/guide/tours/$tourId/edit/')({
   component: () => (
-    <Suspense fallback={<CreateTourSkeleton />}>
-      <CreateTourComponent />
+    <Suspense fallback={<EditTourSkeleton />}>
+      <EditTourComponent />
     </Suspense>
   ),
   staticData: {
-    label: 'Create Tour',
-    description: 'Fill in the details below to create a new tour.',
+    label: 'Edit Tour',
+    description: 'Update tour details.',
     showBreadcrumb: true,
   },
 })
 
-function CreateTourComponent() {
+function EditTourComponent() {
   const navigate = useNavigate()
+  const { tourId } = Route.useParams()
+  const { tour, isLoading: isTourLoading, isError: isTourError, refetch } = useTourDetail(tourId)
   const { subcategoryOptions, countries, cities } = useTourFormData()
-  const createTourMutation = useCreateTourMutation()
-  
-  const [formState, setFormState] = useState<Partial<CreateTourDto>>({
-    country_code: '',
-    city_id: undefined,
-  })
-  
+  const updateTourMutation = useUpdateTourMutation(tourId)
 
-  const handleFormChange = (currentState: Partial<CreateTourDto>) => setFormState((prev) => ({ ...prev, ...currentState }))
+  const [formState, setFormState] = useState<Partial<CreateTourDto>>({
+    country_code: tour?.country_code || '',
+    city_id: tour?.city_id,
+  })
+
+  const handleFormChange = (currentState: Partial<CreateTourDto>) =>
+    setFormState((prev) => ({ ...prev, ...currentState }))
+
+  if (isTourLoading) return <EditTourSkeleton />
+  if (isTourError || !tour)
+    return (
+      <Error
+        title="Failed to load tour"
+        description="Please try again later"
+        retryAction={() => refetch()}
+      />
+    )
 
   const fields: Array<FieldConfig | (FieldConfig & { name: keyof CreateTourDto })> = [
     {
@@ -60,7 +74,7 @@ function CreateTourComponent() {
       helperText: 'Describe the tour highlights and experience',
       required: true,
       rows: 4,
-      className: 'col-span-2'
+      className: 'col-span-2',
     },
     {
       name: 'subcategory_ids',
@@ -103,7 +117,7 @@ function CreateTourComponent() {
       name: 'country_code',
       type: 'select',
       label: 'Country',
-      options: countries.map(country => ({ value: country.code, label: country.name })),
+      options: countries.map((country) => ({ value: country.code, label: country.name })),
       placeholder: 'Select country',
       helperText: 'Tour country',
       required: true,
@@ -112,7 +126,9 @@ function CreateTourComponent() {
       name: 'city_id',
       type: 'select',
       label: 'City',
-      options: cities.filter(city => city.country_code === formState.country_code).map(city => ({ value: Number(city.id), label: city.name })),
+      options: cities
+        .filter((city) => city.country_code === formState.country_code)
+        .map((city) => ({ value: Number(city.id), label: city.name })),
       placeholder: 'Select city',
       disabled: !formState.country_code,
       helperText: 'Tour city',
@@ -121,34 +137,50 @@ function CreateTourComponent() {
     },
     {
       type: 'submit',
-      label: 'Create Tour',
+      label: 'Update Tour',
       className: 'col-span-1',
     },
     {
       type: 'cancel',
       label: 'Cancel',
-      onClick: () => navigate({ to: '/guide/tours' }),
+      onClick: () => navigate({ to: `/guide/tours/${tourId}` }),
       className: 'col-span-1',
     },
   ]
 
-  if (createTourMutation.isError) return <Error
-    title="Failed to create tour"
-    description="Please try again later"
-    retryAction={() => createTourMutation.reset()}
-  />
-  
-  return (
-    <div className='mt-4'> 
-      <Form<CreateTourDto>
-        fields={fields}
-        schema={createTourSchema}
-        onSubmit={(data) => createTourMutation.mutate(data)}
-        onChange={handleFormChange}
-        isLoading={createTourMutation.isPending}
-        formClassName="grid grid-cols-2 gap-3"
+  if (updateTourMutation.isError)
+    return (
+      <Error
+        title="Failed to update tour"
+        description="Please try again later"
+        retryAction={() => updateTourMutation.reset()}
       />
+    )
+
+  return (
+    <div className="space-y-6">
+      <div className="mt-4">
+        <Form<CreateTourDto>
+          fields={fields}
+          schema={createTourSchema}
+          onSubmit={(data) => updateTourMutation.mutate(data)}
+          onChange={handleFormChange}
+          isLoading={updateTourMutation.isPending}
+          formClassName="grid grid-cols-2 gap-3"
+          defaultValues={{
+            name: tour.name,
+            price: tour.price,
+            description: tour.description,
+            subcategory_ids: tour.subcategory_ids,
+            min_travellers: tour.min_travellers,
+            max_travellers: tour.max_travellers,
+            duration_minutes: tour.duration_minutes,
+            country_code: tour.country_code,
+            city_id: tour.city_id,
+          }}
+        />
       </div>
-    
+    </div>
   )
 }
+

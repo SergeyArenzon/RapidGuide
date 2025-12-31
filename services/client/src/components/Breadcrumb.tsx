@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useMatches, useRouterState } from "@tanstack/react-router"
+import { Link, useMatches } from "@tanstack/react-router"
 import {
   Breadcrumb as BreadcrumbComponent,
   BreadcrumbItem,
@@ -10,26 +10,23 @@ import {
 } from "@/components/ui/breadcrumb"
 // Import router types to ensure declaration merging is applied
 import '@/types/router'
+import { extractNameFromLoaderData } from '@/lib/route-utils'
 
 export function Breadcrumb() {
-  const { location } = useRouterState()
-  
   const matches = useMatches()
-  const pathname = location.pathname.split('/').filter(Boolean)
-  
-  // Helper to normalize paths by removing trailing slashes for comparison
-  const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
-  
-  const breadcrumbItems = pathname.map((_, index) => {
-    const path = "/" + pathname.slice(0, index + 1).join('/') 
-    // get the staticData.label from the matches array by comparing normalized paths
-    const match = matches.find(m => normalizePath(m.pathname) === normalizePath(path))
-
-    // TypeScript now knows the type of staticData from declaration merging
-    const label = match?.staticData?.label
+  // Filter matches that have labels, map them to breadcrumb items
+  const breadcrumbItems = matches
+    .filter(match => match.staticData.showBreadcrumb)
+    .map(match => {
+      // Try to extract name from loader data (works for tour, booking, or any entity with a name)
+      const dynamicName = extractNameFromLoaderData(match.loaderData)
+      const label = dynamicName || match.staticData.label!
+      return {
+        label,
+        path: match.pathname,
+      }
+    })
     
-    return { label, path }
-  })
   
   return (
     <BreadcrumbComponent>

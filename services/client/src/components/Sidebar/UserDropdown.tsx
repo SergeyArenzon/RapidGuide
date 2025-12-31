@@ -16,11 +16,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import useUserStore from "@/store/useUser"
 import { authClient } from "@/lib/auth-client"
+import { Route } from "@/routes/__root"
 
 export function UserDropdown() {
-  const { user } = useUserStore()
+  const { user } = Route.useRouteContext();
   const navigate = useNavigate()
 
   const handleLogout = async () => {

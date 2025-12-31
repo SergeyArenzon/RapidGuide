@@ -1,13 +1,11 @@
 import { Compass, MapPin } from "lucide-react"
 import { Button } from "../ui/button"
 import { useRoleStore } from "@/store/useRole"
-import { useGuideStore } from "@/store/useGuide"
-import { useTravellerStore } from "@/store/useTraveller"
+import { Route } from "@/routes/__root" 
 
 export function RoleSwitch() {
   const { role, setRole } = useRoleStore()
-  const { guide } = useGuideStore(state => state)
-  const { traveller } = useTravellerStore(state => state)
+  const { guide, traveller } = Route.useRouteContext();
 
   return (
     <div className="px-2">

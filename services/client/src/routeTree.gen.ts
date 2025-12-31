@@ -18,11 +18,14 @@ import { Route as AuthenticatedGuideRouteImport } from './routes/_authenticated/
 import { Route as UnauthenticatedSignupIndexRouteImport } from './routes/_unauthenticated/signup/index'
 import { Route as AuthenticatedTravellerIndexRouteImport } from './routes/_authenticated/traveller/index'
 import { Route as AuthenticatedGuideIndexRouteImport } from './routes/_authenticated/guide/index'
-import { Route as AuthenticatedGuideToursRouteImport } from './routes/_authenticated/guide.tours'
+import { Route as AuthenticatedGuideToursRouteImport } from './routes/_authenticated/guide/tours'
 import { Route as UnauthenticatedSignupTravellerIndexRouteImport } from './routes/_unauthenticated/signup/traveller/index'
 import { Route as UnauthenticatedSignupGuideIndexRouteImport } from './routes/_unauthenticated/signup/guide/index'
 import { Route as AuthenticatedGuideToursIndexRouteImport } from './routes/_authenticated/guide/tours/index'
+import { Route as AuthenticatedGuideToursTourIdRouteImport } from './routes/_authenticated/guide/tours/$tourId'
 import { Route as AuthenticatedGuideToursNewIndexRouteImport } from './routes/_authenticated/guide/tours/new/index'
+import { Route as AuthenticatedGuideToursTourIdIndexRouteImport } from './routes/_authenticated/guide/tours/$tourId/index'
+import { Route as AuthenticatedGuideToursTourIdEditIndexRouteImport } from './routes/_authenticated/guide/tours/$tourId/edit/index'
 
 const UnauthenticatedRoute = UnauthenticatedRouteImport.update({
   id: '/_unauthenticated',
@@ -92,11 +95,29 @@ const AuthenticatedGuideToursIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedGuideToursRoute,
   } as any)
+const AuthenticatedGuideToursTourIdRoute =
+  AuthenticatedGuideToursTourIdRouteImport.update({
+    id: '/$tourId',
+    path: '/$tourId',
+    getParentRoute: () => AuthenticatedGuideToursRoute,
+  } as any)
 const AuthenticatedGuideToursNewIndexRoute =
   AuthenticatedGuideToursNewIndexRouteImport.update({
     id: '/new/',
     path: '/new/',
     getParentRoute: () => AuthenticatedGuideToursRoute,
+  } as any)
+const AuthenticatedGuideToursTourIdIndexRoute =
+  AuthenticatedGuideToursTourIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedGuideToursTourIdRoute,
+  } as any)
+const AuthenticatedGuideToursTourIdEditIndexRoute =
+  AuthenticatedGuideToursTourIdEditIndexRouteImport.update({
+    id: '/edit/',
+    path: '/edit/',
+    getParentRoute: () => AuthenticatedGuideToursTourIdRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -108,10 +129,13 @@ export interface FileRoutesByFullPath {
   '/guide/': typeof AuthenticatedGuideIndexRoute
   '/traveller/': typeof AuthenticatedTravellerIndexRoute
   '/signup': typeof UnauthenticatedSignupIndexRoute
+  '/guide/tours/$tourId': typeof AuthenticatedGuideToursTourIdRouteWithChildren
   '/guide/tours/': typeof AuthenticatedGuideToursIndexRoute
   '/signup/guide': typeof UnauthenticatedSignupGuideIndexRoute
   '/signup/traveller': typeof UnauthenticatedSignupTravellerIndexRoute
+  '/guide/tours/$tourId/': typeof AuthenticatedGuideToursTourIdIndexRoute
   '/guide/tours/new': typeof AuthenticatedGuideToursNewIndexRoute
+  '/guide/tours/$tourId/edit': typeof AuthenticatedGuideToursTourIdEditIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -122,7 +146,9 @@ export interface FileRoutesByTo {
   '/guide/tours': typeof AuthenticatedGuideToursIndexRoute
   '/signup/guide': typeof UnauthenticatedSignupGuideIndexRoute
   '/signup/traveller': typeof UnauthenticatedSignupTravellerIndexRoute
+  '/guide/tours/$tourId': typeof AuthenticatedGuideToursTourIdIndexRoute
   '/guide/tours/new': typeof AuthenticatedGuideToursNewIndexRoute
+  '/guide/tours/$tourId/edit': typeof AuthenticatedGuideToursTourIdEditIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,10 +162,13 @@ export interface FileRoutesById {
   '/_authenticated/guide/': typeof AuthenticatedGuideIndexRoute
   '/_authenticated/traveller/': typeof AuthenticatedTravellerIndexRoute
   '/_unauthenticated/signup/': typeof UnauthenticatedSignupIndexRoute
+  '/_authenticated/guide/tours/$tourId': typeof AuthenticatedGuideToursTourIdRouteWithChildren
   '/_authenticated/guide/tours/': typeof AuthenticatedGuideToursIndexRoute
   '/_unauthenticated/signup/guide/': typeof UnauthenticatedSignupGuideIndexRoute
   '/_unauthenticated/signup/traveller/': typeof UnauthenticatedSignupTravellerIndexRoute
+  '/_authenticated/guide/tours/$tourId/': typeof AuthenticatedGuideToursTourIdIndexRoute
   '/_authenticated/guide/tours/new/': typeof AuthenticatedGuideToursNewIndexRoute
+  '/_authenticated/guide/tours/$tourId/edit/': typeof AuthenticatedGuideToursTourIdEditIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,10 +181,13 @@ export interface FileRouteTypes {
     | '/guide/'
     | '/traveller/'
     | '/signup'
+    | '/guide/tours/$tourId'
     | '/guide/tours/'
     | '/signup/guide'
     | '/signup/traveller'
+    | '/guide/tours/$tourId/'
     | '/guide/tours/new'
+    | '/guide/tours/$tourId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,7 +198,9 @@ export interface FileRouteTypes {
     | '/guide/tours'
     | '/signup/guide'
     | '/signup/traveller'
+    | '/guide/tours/$tourId'
     | '/guide/tours/new'
+    | '/guide/tours/$tourId/edit'
   id:
     | '__root__'
     | '/'
@@ -179,10 +213,13 @@ export interface FileRouteTypes {
     | '/_authenticated/guide/'
     | '/_authenticated/traveller/'
     | '/_unauthenticated/signup/'
+    | '/_authenticated/guide/tours/$tourId'
     | '/_authenticated/guide/tours/'
     | '/_unauthenticated/signup/guide/'
     | '/_unauthenticated/signup/traveller/'
+    | '/_authenticated/guide/tours/$tourId/'
     | '/_authenticated/guide/tours/new/'
+    | '/_authenticated/guide/tours/$tourId/edit/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideToursIndexRouteImport
       parentRoute: typeof AuthenticatedGuideToursRoute
     }
+    '/_authenticated/guide/tours/$tourId': {
+      id: '/_authenticated/guide/tours/$tourId'
+      path: '/$tourId'
+      fullPath: '/guide/tours/$tourId'
+      preLoaderRoute: typeof AuthenticatedGuideToursTourIdRouteImport
+      parentRoute: typeof AuthenticatedGuideToursRoute
+    }
     '/_authenticated/guide/tours/new/': {
       id: '/_authenticated/guide/tours/new/'
       path: '/new'
@@ -291,16 +335,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideToursNewIndexRouteImport
       parentRoute: typeof AuthenticatedGuideToursRoute
     }
+    '/_authenticated/guide/tours/$tourId/': {
+      id: '/_authenticated/guide/tours/$tourId/'
+      path: '/'
+      fullPath: '/guide/tours/$tourId/'
+      preLoaderRoute: typeof AuthenticatedGuideToursTourIdIndexRouteImport
+      parentRoute: typeof AuthenticatedGuideToursTourIdRoute
+    }
+    '/_authenticated/guide/tours/$tourId/edit/': {
+      id: '/_authenticated/guide/tours/$tourId/edit/'
+      path: '/edit'
+      fullPath: '/guide/tours/$tourId/edit'
+      preLoaderRoute: typeof AuthenticatedGuideToursTourIdEditIndexRouteImport
+      parentRoute: typeof AuthenticatedGuideToursTourIdRoute
+    }
   }
 }
 
+interface AuthenticatedGuideToursTourIdRouteChildren {
+  AuthenticatedGuideToursTourIdIndexRoute: typeof AuthenticatedGuideToursTourIdIndexRoute
+  AuthenticatedGuideToursTourIdEditIndexRoute: typeof AuthenticatedGuideToursTourIdEditIndexRoute
+}
+
+const AuthenticatedGuideToursTourIdRouteChildren: AuthenticatedGuideToursTourIdRouteChildren =
+  {
+    AuthenticatedGuideToursTourIdIndexRoute:
+      AuthenticatedGuideToursTourIdIndexRoute,
+    AuthenticatedGuideToursTourIdEditIndexRoute:
+      AuthenticatedGuideToursTourIdEditIndexRoute,
+  }
+
+const AuthenticatedGuideToursTourIdRouteWithChildren =
+  AuthenticatedGuideToursTourIdRoute._addFileChildren(
+    AuthenticatedGuideToursTourIdRouteChildren,
+  )
+
 interface AuthenticatedGuideToursRouteChildren {
+  AuthenticatedGuideToursTourIdRoute: typeof AuthenticatedGuideToursTourIdRouteWithChildren
   AuthenticatedGuideToursIndexRoute: typeof AuthenticatedGuideToursIndexRoute
   AuthenticatedGuideToursNewIndexRoute: typeof AuthenticatedGuideToursNewIndexRoute
 }
 
 const AuthenticatedGuideToursRouteChildren: AuthenticatedGuideToursRouteChildren =
   {
+    AuthenticatedGuideToursTourIdRoute:
+      AuthenticatedGuideToursTourIdRouteWithChildren,
     AuthenticatedGuideToursIndexRoute: AuthenticatedGuideToursIndexRoute,
     AuthenticatedGuideToursNewIndexRoute: AuthenticatedGuideToursNewIndexRoute,
   }

@@ -14,35 +14,28 @@ import { Button } from "@/components/ui/button"
 
 
 type FormProps<T extends FieldValues> = {
-  fields: Array<FieldConfig & { name: keyof T }>
+  fields: Array<FieldConfig | (FieldConfig & { name: keyof T })>
   onSubmit: (data: T) => void
   onChange?: (data: Partial<T>) => void
-  submitButtonText?: string
   title?: string
   description?: string
   isLoading?: boolean
   error?: string | null
   schema: z.ZodSchema<T>
-} & (
-  | { 
-      onCancel?: undefined; 
-      cancelButtonText?: undefined 
-    }
-  | { 
-    onCancel: () => void; 
-    cancelButtonText: string 
-  }
-)
+  formClassName?: string
+  defaultValues?: Partial<T>
+}
 
 export default function Form<T extends FieldValues>({
   fields,
   onSubmit,
   onChange,
-  submitButtonText = "Submit",
   title,
   description,
   isLoading = false,
-  schema
+  schema,
+  formClassName,
+  defaultValues
 }: FormProps<T>) {
   
   // Setup form
@@ -52,14 +45,28 @@ export default function Form<T extends FieldValues>({
     setValue,
     watch,
     control,
+    reset,
     formState: { errors }
   } = useForm<T>({
     resolver: zodResolver(schema),
-    defaultValues: fields.filter(field => !field.hide).reduce((acc, field) => {
-      (acc as any)[field.name] = field.type === 'checkbox' ? [] : '';
+    defaultValues: defaultValues || fields.filter(field => {
+      if (field.type === 'submit' || field.type === 'cancel') return false;
+      if ('hide' in field && (field as any).hide) return false;
+      return 'name' in field;
+    }).reduce((acc, field) => {
+      if ('name' in field) {
+        (acc as any)[(field as any).name] = field.type === 'checkbox' ? [] : '';
+      }
       return acc;
     }, {} as DefaultValues<T>)
   })
+
+  // Reset form when defaultValues change
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues as T)
+    }
+  }, [defaultValues, reset])
 
   // Set up subscription to form changes instead of watching all values
   useEffect(() => {
@@ -74,30 +81,30 @@ export default function Form<T extends FieldValues>({
     return () => subscription.unsubscribe();
   }, [watch, onChange]);
 
-
   // Render field based on type
-  const renderField = (field: FieldConfig) => {
+  const renderField = (field: FieldConfig, index: number) => {
     switch (field.type) {
       case 'text':
         return (
           <FormFieldBase
-            key={field.name}
-            name={field.name}
+            key={'name' in field ? field.name : index}
+            name={'name' in field ? field.name : ''}
             label={field.label}
-            helperText={field.helperText}
+            helperText={'helperText' in field ? field.helperText : undefined}
             errors={errors}
-            required={field.required}
+            required={'required' in field ? field.required : false}
             disabled={field.disabled}
+            className={field.className}
           >
             <Input
-              id={field.name}
-              type={field.inputType || 'text'}
-              placeholder={field.placeholder}
+              id={'name' in field ? field.name : `field-${index}`}
+              type={'inputType' in field ? (field.inputType || 'text') : 'text'}
+              placeholder={'placeholder' in field ? field.placeholder : undefined}
               disabled={field.disabled || isLoading}
               {
                 ...register(
-                  field.name as Path<T>,
-                  field.inputType === 'number'
+                  ('name' in field ? field.name : '') as Path<T>,
+                  ('inputType' in field && field.inputType === 'number')
                     ? { valueAsNumber: true }
                     : undefined
                 )
@@ -109,19 +116,20 @@ export default function Form<T extends FieldValues>({
       case 'textarea':
         return (
           <FormFieldBase
-            key={field.name}
-            name={field.name}
+            key={'name' in field ? field.name : index}
+            name={'name' in field ? field.name : ''}
             label={field.label}
-            helperText={field.helperText}
+            helperText={'helperText' in field ? field.helperText : undefined}
             errors={errors}
-            required={field.required}
-            disabled={field.disabled}>
+            required={'required' in field ? field.required : false}
+            disabled={field.disabled}
+            className={field.className}>
             <Textarea
-              id={field.name}
+              id={'name' in field ? field.name : `field-${index}`}
               className={`min-h-[${6 * 24}px]`}
-              placeholder={field.placeholder}
+              placeholder={'placeholder' in field ? field.placeholder : undefined}
               disabled={field.disabled || isLoading}
-              {...register(field.name as Path<T>)} 
+              {...register(('name' in field ? field.name : '') as Path<T>)} 
             />
           </FormFieldBase>
         )
@@ -129,23 +137,24 @@ export default function Form<T extends FieldValues>({
       case 'checkbox':
         return (
           <FormFieldBase
-            key={field.name}
-            name={field.name}
+            key={'name' in field ? field.name : index}
+            name={'name' in field ? field.name : ''}
             label={field.label}
-            helperText={field.helperText}
+            helperText={'helperText' in field ? field.helperText : undefined}
             errors={errors}
-            required={field.required}
-            disabled={field.disabled}>
+            required={'required' in field ? field.required : false}
+            disabled={field.disabled}
+            className={field.className}>
               <CheckboxDropdown
-                key={field.name}
-                name={field.name}
+                key={'name' in field ? field.name : index}
+                name={'name' in field ? field.name : ''}
                 label={field.label}
-                options={field.options}
-                placeholder={field.placeholder}
-                helperText={field.helperText}
+                options={'options' in field ? field.options : []}
+                placeholder={'placeholder' in field ? field.placeholder : undefined}
+                helperText={'helperText' in field ? field.helperText : undefined}
                 register={register}
                 watch={watch}
-                required={field.required}
+                required={'required' in field ? field.required : false}
                 setValue={setValue}
                 control={control}
                 disabled={field.disabled || isLoading}/>
@@ -155,26 +164,54 @@ export default function Form<T extends FieldValues>({
       case 'select':
         return (
           <FormFieldBase
-            key={field.name}
-            name={field.name}
+            key={'name' in field ? field.name : index}
+            name={'name' in field ? field.name : ''}
             label={field.label}
-            helperText={field.helperText}
+            helperText={'helperText' in field ? field.helperText : undefined}
             errors={errors}
-            required={field.required}
-            disabled={field.disabled}>
+            required={'required' in field ? field.required : false}
+            disabled={field.disabled}
+            className={field.className}>
               <SelectDropdown
-                key={field.name}
-                name={field.name}
+                key={'name' in field ? field.name : index}
+                name={'name' in field ? field.name : ''}
                 label={field.label}
-                options={field.options}
-                placeholder={field.placeholder}
-                helperText={field.helperText}
+                options={'options' in field ? field.options : []}
+                placeholder={'placeholder' in field ? field.placeholder : undefined}
+                helperText={'helperText' in field ? field.helperText : undefined}
                 register={register}
                 watch={watch}
                 setValue={setValue}
                 disabled={field.disabled || isLoading}
-                isLoading={field.isLoading}/>
+                isLoading={'isLoading' in field ? field.isLoading : false}/>
           </FormFieldBase>
+        )
+
+      case 'submit':
+        return (
+          <Button
+            key={`submit-${index}`}
+            type="submit"
+            className={`w-full ${field.className || ''}`}
+            disabled={field.disabled || isLoading}
+          >
+            {isLoading ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
+            {isLoading ? "Submitting..." : field.label}
+          </Button>
+        )
+
+      case 'cancel':
+        return (
+          <Button
+            key={`cancel-${index}`}
+            type="button"
+            variant="outline"
+            className={`w-full ${field.className || ''}`}
+            disabled={field.disabled || isLoading}
+            onClick={field.onClick}
+          >
+            {field.label}
+          </Button>
         )
 
       default:
@@ -183,20 +220,15 @@ export default function Form<T extends FieldValues>({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit as any)} className="w-full max-w-2xl mx-auto space-y-6 px-6 bg-white  max-h-min  py-10">
+    <form onSubmit={handleSubmit(onSubmit as any)} className={formClassName || "w-full max-w-2xl mx-auto space-y-6 px-6 bg-white  max-h-min  py-10"}>
       {(title || description) && (
-        <div className="space-y-2">
+        <div className={`space-y-2 ${formClassName?.includes('grid') ? 'col-span-full' : ''}`}>
           {title && <h2 className="text-2xl font-bold">{title}</h2>}
           {description && <p className="text-muted-foreground">{description}</p>}
         </div>
       )}
 
-      {fields.filter(field => !field.hide).map(renderField)}
-
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? <Loader2 size={20} className="animate-spin text-secondary" /> : null}
-        {isLoading ? "Submitting..." : submitButtonText}
-      </Button>
+      {fields.filter(field => !('hide' in field) || !(field as any).hide).map((field, index) => renderField(field, index))}
     </form>
   )
 }

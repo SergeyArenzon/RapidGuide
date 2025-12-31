@@ -10,13 +10,14 @@ export default class Api extends BaseApi {
   public tour: TourApi;
   public auth: AuthApi;
 
-  constructor() {
-    const accessToken = useJwtTokenStore.getState().getToken() ?? '';
-    super(accessToken);
+  constructor(accessToken?: string | null) {
+    // Choose between provided token and zustand state
+    const token = accessToken ?? useJwtTokenStore.getState().getToken() ?? '';
+    super(token);
     // Share the same axios instance across all modules
-    this.profile = new ProfileApi(accessToken, this.axios);
-    this.tour = new TourApi(accessToken, this.axios);
-    this.auth = new AuthApi(accessToken, this.axios);
+    this.profile = new ProfileApi(token, this.axios);
+    this.tour = new TourApi(token, this.axios);
+    this.auth = new AuthApi(token, this.axios);
   }
 }
 

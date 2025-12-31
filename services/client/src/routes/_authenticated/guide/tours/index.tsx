@@ -1,50 +1,74 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { Suspense, useMemo } from 'react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
-import Api from '@/lib/api'
-import Loading from '@/components/Loading'
-import { Error } from '@/components/Error'
 import { DataTable } from '@/components/DataTable'
-import { useMemo } from 'react'
+import { ToursListSkeleton } from './-skeleton'
+import { useTours } from './-hooks'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
-  staticData: {
-    label: 'Tours index',
-    description: 'View all your tours and manage them.',
-  },
 })
 
 function RouteComponent() {
+  return (
+    <Suspense fallback={<ToursListSkeleton />}>
+      <ToursListContent />
+    </Suspense>
+  )
+}
+
+function ToursListContent() {
   const navigate = useNavigate()
-  const api = new Api()
+  const { tours, countries, cities } = useTours()
 
-  const {
-    data: tours = [] as Array<TourDto>,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ['tours'],
-    queryFn: () => api.tour.getTours(),
-    retry: false,
-  });
-
-  const isFirstTour = tours.length === 0;
+  const isFirstTour = tours.length === 0
 
   const columns = useMemo<Array<ColumnDef<TourDto>>>(
     () => [
       {
         accessorKey: 'name',
         header: 'Name',
-        cell: (info) => (
-          <span className="font-medium text-foreground">
-            {info.getValue<string>()}
-          </span>
-        ),
+        cell: (info) => {
+          const tour = info.row.original
+          return (
+            <Link
+              to="/guide/tours/$tourId"
+              params={{ tourId: tour.id }}
+              className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer text-left"
+            >
+              {info.getValue<string>()}
+            </Link>
+          )
+        },
+      },
+      {
+        accessorKey: 'country_code',
+        header: 'Country',
+        cell: (info) => {
+          const countryCode = info.getValue<string>()
+          const country = countries.find(c => c.code === countryCode)
+          return (
+            <span className="text-sm text-muted-foreground">
+              {country?.name || countryCode}
+            </span>
+          )
+        },
+      },
+      {
+        accessorKey: 'city_id',
+        header: 'City',
+        cell: (info) => {
+          const cityId = info.getValue<number>()
+          const city = cities.find(c => c.id === cityId)
+          return (
+            <span className="text-sm text-muted-foreground">
+              {city?.name || cityId}
+            </span>
+          )
+        },
       },
       {
         accessorKey: 'duration_minutes',
@@ -74,15 +98,8 @@ function RouteComponent() {
         ),
       },
     ],
-    [],
+    [countries, cities],
   )
-
-  if (isLoading) return <Loading />
-  if (isError) return <Error
-    title="Failed to load tours"
-    description="Please try again later"
-    retryAction={() => refetch()}
-  />
 
   return (
     <div>

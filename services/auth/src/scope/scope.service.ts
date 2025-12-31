@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
+import { ScopePermission } from '@rapid-guide-io/decorators';
 
 @Injectable()
 export class ScopeService {
@@ -10,8 +11,8 @@ export class ScopeService {
     'language:read',
     'country:read',
     'city:read',
-    'guide:write',
-    'traveller:write',
+    'guide:create',
+    'traveller:create',
   ];
 
   // Guide-specific scopes (inherits DEFAULT_SCOPES)
@@ -22,12 +23,12 @@ export class ScopeService {
     const scopes: string[] = [...ScopeService.DEFAULT_SCOPES];
     if (profile.traveller) {
       scopes.push(ScopeService.TRAVELLER_SCOPE);
-      const travellerWriteIndex = scopes.indexOf('traveller:write');
+      const travellerWriteIndex = scopes.indexOf(ScopePermission.TRAVELLER_CREATE);
       scopes.splice(travellerWriteIndex, 1);
     }
     if (profile.guide) {
       scopes.push(ScopeService.GUIDE_SCOPE);
-      const guideWriteIndex = scopes.indexOf('guide:write');
+      const guideWriteIndex = scopes.indexOf(ScopePermission.GUIDE_CREATE);
       scopes.splice(guideWriteIndex, 1);
     }
     return scopes;

@@ -12,11 +12,12 @@ export const Route = createFileRoute('/_unauthenticated/signin')({
   validateSearch: searchSchema,
   staticData: {
     label: 'Sign In',
+    showBreadcrumb: false,
   },
   beforeLoad: ({ context }) => {
-    const { auth } = context
+    const { session, guide } = context
 
-    if (auth.isAuthenticated && !auth.guide) {
+    if (session && !guide) {
         throw redirect({
             to: '/signup',
         })

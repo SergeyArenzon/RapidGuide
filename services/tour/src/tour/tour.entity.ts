@@ -82,6 +82,18 @@ export class Tour extends BaseEntity {
   tourSubcategories = new Collection<TourSubcategory>(this);
 
   /**
+   * City ID where the tour takes place (references profile service)
+   */
+  @Property({ type: 'decimal', nullable: false })
+  city_id: number;
+
+  /**
+   * Country code where the tour takes place (references profile service)
+   */
+  @Property({ type: 'text', nullable: false })
+  country_code: string;
+
+  /**
    * Bookings for this tour (pending, approved, rejected, cancelled)
    */
   //   @OneToMany(() => Booking, (booking) => booking.tour)
@@ -99,6 +111,8 @@ export class Tour extends BaseEntity {
       subcategory_ids: this.tourSubcategories
         ? this.tourSubcategories.getItems().map((tsc) => tsc.subcategory.id)
         : [],
+      city_id: this.city_id,
+      country_code: this.country_code,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };

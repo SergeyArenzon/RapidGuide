@@ -4,13 +4,15 @@
 declare module '@tanstack/react-router' {
   interface StaticDataRouteOption {
     label?: string
-    description?: string
+    description?: string,
+    showBreadcrumb?: boolean
   }
 }
 
 // Export type for convenience (optional, for explicit typing if needed)
 export interface RouteStaticData {
   label?: string
-  description?: string
+  description?: string,
+  showBreadcrumb?: boolean
 }
 

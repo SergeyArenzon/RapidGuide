@@ -1,7 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
-import { useGuideStore } from '@/store/useGuide'
-import { useTravellerStore } from '@/store/useTraveller'
+
 
 export const Route = createFileRoute('/_unauthenticated/signup/')({
   component: RouteComponent,
@@ -11,8 +10,7 @@ export const Route = createFileRoute('/_unauthenticated/signup/')({
 })
 
 function RouteComponent() {
-  const { guide } = useGuideStore(state => state)
-  const { traveller } = useTravellerStore(state => state)
+  const { guide, traveller } = Route.useRouteContext();
   
   return (
     <div className='container'>

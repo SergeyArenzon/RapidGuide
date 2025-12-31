@@ -7,20 +7,19 @@ export const Route = createFileRoute('/')({
     label: 'Home',
   },
   beforeLoad: ({ context }) => {
-    const { auth } = context
+    const { session, traveller, guide } = context
     const { role } = useRoleStore.getState()
     
-    if (auth.isLoading) {
-      return
-    }
-    if (!auth.isAuthenticated) {
+    if (!session) {
       throw redirect({
         to: '/signin',
       })
     }
-    if ((auth.guide || auth.traveller) && role) {
+
+    if (guide || traveller) {
+      
       throw redirect({
-        to: `/${role}`,
+        to: `/${guide ? 'guide' : 'traveller'}`,
       })
     }
   },

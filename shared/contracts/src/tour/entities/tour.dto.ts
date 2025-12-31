@@ -12,6 +12,8 @@ export const tourSchema = timeSchema.extend({
   duration_minutes: z.number().int().positive(),
   // Nested subcategories for response
   subcategory_ids: z.array(z.uuid()).min(1, 'At least one subcategory is required'),
+  city_id: z.number().int().positive(),
+  country_code: z.string(),
 });
 
 export const createTourSchema = tourSchema.omit({ 

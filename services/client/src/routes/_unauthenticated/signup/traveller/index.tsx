@@ -9,7 +9,6 @@ import { Error } from '@/components/Error';
 import Form from '@/components/form';
 import Api from '@/lib/api/index';
 import { AlertDialog, INITIAL_ALERT_DIALOG_STATE } from '@/components/AlertDialog';
-import { useTravellerStore } from '@/store/useTraveller';
 import { useRoleStore } from '@/store/useRole';
 import { TravellerSignupSkeleton } from './-skeleton';
 
@@ -17,6 +16,7 @@ export const Route = createFileRoute('/_unauthenticated/signup/traveller/')({
   component: RouteComponent,
   staticData: {
     label: 'Create Traveller Profile',
+    showBreadcrumb: false,
   },
 })
 
@@ -36,7 +36,6 @@ function RouteComponent() {
   const navigate = useNavigate()
     
     const api = new Api();
-    const { setTraveller } = useTravellerStore(state => state);
     const handleFormChange = (currentState: Partial<z.infer<typeof createTravellerSchema>>) => {
       setFormState((prev: CreateTravellerDto) => ({ ...prev, ...currentState }));
     };
@@ -71,8 +70,7 @@ function RouteComponent() {
     const handleSubmit = async (data: z.infer<typeof createTravellerSchema>) => {
       try {
         setIsLoading(true);
-        const travellerData = await api.profile.createTraveller(data);
-        setTraveller(travellerData);
+        await api.profile.createTraveller(data);
         setRole("traveller");
         setDialogState({
           open: true,
@@ -80,11 +78,6 @@ function RouteComponent() {
           description: 'Your traveller profile has been created successfully.',
           approveText: 'OK',
           onApprove: async() => {
-            // TODO: Update when getMe response includes traveller property
-            const meData = await api.profile.getMe();
-            if (meData.traveller) {
-              setTraveller(meData.traveller);
-            }
             navigate({ to: '/traveller' });
           },
         }); 
@@ -179,10 +172,13 @@ function RouteComponent() {
               helperText: "Select the city you live in.",
               isLoading: isLoadingCities
             },
+            {
+              type: 'submit',
+              label: 'Save Profile',
+            },
           ]}
           onSubmit={handleSubmit}
           onChange={handleFormChange} 
-          submitButtonText="Save Profile"
           isLoading={isLoading}
         />
       </>

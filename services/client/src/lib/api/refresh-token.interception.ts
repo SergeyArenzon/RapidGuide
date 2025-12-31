@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
-import { refreshSession } from '@/hooks/use-auth/helpers';
+import { refreshSession } from '@/lib/auth-client';
 import { useJwtTokenStore } from '@/store/useJwtToken';
 
 /**
@@ -58,20 +58,20 @@ export function setupRefreshTokenInterceptor(
 
         try {
           // Refresh session using Better Auth (uses HTTP-only cookies)
-          const newToken = await refreshSession();
+          // const newToken = await refreshSession();
           
-          if (newToken) {
-            // Process queued requests
-            processQueue(null);
+          // if (newToken) {
+          //   // Process queued requests
+          //   processQueue(null);
             
-            // Retry original request with new token
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            return axiosInstance(originalRequest);
-          } else {
-            // Session refresh failed - session expired
-            processQueue(new Error('Session expired'));
-            return Promise.reject(error);
-          }
+          //   // Retry original request with new token
+          //   originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          //   return axiosInstance(originalRequest);
+          // } else {
+          //   // Session refresh failed - session expired
+          //   processQueue(new Error('Session expired'));
+          //   return Promise.reject(error);
+          // }
         } catch (refreshError) {
           processQueue(refreshError instanceof Error ? refreshError : new Error(String(refreshError)));
           return Promise.reject(refreshError);
