@@ -1,26 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import Api from '@/lib/api'
+import { profileQueries, tourQueries } from '@/lib/query'
 
 export function useTourDetail(tourId: string) {
-  const api = new Api()
-
-  const { data: tour } = useSuspenseQuery({
-    queryKey: ['tour', tourId],
-    queryFn: () => api.tour.getTour(tourId),
-    retry: false,
-  })
-
-  const { data: countries = [] } = useSuspenseQuery({
-    queryKey: ['countries'],
-    queryFn: () => api.profile.getCountries(),
-    retry: false,
-  })
-
-  const { data: cities = [] } = useSuspenseQuery({
-    queryKey: ['cities'],
-    queryFn: () => api.profile.getCities(),
-    retry: false,
-  })
+  const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
+  const { data: countries = [] } = useSuspenseQuery(profileQueries.countries())
+  const { data: cities = [] } = useSuspenseQuery(profileQueries.cities())
 
   const country = countries.find(c => c.code === tour.country_code)
   const city = cities.find(c => c.id === tour.city_id)

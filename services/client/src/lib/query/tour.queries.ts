@@ -35,6 +35,8 @@ export const tourQueries = {
   detail: (tourId: string, jwt?: string | null) => ({
     queryKey: tourQueryKeys.detail(tourId),
     queryFn: async (): Promise<TourDto> => {
+      console.log('jwt', jwt);
+      
       const api = new Api(jwt);
       return api.tour.getTour(tourId);
     },

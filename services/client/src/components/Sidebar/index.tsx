@@ -23,7 +23,7 @@ import { useRoleStore } from "@/store/useRole"
 
 export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>) {
   const { role } = useRoleStore(state => state)
-
+  
   const capitalizedRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : ""
 
   return (
