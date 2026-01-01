@@ -19,9 +19,11 @@ import { Route as UnauthenticatedSignupIndexRouteImport } from './routes/_unauth
 import { Route as AuthenticatedTravellerIndexRouteImport } from './routes/_authenticated/traveller/index'
 import { Route as AuthenticatedGuideIndexRouteImport } from './routes/_authenticated/guide/index'
 import { Route as AuthenticatedGuideToursRouteImport } from './routes/_authenticated/guide/tours'
+import { Route as AuthenticatedGuidePreferencesRouteImport } from './routes/_authenticated/guide/preferences'
 import { Route as UnauthenticatedSignupTravellerIndexRouteImport } from './routes/_unauthenticated/signup/traveller/index'
 import { Route as UnauthenticatedSignupGuideIndexRouteImport } from './routes/_unauthenticated/signup/guide/index'
 import { Route as AuthenticatedGuideToursIndexRouteImport } from './routes/_authenticated/guide/tours/index'
+import { Route as AuthenticatedGuideCalendarIndexRouteImport } from './routes/_authenticated/guide/calendar/index'
 import { Route as AuthenticatedGuideToursTourIdRouteImport } from './routes/_authenticated/guide/tours/$tourId'
 import { Route as AuthenticatedGuideToursNewIndexRouteImport } from './routes/_authenticated/guide/tours/new/index'
 import { Route as AuthenticatedGuideToursTourIdIndexRouteImport } from './routes/_authenticated/guide/tours/$tourId/index'
@@ -77,6 +79,12 @@ const AuthenticatedGuideToursRoute = AuthenticatedGuideToursRouteImport.update({
   path: '/tours',
   getParentRoute: () => AuthenticatedGuideRoute,
 } as any)
+const AuthenticatedGuidePreferencesRoute =
+  AuthenticatedGuidePreferencesRouteImport.update({
+    id: '/preferences',
+    path: '/preferences',
+    getParentRoute: () => AuthenticatedGuideRoute,
+  } as any)
 const UnauthenticatedSignupTravellerIndexRoute =
   UnauthenticatedSignupTravellerIndexRouteImport.update({
     id: '/signup/traveller/',
@@ -94,6 +102,12 @@ const AuthenticatedGuideToursIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedGuideToursRoute,
+  } as any)
+const AuthenticatedGuideCalendarIndexRoute =
+  AuthenticatedGuideCalendarIndexRouteImport.update({
+    id: '/calendar/',
+    path: '/calendar/',
+    getParentRoute: () => AuthenticatedGuideRoute,
   } as any)
 const AuthenticatedGuideToursTourIdRoute =
   AuthenticatedGuideToursTourIdRouteImport.update({
@@ -125,11 +139,13 @@ export interface FileRoutesByFullPath {
   '/guide': typeof AuthenticatedGuideRouteWithChildren
   '/traveller': typeof AuthenticatedTravellerRouteWithChildren
   '/signin': typeof UnauthenticatedSigninRoute
+  '/guide/preferences': typeof AuthenticatedGuidePreferencesRoute
   '/guide/tours': typeof AuthenticatedGuideToursRouteWithChildren
   '/guide/': typeof AuthenticatedGuideIndexRoute
   '/traveller/': typeof AuthenticatedTravellerIndexRoute
   '/signup': typeof UnauthenticatedSignupIndexRoute
   '/guide/tours/$tourId': typeof AuthenticatedGuideToursTourIdRouteWithChildren
+  '/guide/calendar': typeof AuthenticatedGuideCalendarIndexRoute
   '/guide/tours/': typeof AuthenticatedGuideToursIndexRoute
   '/signup/guide': typeof UnauthenticatedSignupGuideIndexRoute
   '/signup/traveller': typeof UnauthenticatedSignupTravellerIndexRoute
@@ -140,9 +156,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/signin': typeof UnauthenticatedSigninRoute
+  '/guide/preferences': typeof AuthenticatedGuidePreferencesRoute
   '/guide': typeof AuthenticatedGuideIndexRoute
   '/traveller': typeof AuthenticatedTravellerIndexRoute
   '/signup': typeof UnauthenticatedSignupIndexRoute
+  '/guide/calendar': typeof AuthenticatedGuideCalendarIndexRoute
   '/guide/tours': typeof AuthenticatedGuideToursIndexRoute
   '/signup/guide': typeof UnauthenticatedSignupGuideIndexRoute
   '/signup/traveller': typeof UnauthenticatedSignupTravellerIndexRoute
@@ -158,11 +176,13 @@ export interface FileRoutesById {
   '/_authenticated/guide': typeof AuthenticatedGuideRouteWithChildren
   '/_authenticated/traveller': typeof AuthenticatedTravellerRouteWithChildren
   '/_unauthenticated/signin': typeof UnauthenticatedSigninRoute
+  '/_authenticated/guide/preferences': typeof AuthenticatedGuidePreferencesRoute
   '/_authenticated/guide/tours': typeof AuthenticatedGuideToursRouteWithChildren
   '/_authenticated/guide/': typeof AuthenticatedGuideIndexRoute
   '/_authenticated/traveller/': typeof AuthenticatedTravellerIndexRoute
   '/_unauthenticated/signup/': typeof UnauthenticatedSignupIndexRoute
   '/_authenticated/guide/tours/$tourId': typeof AuthenticatedGuideToursTourIdRouteWithChildren
+  '/_authenticated/guide/calendar/': typeof AuthenticatedGuideCalendarIndexRoute
   '/_authenticated/guide/tours/': typeof AuthenticatedGuideToursIndexRoute
   '/_unauthenticated/signup/guide/': typeof UnauthenticatedSignupGuideIndexRoute
   '/_unauthenticated/signup/traveller/': typeof UnauthenticatedSignupTravellerIndexRoute
@@ -177,11 +197,13 @@ export interface FileRouteTypes {
     | '/guide'
     | '/traveller'
     | '/signin'
+    | '/guide/preferences'
     | '/guide/tours'
     | '/guide/'
     | '/traveller/'
     | '/signup'
     | '/guide/tours/$tourId'
+    | '/guide/calendar'
     | '/guide/tours/'
     | '/signup/guide'
     | '/signup/traveller'
@@ -192,9 +214,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/signin'
+    | '/guide/preferences'
     | '/guide'
     | '/traveller'
     | '/signup'
+    | '/guide/calendar'
     | '/guide/tours'
     | '/signup/guide'
     | '/signup/traveller'
@@ -209,11 +233,13 @@ export interface FileRouteTypes {
     | '/_authenticated/guide'
     | '/_authenticated/traveller'
     | '/_unauthenticated/signin'
+    | '/_authenticated/guide/preferences'
     | '/_authenticated/guide/tours'
     | '/_authenticated/guide/'
     | '/_authenticated/traveller/'
     | '/_unauthenticated/signup/'
     | '/_authenticated/guide/tours/$tourId'
+    | '/_authenticated/guide/calendar/'
     | '/_authenticated/guide/tours/'
     | '/_unauthenticated/signup/guide/'
     | '/_unauthenticated/signup/traveller/'
@@ -300,6 +326,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideToursRouteImport
       parentRoute: typeof AuthenticatedGuideRoute
     }
+    '/_authenticated/guide/preferences': {
+      id: '/_authenticated/guide/preferences'
+      path: '/preferences'
+      fullPath: '/guide/preferences'
+      preLoaderRoute: typeof AuthenticatedGuidePreferencesRouteImport
+      parentRoute: typeof AuthenticatedGuideRoute
+    }
     '/_unauthenticated/signup/traveller/': {
       id: '/_unauthenticated/signup/traveller/'
       path: '/signup/traveller'
@@ -320,6 +353,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/guide/tours/'
       preLoaderRoute: typeof AuthenticatedGuideToursIndexRouteImport
       parentRoute: typeof AuthenticatedGuideToursRoute
+    }
+    '/_authenticated/guide/calendar/': {
+      id: '/_authenticated/guide/calendar/'
+      path: '/calendar'
+      fullPath: '/guide/calendar'
+      preLoaderRoute: typeof AuthenticatedGuideCalendarIndexRouteImport
+      parentRoute: typeof AuthenticatedGuideRoute
     }
     '/_authenticated/guide/tours/$tourId': {
       id: '/_authenticated/guide/tours/$tourId'
@@ -390,13 +430,17 @@ const AuthenticatedGuideToursRouteWithChildren =
   )
 
 interface AuthenticatedGuideRouteChildren {
+  AuthenticatedGuidePreferencesRoute: typeof AuthenticatedGuidePreferencesRoute
   AuthenticatedGuideToursRoute: typeof AuthenticatedGuideToursRouteWithChildren
   AuthenticatedGuideIndexRoute: typeof AuthenticatedGuideIndexRoute
+  AuthenticatedGuideCalendarIndexRoute: typeof AuthenticatedGuideCalendarIndexRoute
 }
 
 const AuthenticatedGuideRouteChildren: AuthenticatedGuideRouteChildren = {
+  AuthenticatedGuidePreferencesRoute: AuthenticatedGuidePreferencesRoute,
   AuthenticatedGuideToursRoute: AuthenticatedGuideToursRouteWithChildren,
   AuthenticatedGuideIndexRoute: AuthenticatedGuideIndexRoute,
+  AuthenticatedGuideCalendarIndexRoute: AuthenticatedGuideCalendarIndexRoute,
 }
 
 const AuthenticatedGuideRouteWithChildren =

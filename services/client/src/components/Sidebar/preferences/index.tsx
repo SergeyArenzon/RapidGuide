@@ -1,11 +1,9 @@
 import { useRouter, useRouterState } from "@tanstack/react-router"
-import { sidebarTabs } from "./tabs.config"
+import { preferencesConfig } from "./preferences.config"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { useRoleStore } from "@/store/useRole"
 
-
-
-const Tabs = () => {
+const PreferencesMenu = () => {
   const { role } = useRoleStore()
   const router = useRouter()
   const pathname = useRouterState({
@@ -14,20 +12,24 @@ const Tabs = () => {
   
   if (!role) return null
   
-  // Get all routes for the current role, sorted by length (longest first) to prioritize more specific routes
-  const allRoutes = sidebarTabs[role].map(tab => tab.route).sort((a, b) => b.length - a.length)
+  const preferences = preferencesConfig[role]
   
-  const isActive = (tabRoute: string) => {
+  if (preferences.length === 0) return null
+  
+  // Get all routes for the current role, sorted by length (longest first) to prioritize more specific routes
+  const allRoutes = preferences.map(item => item.route).sort((a, b) => b.length - a.length)
+  
+  const isActive = (itemRoute: string) => {
     // Check if this route matches the current pathname
-    const matches = pathname === tabRoute || pathname.startsWith(tabRoute + '/')
+    const matches = pathname === itemRoute || pathname.startsWith(itemRoute + '/')
     
     if (!matches) return false
     
     // Check if there's a more specific route that also matches
     // If so, this route should not be active
     const moreSpecificRoute = allRoutes.find(route => 
-      route !== tabRoute && 
-      route.length > tabRoute.length &&
+      route !== itemRoute && 
+      route.length > itemRoute.length &&
       (pathname === route || pathname.startsWith(route + '/'))
     )
     
@@ -36,14 +38,14 @@ const Tabs = () => {
   
   return (
     <SidebarMenu>
-      {sidebarTabs[role].map((tab) => (
-        <SidebarMenuItem key={tab.label}>
+      {preferences.map((item) => (
+        <SidebarMenuItem key={item.label}>
           <SidebarMenuButton
-            isActive={isActive(tab.route)}
-            onClick={() => router.navigate({ to: tab.route })}
+            isActive={isActive(item.route)}
+            onClick={() => router.navigate({ to: item.route })}
           >
-            <tab.icon className="h-4 w-4" />
-            <span>{tab.label}</span>
+            <item.icon className="h-4 w-4" />
+            <span>{item.label}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}
@@ -51,4 +53,5 @@ const Tabs = () => {
   )
 }
 
-export default Tabs
+export default PreferencesMenu
+

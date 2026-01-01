@@ -4,8 +4,8 @@ import {
   countrySchema,
   getProfilesMeResponseSchema,
   guideSchema,
+  languageSchema,
   travellerSchema,
-  languageSchema
 } from '@rapid-guide-io/contracts';
 import { BaseApi } from './base';
 import type { 
@@ -15,8 +15,8 @@ import type {
   CreateTravellerDto,
   GetProfilesMeResponseDto, 
   GuideDto, 
+  LanguageDto,
   TravellerDto,
-  LanguageDto
 } from '@rapid-guide-io/contracts';
 
 export class ProfileApi extends BaseApi {
@@ -63,6 +63,26 @@ export class ProfileApi extends BaseApi {
       () => this.axios.post(`${ProfileApi.baseUrl}/traveller`, traveller),
       travellerSchema
     );
+  }
+
+  // Guide Schedule methods
+  async getGuideSchedules(): Promise<Array<{ id: string; day_of_week: number; start_time: string; end_time: string }>> {
+    // TODO: Replace with proper schema validation when backend is ready
+    return this.axios.get(`${ProfileApi.baseUrl}/guide/schedule`).then(res => res.data);
+  }
+
+  async createGuideSchedule(schedule: { day_of_week: number; start_time: string; end_time: string }): Promise<{ id: string; day_of_week: number; start_time: string; end_time: string }> {
+    // TODO: Replace with proper schema validation when backend is ready
+    return this.axios.post(`${ProfileApi.baseUrl}/guide/schedule`, schedule).then(res => res.data);
+  }
+
+  async updateGuideSchedule(id: string, schedule: { day_of_week: number; start_time: string; end_time: string }): Promise<{ id: string; day_of_week: number; start_time: string; end_time: string }> {
+    // TODO: Replace with proper schema validation when backend is ready
+    return this.axios.patch(`${ProfileApi.baseUrl}/guide/schedule/${id}`, schedule).then(res => res.data);
+  }
+
+  async deleteGuideSchedule(id: string): Promise<void> {
+    return this.axios.delete(`${ProfileApi.baseUrl}/guide/schedule/${id}`).then(() => undefined);
   }
 }
 

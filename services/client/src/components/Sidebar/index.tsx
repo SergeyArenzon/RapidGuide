@@ -2,7 +2,8 @@ import { Search } from "lucide-react"
 import Logo from "../Logo"
 import { RoleSwitch } from "./RoleSwitch"
 import { UserDropdown } from "./UserDropdown"
-import Tabs from "./tabs"
+import Guide from "./guide"
+import PreferencesMenu from "./preferences"
 import {
   Sidebar as ShadcnSidebar,
   SidebarContent,
@@ -12,8 +13,6 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
 } from "@/components/ui/sidebar"
@@ -40,7 +39,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
           <SidebarGroup>
             <SidebarGroupLabel>{capitalizedRole} Menu</SidebarGroupLabel>
             <SidebarGroupContent>
-              <Tabs />
+              <Guide />
             </SidebarGroupContent>
           </SidebarGroup>
 
@@ -68,16 +67,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
           <SidebarGroup>
             <SidebarGroupLabel>Preferences</SidebarGroupLabel>
             <SidebarGroupContent>
-              <SidebarMenu>
-                {/* {tabs.slice(5).map((tab) => (
-                  <SidebarMenuItem key={tab.id}>
-                    <SidebarMenuButton isActive={activeTab === tab.id} onClick={() => setActiveTab(tab.id)}>
-                      <tab.icon className="h-4 w-4" />
-                      <span>{tab.label}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))} */}
-              </SidebarMenu>
+              <PreferencesMenu />
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
