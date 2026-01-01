@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button'
 import { Plus } from 'lucide-react'
 import { useCalendarContext } from '../../calendar-context'
+import { Button } from '@/components/ui/button'
 
 export default function CalendarHeaderActionsAdd() {
   const { setNewEventDialogOpen } = useCalendarContext()

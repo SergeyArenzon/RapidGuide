@@ -1,8 +1,8 @@
-import { useCalendarContext } from '../../calendar-context'
 import { isSameDay } from 'date-fns'
-import { hours } from './calendar-body-margin-day-margin'
+import { useCalendarContext } from '../../calendar-context'
 import CalendarBodyHeader from '../calendar-body-header'
 import CalendarEvent from '../../calendar-event'
+import { hours } from './calendar-body-margin-day-margin'
 
 export default function CalendarBodyDayContent({ date }: { date: Date }) {
   const { events } = useCalendarContext()

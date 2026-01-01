@@ -2,7 +2,7 @@ import { Search } from "lucide-react"
 import Logo from "../Logo"
 import { RoleSwitch } from "./RoleSwitch"
 import { UserDropdown } from "./UserDropdown"
-import Tabs from "./tabs"
+import Guide from "./guide"
 import PreferencesMenu from "./preferences"
 import {
   Sidebar as ShadcnSidebar,
@@ -39,7 +39,7 @@ export function Sidebar({ ...props }: React.ComponentProps<typeof ShadcnSidebar>
           <SidebarGroup>
             <SidebarGroupLabel>{capitalizedRole} Menu</SidebarGroupLabel>
             <SidebarGroupContent>
-              <Tabs />
+              <Guide />
             </SidebarGroupContent>
           </SidebarGroup>
 

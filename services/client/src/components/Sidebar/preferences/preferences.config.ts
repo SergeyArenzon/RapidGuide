@@ -1,4 +1,5 @@
-import { Clock } from "lucide-react";
+import { Calendar } from "lucide-react";
+import type { Clock } from "lucide-react";
 import type { FileRouteTypes } from "@/routeTree.gen";
 import type { Role } from "@/store/useRole";
 
@@ -14,7 +15,7 @@ export type PreferencesConfig = Record<Role, Preferences>
 
 export const preferencesConfig: PreferencesConfig = {
   guide: [
-    { label: "Time Slots", icon: Clock, route: "/guide/preferences/time-slots" as FileRouteTypes["to"] },
+    // { label: "Calendar", icon: Calendar, route: "/guide/preferences/calendar" as FileRouteTypes["to"] },
   ],
   traveller: [],
 }
