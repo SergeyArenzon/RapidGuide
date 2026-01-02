@@ -39,14 +39,6 @@ function TourDetailContent() {
   const deleteTourMutation = useDeleteTourMutation()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
-  const handleDeleteClick = () => {
-    setDeleteDialogOpen(true)
-  }
-
-  const handleDeleteConfirm = () => {
-    deleteTourMutation.mutate(tourId)
-  }
-
   return (
     <div className="space-y-6">
       {/* Tour Information Card */}
@@ -76,7 +68,7 @@ function TourDetailContent() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     variant="danger"
-                    onClick={handleDeleteClick}
+                    onClick={() =>setDeleteDialogOpen(true)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete Tour
@@ -154,7 +146,7 @@ function TourDetailContent() {
         approveText="Delete"
         cancelText="Cancel"
         variant="destructive"
-        onApprove={handleDeleteConfirm}
+        onApprove={() => deleteTourMutation.mutate(tourId)}
         onCancel={() => setDeleteDialogOpen(false)}
       />
     </div>
