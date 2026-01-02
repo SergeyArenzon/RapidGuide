@@ -6,8 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { sessionSchema, userSchema } from '@rapid-guide-io/contracts'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
@@ -15,9 +14,8 @@ import type { AuthContext } from '@/context/auth-context'
 import { Error } from '@/components/Error'
 import Loading from '@/components/Loading'
 import { Toaster } from '@/components/ui/sonner'
-import { getSessionQuery } from '@/lib/auth.server'
 import { useJwtTokenStore } from '@/store/useJwtToken'
-import { profileQueries } from '@/lib/query'
+import { loadAuthContext } from '@/lib/auth-loader'
 
 
 interface RouterContext extends AuthContext {
@@ -46,93 +44,44 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     ],
   }),
   pendingComponent: () => <Loading />,
-  notFoundComponent: () => <Error 
-    statusCode={404}
-    title="Page not found"
-    description="The page you're looking for doesn't exist."/>,
+  errorComponent: ({ error }: { error?: Error }) => (
+    <RootDocument>
+      <Error 
+        statusCode={500}
+        title="Something went wrong"
+        description={error?.message || "An unexpected error occurred. Please try again later."}
+      />
+    </RootDocument>
+  ),
+  notFoundComponent: () => (
+    <RootDocument>
+      <Error 
+        statusCode={404}
+        title="Page not found"
+        description="The page you're looking for doesn't exist."
+      />
+    </RootDocument>
+  ),
   component: RootComponent,
   beforeLoad: async ({ context }) => {
-    if (context.session) {
-      return; // Don't return anything, keeps existing context
-    }
-    const result = await context.queryClient.ensureQueryData(getSessionQuery);
-
-    if (!result?.data) {
-      return {
-        jwt: null,
-        user: null,
-        session: null,
-        guide: null,
-        traveller: null,
-      };
-    }
-
-    try {
-      // Parse user and session
-      const user = userSchema.parse(result.data.user);
-      const session = sessionSchema.parse(result.data.session);
-
-      // Fetch guide and traveller data using the JWT token directly
-      let guide = null;
-      let traveller = null;
-      
-      if (result.jwt) {
-        try {
-          const meData = await context.queryClient.ensureQueryData(
-            profileQueries.me(result.jwt)
-          );
-          guide = meData.guide || null;
-          traveller = meData.traveller || null;
-        } catch (error) {
-          console.error('Failed to fetch guide/traveller data:', error);
-        }
-      }
-
-      return {
-        jwt: result.jwt,
-        user,
-        session,
-        guide,
-        traveller,
-      };
-    } catch (error) {
-      console.error('Failed to parse session data:', error);
-      return {
-        jwt: null,
-        user: null,
-        session: null,
-        guide: null,
-        traveller: null,
-      };
-    }
+    return await loadAuthContext(context.queryClient, context.session)
   },
   
 })
 
-
-
-
-function RootComponent() {
-  // Get data from beforeLoad - useLoaderData() for beforeLoad return values
-  const { jwt } = Route.useRouteContext();
-  
-  // Get Zustand store setters
-  const { setToken } = useJwtTokenStore((state) => state)
-  
-  // Hydrate Zustand stores from loader data on client side
-  useEffect(() => {
-    setToken(jwt!);
-  }, []);
-  
-
+/**
+ * Root Document Wrapper
+ * Provides the HTML structure (html, head, body) that includes CSS
+ * Used by both RootComponent and error/notFound components to ensure CSS is always loaded
+ */
+function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body className="m-0 h-screen overflow-hidden">
-        <Toaster />
-        <Outlet />
+        {children}
         <TanStackDevtools
           config={{
             position: 'bottom-right',
@@ -148,5 +97,26 @@ function RootComponent() {
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootComponent() {
+  // Get data from beforeLoad - useLoaderData() for beforeLoad return values
+  const { jwt } = Route.useRouteContext();
+  
+  // Get Zustand store setters
+  const { setToken } = useJwtTokenStore((state) => state)
+  
+  // Hydrate Zustand stores from loader data on client side
+  useEffect(() => {
+    setToken(jwt!);
+  }, []);
+  
+
+  return (
+    <RootDocument>
+      <Toaster />
+      <Outlet />
+    </RootDocument>
   )
 }
