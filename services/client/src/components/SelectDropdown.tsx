@@ -36,13 +36,15 @@ export default function SelectDropdown({
     name,
     defaultValue = null,
     register,
+    watch,
     setValue,
     placeholder = "Select...",
     disabled = false,
     isLoading = false,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState<string | number | null>(defaultValue)
+  const formValue = watch(name)
+  const [selected, setSelected] = useState<string | number | null>(defaultValue ?? formValue ?? null)
   
   const handleSelect = (currentValue: string | number) => {
     // Convert to number if the selected option's value is a number
@@ -57,13 +59,27 @@ export default function SelectDropdown({
     register(name)
   }, [register, name])
 
-  // Reset selection when options change
+  // Sync selected state with form value
+  useEffect(() => {
+    if (formValue !== undefined && formValue !== null) {
+      setSelected(formValue)
+    }
+  }, [formValue])
+
+  // Reset selection when options change or selected value is no longer valid
   useEffect(() => {
     if (options.length === 0) {
       setSelected(null)
       setValue(name, null, { shouldValidate: true })
+    } else if (selected !== null && selected !== undefined) {
+      // Check if the selected value is still in the options
+      const isValidOption = options.some(opt => opt.value === selected)
+      if (!isValidOption) {
+        setSelected(null)
+        setValue(name, null, { shouldValidate: true })
+      }
     }
-  }, [options, name, setValue])
+  }, [options, name, setValue, selected])
   
   return (
     <Popover open={open} onOpenChange={setOpen}>

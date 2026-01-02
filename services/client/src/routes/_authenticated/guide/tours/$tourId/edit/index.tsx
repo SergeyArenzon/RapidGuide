@@ -1,14 +1,12 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { createTourSchema } from '@rapid-guide-io/contracts'
-import { ArrowLeft } from 'lucide-react'
 import { useTourDetail, useTourFormData, useUpdateTourMutation } from './-hooks'
 import { EditTourSkeleton } from './-skeleton'
 import type { CreateTourDto } from '@rapid-guide-io/contracts'
 import type { FieldConfig } from '@/components/form/types'
 import Form from '@/components/form'
 import { Error } from '@/components/Error'
-import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/$tourId/edit/')({
   component: () => (
@@ -30,14 +28,6 @@ function EditTourComponent() {
   const { subcategoryOptions, countries, cities } = useTourFormData()
   const updateTourMutation = useUpdateTourMutation(tourId)
 
-  const [formState, setFormState] = useState<Partial<CreateTourDto>>({
-    country_code: tour?.country_code || '',
-    city_id: tour?.city_id,
-  })
-
-  const handleFormChange = (currentState: Partial<CreateTourDto>) =>
-    setFormState((prev) => ({ ...prev, ...currentState }))
-
   if (isTourLoading) return <EditTourSkeleton />
   if (isTourError || !tour)
     return (
@@ -47,6 +37,21 @@ function EditTourComponent() {
         retryAction={() => refetch()}
       />
     )
+
+  // Initialize formState with country_code for city filtering
+  const [formState, setFormState] = useState<Partial<CreateTourDto>>({})
+    
+
+  // reset city_id when country_code changes
+  useEffect(() => {
+    setFormState((prev) => ({
+      ...prev,
+      city_id: undefined,
+    }))
+  }, [formState.country_code])
+
+  const handleFormChange = (currentState: Partial<CreateTourDto>) =>
+    setFormState((prev) => ({ ...prev, ...currentState }))
 
   const fields: Array<FieldConfig | (FieldConfig & { name: keyof CreateTourDto })> = [
     {
@@ -126,11 +131,8 @@ function EditTourComponent() {
       name: 'city_id',
       type: 'select',
       label: 'City',
-      options: cities
-        .filter((city) => city.country_code === formState.country_code)
-        .map((city) => ({ value: Number(city.id), label: city.name })),
+      options: cities.filter(city => city.country_code === (formState.country_code || tour.country_code)).map(city => ({ value: Number(city.id), label: city.name })),
       placeholder: 'Select city',
-      disabled: !formState.country_code,
       helperText: 'Tour city',
       required: true,
       className: 'col-span-2',
@@ -167,17 +169,7 @@ function EditTourComponent() {
           onChange={handleFormChange}
           isLoading={updateTourMutation.isPending}
           formClassName="grid grid-cols-2 gap-3"
-          defaultValues={{
-            name: tour.name,
-            price: tour.price,
-            description: tour.description,
-            subcategory_ids: tour.subcategory_ids,
-            min_travellers: tour.min_travellers,
-            max_travellers: tour.max_travellers,
-            duration_minutes: tour.duration_minutes,
-            country_code: tour.country_code,
-            city_id: tour.city_id,
-          }}
+          defaultValues={tour}
         />
       </div>
     </div>

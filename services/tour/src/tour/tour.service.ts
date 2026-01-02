@@ -64,4 +64,60 @@ export class TourService {
 
     return newTour.toDto();
   }
+
+  async update(id: string, updateTourDto: CreateTourDto): Promise<TourDto> {
+    const em = this.em.fork();
+    const tour = await em.findOne(
+      Tour,
+      { id },
+      { populate: ['tourSubcategories'] },
+    );
+    if (!tour) {
+      throw new NotFoundException(`Tour with id ${id} not found`);
+    }
+
+    // Update tour properties (excluding subcategory_ids as that's handled separately)
+    const { subcategory_ids, ...tourData } = updateTourDto;
+    tour.assign({
+      ...tourData,
+    });
+
+    // Handle subcategories update
+    // Remove existing tour-subcategory relations
+    if (tour.tourSubcategories.isInitialized()) {
+      const existingRelations = tour.tourSubcategories.getItems();
+      for (const relation of existingRelations) {
+        em.remove(relation);
+      }
+    }
+
+    // Create new tour-subcategory relations if provided
+    if (subcategory_ids?.length) {
+      const subcategories = await em.find(SubCategory, {
+        id: { $in: subcategory_ids },
+      });
+
+      for (const subcategory of subcategories) {
+        const tourSubcategory = new TourSubcategory({
+          tour,
+          subcategory,
+        });
+        em.persist(tourSubcategory);
+      }
+    }
+
+    await em.flush();
+    await em.populate(tour, ['tourSubcategories.subcategory']);
+
+    return tour.toDto();
+  }
+
+  async remove(id: string): Promise<void> {
+    const tour = await this.tourRepository.findOne({ id });
+    if (!tour) {
+      throw new NotFoundException(`Tour with id ${id} not found`);
+    }
+    const em = this.em.fork();
+    await em.removeAndFlush(tour);
+  }
 }

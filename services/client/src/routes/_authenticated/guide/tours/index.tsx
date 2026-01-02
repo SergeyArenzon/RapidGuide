@@ -1,12 +1,14 @@
-import { Suspense, useMemo } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
 import { useTours } from './-hooks'
+import { useDeleteTourMutation } from './$tourId/-hooks'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import { DataTable } from '@/components/DataTable'
+import { AlertDialog } from '@/components/AlertDialog'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -28,8 +30,32 @@ function RouteComponent() {
 function ToursListContent() {
   const navigate = useNavigate()
   const { tours, countries, cities } = useTours()
+  const deleteTourMutation = useDeleteTourMutation()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [tourToDelete, setTourToDelete] = useState<TourDto | null>(null)
 
   const isFirstTour = tours.length === 0
+
+  const handleShow = (tour: TourDto) => {
+    navigate({ to: `/guide/tours/${tour.id}` })
+  }
+
+  const handleEdit = (tour: TourDto) => {
+    navigate({ to: `/guide/tours/${tour.id}/edit` })
+  }
+
+  const handleDelete = (tour: TourDto) => {
+    setTourToDelete(tour)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (tourToDelete) {
+      deleteTourMutation.mutate(tourToDelete.id)
+      setDeleteDialogOpen(false)
+      setTourToDelete(null)
+    }
+  }
 
   const columns = useMemo<Array<ColumnDef<TourDto>>>(
     () => [
@@ -117,15 +143,36 @@ function ToursListContent() {
           buttonLink="/guide/tours/new"
         />
       ) : (
-        <DataTable
-          columns={columns}
-          data={tours}
-          emptyMessage="No tours found."
-          filterColumnId="name"
-          filterPlaceholder="Filter tours..."
-          name="Tour"
-          onCreate={() => navigate({ to: '/guide/tours/new' })}
-        />
+        <>
+          <DataTable
+            columns={columns}
+            data={tours}
+            emptyMessage="No tours found."
+            filterColumnId="name"
+            filterPlaceholder="Filter tours..."
+            name="Tour"
+            onCreate={() => navigate({ to: '/guide/tours/new' })}
+            onShowRow={handleShow}
+            onEditRow={handleEdit}
+            onDeleteRow={handleDelete}
+          />
+          {tourToDelete && (
+            <AlertDialog
+              open={deleteDialogOpen}
+              onOpenChange={setDeleteDialogOpen}
+              title="Delete Tour"
+              description={`Are you sure you want to delete "${tourToDelete.name}"? This action cannot be undone.`}
+              approveText="Delete"
+              cancelText="Cancel"
+              variant="destructive"
+              onApprove={handleDeleteConfirm}
+              onCancel={() => {
+                setDeleteDialogOpen(false)
+                setTourToDelete(null)
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   )

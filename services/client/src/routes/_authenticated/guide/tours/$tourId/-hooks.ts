@@ -1,5 +1,8 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { profileQueries, tourQueries } from '@/lib/query'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
+import { profileQueries, tourQueries, tourQueryKeys } from '@/lib/query'
+import Api from '@/lib/api'
 
 export function useTourDetail(tourId: string) {
   const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
@@ -14,5 +17,24 @@ export function useTourDetail(tourId: string) {
     country,
     city,
   }
+}
+
+export function useDeleteTourMutation() {
+  const navigate = useNavigate()
+  const api = new Api()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (tourId: string) => api.tour.deleteTour(tourId),
+    onSuccess: () => {
+      toast.success('Tour deleted successfully!')
+      queryClient.invalidateQueries({ queryKey: tourQueryKeys.all() })
+      navigate({ to: '/guide/tours' })
+    },
+    onError: (error: Error) => {
+      console.error('Error deleting tour:', error)
+      toast.error(error.message || 'Failed to delete tour')
+    },
+  })
 }
 

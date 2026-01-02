@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Clock, DollarSign, Edit, MapPin, MoreHorizontal, Trash2, Users } from 'lucide-react'
-import { useTourDetail } from './-hooks'
+import { useDeleteTourMutation, useTourDetail } from './-hooks'
 import { TourDetailSkeleton } from './-skeleton'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { AlertDialog } from '@/components/AlertDialog'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/$tourId/')({
   staticData: {
@@ -35,6 +36,8 @@ function TourDetailContent() {
   const navigate = useNavigate()
   const { tourId } = Route.useParams()
   const { tour, country, city } = useTourDetail(tourId)
+  const deleteTourMutation = useDeleteTourMutation()
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   return (
     <div className="space-y-6">
@@ -65,10 +68,7 @@ function TourDetailContent() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     variant="danger"
-                    onClick={() => {
-                      // TODO: Implement delete functionality
-                      console.log('Delete tour', tourId)
-                    }}
+                    onClick={() =>setDeleteDialogOpen(true)}
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete Tour
@@ -136,6 +136,19 @@ function TourDetailContent() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete Tour"
+        description={`Are you sure you want to delete "${tour.name}"? This action cannot be undone.`}
+        approveText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+        onApprove={() => deleteTourMutation.mutate(tourId)}
+        onCancel={() => setDeleteDialogOpen(false)}
+      />
     </div>
   )
 }
