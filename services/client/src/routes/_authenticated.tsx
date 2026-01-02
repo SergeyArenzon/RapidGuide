@@ -10,11 +10,12 @@ export const Route = createFileRoute('/_authenticated')({
         })
     } 
 
-    if (!guide && !traveller) {
+    if ((!guide && location.pathname === '/guide') || (!traveller && location.pathname === '/traveller')) {
         throw redirect({
             to: '/signup',
         })
     }
+
   },
   component: AuthenticatedLayout,
 })
