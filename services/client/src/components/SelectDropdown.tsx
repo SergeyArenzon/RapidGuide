@@ -36,13 +36,15 @@ export default function SelectDropdown({
     name,
     defaultValue = null,
     register,
+    watch,
     setValue,
     placeholder = "Select...",
     disabled = false,
     isLoading = false,
 }: SelectDropdownProps) {
   const [open, setOpen] = useState(false)
-  const [selected, setSelected] = useState<string | number | null>(defaultValue)
+  const formValue = watch(name)
+  const [selected, setSelected] = useState<string | number | null>(defaultValue ?? formValue ?? null)
   
   const handleSelect = (currentValue: string | number) => {
     // Convert to number if the selected option's value is a number
@@ -56,6 +58,13 @@ export default function SelectDropdown({
   useEffect(() => {
     register(name)
   }, [register, name])
+
+  // Sync selected state with form value
+  useEffect(() => {
+    if (formValue !== undefined && formValue !== null) {
+      setSelected(formValue)
+    }
+  }, [formValue])
 
   // Reset selection when options change
   useEffect(() => {
