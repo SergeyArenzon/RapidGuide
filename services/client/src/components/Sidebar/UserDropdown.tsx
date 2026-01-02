@@ -7,6 +7,7 @@ import {
 } from "lucide-react"
 
 import { useNavigate, useRouter } from "@tanstack/react-router"
+import { toast } from "sonner"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -30,6 +31,7 @@ export function UserDropdown() {
         fetchOptions: {
           onSuccess: () => {
             console.log("logout success");
+            toast.success("Logged out successfully")
             // Clear all query cache
             queryClient.clear()
             // Invalidate router to clear context (re-run beforeLoad)
@@ -41,6 +43,7 @@ export function UserDropdown() {
       })
     } catch (error) {
       console.log("logout", {error});
+      toast.error("Failed to log out")
       // Even on error, clear context and navigate
       queryClient.clear()
       router.invalidate()
