@@ -66,13 +66,20 @@ export default function SelectDropdown({
     }
   }, [formValue])
 
-  // Reset selection when options change
+  // Reset selection when options change or selected value is no longer valid
   useEffect(() => {
     if (options.length === 0) {
       setSelected(null)
       setValue(name, null, { shouldValidate: true })
+    } else if (selected !== null && selected !== undefined) {
+      // Check if the selected value is still in the options
+      const isValidOption = options.some(opt => opt.value === selected)
+      if (!isValidOption) {
+        setSelected(null)
+        setValue(name, null, { shouldValidate: true })
+      }
     }
-  }, [options, name, setValue])
+  }, [options, name, setValue, selected])
   
   return (
     <Popover open={open} onOpenChange={setOpen}>

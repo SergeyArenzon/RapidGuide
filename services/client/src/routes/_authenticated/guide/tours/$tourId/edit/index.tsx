@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Suspense, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { createTourSchema } from '@rapid-guide-io/contracts'
 import { useTourDetail, useTourFormData, useUpdateTourMutation } from './-hooks'
 import { EditTourSkeleton } from './-skeleton'
@@ -42,8 +42,18 @@ function EditTourComponent() {
   const [formState, setFormState] = useState<Partial<CreateTourDto>>({
     // country_code: tour.country_code,
 
-  })
+    })
 
+
+  // reset city_id when country_code changes
+  useEffect(() => {
+    setFormState((prev) => ({
+      ...prev,
+      city_id: undefined,
+    }))
+  }, [formState.country_code])
+
+  console.log('formState', formState)
   const handleFormChange = (currentState: Partial<CreateTourDto>) =>
     setFormState((prev) => ({ ...prev, ...currentState }))
 
