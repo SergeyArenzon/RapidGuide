@@ -39,10 +39,7 @@ function EditTourComponent() {
     )
 
   // Initialize formState with country_code for city filtering
-  const [formState, setFormState] = useState<Partial<CreateTourDto>>({
-    // country_code: tour.country_code,
-
-    })
+  const [formState, setFormState] = useState<Partial<CreateTourDto>>({})
 
 
   // reset city_id when country_code changes
@@ -53,7 +50,6 @@ function EditTourComponent() {
     }))
   }, [formState.country_code])
 
-  console.log('formState', formState)
   const handleFormChange = (currentState: Partial<CreateTourDto>) =>
     setFormState((prev) => ({ ...prev, ...currentState }))
 
