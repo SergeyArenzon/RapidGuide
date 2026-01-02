@@ -3,8 +3,6 @@ import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ location, context }) => {
     const { session, guide, traveller } = context
-
-    console.log({traveller, location});
     
     if (!session) {
         throw redirect({
