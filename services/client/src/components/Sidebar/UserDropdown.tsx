@@ -6,7 +6,7 @@ import {
   User,
 } from "lucide-react"
 
-import { useNavigate } from "@tanstack/react-router"
+import { useNavigate, useRouter } from "@tanstack/react-router"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -20,20 +20,31 @@ import { authClient } from "@/lib/auth-client"
 import { Route } from "@/routes/__root"
 
 export function UserDropdown() {
-  const { user } = Route.useRouteContext();
+  const { user, queryClient } = Route.useRouteContext();
   const navigate = useNavigate()
+  const router = useRouter()
 
   const handleLogout = async () => {
     try {
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
-            navigate({ to: "/signin", replace: false })
+            console.log("logout success");
+            // Clear all query cache
+            queryClient.clear()
+            // Invalidate router to clear context (re-run beforeLoad)
+            router.invalidate()
+            // Navigate to signin
+            navigate({ to: "/signin", replace: true })
           },
         },
       })
     } catch (error) {
-    } finally {
+      console.log("logout", {error});
+      // Even on error, clear context and navigate
+      queryClient.clear()
+      router.invalidate()
+      navigate({ to: "/signin", replace: true })
     }
   }
 

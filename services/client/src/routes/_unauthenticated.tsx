@@ -5,7 +5,6 @@ export const Route = createFileRoute('/_unauthenticated')({
   beforeLoad: ({ context, location }) => {
     const { session, traveller, guide } = context
     const { role } = useRoleStore.getState()
-
     
     // Only make redirect decisions after auth has finished loading
     // Users with both guide and traveller should be redirected based on their selected role
