@@ -12,9 +12,12 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  CirclePlus,
+  Edit,
+  Eye,
   MoreHorizontal,
   Settings2,
-  CirclePlus,
+  Trash2,
 } from 'lucide-react'
 import type {
   ColumnDef,
@@ -231,6 +234,7 @@ export function DataTable<TData>({
                         onShowRow?.(row.original)
                       }}
                     >
+                      <Eye className="mr-2 h-4 w-4" />
                       Show
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -238,14 +242,17 @@ export function DataTable<TData>({
                         onEditRow?.(row.original)
                       }}
                     >
+                      <Edit className="mr-2 h-4 w-4" />
                       Edit
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
+                      variant="danger"
                       onClick={() => {
                         onDeleteRow?.(row.original)
                       }}
                     >
+                      <Trash2 className="mr-2 h-4 w-4" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>

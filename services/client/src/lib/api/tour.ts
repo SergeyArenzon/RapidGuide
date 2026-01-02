@@ -57,5 +57,9 @@ export class TourApi extends BaseApi {
       tourSchema
     );
   }
+
+  async deleteTour(tourId: string): Promise<void> {
+    return this.axios.delete(`${TourApi.baseUrl}/tour/${tourId}`).then(() => undefined);
+  }
 }
 

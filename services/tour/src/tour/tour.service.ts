@@ -64,4 +64,13 @@ export class TourService {
 
     return newTour.toDto();
   }
+
+  async remove(id: string): Promise<void> {
+    const tour = await this.tourRepository.findOne({ id });
+    if (!tour) {
+      throw new NotFoundException(`Tour with id ${id} not found`);
+    }
+    const em = this.em.fork();
+    await em.removeAndFlush(tour);
+  }
 }
