@@ -15,9 +15,11 @@ export const Route = createFileRoute('/')({
         to: '/signin',
       })
     }
+    if (!guide && !traveller) {
+      throw redirect({to: "/signup"})
+    }
 
     if (guide || traveller) {
-      
       throw redirect({
         to: `/${guide ? 'guide' : 'traveller'}`,
       })
