@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { TourService } from './tour.service';
@@ -38,6 +39,16 @@ export class TourController {
     @Body() createTourDto: CreateTourDto,
   ): Promise<TourDto> {
     return this.tourService.create(guideId, createTourDto);
+  }
+
+  @Put(':id')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.TOUR_UPDATE])
+  update(
+    @Param('id') id: string,
+    @Body() updateTourDto: CreateTourDto,
+  ): Promise<TourDto> {
+    return this.tourService.update(id, updateTourDto);
   }
 
   @Delete(':id')
