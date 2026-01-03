@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { TourService } from './tour.service';
@@ -20,7 +21,23 @@ export class TourController {
   @Get()
   @UseGuards(ScopesGuard)
   @Scopes([ScopePermission.TOUR_READ])
-  findAll(): Promise<TourDto[]> {
+  findAll(
+    @Query('city_id') cityId?: string,
+    @Query('guide_id') guideId?: string,
+  ): Promise<TourDto[]> {
+    // If guide_id is provided, filter by guide
+    if (guideId) {
+      return this.tourService.findByGuide(guideId);
+    }
+    // If city_id is provided, filter by city
+    if (cityId) {
+      const cityIdNum = parseInt(cityId, 10);
+      if (isNaN(cityIdNum)) {
+        return this.tourService.findAll();
+      }
+      return this.tourService.findByCity(cityIdNum);
+    }
+    // Otherwise return all tours
     return this.tourService.findAll();
   }
 

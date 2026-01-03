@@ -21,6 +21,22 @@ export class TourService {
     return tours.map((tour) => tour.toDto());
   }
 
+  async findByCity(cityId: number): Promise<TourDto[]> {
+    const tours = await this.tourRepository.find(
+      { city_id: cityId },
+      { populate: ['tourSubcategories.subcategory'] },
+    );
+    return tours.map((tour) => tour.toDto());
+  }
+
+  async findByGuide(guideId: string): Promise<TourDto[]> {
+    const tours = await this.tourRepository.find(
+      { guide_id: guideId },
+      { populate: ['tourSubcategories.subcategory'] },
+    );
+    return tours.map((tour) => tour.toDto());
+  }
+
   async findOne(id: string): Promise<TourDto> {
     const tour = await this.tourRepository.findOne(
       { id },

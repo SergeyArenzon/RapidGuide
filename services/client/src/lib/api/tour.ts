@@ -37,9 +37,21 @@ export class TourApi extends BaseApi {
     );
   }
 
-  async getTours(): Promise<Array<TourDto>> {
+  async getTours(cityId?: number, guideId?: string): Promise<Array<TourDto>> {
+    const params = new URLSearchParams();
+    if (cityId) {
+      params.append('city_id', cityId.toString());
+    }
+    if (guideId) {
+      params.append('guide_id', guideId);
+    }
+
+    const queryString = params.toString();
+    const url = queryString
+      ? `${TourApi.baseUrl}/tour?${queryString}`
+      : `${TourApi.baseUrl}/tour`;
     return this.validateResponse(
-      () => this.axios.get(`${TourApi.baseUrl}/tour`),
+      () => this.axios.get(url),
       z.array(tourSchema),
     );
   }
