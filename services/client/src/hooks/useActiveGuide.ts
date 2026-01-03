@@ -1,9 +1,9 @@
 import { useRouterState } from "@tanstack/react-router"
-import type { GuideItem } from "@/components/Sidebar/guide/guide.config"
-import { guideConfig } from "@/components/Sidebar/guide/guide.config"
+import type { MenuTabItem } from "@/components/Sidebar/menuTabs/menuTabs.config"
+import { menuTabsConfig } from "@/components/Sidebar/menuTabs/menuTabs.config"
 import { useRoleStore } from "@/store/useRole"
 
-export function useActiveGuide(): GuideItem | null {
+export function useActiveGuide(): MenuTabItem | null {
   const { role } = useRoleStore()
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
@@ -11,7 +11,7 @@ export function useActiveGuide(): GuideItem | null {
 
   if (!role) return null
 
-  const guide = guideConfig[role]
-  return guide.find((item) => item.route === pathname) ?? null
+  const menuTabs = menuTabsConfig[role]
+  return menuTabs.find((item) => item.route === pathname) ?? null
 }
 

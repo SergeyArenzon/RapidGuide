@@ -1,9 +1,9 @@
 import { useRouter, useRouterState } from "@tanstack/react-router"
-import { guideConfig } from "./guide.config"
+import { menuTabsConfig } from "./menuTabs.config"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { useRoleStore } from "@/store/useRole"
 
-const Guide = () => {
+const MenuTabs = () => {
   const { role } = useRoleStore()
   const router = useRouter()
   const pathname = useRouterState({
@@ -12,12 +12,12 @@ const Guide = () => {
   
   if (!role) return null
   
-  const guide = guideConfig[role]
+  const menuTabs = menuTabsConfig[role]
   
-  if (guide.length === 0) return null
+  if (menuTabs.length === 0) return null
   
   // Get all routes for the current role, sorted by length (longest first) to prioritize more specific routes
-  const allRoutes = guide.map(item => item.route).sort((a, b) => b.length - a.length)
+  const allRoutes = menuTabs.map(item => item.route).sort((a, b) => b.length - a.length)
   
   const isActive = (itemRoute: string) => {
     // Check if this route matches the current pathname
@@ -38,7 +38,7 @@ const Guide = () => {
   
   return (
     <SidebarMenu>
-      {guide.map((item) => (
+      {menuTabs.map((item) => (
         <SidebarMenuItem key={item.label}>
           <SidebarMenuButton
             isActive={isActive(item.route)}
@@ -53,5 +53,5 @@ const Guide = () => {
   )
 }
 
-export default Guide
+export default MenuTabs
 
