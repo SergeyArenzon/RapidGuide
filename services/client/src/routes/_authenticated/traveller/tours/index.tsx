@@ -1,6 +1,5 @@
 import { Suspense, useMemo } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { Router, Search } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
 import { useTours } from './-hooks'
 import type { ColumnDef } from '@tanstack/react-table'

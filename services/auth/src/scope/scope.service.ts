@@ -16,14 +16,16 @@ export class ScopeService {
   ];
 
   // Guide-specific scopes (inherits DEFAULT_SCOPES)
-  static readonly GUIDE_SCOPE = 'tour:*';
+  static readonly GUIDE_SCOPE = 'guide:*';
   static readonly TRAVELLER_SCOPE = 'tour:*';
 
   getScopes(profile: GetProfilesMeResponseDto) {
     const scopes: string[] = [...ScopeService.DEFAULT_SCOPES];
     if (profile.traveller) {
       scopes.push(ScopeService.TRAVELLER_SCOPE);
-      const travellerWriteIndex = scopes.indexOf(ScopePermission.TRAVELLER_CREATE);
+      const travellerWriteIndex = scopes.indexOf(
+        ScopePermission.TRAVELLER_CREATE,
+      );
       scopes.splice(travellerWriteIndex, 1);
     }
     if (profile.guide) {

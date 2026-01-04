@@ -84,5 +84,13 @@ export class ProfileApi extends BaseApi {
   async deleteGuideSchedule(id: string): Promise<void> {
     return this.axios.delete(`${ProfileApi.baseUrl}/guide/schedule/${id}`).then(() => undefined);
   }
+
+  async getGuideByGuideId(guideId: string): Promise<GuideDto> {
+    return this.validateResponse(
+      () => this.axios.get(`${ProfileApi.baseUrl}/guide/${guideId}`),
+      guideSchema
+    );
+  }
+
 }
 

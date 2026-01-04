@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common';
 import { GuideService } from './guide.service';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
 import {
@@ -27,11 +35,14 @@ export class GuideController {
     return await this.guideService.create(user.id, body);
   }
 
-  // @Get()
-  // // @UseGuards(RolesGuard, ScopesGuard)
-  // @Roles(Role.CLIENT)
-  // @Scopes([ScopePermission.GUIDE_READ])
-  // async getGuide(@Subject() userId: string): Promise<GuideDto> {
-  //   return await this.guideService.findByUserId(userId);
-  // }
+  @Get(':id')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.GUIDE_READ])
+  async findOne(@Param('id') id: string): Promise<GuideDto> {
+    const guide = await this.guideService.findById(id);
+    if (!guide) {
+      throw new NotFoundException(`Guide with id ${id} not found`);
+    }
+    return guide;
+  }
 }
