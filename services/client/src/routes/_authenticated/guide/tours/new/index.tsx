@@ -143,7 +143,10 @@ function CreateTourComponent() {
       <Form<CreateTourDto>
         fields={fields}
         schema={createTourSchema}
-        onSubmit={(data) => createTourMutation.mutate(data)}
+        onSubmit={(data) => {
+          console.log('Form submitted with data:', data)
+          createTourMutation.mutate(data)
+        }}
         onChange={handleFormChange}
         isLoading={createTourMutation.isPending}
         formClassName="grid grid-cols-2 gap-3"

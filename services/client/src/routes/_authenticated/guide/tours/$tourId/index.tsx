@@ -23,6 +23,6 @@ function RouteComponent() {
 function TourDetailContent() {
   const { tourId } = Route.useParams()
 
-  return <TourCard tourId={tourId} />
+  return <TourCard tourId={tourId} showActions/>
 }
 

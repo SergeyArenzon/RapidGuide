@@ -20,7 +20,8 @@ export const tourSchema = timeSchema.extend({
 export const createTourSchema = tourSchema.omit({ 
   id: true, 
   created_at: true, 
-  updated_at: true 
+  updated_at: true,
+  guide_id: true,
 });
 
 

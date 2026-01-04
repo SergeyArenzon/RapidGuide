@@ -9,6 +9,8 @@ export function useTourCard(tourId: string) {
   const country = countries.find(c => c.code === tour.country_code)
   const city = cities.find(c => c.id === tour.city_id)
 
+  
+
   return {
     tour,
     country,
