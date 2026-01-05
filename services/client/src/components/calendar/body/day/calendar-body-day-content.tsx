@@ -3,19 +3,26 @@ import { useCalendarContext } from '../../calendar-context'
 import CalendarBodyHeader from '../calendar-body-header'
 import CalendarEvent from '../../calendar-event'
 import { hours } from './calendar-body-margin-day-margin'
+import { useState } from 'react'
 
 export default function CalendarBodyDayContent({ date }: { date: Date }) {
   const { events } = useCalendarContext()
 
   const dayEvents = events.filter((event) => isSameDay(event.start, date))
 
+  const [startHour, setStartHour] = useState<{ date: Date; hour: number }[]>([])
+  
   return (
     <div className="flex flex-col flex-grow">
       <CalendarBodyHeader date={date} />
 
       <div className="flex-1 relative">
-        {hours.map((hour) => (
-          <div key={hour} className="h-32 border-b border-border/50 group" />
+        {hours.map((hour) => (  
+          <div 
+          key={hour} 
+          className={`h-32 border-b border-border/50 group 
+            ${startHour.find((h) => h.date.getTime() === date.getTime() && h.hour === hour) ? 'bg-secondary' : ''}`} 
+          onClick={() => setStartHour([...startHour, { date, hour }])} />
         ))}
 
         {dayEvents.map((event) => (
