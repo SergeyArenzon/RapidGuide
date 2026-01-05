@@ -2,6 +2,7 @@ import { Languages, MapPin, Tag } from 'lucide-react'
 import { useGuideCard } from './useGuideCard'
 import type { LanguageDto, SubCategoryDto } from '@rapid-guide-io/contracts'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface GuideCardProps {
@@ -72,12 +73,9 @@ export function GuideCard({ guideId }: GuideCardProps) {
                 <p className="text-sm font-medium text-muted-foreground">Languages</p>
                 <div className="flex flex-wrap gap-2">
                   {guideLanguages.map((lang) => (
-                    <span
-                      key={lang.code}
-                      className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium"
-                    >
+                    <Badge key={lang.code} variant="secondary">
                       {lang.name}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               </div>
@@ -94,12 +92,9 @@ export function GuideCard({ guideId }: GuideCardProps) {
                 <p className="text-sm font-medium text-muted-foreground">Categories</p>
                 <div className="flex flex-wrap gap-2">
                   {guideSubcategories.map((sub) => (
-                    <span
-                      key={sub.id}
-                      className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium"
-                    >
+                    <Badge key={sub.id} variant="secondary">
                       {sub.name}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               </div>

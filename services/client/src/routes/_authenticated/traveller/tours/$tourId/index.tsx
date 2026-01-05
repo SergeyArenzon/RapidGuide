@@ -28,7 +28,8 @@ function RouteComponent() {
 function TourDetailContent() {
   const { tourId } = Route.useParams()
   const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
-
+  console.log({tour});
+  
   return (
     <div className="space-y-6">
       <TourCard tourId={tourId} />
