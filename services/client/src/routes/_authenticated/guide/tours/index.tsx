@@ -3,9 +3,9 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
 import { useTours } from './-hooks'
-import { useDeleteTourMutation } from './$tourId/-hooks'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
+import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutation'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import { DataTable } from '@/components/DataTable'
 import { AlertDialog } from '@/components/AlertDialog'
@@ -29,7 +29,9 @@ function RouteComponent() {
 
 function ToursListContent() {
   const navigate = useNavigate()
-  const { tours, countries, cities } = useTours()
+  const { guide } = Route.useRouteContext()
+  
+  const { tours, countries, cities } = useTours({ guideId: guide?.id ?? '' })
   const deleteTourMutation = useDeleteTourMutation()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [tourToDelete, setTourToDelete] = useState<TourDto | null>(null)

@@ -85,4 +85,15 @@ export class GuideService {
     }
     return guide.toDto();
   }
+
+  async findById(guideId: string): Promise<GuideDto | null> {
+    const guide = await this.guideRepository.findOne(
+      { id: guideId },
+      { populate: ['languages', 'subcategories', 'country', 'city'] },
+    );
+    if (!guide) {
+      return null;
+    }
+    return guide.toDto();
+  }
 }

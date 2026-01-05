@@ -1,6 +1,5 @@
 import { Suspense, useMemo } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
 import { useTours } from './-hooks'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -25,7 +24,8 @@ function RouteComponent() {
 }
 
 function ToursListContent() {
-  const { tours, countries, cities } = useTours()
+
+  const { tours, countries, cities } = useTours({ cityId: undefined })
 
   const columns = useMemo<Array<ColumnDef<TourDto>>>(
     () => [

@@ -33,7 +33,7 @@
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
-    "@rapid-guide-io/contracts": "^1.3.4",
+    "@rapid-guide-io/contracts": "^1.3.6",
     "@rapid-guide-io/decorators": "^1.4.2",
     "@rapid-guide-io/guards": "^1.5.0",
     "@rapid-guide-io/interceptors": "^0.0.9",

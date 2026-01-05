@@ -4,6 +4,7 @@ import { timeSchema } from '../../time.dto';
 // Tour schema for response - includes all fields
 export const tourSchema = timeSchema.extend({
   id: z.uuid(),
+  guide_id: z.uuid(),
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   description: z.string().min(10, { message: "Description must be at least 10 characters" }),
   min_travellers: z.number().int().positive(),
@@ -19,7 +20,8 @@ export const tourSchema = timeSchema.extend({
 export const createTourSchema = tourSchema.omit({ 
   id: true, 
   created_at: true, 
-  updated_at: true 
+  updated_at: true,
+  guide_id: true,
 });
 
 

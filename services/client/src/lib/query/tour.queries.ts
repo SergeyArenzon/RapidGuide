@@ -6,6 +6,8 @@ import Api from '@/lib/api';
  */
 export const tourQueryKeys = {
   all: () => ['tours'] as const,
+  byCity: (cityId: number) => ['tours', 'city', cityId] as const,
+  byGuide: (guideId: string) => ['tours', 'guide', guideId] as const,
   detail: (tourId: string) => ['tour', tourId] as const,
   categories: () => ['categories'] as const,
   subcategories: () => ['subcategories'] as const,
@@ -30,13 +32,33 @@ export const tourQueries = {
   }),
 
   /**
+   * Get tours by city ID
+   */
+  byCity: (cityId: number) => ({
+    queryKey: tourQueryKeys.byCity(cityId),
+    queryFn: async (): Promise<Array<TourDto>> => {
+      const api = new Api();
+      return api.tour.getTours(cityId);
+    },
+  }),
+
+  /**
+   * Get tours by guide ID (user_id)
+   */
+  byGuide: (guideId: string) => ({
+    queryKey: tourQueryKeys.byGuide(guideId),
+    queryFn: async (): Promise<Array<TourDto>> => {
+      const api = new Api();
+      return api.tour.getTours(undefined, guideId);
+    },
+  }),
+
+  /**
    * Get a single tour by ID
    */
   detail: (tourId: string, jwt?: string | null) => ({
     queryKey: tourQueryKeys.detail(tourId),
     queryFn: async (): Promise<TourDto> => {
-      console.log('jwt', jwt);
-      
       const api = new Api(jwt);
       return api.tour.getTour(tourId);
     },

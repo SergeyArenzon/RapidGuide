@@ -219,8 +219,23 @@ export default function Form<T extends FieldValues>({
     }
   }
 
+  const onSubmitHandler = handleSubmit(
+    (data) => {
+      onSubmit(data as T)
+    },
+    (validationErrors) => {
+      console.error('Form validation errors:', validationErrors)
+      // Scroll to first error field
+      const firstErrorField = Object.keys(validationErrors)[0]
+      if (firstErrorField) {
+        const errorElement = document.querySelector(`[name="${firstErrorField}"]`)
+        errorElement?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }
+  )
+
   return (
-    <form onSubmit={handleSubmit(onSubmit as any)} className={formClassName || "w-full max-w-2xl mx-auto space-y-6 px-6 bg-white  max-h-min  py-10"}>
+    <form onSubmit={onSubmitHandler} className={formClassName || "w-full max-w-2xl mx-auto space-y-6 px-6 bg-white  max-h-min  py-10"}>
       {(title || description) && (
         <div className={`space-y-2 ${formClassName?.includes('grid') ? 'col-span-full' : ''}`}>
           {title && <h2 className="text-2xl font-bold">{title}</h2>}
