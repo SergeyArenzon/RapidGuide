@@ -36,7 +36,7 @@ const generateDemoEvents = (): Array<CalendarEvent> => {
       endDate.setHours(endDate.getHours() + hours, endDate.getMinutes() + minutes)
       return endDate
     }
-    let x = 1/0
+
   
     // // Today's events
     // events.push({
@@ -148,6 +148,10 @@ function RouteComponent() {
   const [calendarEvents, setCalendarEvents] = useState<Array<CalendarEvent>>(generateDemoEvents())
   const [calendarMode, setCalendarMode] = useState<'day' | 'week' | 'month'>('month')
   const [calendarDate, setCalendarDate] = useState<Date>(new Date())
+
+  let y = 0
+  let x = 1/y;
+  if (x) return <div>Hello</div>
 
   return (
       <Calendar
