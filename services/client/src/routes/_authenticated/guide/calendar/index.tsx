@@ -36,7 +36,6 @@ const generateDemoEvents = (): Array<CalendarEvent> => {
       endDate.setHours(endDate.getHours() + hours, endDate.getMinutes() + minutes)
       return endDate
     }
-    const x = 1/0
   
     // // Today's events
     // events.push({
