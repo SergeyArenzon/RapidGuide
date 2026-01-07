@@ -17,4 +17,8 @@ export * from './endpoints/post-guide.dto';
 
 export * from './entities/traveller.dto';
 
+export * from './entities/guide-availability.dto';
+
+export * from './endpoints/post-guide-availabilities.dto';
+
 export * from  './endpoints/get-me.dto'

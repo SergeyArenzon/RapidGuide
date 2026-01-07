@@ -9,10 +9,7 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
   const { events } = useCalendarContext()
 
   const dayEvents = events.filter((event) => dayjs(event.start).isSame(dayjs(date), 'day'))
-
   const [startHour, setStartHour] = useState<Array<{start_date: Date, end_date: Date}>>([])
-  console.log({startHour});
-  
   
   return (
     <div className="flex flex-col grow">
