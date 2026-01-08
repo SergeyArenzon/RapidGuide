@@ -43,12 +43,6 @@ export class GuideAvailability extends BaseEntity {
   @Property({ type: 'date' })
   end_date: Date;
 
-  /**
-   * Optional reason/note for this availability period
-   * Useful for tracking special availability (e.g., "Holiday season", "Special event")
-   */
-  @Property({ type: 'text', nullable: true })
-  reason?: string;
 
   toDto(): GuideAvailabilityDto {
     return {
@@ -56,7 +50,6 @@ export class GuideAvailability extends BaseEntity {
       guide_id: this.guide.id,
       start_date: this.start_date,
       end_date: this.end_date,
-      reason: this.reason ?? null,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
