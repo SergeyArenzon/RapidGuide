@@ -1,8 +1,9 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { CreateGuideDto, GuideDto } from '@rapid-guide-io/contracts';
+import { CreateGuideDto, GuideDto, GuideAvailabilityDto } from '@rapid-guide-io/contracts';
 import { Guide } from './entities/guide.entity';
+import { GuideAvailability } from './entities/guide-availability.entity';
 import { CountryService } from '../country/country.service';
 import { CityService } from '../city/city.service';
 import { LanguagesService } from '../languages/languages.service';
@@ -13,6 +14,8 @@ export class GuideService {
   constructor(
     @InjectRepository(Guide)
     private readonly guideRepository: EntityRepository<Guide>,
+    @InjectRepository(GuideAvailability)
+    private readonly availabilityRepository: EntityRepository<GuideAvailability>,
     private readonly em: EntityManager,
     private readonly countryService: CountryService,
     private readonly cityService: CityService,
@@ -95,5 +98,13 @@ export class GuideService {
       return null;
     }
     return guide.toDto();
+  }
+
+  async findAvailabilitiesByGuideId(guideId: string): Promise<GuideAvailabilityDto[]> {
+    const availabilities = await this.availabilityRepository.find(
+      { guide: { id: guideId } },
+      { populate: ['guide'] },
+    );
+    return availabilities.map((availability) => availability.toDto());
   }
 }

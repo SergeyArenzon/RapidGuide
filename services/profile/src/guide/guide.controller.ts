@@ -19,6 +19,7 @@ import {
   GuideDto,
   createGuideSchema,
   CreateGuideDto,
+  GuideAvailabilityDto,
 } from '@rapid-guide-io/contracts';
 
 @Controller('guide')
@@ -33,6 +34,13 @@ export class GuideController {
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
   ): Promise<GuideDto> {
     return await this.guideService.create(user.id, body);
+  }
+
+  @Get(':id/availabilities')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.GUIDE_READ])
+  async getAvailabilities(@Param('id') id: string): Promise<GuideAvailabilityDto[]> {
+    return await this.guideService.findAvailabilitiesByGuideId(id);
   }
 
   @Get(':id')
