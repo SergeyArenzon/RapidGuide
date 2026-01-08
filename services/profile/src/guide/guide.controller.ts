@@ -13,6 +13,7 @@ import {
   ScopePermission,
   Scopes,
   CurrentUser,
+  GuideId,
 } from '@rapid-guide-io/decorators';
 import { ScopesGuard } from '@rapid-guide-io/guards';
 import {
@@ -20,6 +21,8 @@ import {
   createGuideSchema,
   CreateGuideDto,
   GuideAvailabilityDto,
+  postGuideAvailabilitiesRequestSchema,
+  PostGuideAvailabilitiesRequestDto,
 } from '@rapid-guide-io/contracts';
 
 @Controller('guide')
@@ -34,6 +37,16 @@ export class GuideController {
     @Body(new ZodValidationPipe(createGuideSchema)) body: CreateGuideDto,
   ): Promise<GuideDto> {
     return await this.guideService.create(user.id, body);
+  }
+
+  @Post('availabilities')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.GUIDE_UPDATE])
+  async createAvailability(
+    @GuideId() guideId: string,
+    @Body(new ZodValidationPipe(postGuideAvailabilitiesRequestSchema)) body: PostGuideAvailabilitiesRequestDto,
+  ): Promise<GuideAvailabilityDto> {
+    return await this.guideService.createAvailability(guideId, body);
   }
 
   @Get(':id/availabilities')

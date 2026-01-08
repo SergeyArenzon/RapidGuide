@@ -1,7 +1,7 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { CreateGuideDto, GuideDto, GuideAvailabilityDto } from '@rapid-guide-io/contracts';
+import { CreateGuideDto, GuideDto, GuideAvailabilityDto, CreateGuideAvailabilityDto } from '@rapid-guide-io/contracts';
 import { Guide } from './entities/guide.entity';
 import { GuideAvailability } from './entities/guide-availability.entity';
 import { CountryService } from '../country/country.service';
@@ -106,5 +106,35 @@ export class GuideService {
       { populate: ['guide'] },
     );
     return availabilities.map((availability) => availability.toDto());
+  }
+
+  async createAvailability(
+    guideId: string,
+    createAvailabilityDto: CreateGuideAvailabilityDto,
+  ): Promise<GuideAvailabilityDto> {
+    // Get the guide by ID
+    const guide = await this.guideRepository.findOne(
+      { id: guideId },
+    );
+    if (!guide) {
+      throw new NotFoundException('Guide not found');
+    }
+
+    // Fork the EntityManager for this request
+    const em = this.em.fork();
+
+    // Create the availability
+    const newAvailability = new GuideAvailability({
+      ...createAvailabilityDto,
+      guide,
+    });
+
+    // Persist and flush
+    await em.persist(newAvailability).flush();
+
+    // Populate guide relation for DTO conversion
+    await em.populate(newAvailability, ['guide']);
+
+    return newAvailability.toDto();
   }
 }
