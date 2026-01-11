@@ -1,4 +1,3 @@
-import React from 'react'
 import dayjs from 'dayjs'
 import { useCalendarContext } from '../../calendar-context'
 import CalendarBodyHeader from '../calendar-body-header'
@@ -7,14 +6,6 @@ import { hours } from './calendar-body-margin-day-margin'
 
 export default function CalendarBodyDayContent({ date }: { date: Date }) {
   const { events, editAvailabilityMode, availabilityChanges = [], setAvailabilityChanges, availabilities = [] } = useCalendarContext()
-
-  // Debug: log availabilities for this component
-  React.useEffect(() => {
-    if (availabilities.length > 0) {
-      console.log('CalendarBodyDayContent - availabilities:', availabilities)
-      console.log('CalendarBodyDayContent - date:', date)
-    }
-  }, [availabilities, date])
 
   const dayEvents = events.filter((event) => dayjs(event.start).isSame(dayjs(date), 'day'))
   
@@ -39,7 +30,7 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
     })
   }
   
-  const onEditAvailabilityClick = (hourDate: Date, endDate: Date) => {
+  const toggleHourSelection = (hourDate: Date, endDate: Date) => {
     if (!editAvailabilityMode || !setAvailabilityChanges) return
     
     // Check if this hour slot already exists
@@ -73,19 +64,33 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
           const isAvailable = isHourAvailable(hourDate, endDate)
           
           // Determine background class - prioritize selected, then available, then default
-          let bgClass = 'bg-secondary'
+          let bgClass = 'bg-secondary/30'
           if (isSelected) {
-            bgClass = ''
+            bgClass = 'bg-primary/20 border-l-2 border-l-primary'
+          } else if (isAvailable && editAvailabilityMode) {
+            bgClass = 'bg-green-100/50 dark:bg-green-950/30'
           } else if (isAvailable) {
             bgClass = 'bg-green-50 dark:bg-green-950/20'
           }
           
+          const hoverClass = editAvailabilityMode
+            ? 'hover:bg-primary/10 transition-colors duration-150' 
+            : ''
+          
           return (
             <div 
-              key={hour} 
-              className={`h-32 border-b border-border/50 group ${bgClass} ${editAvailabilityMode ? 'cursor-pointer' : ''}`} 
-              onClick={() => onEditAvailabilityClick( hourDate, endDate )} 
-            />
+              key={hour}
+              className={`h-32 border-b border-border/50 group relative ${bgClass} ${hoverClass} ${editAvailabilityMode ? 'cursor-pointer select-none' : ''}`}
+              onClick={() => {
+                if (editAvailabilityMode) {
+                  toggleHourSelection(hourDate, endDate)
+                }
+              }}
+            >
+              {editAvailabilityMode && isSelected && (
+                <div className="absolute top-1 left-1 w-2 h-2 rounded-full bg-primary" />
+              )}
+            </div>
           )
         })}
 

@@ -1,4 +1,4 @@
-import { Pen, Plus } from 'lucide-react'
+import { Pen } from 'lucide-react'
 import { useCalendarContext } from '../../calendar-context'
 import { Button } from '@/components/ui/button'
 

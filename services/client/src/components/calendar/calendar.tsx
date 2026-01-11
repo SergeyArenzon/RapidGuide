@@ -3,12 +3,12 @@ import CalendarBody from './body/calendar-body'
 import CalendarHeaderActions from './header/actions/calendar-header-actions'
 import CalendarHeaderDate from './header/date/calendar-header-date'
 import CalendarHeaderActionsMode from './header/actions/calendar-header-actions-mode'
-import CalendarHeaderActionsAdd from './header/actions/calendar-header-actions-add'
 import CalendarProvider from './calendar-provider'
-import type { CalendarProps } from './calendar-types'
+import { useCalendarContext } from './calendar-context'
 import CalendarHeaderActionsEditAvailability from './header/actions/calendar-header-actions-edit-availability'
 import CalendarHeaderActionsSaveAvailability from './header/actions/calendar-header-actions-save-availability'
-import { useCalendarContext } from './calendar-context'
+import CalendarHeaderActionsCancelAvailability from './header/actions/calendar-header-actions-cancel-availability'
+import type { CalendarProps } from './calendar-types'
 
 function CalendarHeaderContent() {
   const { editAvailabilityMode } = useCalendarContext()
@@ -19,8 +19,13 @@ function CalendarHeaderContent() {
       <CalendarHeaderActions>
         {!editAvailabilityMode && <CalendarHeaderActionsMode />}
         {/* <CalendarHeaderActionsAdd /> */}
-        <CalendarHeaderActionsEditAvailability />
-        <CalendarHeaderActionsSaveAvailability />
+        {!editAvailabilityMode && <CalendarHeaderActionsEditAvailability />}
+        {editAvailabilityMode && (
+          <>
+            <CalendarHeaderActionsCancelAvailability />
+            <CalendarHeaderActionsSaveAvailability />
+          </>
+        )}
       </CalendarHeaderActions>
     </CalendarHeader>
   )

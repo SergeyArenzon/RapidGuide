@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { CalendarContext } from './calendar-context'
 import CalendarNewEventDialog from './dialog/calendar-new-event-dialog'
 import CalendarManageEventDialog from './dialog/calendar-manage-event-dialog'
-import type { CalendarEvent, Mode, AvailabilityChange } from './calendar-types'
+import type { AvailabilityChange, CalendarEvent, Mode } from './calendar-types'
 
 export default function CalendarProvider({
   events,
@@ -31,7 +31,7 @@ export default function CalendarProvider({
   const [manageEventDialogOpen, setManageEventDialogOpen] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
   const [editAvailabilityMode, setEditAvailabilityMode] = useState(initialEditAvailabilityMode)
-  const [availabilityChanges, setAvailabilityChanges] = useState<AvailabilityChange[]>([])
+  const [availabilityChanges, setAvailabilityChanges] = useState<Array<AvailabilityChange>>([])
 
   // Reset availability changes when exiting edit mode
   const handleSetEditAvailabilityMode = (value: boolean) => {
