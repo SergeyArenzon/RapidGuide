@@ -1,9 +1,9 @@
 import { Save } from 'lucide-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { useCalendarContext } from '../../calendar-context'
 import Api from '@/lib/api'
 import { profileQueries, profileQueryKeys } from '@/lib/query'
-import { useCalendarContext } from '../../calendar-context'
 import { Button } from '@/components/ui/button'
 
 export default function CalendarHeaderActionsSaveAvailability() {
@@ -18,29 +18,16 @@ export default function CalendarHeaderActionsSaveAvailability() {
   // All hooks must be called before any conditional returns
   const saveAvailabilityMutation = useMutation({
     mutationFn: async (availabilities: Array<{ start_date: Date; end_date: Date }>) => {
-      // Convert Date objects to date-only format (no time) and send all in one batch request
-      const formattedAvailabilities = availabilities.map((availability) => {
-        const startDate = new Date(availability.start_date)
-        const endDate = new Date(availability.end_date)
-        
-        // Reset time to midnight (UTC) to ensure we're only sending dates
-        startDate.setUTCHours(0, 0, 0, 0)
-        endDate.setUTCHours(0, 0, 0, 0)
-        
-        return {
-          start_date: startDate,
-          end_date: endDate,
-        }
-      })
-      
-      // Send all availabilities in a single request
-      return api.profile.createGuideAvailability(formattedAvailabilities)
+
+      // Send all availabilities in a single request, preserving the time information
+      // @ts-expect-error - Type definition issue: PostGuideAvailabilitiesRequestDto should be an array but TypeScript infers it as a single object
+      return api.profile.createGuideAvailability(availabilities)
     },
     onSuccess: () => {
       // Invalidate availabilities query to refetch after save
       if (guideId) {
         queryClient.invalidateQueries({ 
-          queryKey: profileQueryKeys.guideAvailabilities(guideId) 
+          queryKey: profileQueryKeys.guideAvailabilities() 
         })
       }
       

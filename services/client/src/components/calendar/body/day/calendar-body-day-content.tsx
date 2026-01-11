@@ -1,3 +1,4 @@
+import React from 'react'
 import dayjs from 'dayjs'
 import { useCalendarContext } from '../../calendar-context'
 import CalendarBodyHeader from '../calendar-body-header'
@@ -5,7 +6,15 @@ import CalendarEvent from '../../calendar-event'
 import { hours } from './calendar-body-margin-day-margin'
 
 export default function CalendarBodyDayContent({ date }: { date: Date }) {
-  const { events, editAvailabilityMode, availabilityChanges = [], setAvailabilityChanges } = useCalendarContext()
+  const { events, editAvailabilityMode, availabilityChanges = [], setAvailabilityChanges, availabilities = [] } = useCalendarContext()
+
+  // Debug: log availabilities for this component
+  React.useEffect(() => {
+    if (availabilities.length > 0) {
+      console.log('CalendarBodyDayContent - availabilities:', availabilities)
+      console.log('CalendarBodyDayContent - date:', date)
+    }
+  }, [availabilities, date])
 
   const dayEvents = events.filter((event) => dayjs(event.start).isSame(dayjs(date), 'day'))
   
@@ -13,6 +22,22 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
   const dayAvailabilityChanges = availabilityChanges.filter((change) =>
     dayjs(change.start_date).isSame(dayjs(date), 'day')
   )
+  
+  // Helper function to check if an hour slot falls within any availability range
+  const isHourAvailable = (hourDate: Date, endDate: Date): boolean => {
+    if (availabilities.length === 0) return false
+    
+    return availabilities.some((availability) => {
+      const availStart = dayjs(availability.start_date)
+      const availEnd = dayjs(availability.end_date)
+      const hourStart = dayjs(hourDate)
+      const hourEnd = dayjs(endDate)
+      
+      // Check if the hour slot overlaps with the availability range
+      // Two intervals [a, b] and [c, d] overlap if: a < d && b > c
+      return hourStart.isBefore(availEnd) && hourEnd.isAfter(availStart)
+    })
+  }
   
   const onEditAvailabilityClick = (hourDate: Date, endDate: Date) => {
     if (!editAvailabilityMode || !setAvailabilityChanges) return
@@ -45,13 +70,20 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
           const isSelected = dayAvailabilityChanges.some((h) => 
             dayjs(h.start_date).hour() === hour
           )
+          const isAvailable = isHourAvailable(hourDate, endDate)
+          
+          // Determine background class - prioritize selected, then available, then default
+          let bgClass = 'bg-secondary'
+          if (isSelected) {
+            bgClass = ''
+          } else if (isAvailable) {
+            bgClass = 'bg-green-50 dark:bg-green-950/20'
+          }
           
           return (
             <div 
               key={hour} 
-              className={`h-32 border-b border-border/50 group 
-                ${isSelected ? '' : 'bg-secondary'}
-                ${editAvailabilityMode ? 'cursor-pointer' : ''}`} 
+              className={`h-32 border-b border-border/50 group ${bgClass} ${editAvailabilityMode ? 'cursor-pointer' : ''}`} 
               onClick={() => onEditAvailabilityClick( hourDate, endDate )} 
             />
           )

@@ -45,8 +45,8 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
       '@rapid-guide-io/contracts':
-        specifier: ^1.3.7
-        version: 1.3.7
+        specifier: ^1.3.9
+        version: 1.3.9
       '@rapid-guide-io/decorators':
         specifier: ^1.4.2
         version: 1.4.2(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -768,8 +768,8 @@ packages:
     resolution: {integrity: sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@rapid-guide-io/contracts@1.3.7':
-    resolution: {integrity: sha512-nCWKE/4IvBdK/wUa7krPQbz+fyGxCWIOSf+5L4K3lV8wzRvhGv1LbgnDEO7LbeZMaAPo/grcytOA114+LsUjXA==}
+  '@rapid-guide-io/contracts@1.3.9':
+    resolution: {integrity: sha512-Vdb06WrpuY/iDGuV4yeKZ0koNxamOaOwKB6mfQUzHMYA02vI1K8Y0qAduDrcn2bUcRFTJdnFY6XCCl05loq5Vw==}
 
   '@rapid-guide-io/decorators@0.0.19':
     resolution: {integrity: sha512-5fHoPD+L5++7nDN9cFxjY2XEPGMfwaGBbipu8X53S8y4opr5c9hCdEMwaGWn91uOraJX0/Puuj1hH2vqWDKoaw==}
@@ -4453,7 +4453,7 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@rapid-guide-io/contracts@1.3.7':
+  '@rapid-guide-io/contracts@1.3.9':
     dependencies:
       zod: 4.3.5
 

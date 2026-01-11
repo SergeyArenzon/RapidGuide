@@ -35,6 +35,7 @@ export default function hoCalendar({
   setDate,
   editAvailabilityMode = false,
   calendarIconIsToday = true,
+  availabilities,
 }: CalendarProps) {
   return (
     <CalendarProvider
@@ -46,6 +47,7 @@ export default function hoCalendar({
       date={date}
       setDate={setDate}
       calendarIconIsToday={calendarIconIsToday}
+      availabilities={availabilities}
     >
       <CalendarHeaderContent />
       <CalendarBody />

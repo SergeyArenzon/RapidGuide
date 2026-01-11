@@ -32,7 +32,7 @@ export class GuideAvailability extends BaseEntity {
    * Start date of the available period (inclusive)
    * Stored as date only (no time component)
    */
-  @Property({ type: 'date' })
+  @Property({ type: 'datetime' })
   start_date: Date;
 
   /**
@@ -40,9 +40,8 @@ export class GuideAvailability extends BaseEntity {
    * Stored as date only (no time component)
    * For single-day periods, start_date and end_date are the same
    */
-  @Property({ type: 'date' })
+  @Property({ type: 'datetime' })
   end_date: Date;
-
 
   toDto(): GuideAvailabilityDto {
     return {

@@ -13,6 +13,7 @@ export default function CalendarProvider({
   setDate,
   calendarIconIsToday = true,
   editAvailabilityMode: initialEditAvailabilityMode = false,
+  availabilities,
   children,
 }: {
   events: Array<CalendarEvent>
@@ -23,6 +24,7 @@ export default function CalendarProvider({
   setDate: (date: Date) => void
   calendarIconIsToday: boolean
   editAvailabilityMode: boolean
+  availabilities?: Array<{ start_date: Date; end_date: Date }>
   children: React.ReactNode
 }) {
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false)
@@ -62,6 +64,7 @@ export default function CalendarProvider({
         availabilityChanges,
         setAvailabilityChanges,
         hasAvailabilityChanges,
+        availabilities,
       }}
     >
       <CalendarNewEventDialog />

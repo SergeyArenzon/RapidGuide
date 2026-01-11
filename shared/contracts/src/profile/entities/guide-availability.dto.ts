@@ -21,3 +21,4 @@ export const createGuideAvailabilitySchema = guideAvailabilitySchema.omit({
 export type GuideAvailabilityDto = z.infer<typeof guideAvailabilitySchema>;
 export type CreateGuideAvailabilityDto = z.infer<typeof createGuideAvailabilitySchema>;
 
+

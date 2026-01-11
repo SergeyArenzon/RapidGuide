@@ -95,9 +95,9 @@ export class ProfileApi extends BaseApi {
     );
   }
 
-  async getGuideAvailabilities(guideId: string): Promise<Array<GuideAvailabilityDto>> {
+  async getGuideAvailabilities(): Promise<Array<GuideAvailabilityDto>> {
     return this.validateResponse(
-      () => this.axios.get(`${ProfileApi.baseUrl}/guide/${guideId}/availabilities`),
+      () => this.axios.get(`${ProfileApi.baseUrl}/guide/availabilities`),
       z.array(guideAvailabilitySchema)
     );
   }
