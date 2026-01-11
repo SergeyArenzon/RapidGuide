@@ -6,6 +6,25 @@ import CalendarHeaderActionsMode from './header/actions/calendar-header-actions-
 import CalendarHeaderActionsAdd from './header/actions/calendar-header-actions-add'
 import CalendarProvider from './calendar-provider'
 import type { CalendarProps } from './calendar-types'
+import CalendarHeaderActionsEditAvailability from './header/actions/calendar-header-actions-edit-availability'
+import CalendarHeaderActionsSaveAvailability from './header/actions/calendar-header-actions-save-availability'
+import { useCalendarContext } from './calendar-context'
+
+function CalendarHeaderContent() {
+  const { editAvailabilityMode } = useCalendarContext()
+  
+  return (
+    <CalendarHeader>
+      <CalendarHeaderDate />
+      <CalendarHeaderActions>
+        {!editAvailabilityMode && <CalendarHeaderActionsMode />}
+        {/* <CalendarHeaderActionsAdd /> */}
+        <CalendarHeaderActionsEditAvailability />
+        <CalendarHeaderActionsSaveAvailability />
+      </CalendarHeaderActions>
+    </CalendarHeader>
+  )
+}
 
 export default function hoCalendar({
   events,
@@ -14,6 +33,7 @@ export default function hoCalendar({
   setMode,
   date,
   setDate,
+  editAvailabilityMode = false,
   calendarIconIsToday = true,
 }: CalendarProps) {
   return (
@@ -21,18 +41,13 @@ export default function hoCalendar({
       events={events}
       setEvents={setEvents}
       mode={mode}
+      editAvailabilityMode={editAvailabilityMode}
       setMode={setMode}
       date={date}
       setDate={setDate}
       calendarIconIsToday={calendarIconIsToday}
     >
-      <CalendarHeader>
-        <CalendarHeaderDate />
-        <CalendarHeaderActions>
-          <CalendarHeaderActionsMode />
-          <CalendarHeaderActionsAdd />
-        </CalendarHeaderActions>
-      </CalendarHeader>
+      <CalendarHeaderContent />
       <CalendarBody />
     </CalendarProvider>
   )

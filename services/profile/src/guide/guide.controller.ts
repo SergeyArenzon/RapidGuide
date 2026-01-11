@@ -42,11 +42,11 @@ export class GuideController {
   @Post('availabilities')
   @UseGuards(ScopesGuard)
   @Scopes([ScopePermission.GUIDE_UPDATE])
-  async createAvailability(
+  async createAvailabilities(
     @GuideId() guideId: string,
-    @Body(new ZodValidationPipe(postGuideAvailabilitiesRequestSchema)) body: PostGuideAvailabilitiesRequestDto,
-  ): Promise<GuideAvailabilityDto> {
-    return await this.guideService.createAvailability(guideId, body);
+    @Body(new ZodValidationPipe(postGuideAvailabilitiesRequestSchema)) body: Array<PostGuideAvailabilitiesRequestDto>,
+  ): Promise<GuideAvailabilityDto[]> {
+    return await this.guideService.createAvailabilities(guideId, body);
   }
 
   @Get(':id/availabilities')

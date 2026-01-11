@@ -3,6 +3,7 @@ import type {
   CountryDto,
   GetProfilesMeResponseDto,
   GuideDto,
+  GuideAvailabilityDto,
   LanguageDto,
 } from '@rapid-guide-io/contracts';
 import { ProfileApi } from '@/lib/api/profile';
@@ -16,6 +17,7 @@ export const profileQueryKeys = {
   cities: () => ['cities'] as const,
   languages: () => ['languages'] as const,
   guideById: (guideId: string) => ['guide', guideId] as const,
+  guideAvailabilities: (guideId: string) => ['guide', guideId, 'availabilities'] as const,
 } as const;
 
 /**
@@ -75,6 +77,17 @@ export const profileQueries = {
     queryFn: async (): Promise<GuideDto> => {
       const profileApi = new ProfileApi();
       return profileApi.getGuideByGuideId(guideId);
+    },
+  }),
+
+  /**
+   * Get guide availabilities by guide ID
+   */
+  guideAvailabilities: (guideId: string) => ({
+    queryKey: profileQueryKeys.guideAvailabilities(guideId),
+    queryFn: async (): Promise<Array<GuideAvailabilityDto>> => {
+      const profileApi = new ProfileApi();
+      return profileApi.getGuideAvailabilities(guideId);
     },
   }),
 } as const;
