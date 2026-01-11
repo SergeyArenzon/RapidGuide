@@ -46,7 +46,6 @@ export class GuideAvailability extends BaseEntity {
   toDto(): GuideAvailabilityDto {
     return {
       id: this.id,
-      guide_id: this.guide.id,
       start_date: this.start_date,
       end_date: this.end_date,
       created_at: this.created_at,

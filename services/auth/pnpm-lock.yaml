@@ -45,8 +45,8 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
       '@rapid-guide-io/contracts':
-        specifier: ^1.3.9
-        version: 1.3.9
+        specifier: ^1.3.10
+        version: 1.3.10
       '@rapid-guide-io/decorators':
         specifier: ^1.4.2
         version: 1.4.2(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -1005,8 +1005,8 @@ packages:
   '@prisma/get-platform@5.22.0':
     resolution: {integrity: sha512-pHhpQdr1UPFpt+zFfnPazhulaZYCUqeIcPpJViYoq9R+D/yw4fjE+CtnsnKzPYm0ddUbeXUzjGVGIRVgPDCk4Q==}
 
-  '@rapid-guide-io/contracts@1.3.9':
-    resolution: {integrity: sha512-Vdb06WrpuY/iDGuV4yeKZ0koNxamOaOwKB6mfQUzHMYA02vI1K8Y0qAduDrcn2bUcRFTJdnFY6XCCl05loq5Vw==}
+  '@rapid-guide-io/contracts@1.3.10':
+    resolution: {integrity: sha512-y+ct7ftVV5uaoRXo234L4j9ar1Pjviblg7QpFz9wXkfh/kY2QyGbaPSNY1Fg6QfrwkAQXq++DM9KF6ZpdGOI1Q==}
 
   '@rapid-guide-io/decorators@1.4.2':
     resolution: {integrity: sha512-NHptwewlL5XQnLIbObTDo/L1xV0Fkuf2AUCqDzSRsJ+XtUf1rWdx1anTCYDFxfox0vJKEf9m6V5BCQfpNKw9tQ==}
@@ -5465,7 +5465,7 @@ snapshots:
     dependencies:
       '@prisma/debug': 5.22.0
 
-  '@rapid-guide-io/contracts@1.3.9':
+  '@rapid-guide-io/contracts@1.3.10':
     dependencies:
       zod: 4.3.5
 
