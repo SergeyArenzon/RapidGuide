@@ -98,28 +98,22 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
           const isHovered = hoveredAvailabilityId === availabilityId
           const isMarkedForDeletion = availabilityId ? availabilityDeletions.includes(availabilityId) : false
           
-          // Determine background class - prioritize selected, then marked for deletion, then available, then default
+          // Determine background class - prioritize marked for deletion, then available (even if selected), then selected, then default
           let bgClass = 'bg-secondary/30'
-          if (isSelected) {
-            bgClass = 'bg-primary/20 border-l-2 border-l-primary'
-          } else if (isMarkedForDeletion) {
+          if (isMarkedForDeletion) {
             bgClass = 'bg-destructive/20 dark:bg-destructive/30 border-l-2 border-l-destructive'
           } else if (isAvailable && editAvailabilityMode) {
-            bgClass = 'bg-primary/50 dark:bg-primary/40 border-l-2 border-l-primary'
+            bgClass = 'bg-primary/40 dark:bg-primary/30 border-l-2 border-l-primary'
           } else if (isAvailable) {
-            bgClass = 'bg-primary/25 dark:bg-primary/35 border-l-2 border-l-primary'
+            bgClass = 'bg-primary/30 dark:bg-primary/25 border-l-2 border-l-primary'
+          } else if (isSelected) {
+            bgClass = 'bg-primary/20 border-l-2 border-l-primary'
           }
-          
-          const hoverClass = editAvailabilityMode
-            ? 'hover:bg-primary/25 transition-colors duration-150' 
-            : isAvailable
-            ? 'hover:bg-primary/35 dark:hover:bg-primary/45 transition-colors duration-150'
-            : ''
           
           return (
             <div 
               key={hour}
-              className={`h-32 border-b border-border/50 group relative ${bgClass} ${hoverClass} ${editAvailabilityMode ? 'cursor-pointer select-none' : isAvailable ? 'cursor-pointer' : ''}`}
+              className={`h-32 border-b border-border/50 group relative ${bgClass} ${editAvailabilityMode ? 'cursor-pointer select-none' : ''}`}
               onClick={(e) => {
                 if (editAvailabilityMode) {
                   if (isAvailable && availabilityId) {
