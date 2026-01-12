@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import dayjs from 'dayjs'
 import { cn } from '@/lib/utils'
 
 export const hours = Array.from({ length: 24 }, (_, i) => i)
@@ -21,7 +21,7 @@ export default function CalendarBodyMarginDayMargin({
           <div key={hour} className="relative h-32 first:mt-0">
             {hour !== 0 && (
               <span className="absolute text-xs text-muted-foreground -top-2.5 left-2">
-                {format(new Date().setHours(hour, 0, 0, 0), 'h a')}
+                {dayjs().hour(hour).minute(0).second(0).millisecond(0).format('HH:mm')}
               </span>
             )}
           </div>
