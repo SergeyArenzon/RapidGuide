@@ -7,7 +7,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutation'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
-import { DataTable } from '@/components/DataTable'
+import { TourTable } from '@/components/TourTable'
 import { AlertDialog } from '@/components/AlertDialog'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
@@ -146,7 +146,7 @@ function ToursListContent() {
         />
       ) : (
         <>
-          <DataTable
+          <TourTable
             columns={columns}
             data={tours}
             emptyMessage="No tours found."

@@ -74,7 +74,7 @@ export interface DataTableProps<TData> {
   name?: string
 }
 
-export function DataTable<TData>({
+export function TourTable<TData>({
   columns,
   data,
   emptyMessage = 'No data found.',
