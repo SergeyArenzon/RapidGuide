@@ -177,6 +177,7 @@ function RouteComponent() {
         date={calendarDate}
         setDate={setCalendarDate}
         availabilities={availabilities?.map(avail => ({
+          id: avail.id,
           start_date: avail.start_date,
           end_date: avail.end_date,
         }))}

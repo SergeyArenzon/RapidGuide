@@ -3,12 +3,15 @@ import { useCalendarContext } from '../../calendar-context'
 import { Button } from '@/components/ui/button'
 
 export default function CalendarHeaderActionsCancelAvailability() {
-  const { editAvailabilityMode, setEditAvailabilityMode, setAvailabilityChanges } = useCalendarContext()
+  const { editAvailabilityMode, setEditAvailabilityMode, setAvailabilityChanges, setAvailabilityDeletions } = useCalendarContext()
   
   const handleCancel = () => {
     // Clear any unsaved changes
     if (setAvailabilityChanges) {
       setAvailabilityChanges([])
+    }
+    if (setAvailabilityDeletions) {
+      setAvailabilityDeletions([])
     }
     // Exit edit mode
     if (setEditAvailabilityMode) {

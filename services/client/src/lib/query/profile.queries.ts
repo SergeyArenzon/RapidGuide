@@ -90,5 +90,15 @@ export const profileQueries = {
       return profileApi.getGuideAvailabilities();
     },
   }),
+
+  /**
+   * Delete guide availability by ID
+   */
+  deleteGuideAvailability: (availabilityId: string) => ({
+    mutationFn: async (): Promise<void> => {
+      const profileApi = new ProfileApi();
+      return profileApi.deleteGuideAvailability(availabilityId);
+    },
+  }),
 } as const;
 

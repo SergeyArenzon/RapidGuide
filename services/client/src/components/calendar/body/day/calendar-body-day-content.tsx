@@ -3,9 +3,25 @@ import { useCalendarContext } from '../../calendar-context'
 import CalendarBodyHeader from '../calendar-body-header'
 import CalendarEvent from '../../calendar-event'
 import { hours } from './calendar-body-margin-day-margin'
+import { useState } from 'react'
+import { Trash2 } from 'lucide-react'
 
 export default function CalendarBodyDayContent({ date }: { date: Date }) {
-  const { events, editAvailabilityMode, availabilityChanges = [], setAvailabilityChanges, availabilities = [] } = useCalendarContext()
+  const { events, editAvailabilityMode, availabilityChanges = [], setAvailabilityChanges, availabilityDeletions = [], setAvailabilityDeletions, availabilities = [] } = useCalendarContext()
+  const [hoveredAvailabilityId, setHoveredAvailabilityId] = useState<string | null>(null)
+
+  const handleMarkForDeletion = (e: React.MouseEvent, availabilityId: string) => {
+    e.stopPropagation()
+    if (setAvailabilityDeletions) {
+      if (availabilityDeletions.includes(availabilityId)) {
+        // Remove from deletions if already marked
+        setAvailabilityDeletions(availabilityDeletions.filter(id => id !== availabilityId))
+      } else {
+        // Add to deletions
+        setAvailabilityDeletions([...availabilityDeletions, availabilityId])
+      }
+    }
+  }
 
   const dayEvents = events.filter((event) => dayjs(event.start).isSame(dayjs(date), 'day'))
   
@@ -28,6 +44,22 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
       // Two intervals [a, b] and [c, d] overlap if: a < d && b > c
       return hourStart.isBefore(availEnd) && hourEnd.isAfter(availStart)
     })
+  }
+
+  // Helper function to get the availability ID for an hour slot
+  const getAvailabilityIdForHour = (hourDate: Date, endDate: Date): string | null => {
+    if (availabilities.length === 0) return null
+    
+    const matchingAvailability = availabilities.find((availability) => {
+      const availStart = dayjs(availability.start_date)
+      const availEnd = dayjs(availability.end_date)
+      const hourStart = dayjs(hourDate)
+      const hourEnd = dayjs(endDate)
+      
+      return hourStart.isBefore(availEnd) && hourEnd.isAfter(availStart)
+    })
+    
+    return matchingAvailability?.id || null
   }
   
   const toggleHourSelection = (hourDate: Date, endDate: Date) => {
@@ -62,11 +94,16 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
             dayjs(h.start_date).hour() === hour
           )
           const isAvailable = isHourAvailable(hourDate, endDate)
+          const availabilityId = getAvailabilityIdForHour(hourDate, endDate)
+          const isHovered = hoveredAvailabilityId === availabilityId
+          const isMarkedForDeletion = availabilityId ? availabilityDeletions.includes(availabilityId) : false
           
-          // Determine background class - prioritize selected, then available, then default
+          // Determine background class - prioritize selected, then marked for deletion, then available, then default
           let bgClass = 'bg-secondary/30'
           if (isSelected) {
             bgClass = 'bg-primary/20 border-l-2 border-l-primary'
+          } else if (isMarkedForDeletion) {
+            bgClass = 'bg-red-100/50 dark:bg-red-950/30 border-l-2 border-l-red-500'
           } else if (isAvailable && editAvailabilityMode) {
             bgClass = 'bg-green-100/50 dark:bg-green-950/30'
           } else if (isAvailable) {
@@ -75,20 +112,46 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
           
           const hoverClass = editAvailabilityMode
             ? 'hover:bg-primary/10 transition-colors duration-150' 
+            : isAvailable
+            ? 'hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors duration-150'
             : ''
           
           return (
             <div 
               key={hour}
-              className={`h-32 border-b border-border/50 group relative ${bgClass} ${hoverClass} ${editAvailabilityMode ? 'cursor-pointer select-none' : ''}`}
-              onClick={() => {
+              className={`h-32 border-b border-border/50 group relative ${bgClass} ${hoverClass} ${editAvailabilityMode ? 'cursor-pointer select-none' : isAvailable ? 'cursor-pointer' : ''}`}
+              onClick={(e) => {
                 if (editAvailabilityMode) {
-                  toggleHourSelection(hourDate, endDate)
+                  if (isAvailable && availabilityId) {
+                    handleMarkForDeletion(e, availabilityId)
+                  } else {
+                    toggleHourSelection(hourDate, endDate)
+                  }
+                }
+              }}
+              onMouseEnter={() => {
+                if (editAvailabilityMode && availabilityId) {
+                  setHoveredAvailabilityId(availabilityId)
+                }
+              }}
+              onMouseLeave={() => {
+                if (editAvailabilityMode) {
+                  setHoveredAvailabilityId(null)
                 }
               }}
             >
               {editAvailabilityMode && isSelected && (
                 <div className="absolute top-1 left-1 w-2 h-2 rounded-full bg-primary" />
+              )}
+              {editAvailabilityMode && isAvailable && isHovered && availabilityId && !isMarkedForDeletion && (
+                <div className="absolute top-1 right-1 p-1 bg-red-500 rounded hover:bg-red-600 transition-colors">
+                  <Trash2 className="w-3 h-3 text-white" />
+                </div>
+              )}
+              {editAvailabilityMode && isMarkedForDeletion && availabilityId && (
+                <div className="absolute top-1 right-1 p-1 bg-red-600 rounded">
+                  <Trash2 className="w-3 h-3 text-white" />
+                </div>
               )}
             </div>
           )

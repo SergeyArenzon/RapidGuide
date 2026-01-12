@@ -109,5 +109,9 @@ export class ProfileApi extends BaseApi {
     );
   }
 
+  async deleteGuideAvailability(availabilityId: string): Promise<void> {
+    return this.axios.delete(`${ProfileApi.baseUrl}/guide/availabilities/${availabilityId}`);
+  }
+
 }
 

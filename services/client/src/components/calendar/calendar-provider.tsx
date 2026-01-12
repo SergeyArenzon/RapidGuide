@@ -24,7 +24,7 @@ export default function CalendarProvider({
   setDate: (date: Date) => void
   calendarIconIsToday: boolean
   editAvailabilityMode: boolean
-  availabilities?: Array<{ start_date: Date; end_date: Date }>
+  availabilities?: Array<{ id: string; start_date: Date; end_date: Date }>
   children: React.ReactNode
 }) {
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false)
@@ -32,16 +32,18 @@ export default function CalendarProvider({
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
   const [editAvailabilityMode, setEditAvailabilityMode] = useState(initialEditAvailabilityMode)
   const [availabilityChanges, setAvailabilityChanges] = useState<Array<AvailabilityChange>>([])
+  const [availabilityDeletions, setAvailabilityDeletions] = useState<Array<string>>([])
 
   // Reset availability changes when exiting edit mode
   const handleSetEditAvailabilityMode = (value: boolean) => {
     setEditAvailabilityMode(value)
     if (!value) {
       setAvailabilityChanges([])
+      setAvailabilityDeletions([])
     }
   }
 
-  const hasAvailabilityChanges = availabilityChanges.length > 0
+  const hasAvailabilityChanges = availabilityChanges.length > 0 || availabilityDeletions.length > 0
 
   return (
     <CalendarContext.Provider
@@ -63,6 +65,8 @@ export default function CalendarProvider({
         setSelectedEvent,
         availabilityChanges,
         setAvailabilityChanges,
+        availabilityDeletions,
+        setAvailabilityDeletions,
         hasAvailabilityChanges,
         availabilities,
       }}

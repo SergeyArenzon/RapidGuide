@@ -7,7 +7,7 @@ import { profileQueries, profileQueryKeys } from '@/lib/query'
 import { Button } from '@/components/ui/button'
 
 export default function CalendarHeaderActionsSaveAvailability() {
-  const { editAvailabilityMode, hasAvailabilityChanges, availabilityChanges = [], setAvailabilityChanges, setEditAvailabilityMode } = useCalendarContext()
+  const { editAvailabilityMode, hasAvailabilityChanges, availabilityChanges = [], setAvailabilityChanges, availabilityDeletions = [], setAvailabilityDeletions, setEditAvailabilityMode } = useCalendarContext()
   const queryClient = useQueryClient()
   const api = new Api()
   
@@ -17,13 +17,28 @@ export default function CalendarHeaderActionsSaveAvailability() {
   
   // All hooks must be called before any conditional returns
   const saveAvailabilityMutation = useMutation({
-    mutationFn: async (availabilities: Array<{ start_date: Date; end_date: Date }>) => {
+    mutationFn: async ({ 
+      availabilities, 
+      deletions 
+    }: { 
+      availabilities: Array<{ start_date: Date; end_date: Date }>
+      deletions: Array<string>
+    }) => {
+      // First, delete all marked availabilities
+      const deletePromises = deletions.map(availabilityId => 
+        api.profile.deleteGuideAvailability(availabilityId)
+      )
+      await Promise.all(deletePromises)
 
-      // Send all availabilities in a single request, preserving the time information
-      // @ts-expect-error - Type definition issue: PostGuideAvailabilitiesRequestDto should be an array but TypeScript infers it as a single object
-      return api.profile.createGuideAvailability(availabilities)
+      // Then, create new availabilities if any
+      if (availabilities.length > 0) {
+        // @ts-expect-error - Type definition issue: PostGuideAvailabilitiesRequestDto should be an array but TypeScript infers it as a single object
+        await api.profile.createGuideAvailability(availabilities)
+      }
+
+      return { created: availabilities.length, deleted: deletions.length }
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       // Invalidate availabilities query to refetch after save
       if (guideId) {
         queryClient.invalidateQueries({ 
@@ -32,13 +47,23 @@ export default function CalendarHeaderActionsSaveAvailability() {
       }
       
       // Show success message
-      toast.success(
-        `Successfully saved ${availabilityChanges.length} availability period${availabilityChanges.length > 1 ? 's' : ''}`
-      )
+      const messages = []
+      if (result.created > 0) {
+        messages.push(`added ${result.created} availability period${result.created > 1 ? 's' : ''}`)
+      }
+      if (result.deleted > 0) {
+        messages.push(`deleted ${result.deleted} availability period${result.deleted > 1 ? 's' : ''}`)
+      }
+      if (messages.length > 0) {
+        toast.success(`Successfully ${messages.join(' and ')}`)
+      }
       
       // Clear changes and exit edit mode
       if (setAvailabilityChanges) {
         setAvailabilityChanges([])
+      }
+      if (setAvailabilityDeletions) {
+        setAvailabilityDeletions([])
       }
       if (setEditAvailabilityMode) {
         setEditAvailabilityMode(false)
@@ -51,11 +76,14 @@ export default function CalendarHeaderActionsSaveAvailability() {
   })
   
   const handleSave = () => {
-    if (!availabilityChanges.length) {
+    if (!hasAvailabilityChanges) {
       return
     }
     
-    saveAvailabilityMutation.mutate(availabilityChanges)
+    saveAvailabilityMutation.mutate({ 
+      availabilities: availabilityChanges, 
+      deletions: availabilityDeletions 
+    })
   }
   
   // Only show save button when in edit mode AND there are changes

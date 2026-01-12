@@ -100,6 +100,7 @@ export default function CalendarBodyMonth() {
                 </div>
                 <AnimatePresence mode="wait">
                   <div className="flex flex-col gap-1 mt-1">
+                    {/* Show events */}
                     {dayEvents.slice(0, 3).map((event) => (
                       <CalendarEvent
                         key={event.id}
