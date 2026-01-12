@@ -1,18 +1,18 @@
-import { useCalendarContext } from '../../calendar-context'
 import {
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
   eachDayOfInterval,
-  isSameMonth,
-  isSameDay,
+  endOfMonth,
+  endOfWeek,
   format,
+  isSameDay,
+  isSameMonth,
   isWithinInterval,
+  startOfMonth,
+  startOfWeek,
 } from 'date-fns'
-import { cn } from '@/lib/utils'
-import CalendarEvent from '../../calendar-event'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useCalendarContext } from '../../calendar-context'
+import CalendarEvent from '../../calendar-event'
+import { cn } from '@/lib/utils'
 
 export default function CalendarBodyMonth() {
   const { date, events, setDate, setMode } = useCalendarContext()
@@ -46,7 +46,7 @@ export default function CalendarBodyMonth() {
   )
 
   return (
-    <div className="flex flex-col flex-grow overflow-hidden">
+    <div className="flex flex-col grow overflow-hidden">
       <div className="hidden md:grid grid-cols-7 border-border divide-x divide-border">
         {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
           <div
@@ -61,7 +61,7 @@ export default function CalendarBodyMonth() {
       <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={monthStart.toISOString()}
-          className="grid md:grid-cols-7 flex-grow overflow-y-auto relative"
+          className="grid md:grid-cols-7 grow overflow-y-auto relative"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -100,6 +100,7 @@ export default function CalendarBodyMonth() {
                 </div>
                 <AnimatePresence mode="wait">
                   <div className="flex flex-col gap-1 mt-1">
+                    {/* Show events */}
                     {dayEvents.slice(0, 3).map((event) => (
                       <CalendarEvent
                         key={event.id}

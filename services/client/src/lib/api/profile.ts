@@ -4,6 +4,7 @@ import {
   countrySchema,
   getProfilesMeResponseSchema,
   guideSchema,
+  guideAvailabilitySchema,
   languageSchema,
   travellerSchema,
 } from '@rapid-guide-io/contracts';
@@ -15,7 +16,9 @@ import type {
   CreateTravellerDto,
   GetProfilesMeResponseDto, 
   GuideDto, 
+  GuideAvailabilityDto,
   LanguageDto,
+  PostGuideAvailabilitiesRequestDto,
   TravellerDto,
 } from '@rapid-guide-io/contracts';
 
@@ -90,6 +93,24 @@ export class ProfileApi extends BaseApi {
       () => this.axios.get(`${ProfileApi.baseUrl}/guide/${guideId}`),
       guideSchema
     );
+  }
+
+  async getGuideAvailabilities(): Promise<Array<GuideAvailabilityDto>> {
+    return this.validateResponse(
+      () => this.axios.get(`${ProfileApi.baseUrl}/guide/availabilities`),
+      z.array(guideAvailabilitySchema)
+    );
+  }
+
+  async createGuideAvailability(availability: PostGuideAvailabilitiesRequestDto): Promise<Array<GuideAvailabilityDto>> {
+    return this.validateResponse(
+      () => this.axios.post(`${ProfileApi.baseUrl}/guide/availabilities`, availability),
+      z.array(guideAvailabilitySchema)
+    );
+  }
+
+  async deleteGuideAvailability(availabilityId: string): Promise<void> {
+    return this.axios.delete(`${ProfileApi.baseUrl}/guide/availabilities/${availabilityId}`);
   }
 
 }

@@ -1,7 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import type { CalendarEvent } from '@/components/calendar/calendar-types'
 import Calendar from '@/components/calendar/calendar'
+import { profileQueries } from '@/lib/query'
 
 
 export const Route = createFileRoute(
@@ -36,6 +38,7 @@ const generateDemoEvents = (): Array<CalendarEvent> => {
       endDate.setHours(endDate.getHours() + hours, endDate.getMinutes() + minutes)
       return endDate
     }
+
   
     // // Today's events
     // events.push({
@@ -148,6 +151,23 @@ function RouteComponent() {
   const [calendarMode, setCalendarMode] = useState<'day' | 'week' | 'month'>('month')
   const [calendarDate, setCalendarDate] = useState<Date>(new Date())
 
+  // Fetch current user profile to get guide ID
+  const { data: profile } = useQuery(profileQueries.me())
+  const guideId = profile?.guide?.id
+  
+  // Fetch guide availabilities when guide ID is available
+  const { data: availabilities } = useQuery({
+    ...profileQueries.guideAvailabilities(),
+    enabled: !!guideId,
+  })
+
+  // Log availabilities when fetched (for debugging)
+  useEffect(() => {
+    if (availabilities) {
+      console.log('Fetched guide availabilities:', availabilities)
+    }
+  }, [availabilities])
+
   return (
       <Calendar
         events={calendarEvents}
@@ -156,6 +176,11 @@ function RouteComponent() {
         setMode={setCalendarMode}
         date={calendarDate}
         setDate={setCalendarDate}
+        availabilities={availabilities?.map(avail => ({
+          id: avail.id,
+          start_date: avail.start_date,
+          end_date: avail.end_date,
+        }))}
       />
   )
 }

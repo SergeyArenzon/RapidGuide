@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { GuideController } from './guide.controller';
 import { GuideService } from './guide.service';
+import { AvailabilityService } from './availability.service';
 import { Guide } from './entities/guide.entity';
 import { GuideSubcategory } from './entities/guide-subcategory.entity';
-import { GuideSchedule } from './entities/guide-schedule.entity';
+import { GuideAvailability } from './entities/guide-availability.entity';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 // import { JwtModule } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
@@ -14,14 +15,14 @@ import { LanguagesModule } from '../languages/languages.module';
 
 @Module({
   imports: [
-    MikroOrmModule.forFeature([Guide, GuideSubcategory, GuideSchedule]),
+    MikroOrmModule.forFeature([Guide, GuideSubcategory, GuideAvailability]),
     CountryModule,
     CityModule,
     LanguagesModule,
     // JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
   controllers: [GuideController],
-  providers: [GuideService, Reflector],
-  exports: [GuideService],
+  providers: [GuideService, AvailabilityService, Reflector],
+  exports: [GuideService, AvailabilityService],
 })
 export class GuideModule {}

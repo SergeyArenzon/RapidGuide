@@ -8,7 +8,12 @@ import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 export default function CalendarHeaderActionsMode() {
-  const { mode, setMode } = useCalendarContext()
+  const { mode, setMode, editAvailabilityMode } = useCalendarContext()
+
+  // Don't render if in edit availability mode
+  if (editAvailabilityMode) {
+    return null
+  }
 
   return (
     <LayoutGroup>
