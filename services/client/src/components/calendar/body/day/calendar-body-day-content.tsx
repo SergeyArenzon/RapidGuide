@@ -103,7 +103,7 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
           if (isSelected) {
             bgClass = 'bg-primary/20 border-l-2 border-l-primary'
           } else if (isMarkedForDeletion) {
-            bgClass = 'bg-red-100 dark:bg-red-950/30 border-l-2 border-l-red-500'
+            bgClass = 'bg-destructive/20 dark:bg-destructive/30 border-l-2 border-l-destructive'
           } else if (isAvailable && editAvailabilityMode) {
             bgClass = 'bg-primary/50 dark:bg-primary/40 border-l-2 border-l-primary'
           } else if (isAvailable) {
@@ -144,12 +144,12 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
                 <div className="absolute top-1 left-1 w-2 h-2 rounded-full bg-primary" />
               )}
               {editAvailabilityMode && isAvailable && isHovered && availabilityId && !isMarkedForDeletion && (
-                <div className="absolute top-1 right-1 p-1 bg-red-500 rounded hover:bg-red-600 transition-colors">
+                <div className="absolute top-1 right-1 p-1 bg-destructive rounded hover:bg-destructive/90 transition-colors">
                   <Trash2 className="w-3 h-3 text-white" />
                 </div>
               )}
               {editAvailabilityMode && isMarkedForDeletion && availabilityId && (
-                <div className="absolute top-1 right-1 p-1 bg-red-600 rounded">
+                <div className="absolute top-1 right-1 p-1 bg-destructive rounded">
                   <Trash2 className="w-3 h-3 text-white" />
                 </div>
               )}
