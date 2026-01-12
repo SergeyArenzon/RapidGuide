@@ -1,7 +1,6 @@
-import { format, isSameDay } from 'date-fns'
+import dayjs from 'dayjs'
 import { cn } from '../../../lib/utils'
 import { useCalendarContext } from '../calendar-context'
-import dayjs from 'dayjs'
 
 export default function CalendarBodyHeader({
   date,
@@ -11,7 +10,7 @@ export default function CalendarBodyHeader({
   onlyDay?: boolean
 }) {
   const { availabilities = [] } = useCalendarContext()
-  const isToday = isSameDay(date, new Date())
+  const isToday = dayjs(date).isSame(dayjs(), 'day')
   
   // Check if this day has any availabilities
   const hasAvailability = availabilities.some((availability) => {
@@ -31,7 +30,7 @@ export default function CalendarBodyHeader({
           isToday ? 'text-primary' : 'text-muted-foreground'
         )}
       >
-        {format(date, 'EEE')}
+        {dayjs(date).format('ddd')}
       </span>
       {!onlyDay && (
         <span
@@ -40,7 +39,7 @@ export default function CalendarBodyHeader({
             isToday ? 'text-primary font-bold' : 'text-foreground'
           )}
         >
-          {format(date, 'dd')}
+          {dayjs(date).format('DD')}
         </span>
       )}
     </div>

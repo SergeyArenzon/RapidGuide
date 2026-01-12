@@ -1,14 +1,4 @@
-import {
-  eachDayOfInterval,
-  endOfMonth,
-  endOfWeek,
-  format,
-  isSameDay,
-  isSameMonth,
-  isWithinInterval,
-  startOfMonth,
-  startOfWeek,
-} from 'date-fns'
+import dayjs from 'dayjs'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useCalendarContext } from '../../calendar-context'
 import CalendarEvent from '../../calendar-event'
@@ -18,31 +8,47 @@ export default function CalendarBodyMonth() {
   const { date, events, setDate, setMode } = useCalendarContext()
 
   // Get the first day of the month
-  const monthStart = startOfMonth(date)
+  const monthStart = dayjs(date).startOf('month').toDate()
   // Get the last day of the month
-  const monthEnd = endOfMonth(date)
+  const monthEnd = dayjs(date).endOf('month').toDate()
 
   // Get the first Monday of the first week (may be in previous month)
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 })
+  // dayjs week starts on Sunday (0), so we need to adjust for Monday (1)
+  const getMonday = (date: Date) => {
+    const d = dayjs(date)
+    const day = d.day() // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    return d.subtract((day || 7) - 1, 'day').startOf('day')
+  }
+  const calendarStart = getMonday(monthStart).toDate()
   // Get the last Sunday of the last week (may be in next month)
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 })
+  const calendarEnd = getMonday(monthEnd).add(6, 'day').toDate()
 
   // Get all days between start and end
-  const calendarDays = eachDayOfInterval({
-    start: calendarStart,
-    end: calendarEnd,
-  })
+  const calendarDays: Date[] = []
+  let currentDay = dayjs(calendarStart)
+  const endDay = dayjs(calendarEnd)
+  while (currentDay.isBefore(endDay) || currentDay.isSame(endDay, 'day')) {
+    calendarDays.push(currentDay.toDate())
+    currentDay = currentDay.add(1, 'day')
+  }
 
   const today = new Date()
 
   // Filter events to only show those within the current month view
   const visibleEvents = events.filter(
-    (event) =>
-      isWithinInterval(event.start, {
-        start: calendarStart,
-        end: calendarEnd,
-      }) ||
-      isWithinInterval(event.end, { start: calendarStart, end: calendarEnd })
+    (event) => {
+      const eventStart = dayjs(event.start)
+      const eventEnd = dayjs(event.end)
+      const start = dayjs(calendarStart)
+      const end = dayjs(calendarEnd)
+      return (
+        (eventStart.isAfter(start) || eventStart.isSame(start, 'day')) &&
+        (eventStart.isBefore(end) || eventStart.isSame(end, 'day'))
+      ) || (
+        (eventEnd.isAfter(start) || eventEnd.isSame(start, 'day')) &&
+        (eventEnd.isBefore(end) || eventEnd.isSame(end, 'day'))
+      )
+    }
   )
 
   return (
@@ -72,10 +78,10 @@ export default function CalendarBodyMonth() {
         >
           {calendarDays.map((day) => {
             const dayEvents = visibleEvents.filter((event) =>
-              isSameDay(event.start, day)
+              dayjs(event.start).isSame(dayjs(day), 'day')
             )
-            const isToday = isSameDay(day, today)
-            const isCurrentMonth = isSameMonth(day, date)
+            const isToday = dayjs(day).isSame(dayjs(today), 'day')
+            const isCurrentMonth = dayjs(day).isSame(dayjs(date), 'month')
 
             return (
               <div
@@ -96,7 +102,7 @@ export default function CalendarBodyMonth() {
                     isToday && 'bg-primary text-background'
                   )}
                 >
-                  {format(day, 'd')}
+                  {dayjs(day).format('D')}
                 </div>
                 <AnimatePresence mode="wait">
                   <div className="flex flex-col gap-1 mt-1">

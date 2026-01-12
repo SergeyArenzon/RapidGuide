@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { CalendarIcon } from 'lucide-react'
-import { format } from 'date-fns'
+import dayjs from 'dayjs'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -75,7 +75,7 @@ export function DateTimePicker({ field }: DateTimePickerProps) {
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? (
-            format(date, 'MM/dd/yyyy hh:mm aa')
+            dayjs(date).format('MM/DD/YYYY hh:mm A')
           ) : (
             <span>MM/DD/YYYY hh:mm aa</span>
           )}
