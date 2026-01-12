@@ -103,17 +103,17 @@ export default function CalendarBodyDayContent({ date }: { date: Date }) {
           if (isSelected) {
             bgClass = 'bg-primary/20 border-l-2 border-l-primary'
           } else if (isMarkedForDeletion) {
-            bgClass = 'bg-red-100/50 dark:bg-red-950/30 border-l-2 border-l-red-500'
+            bgClass = 'bg-red-100 dark:bg-red-950/30 border-l-2 border-l-red-500'
           } else if (isAvailable && editAvailabilityMode) {
-            bgClass = 'bg-green-100/50 dark:bg-green-950/30'
+            bgClass = 'bg-primary/50 dark:bg-primary/40 border-l-2 border-l-primary'
           } else if (isAvailable) {
-            bgClass = 'bg-green-50 dark:bg-green-950/20'
+            bgClass = 'bg-primary/25 dark:bg-primary/35 border-l-2 border-l-primary'
           }
           
           const hoverClass = editAvailabilityMode
-            ? 'hover:bg-primary/10 transition-colors duration-150' 
+            ? 'hover:bg-primary/25 transition-colors duration-150' 
             : isAvailable
-            ? 'hover:bg-green-100 dark:hover:bg-green-900/40 transition-colors duration-150'
+            ? 'hover:bg-primary/35 dark:hover:bg-primary/45 transition-colors duration-150'
             : ''
           
           return (
