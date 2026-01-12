@@ -1,15 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useCalendarContext } from '../../calendar-context'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import {
-  format,
-  addDays,
-  addMonths,
-  addWeeks,
-  subDays,
-  subMonths,
-  subWeeks,
-} from 'date-fns'
+import dayjs from 'dayjs'
 
 export default function CalendarHeaderDateChevrons() {
   const { mode, date, setDate } = useCalendarContext()
@@ -17,13 +9,13 @@ export default function CalendarHeaderDateChevrons() {
   function handleDateBackward() {
     switch (mode) {
       case 'month':
-        setDate(subMonths(date, 1))
+        setDate(dayjs(date).subtract(1, 'month').toDate())
         break
       case 'week':
-        setDate(subWeeks(date, 1))
+        setDate(dayjs(date).subtract(1, 'week').toDate())
         break
       case 'day':
-        setDate(subDays(date, 1))
+        setDate(dayjs(date).subtract(1, 'day').toDate())
         break
     }
   }
@@ -31,13 +23,13 @@ export default function CalendarHeaderDateChevrons() {
   function handleDateForward() {
     switch (mode) {
       case 'month':
-        setDate(addMonths(date, 1))
+        setDate(dayjs(date).add(1, 'month').toDate())
         break
       case 'week':
-        setDate(addWeeks(date, 1))
+        setDate(dayjs(date).add(1, 'week').toDate())
         break
       case 'day':
-        setDate(addDays(date, 1))
+        setDate(dayjs(date).add(1, 'day').toDate())
         break
     }
   }
@@ -53,7 +45,7 @@ export default function CalendarHeaderDateChevrons() {
       </Button>
 
       <span className="min-w-[140px] text-center font-medium">
-        {format(date, 'MMMM d, yyyy')}
+        {dayjs(date).format('MMMM D, YYYY')}
       </span>
 
       <Button

@@ -20,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useCalendarContext } from '../calendar-context'
-import { format } from 'date-fns'
+import dayjs from 'dayjs'
 import { DateTimePicker } from '../date-time-picker'
 import { ColorPicker } from '../color-picker'
 import {
@@ -86,8 +86,8 @@ export default function CalendarManageEventDialog() {
     if (selectedEvent) {
       form.reset({
         title: selectedEvent.title,
-        start: format(selectedEvent.start, "yyyy-MM-dd'T'HH:mm"),
-        end: format(selectedEvent.end, "yyyy-MM-dd'T'HH:mm"),
+        start: dayjs(selectedEvent.start).format("YYYY-MM-DDTHH:mm"),
+        end: dayjs(selectedEvent.end).format("YYYY-MM-DDTHH:mm"),
         color: selectedEvent.color,
       })
     }

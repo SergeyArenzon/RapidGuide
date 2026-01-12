@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useCalendarContext } from '../calendar-context'
-import { format } from 'date-fns'
+import dayjs from 'dayjs'
 import { DateTimePicker } from '../date-time-picker'
 import { ColorPicker } from '../color-picker'
 
@@ -49,8 +49,8 @@ export default function CalendarNewEventDialog() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      start: format(date, "yyyy-MM-dd'T'HH:mm"),
-      end: format(date, "yyyy-MM-dd'T'HH:mm"),
+      start: dayjs(date).format("YYYY-MM-DDTHH:mm"),
+      end: dayjs(date).format("YYYY-MM-DDTHH:mm"),
       color: 'blue',
     },
   })
