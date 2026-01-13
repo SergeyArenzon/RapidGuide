@@ -1,14 +1,14 @@
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useState } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
 import { useTours } from './-hooks'
-import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutation'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
-import { TourTable } from '@/components/TourTable'
+import { TourTable } from '@/components/tour-table/TourTable'
 import { AlertDialog } from '@/components/AlertDialog'
+import { createGuideTourColumns } from '@/components/tour-table/columns'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -38,6 +38,8 @@ function ToursListContent() {
 
   const isFirstTour = tours.length === 0
 
+  const columns = createGuideTourColumns(countries, cities)
+
   const handleShow = (tour: TourDto) => {
     navigate({ to: `/guide/tours/${tour.id}` })
   }
@@ -59,80 +61,6 @@ function ToursListContent() {
     }
   }
 
-  const columns = useMemo<Array<ColumnDef<TourDto>>>(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Name',
-        cell: (info) => {
-          const tour = info.row.original
-          return (
-            <Link
-              to="/guide/tours/$tourId"
-              params={{ tourId: tour.id }}
-              className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer text-left"
-            >
-              {info.getValue<string>()}
-            </Link>
-          )
-        },
-      },
-      {
-        accessorKey: 'country_code',
-        header: 'Country',
-        cell: (info) => {
-          const countryCode = info.getValue<string>()
-          const country = countries.find(c => c.code === countryCode)
-          return (
-            <span className="text-sm text-muted-foreground">
-              {country?.name || countryCode}
-            </span>
-          )
-        },
-      },
-      {
-        accessorKey: 'city_id',
-        header: 'City',
-        cell: (info) => {
-          const cityId = info.getValue<number>()
-          const city = cities.find(c => c.id === cityId)
-          return (
-            <span className="text-sm text-muted-foreground">
-              {city?.name || cityId}
-            </span>
-          )
-        },
-      },
-      {
-        accessorKey: 'duration_minutes',
-        header: 'Duration',
-        cell: (info) => (
-          <span className="text-sm text-muted-foreground">
-            {info.getValue<number>()} min
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'price',
-        header: 'Price',
-        cell: (info) => (
-          <span className="text-sm text-muted-foreground">
-            ${info.getValue<number>().toFixed(2)}
-          </span>
-        ),
-      },
-      {
-        accessorKey: 'description',
-        header: 'Description',
-        cell: (info) => (
-          <p className="line-clamp-2 text-sm text-muted-foreground">
-            {info.getValue<string>()}
-          </p>
-        ),
-      },
-    ],
-    [countries, cities],
-  )
 
   return (
     <div>
@@ -149,7 +77,6 @@ function ToursListContent() {
           <TourTable
             columns={columns}
             data={tours}
-            emptyMessage="No tours found."
             filterColumnId="name"
             filterPlaceholder="Filter tours..."
             name="Tour"

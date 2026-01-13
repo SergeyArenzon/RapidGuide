@@ -1,41 +1,23 @@
-import { Suspense } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { ToursListSkeleton } from './-skeleton'
-import { useTours } from './-hooks'
-import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
-import { TourTable } from '@/components/tour-table/TourTable'
+import type { ColumnDef } from '@tanstack/react-table'
+import { Link } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query';
+import { profileQueries } from '@/lib/query';
 
-export const Route = createFileRoute('/_authenticated/traveller/tours/')({
-  component: RouteComponent,
-  staticData: {
-    label: 'Find Tours',
-    description: 'Discover and browse available tours.',
-    showBreadcrumb: false,
-  },
-})
 
-function RouteComponent() {
-  return (
-    <Suspense fallback={<ToursListSkeleton />}>
-      <ToursListContent />
-    </Suspense>
-  )
-}
+export function createGuideTourColumns(): Array<ColumnDef<TourDto, unknown>> {
+  const { data: countries = [] } = useQuery(profileQueries.countries());
+  const { data: cities = [] } = useQuery(profileQueries.cities());
 
-function ToursListContent() {
-
-  const { tours, countries, cities } = useTours()
-
-  const columns: Array<ColumnDef<TourDto>> = [
+  return [
     {
       accessorKey: 'name',
-      header: 'Tour Name',
+      header: 'Name',
       cell: (info) => {
         const tour = info.row.original
         return (
           <Link
-            to="/traveller/tours/$tourId"
+            to="/guide/tours/$tourId"
             params={{ tourId: tour.id }}
             className="font-medium text-foreground hover:text-primary hover:underline cursor-pointer text-left"
           >
@@ -49,7 +31,7 @@ function ToursListContent() {
       header: 'Country',
       cell: (info) => {
         const countryCode = info.getValue<string>()
-        const country = countries.find(c => c.code === countryCode)
+        const country = countries.find((c) => c.code === countryCode)
         return (
           <span className="text-sm text-muted-foreground">
             {country?.name || countryCode}
@@ -62,7 +44,7 @@ function ToursListContent() {
       header: 'City',
       cell: (info) => {
         const cityId = info.getValue<number>()
-        const city = cities.find(c => c.id === cityId)
+        const city = cities.find((c) => c.id === cityId)
         return (
           <span className="text-sm text-muted-foreground">
             {city?.name || cityId}
@@ -83,7 +65,7 @@ function ToursListContent() {
       accessorKey: 'price',
       header: 'Price',
       cell: (info) => (
-        <span className="text-sm font-medium text-foreground">
+        <span className="text-sm text-muted-foreground">
           ${info.getValue<number>().toFixed(2)}
         </span>
       ),
@@ -98,17 +80,4 @@ function ToursListContent() {
       ),
     },
   ]
-
-  return (
-    <div>
-      <TourTable
-        columns={columns}
-        data={tours}
-        filterColumnId="name"
-        filterPlaceholder="Search tours..."
-        name="Tour"
-      />
-    </div>
-  )
 }
-
