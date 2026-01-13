@@ -28,8 +28,6 @@ import {
   TableBody,
   TableCell,
   TableFooter,
-  TableHead,
-  TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
@@ -43,8 +41,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Checkbox } from '@/components/ui/checkbox'
 import type { TourDto } from '@rapid-guide-io/contracts'
-import { createGuideTourColumns } from './columns'
 import { TourTableToolbar } from './TourTableToolbar'
+import { TourTableHeader } from './TourTableHeader'
+import { useTourColumns } from './columns'
 
 
 
@@ -62,6 +61,7 @@ export interface DataTableProps {
   name?: string
 }
 
+
 export function TourTable({
   data,
   getRowId,
@@ -72,10 +72,17 @@ export function TourTable({
   name,
 }: DataTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    name: true,
+    country_code: true,
+    city_id: true,
+    duration_minutes: true,
+    price: true,
+    subcategory_ids: true,
 
-  const columns = createGuideTourColumns()
+  })
+  const columns = useTourColumns()
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
   const table = useReactTable({
     data,
@@ -85,7 +92,9 @@ export function TourTable({
     getPaginationRowModel: getPaginationRowModel(),
     getRowId,
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange: (updater) => {
+      setColumnVisibility(updater)
+    },
     onRowSelectionChange: setRowSelection,
     enableRowSelection: true,
     state: {
@@ -95,38 +104,25 @@ export function TourTable({
     },
   })
 
+  
   const rows = table.getRowModel().rows
   const extraColumns = 2 // selection + actions
 
+  
   return (
     <div className="mt-4 rounded-md border bg-background">
-      <TourTableToolbar table={table} columnVisibility={columnVisibility} onCreate={onCreate} name={name} />
+      <TourTableToolbar 
+      table={table} 
+      columnVisibility={columnVisibility} 
+      onCreate={onCreate} 
+      name={name} />
 
       <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              <TableHead>
-                <Checkbox
-                  checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && 'indeterminate')
-                  }
-                  onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                  aria-label="Select all"
-                />
-              </TableHead>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
-                </TableHead>
-              ))}
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          ))}
-        </TableHeader>
+        <TourTableHeader 
+        headerGroups={table.getHeaderGroups()} 
+        toggleAllPageRowsSelected={table.toggleAllPageRowsSelected}
+        checked={table.getIsAllPageRowsSelected()}/>
+        
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>

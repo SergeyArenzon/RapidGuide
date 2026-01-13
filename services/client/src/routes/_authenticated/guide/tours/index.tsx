@@ -8,7 +8,6 @@ import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutati
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import { TourTable } from '@/components/tour-table/TourTable'
 import { AlertDialog } from '@/components/AlertDialog'
-import { createGuideTourColumns } from '@/components/tour-table/columns'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -31,14 +30,12 @@ function ToursListContent() {
   const navigate = useNavigate()
   const { guide } = Route.useRouteContext()
   
-  const { tours, countries, cities } = useTours({ guideId: guide?.id ?? '' })
+  const { tours } = useTours({ guideId: guide?.id ?? '' })
   const deleteTourMutation = useDeleteTourMutation()
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [tourToDelete, setTourToDelete] = useState<TourDto | null>(null)
 
   const isFirstTour = tours.length === 0
-
-  const columns = createGuideTourColumns(countries, cities)
 
   const handleShow = (tour: TourDto) => {
     navigate({ to: `/guide/tours/${tour.id}` })
@@ -75,10 +72,7 @@ function ToursListContent() {
       ) : (
         <>
           <TourTable
-            columns={columns}
             data={tours}
-            filterColumnId="name"
-            filterPlaceholder="Filter tours..."
             name="Tour"
             onCreate={() => navigate({ to: '/guide/tours/new' })}
             onShowRow={handleShow}
