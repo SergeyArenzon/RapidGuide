@@ -107,15 +107,15 @@ export function TourTable({
   
   const rows = table.getRowModel().rows
   const extraColumns = 2 // selection + actions
-
   
   return (
     <div className="mt-4 rounded-md border bg-background">
       <TourTableToolbar 
-      table={table} 
-      columnVisibility={columnVisibility} 
-      onCreate={onCreate} 
-      name={name} />
+        columns={table.getAllColumns()}  
+        onToggleColumn={table.getToggleAllColumnsVisibilityHandler?.()}
+        onCreate={onCreate} 
+        name={name} 
+      />
 
       <Table>
         <TourTableHeader 
