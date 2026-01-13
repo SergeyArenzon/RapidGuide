@@ -15,12 +15,9 @@ interface TourTableToolbarProps {
   columns: Array<Column<TourDto>>
   onToggleColumn: (columnId: string, visible: boolean) => void
   onCreate?: () => void
-  name?: string
 }
 
-export function TourTableToolbar({ columns, onToggleColumn, onCreate, name }: TourTableToolbarProps) {
- 
-  
+export function TourTableToolbar({ columns, onToggleColumn, onCreate }: TourTableToolbarProps) {
   return (
     <div className="flex items-center gap-2 p-3">
       <div className="ml-auto flex items-center gap-2">
@@ -42,15 +39,13 @@ export function TourTableToolbar({ columns, onToggleColumn, onCreate, name }: To
               onClick={onCreate}
             >
               <CirclePlus className="h-4 w-4" />
-              {name ? `Create ${name}` : 'Create'}
+              "Create Tour"
             </Button>
           )}
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {columns.map((column) => {
-              console.log({column});
-              
               return (
                 <DropdownMenuCheckboxItem
                   key={column.id}

@@ -84,6 +84,13 @@ export function TourTable({
   const columns = useTourColumns()
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
 
+  const handleToggleColumn = (columnId: string, visible: boolean) => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      [columnId]: visible,
+    }))
+  }
+
   const table = useReactTable({
     data,
     columns,
@@ -92,9 +99,7 @@ export function TourTable({
     getPaginationRowModel: getPaginationRowModel(),
     getRowId,
     onSortingChange: setSorting,
-    onColumnVisibilityChange: (updater) => {
-      setColumnVisibility(updater)
-    },
+    onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     enableRowSelection: true,
     state: {
@@ -108,13 +113,17 @@ export function TourTable({
   const rows = table.getRowModel().rows
   const extraColumns = 2 // selection + actions
   
+  // Filter columns that can be toggled (have accessorKey and can be hidden)
+  const toggleableColumns = table.getAllColumns().filter(
+    (column) => column.getCanHide() 
+  )
+  
   return (
     <div className="mt-4 rounded-md border bg-background">
       <TourTableToolbar 
-        columns={table.getAllColumns()}  
-        onToggleColumn={table.getToggleAllColumnsVisibilityHandler?.()}
+        columns={toggleableColumns}  
+        onToggleColumn={handleToggleColumn}
         onCreate={onCreate} 
-        name={name} 
       />
 
       <Table>
