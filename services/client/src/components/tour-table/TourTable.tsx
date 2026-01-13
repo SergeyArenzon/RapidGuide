@@ -5,18 +5,15 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-
 } from '@tanstack/react-table'
 import {
   ChevronLeft,
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
-  CirclePlus,
   Edit,
   Eye,
   MoreHorizontal,
-  Settings2,
   Trash2,
 } from 'lucide-react'
 import type {
@@ -38,7 +35,6 @@ import {
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -48,6 +44,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { createGuideTourColumns } from './columns'
+import { TourTableToolbar } from './TourTableToolbar'
 
 
 
@@ -103,51 +100,7 @@ export function TourTable({
 
   return (
     <div className="mt-4 rounded-md border bg-background">
-      <div className="flex items-center gap-2 p-3">
-        <div className="ml-auto flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="inline-flex h-8 items-center gap-1"
-              >
-                <Settings2 className="h-4 w-4" />
-                View
-              </Button>
-            </DropdownMenuTrigger>
-            {onCreate && (
-            <Button
-              size="sm"
-              className="inline-flex h-8 items-center gap-1"
-              onClick={onCreate}
-            >
-              <CirclePlus className="h-4 w-4" />
-              {name ? `Create ${name}` : 'Create'}
-            </Button>
-          )}
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter(
-                (column) => typeof column.accessorFn !== 'undefined' && column.getCanHide(),
-              )
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.columnDef.header as string}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        </div>
-      </div>
+      <TourTableToolbar table={table} columnVisibility={columnVisibility} onCreate={onCreate} name={name} />
 
       <Table>
         <TableHeader>
@@ -236,7 +189,10 @@ export function TourTable({
           ))}
           {rows.length === 0 && (
             <TableRow>
-              <TableCell colSpan={columns.length + extraColumns} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length + extraColumns}
+                className="h-24 text-center"
+              >
                 No data found.
               </TableCell>
             </TableRow>
