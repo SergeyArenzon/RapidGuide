@@ -18,7 +18,6 @@ export function TourCard({ tourId, showActions = false }: TourCardProps) {
   const deleteTourMutation = useDeleteTourMutation()
 
   return (
-    <>
         <Card>
         <CardHeader>
           <div className="flex items-start justify-between">
@@ -115,7 +114,6 @@ export function TourCard({ tourId, showActions = false }: TourCardProps) {
           </div>
         </CardContent>
       </Card>
-    </>
   )
 }
 

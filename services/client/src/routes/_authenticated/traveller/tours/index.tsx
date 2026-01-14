@@ -1,9 +1,6 @@
 import { Suspense } from 'react'
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { ToursListSkeleton } from './-skeleton'
-import { useTours, useTravellerTours } from './-hooks'
-import type { ColumnDef } from '@tanstack/react-table'
-import type { TourDto } from '@rapid-guide-io/contracts'
 import { TravellerTourTable } from './-traveller-tour-table/-index'
 
 
