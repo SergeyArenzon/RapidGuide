@@ -1,29 +1,19 @@
 // TourTableHeader.tsx
-import type { HeaderGroup, Table as ReactTableInstance, RowSelectionState, VisibilityState } from '@tanstack/react-table'
-import type { TourDto } from '@rapid-guide-io/contracts'
-import { TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Checkbox } from '@/components/ui/checkbox'
 import { flexRender } from '@tanstack/react-table'
+import type { TourDto } from '@rapid-guide-io/contracts'
+import type { HeaderGroup } from '@tanstack/react-table';
+import { TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 interface TourTableHeaderProps {
-  headerGroups: HeaderGroup<TourDto>[]
-  toggleAllPageRowsSelected: (value: boolean) => void,
-  checked: boolean
+  headerGroups: Array<HeaderGroup<TourDto>>
 }
 
-export function TourTableHeader({ headerGroups, checked, toggleAllPageRowsSelected }: TourTableHeaderProps) {
+export function TourTableHeader({ headerGroups }: TourTableHeaderProps) {
 
   return (
     <TableHeader>
       {headerGroups.map((headerGroup) => (
         <TableRow key={headerGroup.id}>
-          <TableHead className="w-[50px]">
-            <Checkbox
-              checked={checked}
-              onCheckedChange={(value) => toggleAllPageRowsSelected(!!value)}
-              aria-label="Select all"
-            />
-          </TableHead>
           {headerGroup.headers.map((header) => (
             <TableHead key={header.id}>
               {header.isPlaceholder

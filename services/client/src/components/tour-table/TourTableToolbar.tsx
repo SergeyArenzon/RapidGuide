@@ -1,4 +1,5 @@
-import type { VisibilityState, ColumnDef, Column } from '@tanstack/react-table'
+import { CirclePlus, Settings2 } from 'lucide-react'
+import type { Column, VisibilityState } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { Button } from '@/components/ui/button'
 import {
@@ -9,15 +10,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { CirclePlus, Settings2 } from 'lucide-react'
 
 interface TourTableToolbarProps {
-  columns: Array<Column<TourDto>>
-  onToggleColumn: (columnId: string, visible: boolean) => void
+  toggleableColumns: Array<Column<TourDto>>
+  columnVisibility: VisibilityState
   onCreate?: () => void
 }
 
-export function TourTableToolbar({ columns, onToggleColumn, onCreate }: TourTableToolbarProps) {
+export function TourTableToolbar({ toggleableColumns, columnVisibility, onCreate }: TourTableToolbarProps) {
+  
+
+    
   return (
     <div className="flex items-center gap-2 p-3">
       <div className="ml-auto flex items-center gap-2">
@@ -39,20 +42,23 @@ export function TourTableToolbar({ columns, onToggleColumn, onCreate }: TourTabl
               onClick={onCreate}
             >
               <CirclePlus className="h-4 w-4" />
-              "Create Tour"
+              Create Tour
             </Button>
           )}
           <DropdownMenuContent align="end" className="w-40">
             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {columns.map((column) => {
+            {toggleableColumns.map((column) => {
+              const isVisible = column.getIsVisible()
+              console.log({columnId: column.id, isVisible, columnVisibility});
+              
               return (
                 <DropdownMenuCheckboxItem
                   key={column.id}
                   className="capitalize"
-                  checked={column.getIsVisible()}
+                  checked={isVisible}
                   onCheckedChange={(checked) => {
-                    onToggleColumn(column.id, checked as boolean)
+                    column.toggleVisibility(!!checked)
                   }}
                 >
                   {column.columnDef.header as string}

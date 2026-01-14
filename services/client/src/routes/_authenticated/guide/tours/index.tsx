@@ -73,7 +73,6 @@ function ToursListContent() {
         <>
           <TourTable
             data={tours}
-            name="Tour"
             onCreate={() => navigate({ to: '/guide/tours/new' })}
             onShowRow={handleShow}
             onEditRow={handleEdit}
