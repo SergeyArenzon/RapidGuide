@@ -2,12 +2,13 @@ import { Suspense, useState } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
-import { useTours } from './-hooks'
+import { useGuideTours, useTours } from './-hooks'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutation'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
 import { TourTable } from '@/components/tour-table/TourTable'
 import { AlertDialog } from '@/components/AlertDialog'
+import { GuideTourTable } from '@/components/tour-table/GuideTourTable'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -27,37 +28,9 @@ function RouteComponent() {
 }
 
 function ToursListContent() {
-  const navigate = useNavigate()
   const { guide } = Route.useRouteContext()
-  
-  const { tours } = useTours({ guideId: guide?.id ?? '' })
-  const deleteTourMutation = useDeleteTourMutation()
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [tourToDelete, setTourToDelete] = useState<TourDto | null>(null)
-
+  const { tours } = useGuideTours({ guideId: guide?.id ?? '' })
   const isFirstTour = tours.length === 0
-
-  const handleShow = (tour: TourDto) => {
-    navigate({ to: `/guide/tours/${tour.id}` })
-  }
-
-  const handleEdit = (tour: TourDto) => {
-    navigate({ to: `/guide/tours/${tour.id}/edit` })
-  }
-
-  const handleDelete = (tour: TourDto) => {
-    setTourToDelete(tour)
-    setDeleteDialogOpen(true)
-  }
-
-  const handleDeleteConfirm = () => {
-    if (tourToDelete) {
-      deleteTourMutation.mutate(tourToDelete.id)
-      setDeleteDialogOpen(false)
-      setTourToDelete(null)
-    }
-  }
-
 
   return (
     <div>
@@ -71,29 +44,7 @@ function ToursListContent() {
         />
       ) : (
         <>
-          <TourTable
-            data={tours}
-            onCreate={() => navigate({ to: '/guide/tours/new' })}
-            onShowRow={handleShow}
-            onEditRow={handleEdit}
-            onDeleteRow={handleDelete}
-          />
-          {tourToDelete && (
-            <AlertDialog
-              open={deleteDialogOpen}
-              onOpenChange={setDeleteDialogOpen}
-              title="Delete Tour"
-              description={`Are you sure you want to delete "${tourToDelete.name}"? This action cannot be undone.`}
-              approveText="Delete"
-              cancelText="Cancel"
-              variant="destructive"
-              onApprove={handleDeleteConfirm}
-              onCancel={() => {
-                setDeleteDialogOpen(false)
-                setTourToDelete(null)
-              }}
-            />
-          )}
+          <GuideTourTable guideId={guide.id ?? ''} />
         </>
       )}
     </div>
