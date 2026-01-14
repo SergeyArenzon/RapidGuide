@@ -6,11 +6,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import TourTableBody from './TourTableBody'
-import { TourTableHeader } from './TourTableHeader'
-import { TourTableToolbar } from './TourTableToolbar'
-import { TourTableFooter } from './TourTableFooter'
-import { useTourColumns } from './hooks'
+import TourTableBody from '../../../../../components/tour-table/TourTableBody'
+import { TourTableHeader } from '../../../../../components/tour-table/TourTableHeader'
+import { TourTableToolbar } from '../../../../../components/tour-table/TourTableToolbar'
+import { TourTableFooter } from '../../../../../components/tour-table/TourTableFooter'
+import { useTourColumns } from '../../../../../components/tour-table/hooks'
 import type {
   SortingState,
   VisibilityState,

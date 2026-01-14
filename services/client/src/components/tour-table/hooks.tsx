@@ -4,20 +4,24 @@ import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
 import { profileQueries } from '@/lib/query'
+import { useRoleStore } from '@/store/useRole'
 
 export function useTourColumns() {
   const { data: countries = [] } = useQuery(profileQueries.countries())
   const { data: cities = [] } = useQuery(profileQueries.cities())
-
+  const { role } = useRoleStore()
+  console.log({});
+  
   const columns: Array<ColumnDef<TourDto, any>> = [
     {
       accessorKey: 'name',
       header: 'Name',
       cell: (info) => {
+        if (!role) return null
         const tour = info.row.original
         return (
           <Link
-            to="/guide/tours/$tourId"
+            to={`/${role}/tours/$tourId`}
             params={{ tourId: tour.id }}
             className="cursor-pointer text-left font-medium text-foreground hover:text-primary hover:underline"
           >

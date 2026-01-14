@@ -1,14 +1,10 @@
-import { Suspense, useState } from 'react'
-import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Suspense } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 import { MapPin } from 'lucide-react'
 import { ToursListSkeleton } from './-skeleton'
-import { useGuideTours, useTours } from './-hooks'
-import type { TourDto } from '@rapid-guide-io/contracts'
-import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutation'
+import { useGuideTours } from './-hooks'
 import { FirstTimeCreation } from '@/components/FirstTimeCreation'
-import { TourTable } from '@/components/tour-table/TourTable'
-import { AlertDialog } from '@/components/AlertDialog'
-import { GuideTourTable } from '@/components/tour-table/GuideTourTable'
+import { GuideTourTable } from '@/routes/_authenticated/guide/tours/-guide-tour-table/-index'
 
 export const Route = createFileRoute('/_authenticated/guide/tours/')({
   component: RouteComponent,
@@ -44,7 +40,7 @@ function ToursListContent() {
         />
       ) : (
         <>
-          <GuideTourTable guideId={guide.id ?? ''} />
+          {guide && <GuideTourTable guideId={guide.id} />}
         </>
       )}
     </div>
