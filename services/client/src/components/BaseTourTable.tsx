@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   flexRender,
   getCoreRowModel,
@@ -6,7 +7,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-
 } from '@tanstack/react-table'
 import {
   ChevronLeft,
@@ -28,6 +28,9 @@ import type {
   SortingState,
   VisibilityState,
 } from '@tanstack/react-table'
+import type { TourDto } from '@rapid-guide-io/contracts'
+import { useDeleteTourMutation } from '@/components/TourCard/useDeleteTourMutation'
+import { AlertDialog } from '@/components/AlertDialog'
 
 import {
   Table,
@@ -53,7 +56,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 
 type AnyRow<TData> = Row<TData>
 
-export interface DataTableProps<TData> {
+export interface BaseTourTableProps<TData> {
   columns: Array<ColumnDef<TData, unknown>>
   data: Array<TData>
   /** Message to display when there are no rows */
@@ -72,26 +75,80 @@ export interface DataTableProps<TData> {
   onCreate?: () => void
   /** Optional name to display in the create button (e.g. "Tour", "User") */
   name?: string
+  /** Optional guide ID for guide-specific tours */
+  guideId?: string
 }
 
-export function DataTable<TData>({
+export function BaseTourTable<TData extends TourDto = TourDto>({
   columns,
   data,
   emptyMessage = 'No data found.',
   getRowId,
-  filterColumnId,
+  filterColumnId = 'name',
   filterPlaceholder = 'Filter...',
-  onShowRow,
-  onEditRow,
-  onDeleteRow,
-  onCreate,
-  name,
-}: DataTableProps<TData>) {
+  onShowRow: providedOnShowRow,
+  onEditRow: providedOnEditRow,
+  onDeleteRow: providedOnDeleteRow,
+  onCreate: providedOnCreate,
+  name = 'Tour',
+  guideId,
+}: BaseTourTableProps<TData>) {
+  const navigate = useNavigate()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
+  const [tourToDelete, setTourToDelete] = React.useState<TData | null>(null)
   
+  const deleteTourMutation = useDeleteTourMutation()
+
+  // Handle navigation internally
+  const handleShow = React.useCallback((tour: TData) => {
+    if (providedOnShowRow) {
+      providedOnShowRow(tour)
+      return
+    }
+    const basePath = guideId ? '/guide/tours' : '/traveller/tours'
+    navigate({ to: `${basePath}/${tour.id}` })
+  }, [providedOnShowRow, navigate, guideId])
+
+  const handleEdit = React.useCallback((tour: TData) => {
+    if (providedOnEditRow) {
+      providedOnEditRow(tour)
+      return
+    }
+    if (guideId) {
+      navigate({ to: `/guide/tours/${tour.id}/edit` })
+    }
+  }, [providedOnEditRow, navigate, guideId])
+
+  const handleDelete = React.useCallback((tour: TData) => {
+    if (providedOnDeleteRow) {
+      providedOnDeleteRow(tour)
+      return
+    }
+    setTourToDelete(tour)
+    setDeleteDialogOpen(true)
+  }, [providedOnDeleteRow])
+
+  const handleDeleteConfirm = React.useCallback(() => {
+    if (tourToDelete) {
+      deleteTourMutation.mutate(tourToDelete.id)
+      setDeleteDialogOpen(false)
+      setTourToDelete(null)
+    }
+  }, [tourToDelete, deleteTourMutation])
+
+  const handleCreate = React.useCallback(() => {
+    if (providedOnCreate) {
+      providedOnCreate()
+      return
+    }
+    if (guideId) {
+      navigate({ to: '/guide/tours/new' })
+    }
+  }, [providedOnCreate, navigate, guideId])
 
   const table = useReactTable({
     data,
@@ -144,11 +201,11 @@ export function DataTable<TData>({
                 View
               </Button>
             </DropdownMenuTrigger>
-            {onCreate && (
+            {(guideId || providedOnCreate) && (
             <Button
               size="sm"
               className="inline-flex h-8 items-center gap-1"
-              onClick={onCreate}
+              onClick={handleCreate}
             >
               <CirclePlus className="h-4 w-4" />
               {name ? `Create ${name}` : 'Create'}
@@ -233,30 +290,36 @@ export function DataTable<TData>({
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={() => {
-                        onShowRow?.(row.original)
+                        handleShow(row.original)
                       }}
                     >
                       <Eye className="mr-2 h-4 w-4" />
                       Show
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        onEditRow?.(row.original)
-                      }}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      variant="danger"
-                      onClick={() => {
-                        onDeleteRow?.(row.original)
-                      }}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
+                    {guideId && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleEdit(row.original)
+                        }}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                    )}
+                    {guideId && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          variant="danger"
+                          onClick={() => {
+                            handleDelete(row.original)
+                          }}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
@@ -337,6 +400,23 @@ export function DataTable<TData>({
           </TableRow>
         </TableFooter>
       </Table>
+      {tourToDelete && (
+        <AlertDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          title="Delete Tour"
+          description={`Are you sure you want to delete "${tourToDelete.name}"? This action cannot be undone.`}
+          approveText="Delete"
+          cancelText="Cancel"
+          variant="destructive"
+          onApprove={handleDeleteConfirm}
+          onCancel={() => {
+            setDeleteDialogOpen(false)
+            setTourToDelete(null)
+          }}
+        />
+      )}
     </div>
   )
 }
+

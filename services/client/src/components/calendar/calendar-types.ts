@@ -1,13 +1,12 @@
 export type CalendarProps = {
-  events: Array<CalendarEvent>
-  setEvents: (events: Array<CalendarEvent>) => void
+  events: CalendarEvent[]
+  setEvents: (events: CalendarEvent[]) => void
   mode: Mode
   setMode: (mode: Mode) => void
   date: Date
   setDate: (date: Date) => void
   calendarIconIsToday?: boolean,
   editAvailabilityMode?: boolean
-  availabilities?: Array<{ id: string; start_date: Date; end_date: Date }>
 }
 
 export type AvailabilityChange = {
@@ -24,12 +23,9 @@ export type CalendarContextType = CalendarProps & {
   setSelectedEvent: (event: CalendarEvent | null) => void
   editAvailabilityMode?: boolean
   setEditAvailabilityMode?: (editAvailabilityMode: boolean) => void
-  availabilityChanges?: Array<AvailabilityChange>
-  setAvailabilityChanges?: (changes: Array<AvailabilityChange>) => void
-  availabilityDeletions?: Array<string>
-  setAvailabilityDeletions?: (deletions: Array<string>) => void
+  availabilityChanges?: AvailabilityChange[]
+  setAvailabilityChanges?: (changes: AvailabilityChange[]) => void
   hasAvailabilityChanges?: boolean
-  availabilities?: Array<{ id: string; start_date: Date; end_date: Date }>
 }
 export type CalendarEvent = {
   id: string
