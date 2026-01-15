@@ -1,10 +1,11 @@
-import { profileQueries, tourQueries } from '@/lib/query'
+import { Suspense, useState } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Suspense, useState } from 'react'
-import { ScheduleSkeleton } from './-skeleton'
 import dayjs from 'dayjs'
+import { ScheduleSkeleton } from './-skeleton'
+import { AvailabilitiesList, calculateValidTimeSlots } from './-availabilities-list'
 import { Calendar } from '@/components/ui/calendar'
+import { profileQueries, tourQueries } from '@/lib/query'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/schedule/',
@@ -28,24 +29,24 @@ function RouteComponent() {
 function ScheduleTourContent() {
     const { tourId } = Route.useParams()
     const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
+    
     const { data: guideAvailabilities } = useSuspenseQuery(profileQueries.guideAvailabilities())
     
     const [selectedDate, setSelectedDate] = useState<Date | undefined>()
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
+    const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<string | undefined>()
 
-  // Check if a date is available (falls within any availability range)
+  // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
-    if (!guideAvailabilities || guideAvailabilities.length === 0) return false
+    if (guideAvailabilities.length === 0) return false
 
-    const dayStart = dayjs(date).startOf('day')
-    
-    return guideAvailabilities.some((availability) => {
-      const availStart = dayjs(availability.start_date).startOf('day')
-      const availEnd = dayjs(availability.end_date).startOf('day')
-      
-      return (dayStart.isAfter(availStart) || dayStart.isSame(availStart)) &&
-             (dayStart.isBefore(availEnd) || dayStart.isSame(availEnd))
-    })
+    // Check if there are any valid time slots for this date
+    const validSlots = calculateValidTimeSlots(
+      date,
+      guideAvailabilities,
+      tour.duration_minutes
+    )
+    return validSlots.length > 0
   }
 
   // Custom modifiers for react-day-picker
@@ -53,20 +54,19 @@ function ScheduleTourContent() {
     available: (date: Date) => isDateAvailable(date),
   }
 
-  const modifiersClassNames = {
-    available: 'bg-primary/20 border-primary border-2',
-  }
-
+  console.log({selectedAvailabilityId});
   return (
-    <div className="container mx-auto py-6">
+    <div className="grid grid-cols-[min-content_1fr] grid-rows-1 gap-2">
       <Calendar
         mode="single"
         selected={selectedDate}
-        onSelect={setSelectedDate}
+        onSelect={(date) => {
+          setSelectedDate(date)
+          setSelectedAvailabilityId(undefined) // Reset selection when date changes
+        }}
         month={currentMonth}
         onMonthChange={setCurrentMonth}
         modifiers={modifiers}
-        modifiersClassNames={modifiersClassNames}
         disabled={(date) => {
           // Disable dates in the past
           const isPast = dayjs(date).isBefore(dayjs(), 'day')
@@ -74,8 +74,20 @@ function ScheduleTourContent() {
           const isNotAvailable = !isDateAvailable(date)
           return isPast || isNotAvailable
         }}
-        className="rounded-md border"
+        className="rounded-md border "
       />
+
+      {selectedDate && (
+        <AvailabilitiesList
+          selectedDate={selectedDate}
+          availabilities={guideAvailabilities}
+          tourDurationMinutes={tour.duration_minutes}
+          selectedAvailabilityId={selectedAvailabilityId}
+          onAvailabilityClick={(availability) => {
+            setSelectedAvailabilityId(availability.id)
+          }}
+        />
+      )}
     </div>
   )
 }
