@@ -18,9 +18,6 @@ interface TourTableToolbarProps {
 }
 
 export function TourTableToolbar({ toggleableColumns, columnVisibility, onCreate }: TourTableToolbarProps) {
-  
-
-    
   return (
     <div className="flex items-center gap-2 p-3">
       <div className="ml-auto flex items-center gap-2">

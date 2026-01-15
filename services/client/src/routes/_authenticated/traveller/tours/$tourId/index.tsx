@@ -1,10 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { TourDetailSkeleton } from './-skeleton'
 import { GuideCard } from '@/components/GuideCard'
 import { TourCard } from '@/components/TourCard'
 import { tourQueries } from '@/lib/query'
+import { Button } from '@/components/ui/button'
+import { Calendar } from 'lucide-react'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/',
@@ -28,12 +30,22 @@ function RouteComponent() {
 function TourDetailContent() {
   const { tourId } = Route.useParams()
   const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
-  console.log({tour});
+  const navigate = useNavigate()
   
   return (
-    <div className="space-y-6">
-      <TourCard tourId={tourId} />
-      <GuideCard guideId={tour.guide_id} />
+    <div className="grid grid-cols-2 gap-3">
+      <div className="row-span-2 row-start-1">
+        <TourCard tourId={tourId} />
+      </div>
+      <div className="col-start-2 row-start-1 h-full">
+        <Button onClick={() => navigate({ to: `/traveller/tours/${tourId}/schedule` })} size="lg" className="w-full">
+          <Calendar className="mr-2 h-4 w-4" />
+          Schedule Tour
+        </Button>
+      </div>
+      <div className="col-start-2 row-start-2">
+        <GuideCard guideId={tour.guide_id} />
+      </div>
     </div>
   )
 }
