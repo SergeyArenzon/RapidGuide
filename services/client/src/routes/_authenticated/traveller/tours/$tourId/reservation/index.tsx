@@ -2,25 +2,26 @@ import { Suspense, useState } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
-import { ScheduleSkeleton } from './-skeleton'
+import { ReservationSkeleton } from './-skeleton'
 import { AvailabilitiesList, calculateValidTimeSlots } from './-availabilities-list'
+import { ReservationDetailsCard } from './-reservation-details-card'
 import { Calendar } from '@/components/ui/calendar'
 import { profileQueries, tourQueries } from '@/lib/query'
 
 export const Route = createFileRoute(
-  '/_authenticated/traveller/tours/$tourId/schedule/',
+  '/_authenticated/traveller/tours/$tourId/reservation/',
 )({
   component: RouteComponent,
   staticData: {
-    label: 'Schedule Tour',
-    description: 'Schedule a tour.',
+    label: 'Reserve a Tour',
+    description: 'Find a suitable time for your tour.',
     showBreadcrumb: true,
   },
 })
 
 function RouteComponent() {
     return (
-      <Suspense fallback={<ScheduleSkeleton />}>
+      <Suspense fallback={<ReservationSkeleton />}>
         <ScheduleTourContent />
       </Suspense>
     )
@@ -54,9 +55,32 @@ function ScheduleTourContent() {
     available: (date: Date) => isDateAvailable(date),
   }
 
-  console.log({selectedAvailabilityId});
+  // Get the selected time slot details
+  const getSelectedTimeSlotDetails = () => {
+    if (!selectedDate || !selectedAvailabilityId) return undefined
+    
+    const validSlots = calculateValidTimeSlots(
+      selectedDate,
+      guideAvailabilities,
+      tour.duration_minutes
+    )
+    
+    return validSlots.find(slot => slot.id === selectedAvailabilityId)
+  }
+
+  const selectedSlotDetails = getSelectedTimeSlotDetails()
+
+  const handleFinalizeReservation = () => {
+    // TODO: Implement reservation finalization
+    console.log('Finalizing reservation:', {
+      tourId,
+      date: selectedDate,
+      timeSlot: selectedSlotDetails,
+    })
+  }
+
   return (
-    <div className="grid grid-cols-[min-content_1fr] grid-rows-1 gap-2">
+    <div className="grid grid-cols-[min-content_1fr] gap-4">
       <Calendar
         mode="single"
         selected={selectedDate}
@@ -74,20 +98,31 @@ function ScheduleTourContent() {
           const isNotAvailable = !isDateAvailable(date)
           return isPast || isNotAvailable
         }}
-        className="rounded-md border "
+        className="rounded-md border"
       />
 
-      {selectedDate && (
-        <AvailabilitiesList
-          selectedDate={selectedDate}
-          availabilities={guideAvailabilities}
-          tourDurationMinutes={tour.duration_minutes}
-          selectedAvailabilityId={selectedAvailabilityId}
-          onAvailabilityClick={(availability) => {
-            setSelectedAvailabilityId(availability.id)
-          }}
-        />
-      )}
+      <div className="space-y-4">
+        {selectedDate && (
+          <AvailabilitiesList
+            selectedDate={selectedDate}
+            availabilities={guideAvailabilities}
+            tourDurationMinutes={tour.duration_minutes}
+            selectedAvailabilityId={selectedAvailabilityId}
+            onAvailabilityClick={(availability) => {
+              setSelectedAvailabilityId(availability.id)
+            }}
+          />
+        )}
+
+        {selectedDate && selectedSlotDetails && (
+          <ReservationDetailsCard
+            tour={tour}
+            selectedDate={selectedDate}
+            selectedTimeSlot={selectedSlotDetails}
+            onFinalize={handleFinalizeReservation}
+          />
+        )}
+      </div>
     </div>
   )
 }

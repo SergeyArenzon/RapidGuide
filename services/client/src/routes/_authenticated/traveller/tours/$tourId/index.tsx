@@ -38,9 +38,9 @@ function TourDetailContent() {
         <TourCard tourId={tourId} />
       </div>
       <div className="col-start-2 row-start-1 h-full">
-        <Button onClick={() => navigate({ to: `/traveller/tours/${tourId}/schedule` })} size="lg" className="w-full">
+        <Button onClick={() => navigate({ to: `/traveller/tours/${tourId}/reservation` })} size="lg" className="w-full">
           <Calendar className="mr-2 h-4 w-4" />
-          Schedule Tour
+          Reserve a Tour
         </Button>
       </div>
       <div className="col-start-2 row-start-2">

@@ -31,7 +31,7 @@ import { Route as AuthenticatedGuideToursTourIdRouteImport } from './routes/_aut
 import { Route as AuthenticatedTravellerToursTourIdIndexRouteImport } from './routes/_authenticated/traveller/tours/$tourId/index'
 import { Route as AuthenticatedGuideToursNewIndexRouteImport } from './routes/_authenticated/guide/tours/new/index'
 import { Route as AuthenticatedGuideToursTourIdIndexRouteImport } from './routes/_authenticated/guide/tours/$tourId/index'
-import { Route as AuthenticatedTravellerToursTourIdScheduleIndexRouteImport } from './routes/_authenticated/traveller/tours/$tourId/schedule/index'
+import { Route as AuthenticatedTravellerToursTourIdReservationIndexRouteImport } from './routes/_authenticated/traveller/tours/$tourId/reservation/index'
 import { Route as AuthenticatedGuideToursTourIdEditIndexRouteImport } from './routes/_authenticated/guide/tours/$tourId/edit/index'
 
 const UnauthenticatedRoute = UnauthenticatedRouteImport.update({
@@ -156,10 +156,10 @@ const AuthenticatedGuideToursTourIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedGuideToursTourIdRoute,
   } as any)
-const AuthenticatedTravellerToursTourIdScheduleIndexRoute =
-  AuthenticatedTravellerToursTourIdScheduleIndexRouteImport.update({
-    id: '/schedule/',
-    path: '/schedule/',
+const AuthenticatedTravellerToursTourIdReservationIndexRoute =
+  AuthenticatedTravellerToursTourIdReservationIndexRouteImport.update({
+    id: '/reservation/',
+    path: '/reservation/',
     getParentRoute: () => AuthenticatedTravellerToursTourIdRoute,
   } as any)
 const AuthenticatedGuideToursTourIdEditIndexRoute =
@@ -191,7 +191,7 @@ export interface FileRoutesByFullPath {
   '/guide/tours/new': typeof AuthenticatedGuideToursNewIndexRoute
   '/traveller/tours/$tourId/': typeof AuthenticatedTravellerToursTourIdIndexRoute
   '/guide/tours/$tourId/edit': typeof AuthenticatedGuideToursTourIdEditIndexRoute
-  '/traveller/tours/$tourId/schedule': typeof AuthenticatedTravellerToursTourIdScheduleIndexRoute
+  '/traveller/tours/$tourId/reservation': typeof AuthenticatedTravellerToursTourIdReservationIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -209,7 +209,7 @@ export interface FileRoutesByTo {
   '/guide/tours/new': typeof AuthenticatedGuideToursNewIndexRoute
   '/traveller/tours/$tourId': typeof AuthenticatedTravellerToursTourIdIndexRoute
   '/guide/tours/$tourId/edit': typeof AuthenticatedGuideToursTourIdEditIndexRoute
-  '/traveller/tours/$tourId/schedule': typeof AuthenticatedTravellerToursTourIdScheduleIndexRoute
+  '/traveller/tours/$tourId/reservation': typeof AuthenticatedTravellerToursTourIdReservationIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -236,7 +236,7 @@ export interface FileRoutesById {
   '/_authenticated/guide/tours/new/': typeof AuthenticatedGuideToursNewIndexRoute
   '/_authenticated/traveller/tours/$tourId/': typeof AuthenticatedTravellerToursTourIdIndexRoute
   '/_authenticated/guide/tours/$tourId/edit/': typeof AuthenticatedGuideToursTourIdEditIndexRoute
-  '/_authenticated/traveller/tours/$tourId/schedule/': typeof AuthenticatedTravellerToursTourIdScheduleIndexRoute
+  '/_authenticated/traveller/tours/$tourId/reservation/': typeof AuthenticatedTravellerToursTourIdReservationIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -262,7 +262,7 @@ export interface FileRouteTypes {
     | '/guide/tours/new'
     | '/traveller/tours/$tourId/'
     | '/guide/tours/$tourId/edit'
-    | '/traveller/tours/$tourId/schedule'
+    | '/traveller/tours/$tourId/reservation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -280,7 +280,7 @@ export interface FileRouteTypes {
     | '/guide/tours/new'
     | '/traveller/tours/$tourId'
     | '/guide/tours/$tourId/edit'
-    | '/traveller/tours/$tourId/schedule'
+    | '/traveller/tours/$tourId/reservation'
   id:
     | '__root__'
     | '/'
@@ -306,7 +306,7 @@ export interface FileRouteTypes {
     | '/_authenticated/guide/tours/new/'
     | '/_authenticated/traveller/tours/$tourId/'
     | '/_authenticated/guide/tours/$tourId/edit/'
-    | '/_authenticated/traveller/tours/$tourId/schedule/'
+    | '/_authenticated/traveller/tours/$tourId/reservation/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -471,11 +471,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGuideToursTourIdIndexRouteImport
       parentRoute: typeof AuthenticatedGuideToursTourIdRoute
     }
-    '/_authenticated/traveller/tours/$tourId/schedule/': {
-      id: '/_authenticated/traveller/tours/$tourId/schedule/'
-      path: '/schedule'
-      fullPath: '/traveller/tours/$tourId/schedule'
-      preLoaderRoute: typeof AuthenticatedTravellerToursTourIdScheduleIndexRouteImport
+    '/_authenticated/traveller/tours/$tourId/reservation/': {
+      id: '/_authenticated/traveller/tours/$tourId/reservation/'
+      path: '/reservation'
+      fullPath: '/traveller/tours/$tourId/reservation'
+      preLoaderRoute: typeof AuthenticatedTravellerToursTourIdReservationIndexRouteImport
       parentRoute: typeof AuthenticatedTravellerToursTourIdRoute
     }
     '/_authenticated/guide/tours/$tourId/edit/': {
@@ -544,15 +544,15 @@ const AuthenticatedGuideRouteWithChildren =
 
 interface AuthenticatedTravellerToursTourIdRouteChildren {
   AuthenticatedTravellerToursTourIdIndexRoute: typeof AuthenticatedTravellerToursTourIdIndexRoute
-  AuthenticatedTravellerToursTourIdScheduleIndexRoute: typeof AuthenticatedTravellerToursTourIdScheduleIndexRoute
+  AuthenticatedTravellerToursTourIdReservationIndexRoute: typeof AuthenticatedTravellerToursTourIdReservationIndexRoute
 }
 
 const AuthenticatedTravellerToursTourIdRouteChildren: AuthenticatedTravellerToursTourIdRouteChildren =
   {
     AuthenticatedTravellerToursTourIdIndexRoute:
       AuthenticatedTravellerToursTourIdIndexRoute,
-    AuthenticatedTravellerToursTourIdScheduleIndexRoute:
-      AuthenticatedTravellerToursTourIdScheduleIndexRoute,
+    AuthenticatedTravellerToursTourIdReservationIndexRoute:
+      AuthenticatedTravellerToursTourIdReservationIndexRoute,
   }
 
 const AuthenticatedTravellerToursTourIdRouteWithChildren =
