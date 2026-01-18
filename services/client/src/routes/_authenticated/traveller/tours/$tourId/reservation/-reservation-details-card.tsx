@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
+import type { TourDto } from '@rapid-guide-io/contracts'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import type { TourDto } from '@rapid-guide-io/contracts'
 
 interface TimeSlot {
   id: string
@@ -14,6 +14,7 @@ interface ReservationDetailsCardProps {
   selectedDate: Date
   selectedTimeSlot: TimeSlot
   onFinalize: () => void
+  isLoading?: boolean
 }
 
 export function ReservationDetailsCard({
@@ -21,6 +22,7 @@ export function ReservationDetailsCard({
   selectedDate,
   selectedTimeSlot,
   onFinalize,
+  isLoading = false,
 }: ReservationDetailsCardProps) {
   return (
     <Card>
@@ -57,8 +59,9 @@ export function ReservationDetailsCard({
           onClick={onFinalize} 
           className="w-full" 
           size="lg"
+          disabled={isLoading}
         >
-          Finalize Reservation
+          {isLoading ? 'Creating Reservation...' : 'Finalize Reservation'}
         </Button>
       </CardFooter>
     </Card>

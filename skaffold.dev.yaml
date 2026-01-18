@@ -35,7 +35,7 @@ build:
           - src: "src/**/*.json"
             dest: .
     - image: sergeyarenzon/huddlehub-booking
-      context: services/booking
+      context: services/reservation
       docker:
         dockerfile: Dockerfile.dev
       sync: 

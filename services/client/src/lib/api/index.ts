@@ -2,6 +2,7 @@ import { BaseApi } from './base';
 import { ProfileApi } from './profile';
 import { TourApi } from './tour';
 import { AuthApi } from './auth';
+import { BookingApi } from './booking';
 import { useJwtTokenStore } from '@/store/useJwtToken';
 
 // Main Api class that composes all API modules
@@ -9,6 +10,7 @@ export default class Api extends BaseApi {
   public profile: ProfileApi;
   public tour: TourApi;
   public auth: AuthApi;
+  public booking: BookingApi;
 
   constructor(accessToken?: string | null) {
     // Choose between provided token and zustand state
@@ -18,6 +20,7 @@ export default class Api extends BaseApi {
     this.profile = new ProfileApi(token, this.axios);
     this.tour = new TourApi(token, this.axios);
     this.auth = new AuthApi(token, this.axios);
+    this.booking = new BookingApi(token, this.axios);
   }
 }
 

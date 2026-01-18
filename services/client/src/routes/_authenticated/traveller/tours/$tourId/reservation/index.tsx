@@ -2,9 +2,11 @@ import { Suspense, useState } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
-import { ReservationSkeleton } from './-skeleton'
 import { AvailabilitiesList, calculateValidTimeSlots } from './-availabilities-list'
 import { ReservationDetailsCard } from './-reservation-details-card'
+import { ReservationSkeleton } from './-skeleton'
+import { useCreateReservationMutation } from './useCreateReservationMutation'
+import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
 import { profileQueries, tourQueries } from '@/lib/query'
 
@@ -29,6 +31,7 @@ function RouteComponent() {
 
 function ScheduleTourContent() {
     const { tourId } = Route.useParams()
+    const { traveller } = RootRoute.useRouteContext()
     const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
     
     const { data: guideAvailabilities } = useSuspenseQuery(profileQueries.guideAvailabilities())
@@ -36,6 +39,8 @@ function ScheduleTourContent() {
     const [selectedDate, setSelectedDate] = useState<Date | undefined>()
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
     const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<string | undefined>()
+
+    const createReservationMutation = useCreateReservationMutation()
 
   // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
@@ -71,11 +76,26 @@ function ScheduleTourContent() {
   const selectedSlotDetails = getSelectedTimeSlotDetails()
 
   const handleFinalizeReservation = () => {
-    // TODO: Implement reservation finalization
-    console.log('Finalizing reservation:', {
-      tourId,
-      date: selectedDate,
-      timeSlot: selectedSlotDetails,
+    if (!selectedDate || !selectedSlotDetails || !traveller?.id) {
+      console.error('Missing required data for reservation')
+      return
+    }
+
+    // Combine selectedDate with startTime to create scheduled_datetime
+    const [hours, minutes] = selectedSlotDetails.startTime.split(':').map(Number)
+    const scheduledDatetime = dayjs(selectedDate)
+      .hour(hours)
+      .minute(minutes)
+      .second(0)
+      .millisecond(0)
+      .toDate()
+
+    createReservationMutation.mutate({
+      tour_id: tourId,
+      availability_ids: [selectedAvailabilityId!], // Use the selected availability ID
+      scheduled_datetime: scheduledDatetime,
+      traveller_ids: [traveller.id],
+      price_per_traveller: tour.price,
     })
   }
 
@@ -120,6 +140,7 @@ function ScheduleTourContent() {
             selectedDate={selectedDate}
             selectedTimeSlot={selectedSlotDetails}
             onFinalize={handleFinalizeReservation}
+            isLoading={createReservationMutation.isPending}
           />
         )}
       </div>

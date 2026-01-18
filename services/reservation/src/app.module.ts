@@ -1,8 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { microOrmConfig } from 'src/config';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { ProfileModule } from './profile/profile.module';
+import { AppService } from './app.service';
+import microOrmConfig from './mikro-orm.config';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { ReservationModule } from './reservation/reservation.module';
 import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';
 import { ZodResponseInterceptor } from '@rapid-guide-io/interceptors';
 import { AuthModule } from '@thallesp/nestjs-better-auth';
@@ -19,15 +20,16 @@ import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
       disableGlobalAuthGuard: true,
     }),
     MikroOrmModule.forRoot(microOrmConfig),
-    ProfileModule,
+    ReservationModule,
   ],
   controllers: [AppController],
   providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useFactory: (reflector: Reflector) => {
         const options: JwtAuthGuardOptions = {
-          audience: 'profile-svc',
+          audience: 'reservation-svc',
         };
         return new JwtAuthGuard(reflector, options);
       },
@@ -41,8 +43,4 @@ import { JwtAuthGuard, JwtAuthGuardOptions } from '@rapid-guide-io/guards';
     },
   ],
 })
-export class AppModule implements NestModule {
-  configure(_consumer: MiddlewareConsumer) {
-    // consumer.apply(LoggerMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}

@@ -6,13 +6,10 @@ import { ScopePermission } from '@rapid-guide-io/decorators';
 export class ScopeService {
   // Base scopes available to all users
   static readonly DEFAULT_SCOPES = [
-    'category:read',
-    'subcategory:read',
-    'language:read',
-    'country:read',
-    'city:read',
-    'guide:create',
-    'traveller:create',
+    ScopePermission.CATEGORY_READ,
+    ScopePermission.SUBCATEGORY_READ,
+    ScopePermission.GUIDE_CREATE,
+    ScopePermission.TRAVELLER_CREATE,
   ];
 
   // Guide-specific scopes (inherits DEFAULT_SCOPES)
@@ -22,7 +19,13 @@ export class ScopeService {
   getScopes(profile: GetProfilesMeResponseDto) {
     const scopes: string[] = [...ScopeService.DEFAULT_SCOPES];
     if (profile.traveller) {
-      scopes.push(ScopeService.TRAVELLER_SCOPE);
+      scopes.push(
+        ScopeService.TRAVELLER_SCOPE,
+        ScopePermission.RESERVATION_CREATE,
+        ScopePermission.RESERVATION_READ,
+        ScopePermission.RESERVATION_UPDATE,
+        ScopePermission.RESERVATION_DELETE,
+      );
       const travellerWriteIndex = scopes.indexOf(
         ScopePermission.TRAVELLER_CREATE,
       );
@@ -30,6 +33,11 @@ export class ScopeService {
     }
     if (profile.guide) {
       scopes.push(ScopeService.GUIDE_SCOPE);
+      scopes.push(
+        ScopePermission.RESERVATION_READ,
+        ScopePermission.RESERVATION_UPDATE,
+        ScopePermission.RESERVATION_DELETE,
+      );
       const guideWriteIndex = scopes.indexOf(ScopePermission.GUIDE_CREATE);
       scopes.splice(guideWriteIndex, 1);
     }

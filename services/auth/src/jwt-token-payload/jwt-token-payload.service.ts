@@ -93,7 +93,7 @@ export class JwtTokenPayloadService {
     const payload: Record<string, any> = {
       // iss is set by better-auth JWT plugin configuration
       iss: 'auth-svc',
-      aud: ['profile-svc', 'tour-svc'],
+      aud: ['profile-svc', 'tour-svc', 'reservation-svc'],
       id: user.id,
       sub: user.id,
       email: user.email,
