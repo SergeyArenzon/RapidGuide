@@ -29,6 +29,8 @@
     "@nestjs/core": "^10.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.0.0",
+    "@rapid-guide-io/contracts": "^1.4.0",
+    "@rapid-guide-io/pipes": "^0.0.10",
     "better-auth": "^1.4.7",
     "cookie-parser": "^1.4.7",
     "reflect-metadata": "^0.2.0",
