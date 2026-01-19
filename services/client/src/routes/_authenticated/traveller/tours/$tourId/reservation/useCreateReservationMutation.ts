@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
-import Api from '@/lib/api'
 import type { CreateReservationDto } from '@rapid-guide-io/contracts'
+import Api from '@/lib/api'
 
 export function useCreateReservationMutation() {
   const navigate = useNavigate()
