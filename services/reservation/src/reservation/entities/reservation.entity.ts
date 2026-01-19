@@ -29,17 +29,6 @@ export class Reservation extends BaseEntity {
   tour_id: string;
 
   /**
-   * ID of the primary/starting guide availability slot (denormalized for quick access)
-   * This represents the first time slot where the tour starts.
-   * 
-   * For tours spanning multiple slots, all slots are tracked in the 
-   * availabilities collection. This field provides quick access to 
-   * the starting availability without loading the collection.
-   */
-  @Property({ type: 'uuid' })
-  availability_id: string;
-
-  /**
    * The scheduled date and time for the tour
    * This is when the tour is expected to start.
    * 

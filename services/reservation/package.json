@@ -29,7 +29,7 @@
     "@nestjs/core": "^11.1.6",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "11.1.6",
-    "@rapid-guide-io/contracts": "^1.4.0",
+    "@rapid-guide-io/contracts": "^1.4.1",
     "@rapid-guide-io/decorators": "^1.5.1",
     "@rapid-guide-io/guards": "^1.5.0",
     "@rapid-guide-io/interceptors": "^0.0.9",
@@ -39,7 +39,8 @@
     "cookie-parser": "^1.4.7",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "zod": "4.1.7"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

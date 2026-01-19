@@ -1,0 +1,5 @@
+{
+	"dependencies": {
+		"@rapid-guide-io/interceptors": "^0.0.9"
+	}
+}

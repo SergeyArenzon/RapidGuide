@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { reservationSchema } from '@rapid-guide-io/contracts';
+import { createReservationSchema, reservationSchema } from '@rapid-guide-io/contracts';
 import { BaseApi } from './base';
 import type {
   CreateReservationDto,
@@ -10,10 +10,10 @@ export class BookingApi extends BaseApi {
   // Base URL for the booking service
   static readonly baseUrl = '/reservation';
 
-  async createReservation(reservation: CreateReservationDto): Promise<ReservationDto> {
+  async createReservation(reservation: CreateReservationDto): Promise<CreateReservationDto> {
     return this.validateResponse(
       () => this.axios.post(`${BookingApi.baseUrl}/reservation`, reservation),
-      reservationSchema
+      createReservationSchema
     );
   }
 

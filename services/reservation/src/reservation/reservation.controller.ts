@@ -28,8 +28,7 @@ export class ReservationController {
   @UseGuards(ScopesGuard)
   @Scopes([ScopePermission.RESERVATION_CREATE])
   create(
-    @Body(new ZodValidationPipe(createReservationSchema))
-    createReservationDto: CreateReservationDto,
+    @Body(new ZodValidationPipe(createReservationSchema)) createReservationDto: CreateReservationDto,
   ): Promise<ReservationDto> {
     return this.reservationService.create(createReservationDto);
   }
@@ -48,16 +47,16 @@ export class ReservationController {
     return this.reservationService.findOne(id);
   }
 
-  @Patch(':id')
-  @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.RESERVATION_UPDATE])
-  update(
-    @Param('id') id: string,
-    @Body(new ZodValidationPipe(updateReservationSchema))
-    updateReservationDto: UpdateReservationDto,
-  ): Promise<ReservationDto> {
-    return this.reservationService.update(id, updateReservationDto);
-  }
+  // @Patch(':id')
+  // @UseGuards(ScopesGuard)
+  // @Scopes([ScopePermission.RESERVATION_UPDATE])
+  // update(
+  //   @Param('id') id: string,
+  //   @Body(new ZodValidationPipe(updateReservationSchema))
+  //   updateReservationDto: UpdateReservationDto,
+  // ): Promise<ReservationDto> {
+  //   return this.reservationService.update(id, updateReservationDto);
+  // }
 
   @Delete(':id')
   @UseGuards(ScopesGuard)

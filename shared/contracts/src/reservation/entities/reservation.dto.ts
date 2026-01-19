@@ -15,7 +15,6 @@ export const reservationAvailabilitySchema = z.object({
 export const reservationSchema = timeSchema.extend({
   id: z.uuid(),
   tour_id: z.uuid(),
-  availability_id: z.uuid(), // Primary/starting availability slot
   scheduled_datetime: z.coerce.date(),
   number_of_travellers: z.number().int().positive(),
   price_per_traveller: z.number().positive(),
@@ -34,8 +33,7 @@ export const createReservationSchema = z.object({
   tour_id: z.uuid(),
   availability_ids: z.array(z.uuid()).min(1, 'At least one availability is required'),
   scheduled_datetime: z.coerce.date(),
-  traveller_ids: z.array(z.uuid()).min(1, 'At least one traveller is required'),
-  notes: z.string().optional(),
+  traveller_id: z.uuid().min(1, 'Traveller is required'),
   // Price per traveller - should match tour price, but included for validation
   price_per_traveller: z.number().positive().optional(),
 });

@@ -94,7 +94,7 @@ function ScheduleTourContent() {
       tour_id: tourId,
       availability_ids: [selectedAvailabilityId!], // Use the selected availability ID
       scheduled_datetime: scheduledDatetime,
-      traveller_ids: [traveller.id],
+      traveller_id: traveller.id,
       price_per_traveller: tour.price,
     })
   }
