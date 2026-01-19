@@ -3,6 +3,7 @@ import { createReservationSchema, reservationSchema } from '@rapid-guide-io/cont
 import { BaseApi } from './base';
 import type {
   CreateReservationDto,
+  GetReservationsFilterDto,
   ReservationDto,
 } from '@rapid-guide-io/contracts';
 
@@ -17,9 +18,23 @@ export class BookingApi extends BaseApi {
     );
   }
 
-  async getReservations(): Promise<Array<ReservationDto>> {
+  async getReservations(filter?: GetReservationsFilterDto): Promise<Array<ReservationDto>> {
+    const params = new URLSearchParams();
+    if (filter?.tour_id) {
+      params.append('tour_id', filter.tour_id);
+    }
+    if (filter?.date) {
+      // Format date as ISO string for query parameter
+      params.append('date', filter.date instanceof Date ? filter.date.toISOString() : filter.date);
+    }
+    
+    const queryString = params.toString();
+    const url = queryString 
+      ? `${BookingApi.baseUrl}/reservation?${queryString}`
+      : `${BookingApi.baseUrl}/reservation`;
+    
     return this.validateResponse(
-      () => this.axios.get(`${BookingApi.baseUrl}/reservation`),
+      () => this.axios.get(url),
       z.array(reservationSchema)
     );
   }

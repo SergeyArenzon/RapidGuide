@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import {
@@ -15,6 +16,8 @@ import {
   createReservationSchema,
   UpdateReservationDto,
   updateReservationSchema,
+  getResevationsFilerSchema,
+  GetReservationsFilterDto,
 } from '@rapid-guide-io/contracts';
 import { ZodValidationPipe } from '@rapid-guide-io/pipes';
 import { ScopesGuard } from '@rapid-guide-io/guards';
@@ -28,7 +31,8 @@ export class ReservationController {
   @UseGuards(ScopesGuard)
   @Scopes([ScopePermission.RESERVATION_CREATE])
   create(
-    @Body(new ZodValidationPipe(createReservationSchema)) createReservationDto: CreateReservationDto,
+    @Body(new ZodValidationPipe(createReservationSchema))
+    createReservationDto: CreateReservationDto,
   ): Promise<ReservationDto> {
     return this.reservationService.create(createReservationDto);
   }
@@ -36,8 +40,11 @@ export class ReservationController {
   @Get()
   @UseGuards(ScopesGuard)
   @Scopes([ScopePermission.RESERVATION_READ])
-  findAll(): Promise<ReservationDto[]> {
-    return this.reservationService.findAll();
+  findAll(
+    @Query(new ZodValidationPipe(getResevationsFilerSchema))
+    filter: GetReservationsFilterDto,
+  ): Promise<ReservationDto[]> {
+    return this.reservationService.findAll(filter);
   }
 
   @Get(':id')

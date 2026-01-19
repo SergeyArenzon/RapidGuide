@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { 
-  CreateReservationDto, 
+import {
+  CreateReservationDto,
+  GetReservationsFilterDto,
   ReservationDto,
   reservationStatusSchema,
-  UpdateReservationDto 
+  UpdateReservationDto,
 } from '@rapid-guide-io/contracts';
 import { Reservation } from './entities/reservation.entity';
 import { ReservationTraveller } from './entities/reservation-traveller.entity';
@@ -19,10 +20,12 @@ export class ReservationService {
     private readonly em: EntityManager,
   ) {}
 
-  async create(createReservationDto: CreateReservationDto): Promise<ReservationDto> {
+  async create(
+    createReservationDto: CreateReservationDto,
+  ): Promise<ReservationDto> {
     const em = this.em.fork();
-    console.log({createReservationDto});
-    
+    console.log({ createReservationDto });
+
     // Create the reservation entity
     const reservation = new Reservation({
       tour_id: createReservationDto.tour_id,
@@ -64,9 +67,10 @@ export class ReservationService {
    */
   private toDto(reservation: Reservation): ReservationDto {
     const availabilities = reservation.availabilities.isInitialized()
-      ? reservation.availabilities.getItems().sort((a, b) => a.slot_order - b.slot_order)
+      ? reservation.availabilities
+          .getItems()
+          .sort((a, b) => a.slot_order - b.slot_order)
       : [];
-    
 
     return {
       id: reservation.id,
@@ -80,9 +84,9 @@ export class ReservationService {
       reviewed_at: reservation.reviewed_at || null,
       rejection_reason: reservation.rejection_reason || null,
       traveller_ids: reservation.travellers.isInitialized()
-        ? reservation.travellers.getItems().map(t => t.traveller_id)
+        ? reservation.travellers.getItems().map((t) => t.traveller_id)
         : [],
-      availabilities: availabilities.map(a => ({
+      availabilities: availabilities.map((a) => ({
         availability_id: a.availability_id,
         slot_order: a.slot_order,
       })),
@@ -91,9 +95,26 @@ export class ReservationService {
     };
   }
 
-  findAll(): Promise<ReservationDto[]> {
-    // TODO: Implement find all reservations
-    throw new Error('Not implemented');
+  async findAll(
+    filterDto: GetReservationsFilterDto,
+  ): Promise<ReservationDto[]> {
+    const { tour_id, date } = filterDto;
+    // 1. Initialize an empty filter object
+    const where: any = {};
+
+    // 2. Only add to the filter if the value exists
+    if (tour_id) {
+      where.tour_id = tour_id;
+    }
+
+    if (date) {
+      where.scheduled_datetime = { $eq: date };
+    }
+
+    // 3. Pass the dynamic object to MikroORM
+    const reservations = await this.reservationRepository.find(where);
+
+    return reservations.map(this.toDto);
   }
 
   findOne(id: string): Promise<ReservationDto> {
@@ -101,7 +122,10 @@ export class ReservationService {
     throw new Error('Not implemented');
   }
 
-  update(id: string, updateReservationDto: UpdateReservationDto): Promise<ReservationDto> {
+  update(
+    id: string,
+    updateReservationDto: UpdateReservationDto,
+  ): Promise<ReservationDto> {
     // TODO: Implement update reservation
     throw new Error('Not implemented');
   }

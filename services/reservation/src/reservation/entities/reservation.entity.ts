@@ -1,15 +1,22 @@
-import { Entity, Property, OneToMany, Collection, BeforeCreate, BeforeUpdate } from '@mikro-orm/core';
+import {
+  Entity,
+  Property,
+  OneToMany,
+  Collection,
+  BeforeCreate,
+  BeforeUpdate,
+} from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
 import { ReservationTraveller } from './reservation-traveller.entity';
 import { ReservationAvailability } from './reservation-availability.entity';
 
 /**
  * Represents a tour reservation made by a traveller
- * 
+ *
  * A reservation is a request to book a tour at a specific date/time.
  * It starts as 'pending' and requires guide confirmation to be confirmed.
  * Once confirmed, it becomes a confirmed booking.
- * 
+ *
  * Key characteristics:
  * - Can hold multiple reservant travellers
  * - Status remains 'pending' until guide confirms or rejects it
@@ -31,11 +38,11 @@ export class Reservation extends BaseEntity {
   /**
    * The scheduled date and time for the tour
    * This is when the tour is expected to start.
-   * 
+   *
    * This is denormalized from the availability's start_date for:
    * - Performance: avoids querying the profile service for reservation details
    * - Data integrity: preserves the original scheduled time even if availability changes
-   * 
+   *
    * Should match the availability's start_date at the time of reservation creation.
    */
   @Property({ type: 'datetime' })
@@ -100,15 +107,18 @@ export class Reservation extends BaseEntity {
 
   /**
    * All guide availability slots used by this reservation
-   * 
-   * When a tour spans multiple availability slots (e.g., 61-minute tour 
-   * spanning 09:00-10:00 and 10:00-11:00), this collection tracks all 
+   *
+   * When a tour spans multiple availability slots (e.g., 61-minute tour
+   * spanning 09:00-10:00 and 10:00-11:00), this collection tracks all
    * the availability slots that are reserved.
-   * 
+   *
    * For single-slot tours, this will contain one entry matching availability_id.
    * For multi-slot tours, this will contain multiple entries ordered by slot_order.
    */
-  @OneToMany(() => ReservationAvailability, (availability) => availability.reservation)
+  @OneToMany(
+    () => ReservationAvailability,
+    (availability) => availability.reservation,
+  )
   availabilities = new Collection<ReservationAvailability>(this);
 
   /**
@@ -127,7 +137,8 @@ export class Reservation extends BaseEntity {
    * This is automatically called before create/update via lifecycle hooks.
    */
   calculateTotalPrice(): void {
-    this.total_price = Number(this.price_per_traveller) * this.number_of_travellers;
+    this.total_price =
+      Number(this.price_per_traveller) * this.number_of_travellers;
   }
 
   /**
