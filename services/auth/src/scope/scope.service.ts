@@ -9,6 +9,7 @@ export class ScopeService {
     ScopePermission.CATEGORY_READ,
     ScopePermission.SUBCATEGORY_READ,
     ScopePermission.GUIDE_CREATE,
+    ScopePermission.GUIDE_READ,
     ScopePermission.TRAVELLER_CREATE,
   ];
 
@@ -37,6 +38,7 @@ export class ScopeService {
         ScopePermission.RESERVATION_READ,
         ScopePermission.RESERVATION_UPDATE,
         ScopePermission.RESERVATION_DELETE,
+        ScopePermission.TOUR_ALL,
       );
       const guideWriteIndex = scopes.indexOf(ScopePermission.GUIDE_CREATE);
       scopes.splice(guideWriteIndex, 1);

@@ -28,7 +28,6 @@ spec:
           args:
             - |
               echo "Running DB migrations..." &&
-              cd /app &&
               npx mikro-orm migration:up &&
               echo "Migrations completed successfully"
           env:

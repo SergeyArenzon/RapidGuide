@@ -34,7 +34,9 @@ function ScheduleTourContent() {
     const { traveller } = RootRoute.useRouteContext()
     const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
     
-    const { data: guideAvailabilities } = useSuspenseQuery(profileQueries.guideAvailabilities())
+    const { data: guideAvailabilities } = useSuspenseQuery(
+      profileQueries.guideAvailabilitiesByGuideId(tour.guide_id)
+    )
     
     const [selectedDate, setSelectedDate] = useState<Date | undefined>()
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
