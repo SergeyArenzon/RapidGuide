@@ -85,7 +85,7 @@ function ScheduleTourContent() {
 
     // Combine selectedDate with startTime to create scheduled_datetime
     const [hours, minutes] = selectedSlotDetails.startTime.split(':').map(Number)
-    const scheduledDatetime = dayjs(selectedDate)
+    const datetime = dayjs(selectedDate)
       .hour(hours)
       .minute(minutes)
       .second(0)
@@ -95,7 +95,7 @@ function ScheduleTourContent() {
     createReservationMutation.mutate({
       tour_id: tourId,
       availability_ids: [selectedAvailabilityId!], // Use the selected availability ID
-      scheduled_datetime: scheduledDatetime,
+      datetime,
       traveller_id: traveller.id,
       price_per_traveller: tour.price,
     })

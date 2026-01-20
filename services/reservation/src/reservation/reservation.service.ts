@@ -29,7 +29,7 @@ export class ReservationService {
     // Create the reservation entity
     const reservation = new Reservation({
       tour_id: createReservationDto.tour_id,
-      scheduled_datetime: createReservationDto.scheduled_datetime,
+      datetime: createReservationDto.datetime,
       price_per_traveller: createReservationDto.price_per_traveller, // Will be set from tour if not provided
       status: reservationStatusSchema.enum.pending,
     });
@@ -75,7 +75,7 @@ export class ReservationService {
     return {
       id: reservation.id,
       tour_id: reservation.tour_id,
-      scheduled_datetime: reservation.scheduled_datetime,
+      datetime: reservation.datetime,
       number_of_travellers: reservation.number_of_travellers,
       price_per_traveller: Number(reservation.price_per_traveller),
       total_price: Number(reservation.total_price),
@@ -108,7 +108,7 @@ export class ReservationService {
     }
 
     if (date) {
-      where.scheduled_datetime = { $eq: date };
+      where.datetime = { $eq: date };
     }
 
     // 3. Pass the dynamic object to MikroORM

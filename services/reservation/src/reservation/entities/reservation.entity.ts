@@ -46,7 +46,7 @@ export class Reservation extends BaseEntity {
    * Should match the availability's start_date at the time of reservation creation.
    */
   @Property({ type: 'datetime' })
-  scheduled_datetime: Date;
+  datetime: Date;
 
   /**
    * Number of travellers in this reservation (denormalized for performance)
