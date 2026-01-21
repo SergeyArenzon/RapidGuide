@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import dayjs from 'dayjs';
 import { createReservationSchema, reservationSchema } from '@rapid-guide-io/contracts';
 import { BaseApi } from './base';
 import type {
@@ -19,23 +20,33 @@ export class BookingApi extends BaseApi {
   }
 
   async getReservations(filter?: GetReservationsFilterDto): Promise<Array<ReservationDto>> {
+
     const params = new URLSearchParams();
+
     if (filter?.tour_id) {
       params.append('tour_id', filter.tour_id);
     }
+
     if (filter?.date) {
-      // Format date as ISO string for query parameter
-      params.append('date', filter.date instanceof Date ? filter.date.toISOString() : filter.date);
+      /**
+       * Send a pure calendar date to the backend in YYYY-MM-DD format.
+       * The backend will interpret this as a full-day range in UTC.
+       */
+      const dateParam = dayjs(filter.date).format('YYYY-MM-DD');
+
+      console.log({ filter, dateParam });
+
+      params.append('date', dateParam);
     }
-    
+
     const queryString = params.toString();
-    const url = queryString 
+    const url = queryString
       ? `${BookingApi.baseUrl}/reservation?${queryString}`
       : `${BookingApi.baseUrl}/reservation`;
-    
+
     return this.validateResponse(
       () => this.axios.get(url),
-      z.array(reservationSchema)
+      z.array(reservationSchema),
     );
   }
 

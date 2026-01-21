@@ -8,9 +8,13 @@ import {
   reservationStatusSchema,
   UpdateReservationDto,
 } from '@rapid-guide-io/contracts';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { Reservation } from './entities/reservation.entity';
 import { ReservationTraveller } from './entities/reservation-traveller.entity';
 import { ReservationAvailability } from './entities/reservation-availability.entity';
+
+dayjs.extend(utc);
 
 @Injectable()
 export class ReservationService {
@@ -108,7 +112,16 @@ export class ReservationService {
     }
 
     if (date) {
-      where.datetime = { $eq: date };
+      /**
+       * `date` is expected to be a calendar date string: "YYYY-MM-DD".
+       * We convert it into an explicit UTC day range so that reservations
+       * like "2026-01-23T06:00:00.000Z" are correctly included.
+       */
+      const startOfDay = dayjs.utc(date).startOf('day').toDate();
+      const endOfDay = dayjs.utc(date).endOf('day').toDate();
+
+      console.log({startOfDay, endOfDay});
+      where.datetime = { $gte: startOfDay, $lte: endOfDay };
     }
 
     // 3. Pass the dynamic object to MikroORM

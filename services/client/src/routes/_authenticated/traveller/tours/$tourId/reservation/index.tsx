@@ -1,5 +1,5 @@
 import { Suspense, useState } from 'react'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { AvailabilitiesList, calculateValidTimeSlots } from './-availabilities-list'
@@ -8,7 +8,7 @@ import { ReservationSkeleton } from './-skeleton'
 import { useCreateReservationMutation } from './useCreateReservationMutation'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
-import { profileQueries, tourQueries } from '@/lib/query'
+import { bookingQueries, profileQueries, tourQueries } from '@/lib/query'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/reservation/',
@@ -43,6 +43,17 @@ function ScheduleTourContent() {
     const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<string | undefined>()
 
     const createReservationMutation = useCreateReservationMutation()
+
+    const { data: existingReservations = [] } = useQuery({
+      ...bookingQueries.all({
+        tour_id: tourId,
+        // Value is ignored when query is disabled, but needed for stable key shape
+        date: selectedDate ?? new Date(0),
+      }),
+      enabled: !!selectedDate,
+    })
+    console.log({selectedDate});
+    
 
   // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
@@ -144,6 +155,31 @@ function ScheduleTourContent() {
             onFinalize={handleFinalizeReservation}
             isLoading={createReservationMutation.isPending}
           />
+        )}
+
+        {selectedDate && existingReservations.length > 0 && (
+          <div className="space-y-2 rounded-md border border-muted p-4">
+            <h3 className="text-sm font-medium">
+              Existing reservations for this tour on{' '}
+              {dayjs(selectedDate).format('MMMM D, YYYY')}
+            </h3>
+            <ul className="space-y-1 text-sm">
+              {existingReservations.map((reservation) => (
+                <li
+                  key={reservation.id}
+                  className="flex items-center justify-between rounded bg-muted/40 px-3 py-2"
+                >
+                  <span className="font-medium">
+                    {dayjs((reservation as any).datetime).format('HH:mm')}
+                  </span>
+                  <span className="text-muted-foreground">
+                    {reservation.status} · {reservation.number_of_travellers} traveller
+                    {reservation.number_of_travellers !== 1 ? 's' : ''}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     </div>
