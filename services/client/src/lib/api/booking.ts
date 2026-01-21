@@ -20,7 +20,6 @@ export class BookingApi extends BaseApi {
   }
 
   async getReservations(filter?: GetReservationsFilterDto): Promise<Array<ReservationDto>> {
-
     const params = new URLSearchParams();
 
     if (filter?.tour_id) {
@@ -33,8 +32,6 @@ export class BookingApi extends BaseApi {
        * The backend will interpret this as a full-day range in UTC.
        */
       const dateParam = dayjs(filter.date).format('YYYY-MM-DD');
-
-      console.log({ filter, dateParam });
 
       params.append('date', dateParam);
     }
@@ -50,10 +47,10 @@ export class BookingApi extends BaseApi {
     );
   }
 
-  async getReservation(reservationId: string): Promise<ReservationDto> {
+  async getReservation(reservationId: string): Promise<Array<ReservationDto>> {
     return this.validateResponse(
       () => this.axios.get(`${BookingApi.baseUrl}/reservation/${reservationId}`),
-      reservationSchema
+      z.array(reservationSchema)
     );
   }
 

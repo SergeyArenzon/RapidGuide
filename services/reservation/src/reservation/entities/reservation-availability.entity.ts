@@ -1,14 +1,15 @@
 import { Entity, Property, ManyToOne } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
 import { Reservation } from './reservation.entity';
+import { ReservationAvailabilityDto } from '@rapid-guide-io/contracts';
 
 /**
  * Represents a guide availability used by a reservation
- * 
- * When a tour spans multiple availability slots (e.g., a 61-minute tour 
- * spanning 09:00-10:00 and 10:00-11:00), this entity tracks all the 
+ *
+ * When a tour spans multiple availability slots (e.g., a 61-minute tour
+ * spanning 09:00-10:00 and 10:00-11:00), this entity tracks all the
  * availability slots that are reserved for this tour.
- * 
+ *
  * Example: A 61-minute tour starting at 09:00 would use:
  * - ReservationAvailability #1: availability_id for 09:00-10:00 slot
  * - ReservationAvailability #2: availability_id for 10:00-11:00 slot
@@ -38,11 +39,18 @@ export class ReservationAvailability extends BaseEntity {
    * Order/index of this availability within the reservation
    * Used to determine the sequence when multiple slots are used.
    * Lower values indicate earlier time slots.
-   * 
+   *
    * Example: For a 61-min tour from 09:00-10:01:
    * - Order 0: availability for 09:00-10:00
    * - Order 1: availability for 10:00-11:00
    */
   @Property({ default: 0 })
   slot_order: number;
+
+  toDto(): ReservationAvailabilityDto {
+    return {
+      availability_id: this.availability_id,
+      slot_order: this.slot_order,
+    };
+  }
 }

@@ -7,7 +7,13 @@ import { ReservationTraveller } from './entities/reservation-traveller.entity';
 import { ReservationAvailability } from './entities/reservation-availability.entity';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([Reservation, ReservationTraveller, ReservationAvailability])],
+  imports: [
+    MikroOrmModule.forFeature([
+      Reservation,
+      ReservationTraveller,
+      ReservationAvailability,
+    ]),
+  ],
   controllers: [ReservationController],
   providers: [ReservationService],
 })

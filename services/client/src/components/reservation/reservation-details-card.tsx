@@ -1,0 +1,128 @@
+import dayjs from 'dayjs'
+import { CalendarDays, Clock, DollarSign, MapPin, Users } from 'lucide-react'
+import type { ReservationDto, TourDto } from '@rapid-guide-io/contracts'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+
+
+
+interface ReservationDetailsCardProps {
+  reservation: Partial<ReservationDto>
+  tour: TourDto
+  onFinalize: () => void
+  isLoading?: boolean
+}
+
+export function ReservationDetailsCard({
+  tour,
+  reservation,
+  onFinalize,
+  isLoading = false,
+}: ReservationDetailsCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <CardTitle className="text-2xl">Reservation Details</CardTitle>
+            <CardDescription className="text-base">
+              Review your reservation before finalizing
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Tour name */}
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-muted p-2">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Tour</p>
+              <p className="text-sm font-semibold">{tour.name}</p>
+            </div>
+          </div>
+
+          {/* Date */}
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-muted p-2">
+              <CalendarDays className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Date</p>
+              <p className="text-sm">
+                {dayjs(reservation.datetime).format('MMMM D, YYYY')}
+              </p>
+            </div>
+          </div>
+
+          {/* Time */}
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-muted p-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Time</p>
+              <p className="text-sm">
+                {reservation.datetime
+                  ? `${dayjs(reservation.datetime).format('HH:mm')} - ${dayjs(reservation.datetime).add(tour.duration_minutes, 'minute').format('HH:mm')}`
+                  : '—'}
+              </p>
+            </div>
+          </div>
+
+          {/* Duration */}
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-muted p-2">
+              <Clock className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Duration</p>
+              <p className="text-sm">{tour.duration_minutes} minutes</p>
+            </div>
+          </div>
+
+          {/* Travellers */}
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-muted p-2">
+              <Users className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Travellers</p>
+              <p className="text-sm">
+                {reservation.number_of_travellers !== undefined
+                  ? `${reservation.number_of_travellers} / ${tour.max_travellers} (min: ${tour.min_travellers})`
+                  : `${tour.min_travellers} - ${tour.max_travellers}`}
+              </p>
+            </div>
+          </div>
+
+          {/* Price */}
+          <div className="flex items-start gap-3">
+            <div className="rounded-lg bg-muted p-2">
+              <DollarSign className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Price</p>
+              <p className="text-lg font-semibold">
+                €{tour.price}
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button 
+          onClick={onFinalize} 
+          className="w-full" 
+          size="lg"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Creating Reservation...' : 'Join Reservation'}
+        </Button>
+      </CardFooter>
+    </Card>
+  )
+}
+

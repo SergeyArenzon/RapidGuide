@@ -8,8 +8,8 @@ import {
   reservationStatusSchema,
   UpdateReservationDto,
 } from '@rapid-guide-io/contracts';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import * as dayjs from 'dayjs';
+import * as utc from 'dayjs/plugin/utc';
 import { Reservation } from './entities/reservation.entity';
 import { ReservationTraveller } from './entities/reservation-traveller.entity';
 import { ReservationAvailability } from './entities/reservation-availability.entity';
@@ -28,7 +28,6 @@ export class ReservationService {
     createReservationDto: CreateReservationDto,
   ): Promise<ReservationDto> {
     const em = this.em.fork();
-    console.log({ createReservationDto });
 
     // Create the reservation entity
     const reservation = new Reservation({
@@ -63,41 +62,9 @@ export class ReservationService {
     // Populate relations for DTO conversion
     await em.populate(reservation, ['travellers', 'availabilities']);
 
-    return this.toDto(reservation);
+    return reservation.toDto();
   }
 
-  /**
-   * Convert Reservation entity to ReservationDto
-   */
-  private toDto(reservation: Reservation): ReservationDto {
-    const availabilities = reservation.availabilities.isInitialized()
-      ? reservation.availabilities
-          .getItems()
-          .sort((a, b) => a.slot_order - b.slot_order)
-      : [];
-
-    return {
-      id: reservation.id,
-      tour_id: reservation.tour_id,
-      datetime: reservation.datetime,
-      number_of_travellers: reservation.number_of_travellers,
-      price_per_traveller: Number(reservation.price_per_traveller),
-      total_price: Number(reservation.total_price),
-      status: reservation.status,
-      notes: reservation.notes || null,
-      reviewed_at: reservation.reviewed_at || null,
-      rejection_reason: reservation.rejection_reason || null,
-      traveller_ids: reservation.travellers.isInitialized()
-        ? reservation.travellers.getItems().map((t) => t.traveller_id)
-        : [],
-      availabilities: availabilities.map((a) => ({
-        availability_id: a.availability_id,
-        slot_order: a.slot_order,
-      })),
-      created_at: reservation.created_at,
-      updated_at: reservation.updated_at,
-    };
-  }
 
   async findAll(
     filterDto: GetReservationsFilterDto,
@@ -120,14 +87,15 @@ export class ReservationService {
       const startOfDay = dayjs.utc(date).startOf('day').toDate();
       const endOfDay = dayjs.utc(date).endOf('day').toDate();
 
-      console.log({startOfDay, endOfDay});
       where.datetime = { $gte: startOfDay, $lte: endOfDay };
     }
 
     // 3. Pass the dynamic object to MikroORM
-    const reservations = await this.reservationRepository.find(where);
+    const reservations = await this.reservationRepository.find(where, {
+      populate: ['travellers', 'availabilities'],
+    });
 
-    return reservations.map(this.toDto);
+    return reservations.map((reservation) => reservation.toDto());
   }
 
   findOne(id: string): Promise<ReservationDto> {

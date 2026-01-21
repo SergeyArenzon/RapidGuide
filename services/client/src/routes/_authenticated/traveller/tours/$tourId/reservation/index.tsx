@@ -3,9 +3,9 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { AvailabilitiesList, calculateValidTimeSlots } from './-availabilities-list'
-import { ReservationDetailsCard } from './-reservation-details-card'
-import { ReservationSkeleton } from './-skeleton'
 import { useCreateReservationMutation } from './useCreateReservationMutation'
+import { ReservationSkeleton } from './-skeleton'
+import { ReservationDetailsCard } from '@/components/reservation/reservation-details-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
 import { bookingQueries, profileQueries, tourQueries } from '@/lib/query'
@@ -52,7 +52,7 @@ function ScheduleTourContent() {
       }),
       enabled: !!selectedDate,
     })
-    console.log({selectedDate});
+    console.log({existingReservations});
     
 
   // Check if a date is available (has valid time slots considering tour duration)
@@ -88,6 +88,19 @@ function ScheduleTourContent() {
 
   const selectedSlotDetails = getSelectedTimeSlotDetails()
 
+  // Calculate datetime from availability's start time for display
+  const reservationDatetime = selectedDate && selectedSlotDetails
+    ? (() => {
+        const [hours, minutes] = selectedSlotDetails.startTime.split(':').map(Number)
+        return dayjs(selectedDate)
+          .hour(hours)
+          .minute(minutes)
+          .second(0)
+          .millisecond(0)
+          .toDate()
+      })()
+    : undefined
+
   const handleFinalizeReservation = () => {
     if (!selectedDate || !selectedSlotDetails || !traveller?.id) {
       console.error('Missing required data for reservation')
@@ -106,11 +119,14 @@ function ScheduleTourContent() {
     createReservationMutation.mutate({
       tour_id: tourId,
       availability_ids: [selectedAvailabilityId!], // Use the selected availability ID
-      datetime,
+      datetime: datetime,
       traveller_id: traveller.id,
       price_per_traveller: tour.price,
     })
   }
+
+  console.log({tour});
+  
 
   return (
     <div className="grid grid-cols-[min-content_1fr] gap-4">
@@ -147,38 +163,35 @@ function ScheduleTourContent() {
           />
         )}
 
-        {selectedDate && selectedSlotDetails && (
+        {selectedDate && selectedSlotDetails && reservationDatetime && (
           <ReservationDetailsCard
             tour={tour}
-            selectedDate={selectedDate}
-            selectedTimeSlot={selectedSlotDetails}
+            reservation={{
+              id: selectedSlotDetails.id,
+              datetime: reservationDatetime,
+              number_of_travellers: 0
+            }}
             onFinalize={handleFinalizeReservation}
             isLoading={createReservationMutation.isPending}
           />
         )}
 
         {selectedDate && existingReservations.length > 0 && (
-          <div className="space-y-2 rounded-md border border-muted p-4">
+          <div className="space-y-2">
             <h3 className="text-sm font-medium">
               Existing reservations for this tour on{' '}
               {dayjs(selectedDate).format('MMMM D, YYYY')}
             </h3>
-            <ul className="space-y-1 text-sm">
-              {existingReservations.map((reservation) => (
-                <li
-                  key={reservation.id}
-                  className="flex items-center justify-between rounded bg-muted/40 px-3 py-2"
-                >
-                  <span className="font-medium">
-                    {dayjs((reservation as any).datetime).format('HH:mm')}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {reservation.status} · {reservation.number_of_travellers} traveller
-                    {reservation.number_of_travellers !== 1 ? 's' : ''}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <div className="grid gap-4 md:grid-cols-2">
+              {existingReservations.map((reservation) => 
+                (<ReservationDetailsCard
+                    key={reservation.id}
+                    tour={tour}
+                    reservation={reservation}
+                    onFinalize={() => {}}
+                  />)
+              )}
+            </div>
           </div>
         )}
       </div>

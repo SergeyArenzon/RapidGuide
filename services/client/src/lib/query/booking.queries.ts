@@ -37,7 +37,7 @@ export const bookingQueries = {
    */
   detail: (reservationId: string) => ({
     queryKey: bookingQueryKeys.detail(reservationId),
-    queryFn: async (): Promise<ReservationDto> => {
+    queryFn: async (): Promise<Array<ReservationDto>> => {
       const api = new Api();
       return api.booking.getReservation(reservationId);
     },

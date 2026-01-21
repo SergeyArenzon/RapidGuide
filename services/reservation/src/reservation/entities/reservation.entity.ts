@@ -9,6 +9,7 @@ import {
 import { BaseEntity } from '../../entities/base.entity';
 import { ReservationTraveller } from './reservation-traveller.entity';
 import { ReservationAvailability } from './reservation-availability.entity';
+import { ReservationDto } from '@rapid-guide-io/contracts';
 
 /**
  * Represents a tour reservation made by a traveller
@@ -157,5 +158,33 @@ export class Reservation extends BaseEntity {
   beforeUpdate() {
     this.countTravellerCount();
     this.calculateTotalPrice();
+  }
+
+  /**
+   * Convert Reservation entity to ReservationDto
+   */
+  toDto(): ReservationDto {
+    return {
+      id: this.id,
+      tour_id: this.tour_id,
+      datetime: this.datetime,
+      number_of_travellers: this.number_of_travellers,
+      price_per_traveller: Number(this.price_per_traveller),
+      total_price: Number(this.total_price),
+      status: this.status,
+      notes: this.notes || null,
+      reviewed_at: this.reviewed_at || null,
+      rejection_reason: this.rejection_reason || null,
+      traveller_ids: this.travellers.isInitialized()
+        ? this.travellers.getItems().map((t) => t.traveller_id)
+        : [],
+      availabilities: this.availabilities.isInitialized()
+        ? this.availabilities
+            .getItems()
+            .map((reservationAvailability) => reservationAvailability.toDto())
+        : [],
+      created_at: this.created_at,
+      updated_at: this.updated_at,
+    };
   }
 }
