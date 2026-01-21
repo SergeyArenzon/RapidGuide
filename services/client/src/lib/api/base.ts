@@ -36,6 +36,7 @@ export class BaseApi {
     schema: z.ZodType<T>
   ): Promise<T> {
     const response = await apiCall();
+    console.log({data: response.data, schema});
     const parsed = schema.safeParse(response.data);
     
     if (!parsed.success) {

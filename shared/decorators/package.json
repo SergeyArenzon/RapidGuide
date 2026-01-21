@@ -1,6 +1,6 @@
 {
 	"name": "@rapid-guide-io/decorators",
-	"version": "1.4.2",
+	"version": "1.5.1",
 	"description": "Shared decorators modules for Rapid Guide services",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

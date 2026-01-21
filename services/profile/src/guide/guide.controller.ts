@@ -54,10 +54,7 @@ export class GuideController {
     @Body(new ZodValidationPipe(postGuideAvailabilitiesRequestSchema))
     body: Array<PostGuideAvailabilitiesRequestDto>,
   ): Promise<GuideAvailabilityDto[]> {
-    return await this.availabilityService.createAvailabilities(
-      guideId,
-      body,
-    );
+    return await this.availabilityService.createAvailabilities(guideId, body);
   }
 
   @Get('availabilities')
@@ -66,9 +63,17 @@ export class GuideController {
   async getAvailabilities(
     @GuideId() guideId: string,
   ): Promise<GuideAvailabilityDto[]> {
-    return await this.availabilityService.findAvailabilitiesByGuideId(
-      guideId,
-    );
+    return await this.availabilityService.findAvailabilitiesByGuideId(guideId);
+  }
+
+  // fetching guide availabilities by Traveller role
+  @Get(':id/availabilities')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.GUIDE_READ])
+  async getGuideAvailabilities(
+    @Param('id') guideId: string,
+  ): Promise<GuideAvailabilityDto[]> {
+    return await this.availabilityService.findAvailabilitiesByGuideId(guideId);
   }
 
   @Delete('availabilities/:id')
@@ -79,10 +84,7 @@ export class GuideController {
     @GuideId() guideId: string,
     @Param('id') availabilityId: string,
   ): Promise<void> {
-    await this.availabilityService.deleteAvailability(
-      guideId,
-      availabilityId,
-    );
+    await this.availabilityService.deleteAvailability(guideId, availabilityId);
   }
 
   @Get(':id')

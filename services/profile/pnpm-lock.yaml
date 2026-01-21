@@ -48,11 +48,11 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.6)
       '@rapid-guide-io/contracts':
-        specifier: ^1.3.10
-        version: 1.3.10
+        specifier: ^1.4.3
+        version: 1.4.3
       '@rapid-guide-io/decorators':
-        specifier: ^1.4.2
-        version: 1.4.2(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+        specifier: ^1.5.1
+        version: 1.5.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@rapid-guide-io/guards':
         specifier: ^1.5.0
         version: 1.5.0(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -1014,14 +1014,14 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@rapid-guide-io/contracts@1.3.10':
-    resolution: {integrity: sha512-y+ct7ftVV5uaoRXo234L4j9ar1Pjviblg7QpFz9wXkfh/kY2QyGbaPSNY1Fg6QfrwkAQXq++DM9KF6ZpdGOI1Q==}
+  '@rapid-guide-io/contracts@1.4.3':
+    resolution: {integrity: sha512-G9QfIFj7kQ05ujy46rCcA27lVot+EkU7/IpX7+LAzDwaIXRwWkqYWHOcccVoz4VDfTuO+nXCn55Q9GZyVfwdog==}
 
   '@rapid-guide-io/decorators@0.0.19':
     resolution: {integrity: sha512-5fHoPD+L5++7nDN9cFxjY2XEPGMfwaGBbipu8X53S8y4opr5c9hCdEMwaGWn91uOraJX0/Puuj1hH2vqWDKoaw==}
 
-  '@rapid-guide-io/decorators@1.4.2':
-    resolution: {integrity: sha512-NHptwewlL5XQnLIbObTDo/L1xV0Fkuf2AUCqDzSRsJ+XtUf1rWdx1anTCYDFxfox0vJKEf9m6V5BCQfpNKw9tQ==}
+  '@rapid-guide-io/decorators@1.5.1':
+    resolution: {integrity: sha512-ZzDL2qTIQev90M7WDzLGym7dHUN8bhnuyJjs8xYYBRYV5p9qOlunSdqkiZusdVY4BLccJqkwiZEK3axvAZtX9Q==}
 
   '@rapid-guide-io/guards@1.5.0':
     resolution: {integrity: sha512-xhJBid92ezk8XW5sO1quJJw55S4dPMxHfu0dzBu2TE82KcCHfjPzgjYqH80NeU7LKqxy171ZpnkpcL0d6YIDNA==}
@@ -5320,7 +5320,7 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@rapid-guide-io/contracts@1.3.10':
+  '@rapid-guide-io/contracts@1.4.3':
     dependencies:
       zod: 4.1.7
 
@@ -5335,7 +5335,7 @@ snapshots:
       - rxjs
       - supports-color
 
-  '@rapid-guide-io/decorators@1.4.2(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
+  '@rapid-guide-io/decorators@1.5.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)':
     dependencies:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       express: 5.2.1
@@ -5351,7 +5351,7 @@ snapshots:
       '@nestjs/common': 11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/jwt': 11.0.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))
-      '@rapid-guide-io/decorators': 1.4.2(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@rapid-guide-io/decorators': 1.5.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       express: 5.2.1
       jose: 6.1.3
     transitivePeerDependencies:

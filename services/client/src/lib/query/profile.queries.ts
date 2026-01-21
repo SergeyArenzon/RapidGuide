@@ -18,6 +18,7 @@ export const profileQueryKeys = {
   languages: () => ['languages'] as const,
   guideById: (guideId: string) => ['guide', guideId] as const,
   guideAvailabilities: () => ['guide', 'availabilities'] as const,
+  guideAvailabilitiesByGuideId: (guideId: string) => ['guide', guideId, 'availabilities'] as const,
 } as const;
 
 /**
@@ -81,13 +82,24 @@ export const profileQueries = {
   }),
 
   /**
-   * Get guide availabilities by guide ID
+   * Get guide availabilities by guide ID (for guides - uses JWT)
    */
   guideAvailabilities: () => ({
     queryKey: profileQueryKeys.guideAvailabilities(),
     queryFn: async (): Promise<Array<GuideAvailabilityDto>> => {
       const profileApi = new ProfileApi();
       return profileApi.getGuideAvailabilities();
+    },
+  }),
+
+  /**
+   * Get guide availabilities by guide ID (for travelers - uses guide ID parameter)
+   */
+  guideAvailabilitiesByGuideId: (guideId: string) => ({
+    queryKey: profileQueryKeys.guideAvailabilitiesByGuideId(guideId),
+    queryFn: async (): Promise<Array<GuideAvailabilityDto>> => {
+      const profileApi = new ProfileApi();
+      return profileApi.getGuideAvailabilitiesByGuideId(guideId);
     },
   }),
 

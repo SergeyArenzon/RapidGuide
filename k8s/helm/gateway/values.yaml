@@ -26,6 +26,10 @@ ingress:
       pathType: Prefix
       serviceName: tour
       servicePort: 3000
+    - path: /api/v1/reservation(/|$)(.*)
+      pathType: Prefix
+      serviceName: booking
+      servicePort: 3000
 
 resources:
   limits:

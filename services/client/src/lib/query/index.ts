@@ -12,11 +12,13 @@
 export { tourQueryKeys } from './tour.queries';
 export { profileQueryKeys } from './profile.queries';
 export { authQueryKeys } from './auth.queries';
+export { bookingQueryKeys } from './booking.queries';
 
 // Query options factories (keys + queryFn)
 export { tourQueries } from './tour.queries';
 export { profileQueries } from './profile.queries';
 export { authQueries } from './auth.queries';
+export { bookingQueries } from './booking.queries';
 
 // Legacy query keys export (for backward compatibility)
 export { queryKeys } from './query-keys';
