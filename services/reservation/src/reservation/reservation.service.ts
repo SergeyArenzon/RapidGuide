@@ -65,7 +65,6 @@ export class ReservationService {
     return reservation.toDto();
   }
 
-
   async findAll(
     filterDto: GetReservationsFilterDto,
   ): Promise<ReservationDto[]> {

@@ -44,16 +44,7 @@ function ScheduleTourContent() {
 
     const createReservationMutation = useCreateReservationMutation()
 
-    const { data: existingReservations = [] } = useQuery({
-      ...bookingQueries.all({
-        tour_id: tourId,
-        // Value is ignored when query is disabled, but needed for stable key shape
-        date: selectedDate ?? new Date(0),
-      }),
-      enabled: !!selectedDate,
-    })
-    console.log({existingReservations});
-    
+
 
   // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
@@ -101,6 +92,16 @@ function ScheduleTourContent() {
       })()
     : undefined
 
+    const { data: existingReservations = [] } = useQuery({
+      ...bookingQueries.all({
+        tour_id: tourId,
+        // Value is ignored when query is disabled, but needed for stable key shape
+        date: selectedDate ?? new Date(0),
+      }),
+      enabled: !!reservationDatetime,
+    })
+    
+
   const handleFinalizeReservation = () => {
     if (!selectedDate || !selectedSlotDetails || !traveller?.id) {
       console.error('Missing required data for reservation')
@@ -124,9 +125,6 @@ function ScheduleTourContent() {
       price_per_traveller: tour.price,
     })
   }
-
-  console.log({tour});
-  
 
   return (
     <div className="grid grid-cols-[min-content_1fr] gap-4">
