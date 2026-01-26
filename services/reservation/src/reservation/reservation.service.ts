@@ -34,7 +34,12 @@ export class ReservationService {
     const existingReservation = await this.reservationRepository.findOne({
       tour_id: createReservationDto.tour_id,
       datetime: createReservationDto.datetime,
-      status: { $in: ['pending', 'confirmed'] },
+      status: {
+        $in: [
+          reservationStatusSchema.enum.pending,
+          reservationStatusSchema.enum.confirmed,
+        ],
+      },
     });
 
     if (existingReservation) {
