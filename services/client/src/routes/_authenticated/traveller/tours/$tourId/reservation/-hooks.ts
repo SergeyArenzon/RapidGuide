@@ -106,6 +106,20 @@ export function useReservation({
     enabled: !!selectedDate,
   })
 
+  // Extract reserved availability IDs from existing reservations (pending or confirmed only)
+  const reservedAvailabilityIds = new Set<string>(
+    existingReservations
+      .filter(
+        (reservation) =>
+          reservation.status === 'pending' || reservation.status === 'confirmed'
+      )
+      .flatMap((reservation) =>
+        reservation.reservation_availabilities.map(
+          (ra) => ra.availability_id
+        )
+      )
+  )
+
   // Handle date selection
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date)
@@ -117,10 +131,21 @@ export function useReservation({
     setSelectedAvailabilityId(availability.id)
   }
 
+  // Check if selected slot is already reserved
+  const isSelectedSlotReserved = selectedAvailabilityId
+    ? reservedAvailabilityIds.has(selectedAvailabilityId)
+    : false
+
   // Handle finalizing the reservation
   const handleFinalizeReservation = () => {
     if (!selectedDate || !selectedSlotDetails || !travellerId) {
       console.error('Missing required data for reservation')
+      return
+    }
+
+    // Validate that the selected slot is not already reserved
+    if (isSelectedSlotReserved) {
+      toast.error('This time slot is already reserved. Please select a different time slot.')
       return
     }
 
@@ -159,6 +184,7 @@ export function useReservation({
     selectedSlotDetails,
     reservationDatetime,
     existingReservations,
+    reservedAvailabilityIds,
 
     // Actions
     setSelectedDate: handleDateSelect,
@@ -170,6 +196,7 @@ export function useReservation({
     modifiers,
     isDateAvailable,
     isDateDisabled,
+    isSelectedSlotReserved,
 
     // Mutation state
     isCreatingReservation: createReservationMutation.isPending,

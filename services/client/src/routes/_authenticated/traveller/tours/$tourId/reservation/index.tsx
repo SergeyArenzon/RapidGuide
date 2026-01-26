@@ -45,12 +45,14 @@ function ScheduleTourContent() {
     selectedSlotDetails,
     reservationDatetime,
     existingReservations,
+    reservedAvailabilityIds,
     setSelectedDate,
     setCurrentMonth,
     handleAvailabilityClick,
     handleFinalizeReservation,
     modifiers,
     isDateDisabled,
+    isSelectedSlotReserved,
     isCreatingReservation,
   } = useReservation({
     tourId,
@@ -79,6 +81,7 @@ function ScheduleTourContent() {
             availabilities={guideAvailabilities}
             tourDurationMinutes={tour.duration_minutes}
             selectedAvailabilityId={selectedAvailabilityId}
+            reservedAvailabilityIds={reservedAvailabilityIds}
             onAvailabilityClick={handleAvailabilityClick}
           />
         )}
@@ -93,6 +96,7 @@ function ScheduleTourContent() {
             }}
             onFinalize={handleFinalizeReservation}
             isLoading={isCreatingReservation}
+            disabled={isSelectedSlotReserved}
           />
         )}
 

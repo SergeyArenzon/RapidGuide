@@ -11,6 +11,7 @@ interface ReservationDetailsCardProps {
   tour: TourDto
   onFinalize: () => void
   isLoading?: boolean
+  disabled?: boolean
 }
 
 export function ReservationDetailsCard({
@@ -18,6 +19,7 @@ export function ReservationDetailsCard({
   reservation,
   onFinalize,
   isLoading = false,
+  disabled = false,
 }: ReservationDetailsCardProps) {
   return (
     <Card>
@@ -113,11 +115,18 @@ export function ReservationDetailsCard({
         </div>
       </CardContent>
       <CardFooter>
+        {disabled && (
+          <div className="w-full mb-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <p className="text-sm text-destructive font-medium">
+              This time slot is already reserved. Please select a different time slot.
+            </p>
+          </div>
+        )}
         <Button 
           onClick={onFinalize} 
           className="w-full" 
           size="lg"
-          disabled={isLoading}
+          disabled={isLoading || disabled}
         >
           {isLoading ? 'Creating Reservation...' : 'Join Reservation'}
         </Button>

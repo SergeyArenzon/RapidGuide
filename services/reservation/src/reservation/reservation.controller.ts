@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -14,8 +13,6 @@ import {
   CreateReservationDto,
   ReservationDto,
   createReservationSchema,
-  UpdateReservationDto,
-  updateReservationSchema,
   getResevationsFilerSchema,
   GetReservationsFilterDto,
 } from '@rapid-guide-io/contracts';
