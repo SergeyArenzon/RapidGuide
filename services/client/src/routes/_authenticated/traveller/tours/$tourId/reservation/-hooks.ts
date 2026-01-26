@@ -167,6 +167,24 @@ export function useReservation({
     })
   }
 
+  // Handle joining an existing reservation
+  const handleJoinReservation = (reservationId: string) => {
+    if (!travellerId) {
+      toast.error('Please log in to join a reservation')
+      return
+    }
+
+    // TODO: Implement join reservation API endpoint
+    // For now, show a message that this feature is coming soon
+    toast.info('Joining reservations will be available soon. For now, please create a new reservation.')
+    
+    // When the API is ready, this would be:
+    // joinReservationMutation.mutate({
+    //   reservation_id: reservationId,
+    //   traveller_id: travellerId,
+    // })
+  }
+
   // Check if a date should be disabled (past dates or unavailable dates)
   const isDateDisabled = (date: Date): boolean => {
     // Disable dates in the past
@@ -191,6 +209,7 @@ export function useReservation({
     setCurrentMonth,
     handleAvailabilityClick,
     handleFinalizeReservation,
+    handleJoinReservation,
 
     // Computed values
     modifiers,

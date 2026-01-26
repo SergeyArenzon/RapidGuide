@@ -50,6 +50,7 @@ function ScheduleTourContent() {
     setCurrentMonth,
     handleAvailabilityClick,
     handleFinalizeReservation,
+    handleJoinReservation,
     modifiers,
     isDateDisabled,
     isSelectedSlotReserved,
@@ -61,63 +62,106 @@ function ScheduleTourContent() {
     travellerId: traveller?.id,
   })
 
+  // Filter joinable reservations (pending/confirmed with available spots)
+  const joinableReservations = existingReservations.filter(
+    (reservation) =>
+      (reservation.status === 'pending' || reservation.status === 'confirmed') &&
+      reservation.number_of_travellers < tour.max_travellers
+  )
+
   return (
-    <div className="grid grid-cols-[min-content_1fr] gap-4">
-      <Calendar
-        mode="single"
-        selected={selectedDate}
-        onSelect={setSelectedDate}
-        month={currentMonth}
-        onMonthChange={setCurrentMonth}
-        modifiers={modifiers}
-        disabled={isDateDisabled}
-        className="rounded-md border"
-      />
+    <div className="space-y-6">
+      <div className="grid grid-cols-[min-content_1fr] gap-4">
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={setSelectedDate}
+          month={currentMonth}
+          onMonthChange={setCurrentMonth}
+          modifiers={modifiers}
+          disabled={isDateDisabled}
+          className="rounded-md border"
+        />
 
-      <div className="space-y-4">
-        {selectedDate && (
-          <AvailabilitiesList
-            selectedDate={selectedDate}
-            availabilities={guideAvailabilities}
-            tourDurationMinutes={tour.duration_minutes}
-            selectedAvailabilityId={selectedAvailabilityId}
-            reservedAvailabilityIds={reservedAvailabilityIds}
-            onAvailabilityClick={handleAvailabilityClick}
-          />
-        )}
+        <div className="space-y-6">
+          {selectedDate && (
+            <>
+              {/* Create New Reservation Section */}
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <h2 className="text-lg font-semibold">Create New Reservation</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground ml-4">
+                    Select an available time slot to create a new reservation.
+                  </p>
+                </div>
+                <AvailabilitiesList
+                  selectedDate={selectedDate}
+                  availabilities={guideAvailabilities}
+                  tourDurationMinutes={tour.duration_minutes}
+                  selectedAvailabilityId={selectedAvailabilityId}
+                  reservedAvailabilityIds={reservedAvailabilityIds}
+                  onAvailabilityClick={handleAvailabilityClick}
+                />
+              </div>
 
-        {selectedDate && selectedSlotDetails && reservationDatetime && (
-          <ReservationDetailsCard
-            tour={tour}
-            reservation={{
-              id: selectedSlotDetails.id,
-              datetime: reservationDatetime,
-              number_of_travellers: 0
-            }}
-            onFinalize={handleFinalizeReservation}
-            isLoading={isCreatingReservation}
-            disabled={isSelectedSlotReserved}
-          />
-        )}
-
-        {selectedDate && existingReservations.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium">
-              Existing reservations for this tour on{' '}
-              {dayjs(selectedDate).format('MMMM D, YYYY')}
-            </h3>
-            <div className="grid gap-4 md:grid-cols-2">
-              {existingReservations.map((reservation) => 
-                (<ReservationDetailsCard
-                    key={reservation.id}
-                    tour={tour}
-                    reservation={reservation}
-                    onFinalize={() => {}}
-                  />)
+              {/* New Reservation Details */}
+              {selectedSlotDetails && reservationDatetime && (
+                <ReservationDetailsCard
+                  tour={tour}
+                  reservation={{
+                    id: selectedSlotDetails.id,
+                    datetime: reservationDatetime,
+                    number_of_travellers: 0
+                  }}
+                  onFinalize={handleFinalizeReservation}
+                  isLoading={isCreatingReservation}
+                  disabled={isSelectedSlotReserved}
+                  mode="create"
+                />
               )}
+
+              {/* Join Existing Reservations Section */}
+              {joinableReservations.length > 0 && (
+                <>
+                  <div className="border-t my-4" />
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-primary" />
+                        <h2 className="text-lg font-semibold">Join Existing Reservation</h2>
+                      </div>
+                      <p className="text-sm text-muted-foreground ml-4">
+                        These reservations have available spots. Join to share the tour with other travellers.
+                      </p>
+                    </div>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      {joinableReservations.map((reservation) => (
+                        <ReservationDetailsCard
+                          key={reservation.id}
+                          tour={tour}
+                          reservation={reservation}
+                          onFinalize={() => handleJoinReservation(reservation.id)}
+                          isLoading={isCreatingReservation}
+                          mode="join"
+                          availableSpots={tour.max_travellers - reservation.number_of_travellers}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+
+          {!selectedDate && (
+            <div className="flex items-center justify-center h-64 text-muted-foreground">
+              <p>Select a date to see available reservations</p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
