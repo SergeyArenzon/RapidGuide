@@ -45,8 +45,8 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
       '@rapid-guide-io/contracts':
-        specifier: ^1.4.3
-        version: 1.4.3
+        specifier: ^1.4.4
+        version: 1.4.4
       '@rapid-guide-io/decorators':
         specifier: ^1.5.1
         version: 1.5.1(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -1005,8 +1005,8 @@ packages:
   '@prisma/get-platform@5.22.0':
     resolution: {integrity: sha512-pHhpQdr1UPFpt+zFfnPazhulaZYCUqeIcPpJViYoq9R+D/yw4fjE+CtnsnKzPYm0ddUbeXUzjGVGIRVgPDCk4Q==}
 
-  '@rapid-guide-io/contracts@1.4.3':
-    resolution: {integrity: sha512-G9QfIFj7kQ05ujy46rCcA27lVot+EkU7/IpX7+LAzDwaIXRwWkqYWHOcccVoz4VDfTuO+nXCn55Q9GZyVfwdog==}
+  '@rapid-guide-io/contracts@1.4.4':
+    resolution: {integrity: sha512-dvlSQRRFOo01WGsCFGRGdhZUNZOh4rJxj6a/L+WByUOYlHOAyR5TW+5GRLG2IWCHsEE3gA/++848+f461wQt2A==}
 
   '@rapid-guide-io/decorators@1.5.1':
     resolution: {integrity: sha512-ZzDL2qTIQev90M7WDzLGym7dHUN8bhnuyJjs8xYYBRYV5p9qOlunSdqkiZusdVY4BLccJqkwiZEK3axvAZtX9Q==}
@@ -4256,8 +4256,8 @@ packages:
   zod@4.1.7:
     resolution: {integrity: sha512-6qi6UYyzAl7W9uV29KvcSFXqK4QCYNYUz2YASPNBWpJE1RY6R1nArmmFPgGY/CBYWzpeMw3EOER+DR9a05O4IA==}
 
-  zod@4.3.5:
-    resolution: {integrity: sha512-k7Nwx6vuWx1IJ9Bjuf4Zt1PEllcwe7cls3VNzm4CQ1/hgtFUK2bRNG3rvnpPUhFjmqJKAKtjV576KnUkHocg/g==}
+  zod@4.3.6:
+    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
 snapshots:
 
@@ -5469,9 +5469,9 @@ snapshots:
     dependencies:
       '@prisma/debug': 5.22.0
 
-  '@rapid-guide-io/contracts@1.4.3':
+  '@rapid-guide-io/contracts@1.4.4':
     dependencies:
-      zod: 4.3.5
+      zod: 4.3.6
 
   '@rapid-guide-io/decorators@1.5.1(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
@@ -8952,4 +8952,4 @@ snapshots:
 
   zod@4.1.7: {}
 
-  zod@4.3.5: {}
+  zod@4.3.6: {}
