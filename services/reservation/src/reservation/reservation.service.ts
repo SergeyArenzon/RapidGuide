@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import {
@@ -28,6 +28,20 @@ export class ReservationService {
     createReservationDto: CreateReservationDto,
   ): Promise<ReservationDto> {
     const em = this.em.fork();
+
+    // Check for existing reservation with same tour and datetime (active statuses only)
+    // This prevents duplicate reservations for the same tour at the same time slot
+    const existingReservation = await this.reservationRepository.findOne({
+      tour_id: createReservationDto.tour_id,
+      datetime: createReservationDto.datetime,
+      status: { $in: ['pending', 'confirmed'] },
+    });
+
+    if (existingReservation) {
+      throw new ConflictException(
+        'A reservation already exists for this tour at the same time slot',
+      );
+    }
 
     // Create the reservation entity
     const reservation = new Reservation({

@@ -1,115 +1,131 @@
 import { useState } from 'react'
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
-import { useParams } from '@tanstack/react-router'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import dayjs from 'dayjs'
-
 import { calculateValidTimeSlots } from './-availabilities-list'
-import { useCreateReservationMutation } from './useCreateReservationMutation'
+import type { CreateReservationDto, GuideAvailabilityDto, TourDto } from '@rapid-guide-io/contracts'
+import { bookingQueries } from '@/lib/query'
+import Api from '@/lib/api'
 
-import { bookingQueries, profileQueries, tourQueries } from '@/lib/query'
-import { Route as RootRoute } from '@/routes/__root'
+export function useCreateReservationMutation() {
+  const navigate = useNavigate()
+  const api = new Api()
 
-type AvailabilityLike = {
-  id: string
+  return useMutation({
+    mutationFn: (reservation: CreateReservationDto) => api.booking.createReservation(reservation),
+    onSuccess: () => {
+      toast.success('Reservation created successfully!')
+      // Optionally invalidate queries if needed
+      // queryClient.invalidateQueries({ queryKey: ['reservations'] })
+      // Navigate to reservation details or back to tours
+      navigate({ to: '/traveller/tours' })
+    },
+    onError: (error: Error) => {
+      console.error('Error creating reservation:', error)
+      toast.error(error.message || 'Failed to create reservation')
+    },
+  })
 }
 
-export function useReservationSchedule() {
-  const { tourId } = useParams({
-    from: '/_authenticated/traveller/tours/$tourId/reservation/',
-  })
-  const { traveller } = RootRoute.useRouteContext()
+interface UseReservationParams {
+  tourId: string
+  tour: TourDto
+  guideAvailabilities: Array<GuideAvailabilityDto>
+  travellerId?: string
+}
 
-  const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
+interface TimeSlot {
+  id: string
+  startTime: string
+  endTime: string
+  availability: GuideAvailabilityDto
+}
 
-  const { data: guideAvailabilities } = useSuspenseQuery(
-    profileQueries.guideAvailabilitiesByGuideId(tour.guide_id),
-  )
-
+export function useReservation({
+  tourId,
+  tour,
+  guideAvailabilities,
+  travellerId,
+}: UseReservationParams) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>()
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
-  const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<
-    string | undefined
-  >()
+  const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<string | undefined>()
 
   const createReservationMutation = useCreateReservationMutation()
 
+  // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
     if (guideAvailabilities.length === 0) return false
 
+    // Check if there are any valid time slots for this date
     const validSlots = calculateValidTimeSlots(
       date,
       guideAvailabilities,
-      tour.duration_minutes,
+      tour.duration_minutes
     )
-
     return validSlots.length > 0
   }
 
+  // Custom modifiers for react-day-picker
   const modifiers = {
     available: (date: Date) => isDateAvailable(date),
   }
 
-  const getSelectedTimeSlotDetails = () => {
-    if (!selectedDate || !selectedAvailabilityId) return undefined
+  // Get the selected time slot details
+  const selectedSlotDetails: TimeSlot | undefined =
+    !selectedDate || !selectedAvailabilityId
+      ? undefined
+      : calculateValidTimeSlots(
+          selectedDate,
+          guideAvailabilities,
+          tour.duration_minutes
+        ).find((slot) => slot.id === selectedAvailabilityId)
 
-    const validSlots = calculateValidTimeSlots(
-      selectedDate,
-      guideAvailabilities,
-      tour.duration_minutes,
-    )
+  // Calculate datetime from availability's start time for display
+  const reservationDatetime: Date | undefined = (() => {
+    if (!selectedDate || !selectedSlotDetails) return undefined
 
-    return validSlots.find((slot) => slot.id === selectedAvailabilityId)
-  }
+    const [hours, minutes] = selectedSlotDetails.startTime.split(':').map(Number)
+    return dayjs(selectedDate)
+      .hour(hours)
+      .minute(minutes)
+      .second(0)
+      .millisecond(0)
+      .toDate()
+  })()
 
-  const selectedSlotDetails = getSelectedTimeSlotDetails()
 
-  const reservationStartDatetime =
-    selectedDate && selectedSlotDetails
-      ? (() => {
-          const [hours, minutes] = selectedSlotDetails.startTime
-            .split(':')
-            .map(Number)
-
-          return dayjs(selectedDate)
-            .hour(hours)
-            .minute(minutes)
-            .second(0)
-            .millisecond(0)
-            .toDate()
-        })()
-      : undefined
-
+  // Fetch existing reservations for the selected date
   const { data: existingReservations = [] } = useQuery({
     ...bookingQueries.all({
       tour_id: tourId,
+      // Value is ignored when query is disabled, but needed for stable key shape
       date: selectedDate ?? new Date(0),
     }),
     enabled: !!selectedDate,
   })
 
-  const handleSelectDate = (date?: Date) => {
+  // Handle date selection
+  const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date)
-    setSelectedAvailabilityId(undefined)
+    setSelectedAvailabilityId(undefined) // Reset selection when date changes
   }
 
-  const handleMonthChange = (date: Date) => {
-    setCurrentMonth(date)
-  }
-
-  const handleAvailabilityClick = (availability: AvailabilityLike) => {
+  // Handle availability selection
+  const handleAvailabilityClick = (availability: GuideAvailabilityDto) => {
     setSelectedAvailabilityId(availability.id)
   }
 
+  // Handle finalizing the reservation
   const handleFinalizeReservation = () => {
-    if (!selectedDate || !selectedSlotDetails || !traveller?.id) {
+    if (!selectedDate || !selectedSlotDetails || !travellerId) {
       console.error('Missing required data for reservation')
       return
     }
 
-    const [hours, minutes] = selectedSlotDetails.startTime
-      .split(':')
-      .map(Number)
-
+    // Combine selectedDate with startTime to create scheduled_datetime
+    const [hours, minutes] = selectedSlotDetails.startTime.split(':').map(Number)
     const datetime = dayjs(selectedDate)
       .hour(hours)
       .minute(minutes)
@@ -119,42 +135,43 @@ export function useReservationSchedule() {
 
     createReservationMutation.mutate({
       tour_id: tourId,
-      availability_ids: [selectedAvailabilityId!],
-      datetime,
-      traveller_id: traveller.id,
+      availability_ids: [selectedAvailabilityId!], // Use the selected availability ID
+      datetime: datetime,
+      traveller_id: travellerId,
       price_per_traveller: tour.price,
     })
   }
 
-  const isDateDisabled = (date: Date) => {
+  // Check if a date should be disabled (past dates or unavailable dates)
+  const isDateDisabled = (date: Date): boolean => {
+    // Disable dates in the past
     const isPast = dayjs(date).isBefore(dayjs(), 'day')
+    // Disable dates that are not available
     const isNotAvailable = !isDateAvailable(date)
-
     return isPast || isNotAvailable
   }
 
   return {
-    // data
-    tour,
-    guideAvailabilities,
+    // State
     selectedDate,
     currentMonth,
     selectedAvailabilityId,
-    existingReservations,
     selectedSlotDetails,
-    reservationDatetime: reservationStartDatetime,
-    createReservationMutation,
+    reservationDatetime,
+    existingReservations,
 
-    // calendar config
-    modifiers,
-    isDateDisabled,
-
-    // actions
-    handleSelectDate,
-    handleMonthChange,
+    // Actions
+    setSelectedDate: handleDateSelect,
+    setCurrentMonth,
     handleAvailabilityClick,
     handleFinalizeReservation,
+
+    // Computed values
+    modifiers,
+    isDateAvailable,
+    isDateDisabled,
+
+    // Mutation state
+    isCreatingReservation: createReservationMutation.isPending,
   }
 }
-
-

@@ -4,11 +4,11 @@ import { createFileRoute } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import { AvailabilitiesList } from './-availabilities-list'
 import { ReservationSkeleton } from './-skeleton'
+import { useReservation } from './-hooks'
 import { ReservationDetailsCard } from '@/components/reservation/reservation-details-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
 import { profileQueries, tourQueries } from '@/lib/query'
-import { useReservation } from './useReservation'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/reservation/',
