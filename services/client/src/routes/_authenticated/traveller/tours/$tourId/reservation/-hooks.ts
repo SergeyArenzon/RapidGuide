@@ -1,23 +1,24 @@
 import { useState } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
 import { calculateValidTimeSlots } from './-availabilities-list'
 import type { CreateReservationDto, GuideAvailabilityDto, TourDto } from '@rapid-guide-io/contracts'
-import { bookingQueries } from '@/lib/query'
+import { bookingQueries, bookingQueryKeys, queryKeys } from '@/lib/query'
 import Api from '@/lib/api'
 
-export function useCreateReservationMutation() {
+export function useCreateReservationMutation(tourId: string, selectedDate: Date) {
   const navigate = useNavigate()
   const api = new Api()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (reservation: CreateReservationDto) => api.booking.createReservation(reservation),
     onSuccess: () => {
       toast.success('Reservation created successfully!')
-      // Optionally invalidate queries if needed
-      // queryClient.invalidateQueries({ queryKey: ['reservations'] })
+      // Refresh any reservations lists (for this tour/date and caches derived from it)
+      queryClient.invalidateQueries({ queryKey: bookingQueryKeys.all({ tour_id: tourId, date: selectedDate }) })
       // Navigate to reservation details or back to tours
       navigate({ to: '/traveller/tours' })
     },
@@ -52,7 +53,7 @@ export function useReservation({
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<string | undefined>()
 
-  const createReservationMutation = useCreateReservationMutation()
+  const createReservationMutation = useCreateReservationMutation(tourId, selectedDate ?? new Date())
 
   // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
