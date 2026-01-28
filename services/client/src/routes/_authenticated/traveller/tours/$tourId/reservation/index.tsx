@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { AvailabilitiesList } from './-availabilities-list'
 import { ReservationSkeleton } from './-skeleton'
 import { useReservation } from './-hooks'
+import { ExistingReservations } from './-existing-reservations'
 import { ReservationDetailsCard } from '@/components/reservation/reservation-details-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
@@ -124,35 +125,12 @@ function ScheduleTourContent() {
               )}
 
               {/* Join Existing Reservations Section */}
-              {joinableReservations.length > 0 && (
-                <>
-                  <div className="border-t my-4" />
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-primary" />
-                        <h2 className="text-lg font-semibold">Join Existing Reservation</h2>
-                      </div>
-                      <p className="text-sm text-muted-foreground ml-4">
-                        These reservations have available spots. Join to share the tour with other travellers.
-                      </p>
-                    </div>
-                    <div className="grid gap-4 md:grid-cols-2">
-                      {joinableReservations.map((reservation) => (
-                        <ReservationDetailsCard
-                          key={reservation.id}
-                          tour={tour}
-                          reservation={reservation}
-                          onFinalize={() => handleJoinReservation(reservation.id)}
-                          isLoading={isCreatingReservation}
-                          mode="join"
-                          availableSpots={tour.max_travellers - reservation.number_of_travellers}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </>
-              )}
+              <ExistingReservations
+                joinableReservations={joinableReservations}
+                tour={tour}
+                onJoin={handleJoinReservation}
+                isLoading={isCreatingReservation}
+              />
             </>
           )}
 
