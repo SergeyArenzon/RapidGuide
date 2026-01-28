@@ -194,6 +194,22 @@ export function useReservation({
     return isPast || isNotAvailable
   }
 
+    // Filter joinable reservations (pending/confirmed with available spots)
+    const allJoinableReservations = existingReservations.filter(
+      (reservation) =>
+        (reservation.status === 'pending' || reservation.status === 'confirmed') &&
+        reservation.number_of_travellers < tour.max_travellers
+    )
+  
+    // If a specific availability is selected, only show reservations for that slot
+    const joinableReservations = selectedAvailabilityId
+      ? allJoinableReservations.filter((reservation) =>
+          reservation.reservation_availabilities.some(
+            (ra) => ra.availability_id === selectedAvailabilityId
+          )
+        )
+      : []
+
   return {
     // State
     selectedDate,
@@ -210,7 +226,8 @@ export function useReservation({
     handleAvailabilityClick,
     handleFinalizeReservation,
     handleJoinReservation,
-
+    allJoinableReservations,
+    joinableReservations,
     // Computed values
     modifiers,
     isDateAvailable,

@@ -186,7 +186,7 @@ export function ReservationDetailsCard({
           variant="default"
         >
           {!isLoading && (
-            <config.Icon className="mr-2 h-4 w-4" />
+            <config.Icon className="h-4 w-4" />
           )}
           {buttonLabel}
         </Button>

@@ -54,6 +54,8 @@ function ScheduleTourContent() {
     isDateDisabled,
     isSelectedSlotReserved,
     isCreatingReservation,
+    allJoinableReservations,
+    joinableReservations,
   } = useReservation({
     tourId,
     tour,
@@ -61,90 +63,71 @@ function ScheduleTourContent() {
     travellerId: traveller?.id,
   })
 
-  // Filter joinable reservations (pending/confirmed with available spots)
-  const allJoinableReservations = existingReservations.filter(
-    (reservation) =>
-      (reservation.status === 'pending' || reservation.status === 'confirmed') &&
-      reservation.number_of_travellers < tour.max_travellers
-  )
 
-  // If a specific availability is selected, only show reservations for that slot
-  const joinableReservations = selectedAvailabilityId
-    ? allJoinableReservations.filter((reservation) =>
-        reservation.reservation_availabilities.some(
-          (ra) => ra.availability_id === selectedAvailabilityId
-        )
-      )
-    : []
-
-    console.log('joinableReservations', joinableReservations)
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-[min-content_1fr] gap-4">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          month={currentMonth}
-          onMonthChange={setCurrentMonth}
-          modifiers={modifiers}
-          disabled={isDateDisabled}
-          className="rounded-md border"
-        />
+    <div className="space-y-6 grid grid-cols-[min-content_1fr] gap-4">
+      <Calendar
+        mode="single"
+        selected={selectedDate}
+        onSelect={setSelectedDate}
+        month={currentMonth}
+        onMonthChange={setCurrentMonth}
+        modifiers={modifiers}
+        disabled={isDateDisabled}
+        className="rounded-md border self-start"
+      />
+      <div className="space-y-6">
+        {selectedDate && (
+          <>
+            {/* Create New Reservation Section */}
+            <div className="space-y-3">
+              <AvailabilitiesList
+                selectedDate={selectedDate}
+                availabilities={guideAvailabilities}
+                tourDurationMinutes={tour.duration_minutes}
+                selectedAvailabilityId={selectedAvailabilityId}
+                reservedAvailabilityIds={reservedAvailabilityIds}
+                onAvailabilityClick={handleAvailabilityClick}
+              />
+            </div>
 
-        <div className="space-y-6">
-          {selectedDate && (
-            <>
-              {/* Create New Reservation Section */}
-              <div className="space-y-3">
-                <AvailabilitiesList
-                  selectedDate={selectedDate}
-                  availabilities={guideAvailabilities}
-                  tourDurationMinutes={tour.duration_minutes}
-                  selectedAvailabilityId={selectedAvailabilityId}
-                  reservedAvailabilityIds={reservedAvailabilityIds}
-                  onAvailabilityClick={handleAvailabilityClick}
-                />
-              </div>
+            {/* New Reservation Details (only when slot is free) */}
+            {selectedSlotDetails && reservationDatetime && !isSelectedSlotReserved && (
+              <ReservationDetailsCard
+                tour={tour}
+                reservation={{
+                  id: selectedSlotDetails.id,
+                  datetime: reservationDatetime,
+                  number_of_travellers: 0
+                }}
+                onFinalize={handleFinalizeReservation}
+                isLoading={isCreatingReservation}
+                disabled={isSelectedSlotReserved}
+                mode="create"
+              />
+            )}
 
-              {/* New Reservation Details (only when slot is free) */}
-              {selectedSlotDetails && reservationDatetime && !isSelectedSlotReserved && (
+            {/* Join Existing Reservation (for selected slot) */}
+            {joinableReservations.length > 0 && (
                 <ReservationDetailsCard
                   tour={tour}
-                  reservation={{
-                    id: selectedSlotDetails.id,
-                    datetime: reservationDatetime,
-                    number_of_travellers: 0
-                  }}
-                  onFinalize={handleFinalizeReservation}
+                  reservation={joinableReservations[0]}
+                  onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
                   isLoading={isCreatingReservation}
-                  disabled={isSelectedSlotReserved}
-                  mode="create"
+                  mode="join"
+                  availableSpots={
+                    tour.max_travellers - joinableReservations[0].number_of_travellers
+                  }
                 />
-              )}
+            )}
+          </>
+        )}
 
-              {/* Join Existing Reservation (for selected slot) */}
-              {joinableReservations.length > 0 && (
-                  <ReservationDetailsCard
-                    tour={tour}
-                    reservation={joinableReservations[0]}
-                    onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
-                    isLoading={isCreatingReservation}
-                    mode="join"
-                    availableSpots={
-                      tour.max_travellers - joinableReservations[0].number_of_travellers
-                    }
-                  />
-              )}
-            </>
-          )}
-
-          {!selectedDate && (
-            <div className="flex items-center justify-center h-64 text-muted-foreground">
-              <p>Select a date to see available reservations</p>
-            </div>
-          )}
-        </div>
+        {!selectedDate && (
+          <div className="flex items-center justify-center h-64 text-muted-foreground">
+            <p>Select a date to see available reservations</p>
+          </div>
+        )}
       </div>
     </div>
   )
