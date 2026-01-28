@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import dayjs from 'dayjs'
 import { AvailabilitiesList } from './-availabilities-list'
 import { ReservationSkeleton } from './-skeleton'
 import { useReservation } from './-hooks'
@@ -76,8 +75,9 @@ function ScheduleTourContent() {
           (ra) => ra.availability_id === selectedAvailabilityId
         )
       )
-    : allJoinableReservations
+    : []
 
+    console.log('joinableReservations', joinableReservations)
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-[min-content_1fr] gap-4">
@@ -97,15 +97,6 @@ function ScheduleTourContent() {
             <>
               {/* Create New Reservation Section */}
               <div className="space-y-3">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <h2 className="text-lg font-semibold">Create New Reservation</h2>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-4">
-                    Select an available time slot to create a new reservation.
-                  </p>
-                </div>
                 <AvailabilitiesList
                   selectedDate={selectedDate}
                   availabilities={guideAvailabilities}
