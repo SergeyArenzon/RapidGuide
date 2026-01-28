@@ -5,7 +5,6 @@ import dayjs from 'dayjs'
 import { AvailabilitiesList } from './-availabilities-list'
 import { ReservationSkeleton } from './-skeleton'
 import { useReservation } from './-hooks'
-import { ExistingReservations } from './-existing-reservations'
 import { ReservationDetailsCard } from '@/components/reservation/reservation-details-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
@@ -64,11 +63,20 @@ function ScheduleTourContent() {
   })
 
   // Filter joinable reservations (pending/confirmed with available spots)
-  const joinableReservations = existingReservations.filter(
+  const allJoinableReservations = existingReservations.filter(
     (reservation) =>
       (reservation.status === 'pending' || reservation.status === 'confirmed') &&
       reservation.number_of_travellers < tour.max_travellers
   )
+
+  // If a specific availability is selected, only show reservations for that slot
+  const joinableReservations = selectedAvailabilityId
+    ? allJoinableReservations.filter((reservation) =>
+        reservation.reservation_availabilities.some(
+          (ra) => ra.availability_id === selectedAvailabilityId
+        )
+      )
+    : allJoinableReservations
 
   return (
     <div className="space-y-6">
@@ -108,8 +116,8 @@ function ScheduleTourContent() {
                 />
               </div>
 
-              {/* New Reservation Details */}
-              {selectedSlotDetails && reservationDatetime && (
+              {/* New Reservation Details (only when slot is free) */}
+              {selectedSlotDetails && reservationDatetime && !isSelectedSlotReserved && (
                 <ReservationDetailsCard
                   tour={tour}
                   reservation={{
@@ -124,13 +132,19 @@ function ScheduleTourContent() {
                 />
               )}
 
-              {/* Join Existing Reservations Section */}
-              <ExistingReservations
-                joinableReservations={joinableReservations}
-                tour={tour}
-                onJoin={handleJoinReservation}
-                isLoading={isCreatingReservation}
-              />
+              {/* Join Existing Reservation (for selected slot) */}
+              {joinableReservations.length > 0 && (
+                  <ReservationDetailsCard
+                    tour={tour}
+                    reservation={joinableReservations[0]}
+                    onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
+                    isLoading={isCreatingReservation}
+                    mode="join"
+                    availableSpots={
+                      tour.max_travellers - joinableReservations[0].number_of_travellers
+                    }
+                  />
+              )}
             </>
           )}
 

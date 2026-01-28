@@ -165,8 +165,8 @@ export function AvailabilitiesList({
                 startTime={slot.startTime}
                 endTime={slot.endTime}
                 isActive={selectedAvailabilityId === slot.id}
-                isDisabled={isReserved}
-                onClick={() => !isReserved && onAvailabilityClick?.(slot.availability)}
+                isReserved={isReserved}
+                onClick={() => onAvailabilityClick?.(slot.availability)}
               />
             )
           })}
