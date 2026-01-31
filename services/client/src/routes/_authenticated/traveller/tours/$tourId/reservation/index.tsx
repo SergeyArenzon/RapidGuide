@@ -8,6 +8,7 @@ import { ReservationDetailsCard } from '@/components/reservation/reservation-det
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar'
 import { profileQueries, tourQueries } from '@/lib/query'
+import { CalendarDays } from 'lucide-react'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/reservation/',
@@ -137,7 +138,8 @@ function ScheduleTourContent() {
         )}
 
         {!selectedDate && (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
+          <div className="flex items-center justify-center h-64 text-muted-foreground gap-2">
+            <CalendarDays className="h-5 w-5 text-muted-foreground" />
             <p>Select a date to see available reservations</p>
           </div>
         )}
