@@ -52,6 +52,27 @@ export function useJoinReservationMutation(tourId: string, selectedDate: Date | 
   })
 }
 
+export function useCancelReservationMutation(tourId: string, selectedDate: Date | undefined) {
+  const api = new Api()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (reservationId: string) => api.booking.deleteReservation(reservationId),
+    onSuccess: () => {
+      toast.success('Reservation cancelled')
+      if (selectedDate) {
+        queryClient.invalidateQueries({
+          queryKey: bookingQueryKeys.all({ tour_id: tourId, date: selectedDate }),
+        })
+      }
+    },
+    onError: (error: Error) => {
+      console.error('Error cancelling reservation:', error)
+      toast.error(error.message || 'Failed to cancel reservation')
+    },
+  })
+}
+
 
 
 interface UseReservationParams {
@@ -80,6 +101,7 @@ export function useReservation({
 
   const createReservationMutation = useCreateReservationMutation(tourId, selectedDate ?? new Date())
   const joinReservationMutation = useJoinReservationMutation(tourId, selectedDate)
+  const cancelReservationMutation = useCancelReservationMutation(tourId, selectedDate)
 
   // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
@@ -158,10 +180,22 @@ export function useReservation({
     setSelectedAvailabilityId(availability.id)
   }
 
-  // Check if selected slot is already reserved
+  // Check if selected slot is already reserved (by anyone)
   const isSelectedSlotReserved = selectedAvailabilityId
     ? reservedAvailabilityIds.has(selectedAvailabilityId)
     : false
+
+  // Check if selected slot is reserved by the current traveller
+  const reservationByCurrentUser = travellerId
+    ? existingReservations.find(
+        (r) =>
+          (r.status === 'pending' || r.status === 'confirmed') &&
+          r.traveller_ids.includes(travellerId) &&
+          r.reservation_availabilities.some(
+            (ra) => ra.availability_id === selectedAvailabilityId
+          )
+      )
+    : undefined
 
   // Handle finalizing the reservation
   const handleFinalizeReservation = () => {
@@ -206,6 +240,11 @@ export function useReservation({
     })
   }
 
+  // Handle cancelling own reservation
+  const handleCancelReservation = (reservationId: string): void => {
+    cancelReservationMutation.mutate(reservationId)
+  }
+
   // Check if a date should be disabled (past dates or unavailable dates)
   const isDateDisabled = (date: Date): boolean => {
     // Disable dates in the past
@@ -215,21 +254,22 @@ export function useReservation({
     return isPast || isNotAvailable
   }
 
-    // Filter joinable reservations (pending/confirmed with available spots)
-    const allJoinableReservations = existingReservations.filter(
-      (reservation) =>
-        (reservation.status === 'pending' || reservation.status === 'confirmed') &&
-        reservation.traveller_ids.length < tour.max_travellers
-    )
-  
-    // If a specific availability is selected, only show reservations for that slot
-    const joinableReservations = selectedAvailabilityId
-      ? allJoinableReservations.filter((reservation) =>
-          reservation.reservation_availabilities.some(
-            (ra) => ra.availability_id === selectedAvailabilityId
-          )
+  // Filter joinable reservations (pending/confirmed with available spots, excluding ones the traveller is already in)
+  const allJoinableReservations = existingReservations.filter(
+    (reservation) =>
+      (reservation.status === 'pending' || reservation.status === 'confirmed') &&
+      reservation.traveller_ids.length < tour.max_travellers &&
+      !(travellerId && reservation.traveller_ids.includes(travellerId))
+  )
+
+  // If a specific availability is selected, only show reservations for that slot
+  const joinableReservations = selectedAvailabilityId
+    ? allJoinableReservations.filter((reservation) =>
+        reservation.reservation_availabilities.some(
+          (ra) => ra.availability_id === selectedAvailabilityId
         )
-      : []
+      )
+    : []
 
   return {
     // State
@@ -246,15 +286,18 @@ export function useReservation({
     handleAvailabilityClick,
     handleFinalizeReservation,
     handleJoinReservation,
+    handleCancelReservation,
     joinableReservations,
     // Computed values
     modifiers,
     isDateAvailable,
     isDateDisabled,
     isSelectedSlotReserved,
+    reservationByCurrentUser,
 
     // Mutation state
     isCreatingReservation: createReservationMutation.isPending,
     isJoiningReservation: joinReservationMutation.isPending,
+    isCancellingReservation: cancelReservationMutation.isPending,
   }
 }

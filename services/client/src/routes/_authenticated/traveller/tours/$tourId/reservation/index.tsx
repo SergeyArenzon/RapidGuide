@@ -49,10 +49,14 @@ function ScheduleTourContent() {
     handleAvailabilityClick,
     handleFinalizeReservation,
     handleJoinReservation,
+    handleCancelReservation,
     modifiers,
     isDateDisabled,
     isSelectedSlotReserved,
+    reservationByCurrentUser,
     isCreatingReservation,
+    isJoiningReservation,
+    isCancellingReservation,
     joinableReservations,
   } = useReservation({
     tourId,
@@ -105,18 +109,29 @@ function ScheduleTourContent() {
               />
             )}
 
-            {/* Join Existing Reservation (for selected slot) */}
-            {joinableReservations.length > 0 && (
-                <ReservationDetailsCard
-                  tour={tour}
-                  reservation={joinableReservations[0]}
-                  onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
-                  isLoading={isCreatingReservation}
-                  mode="join"
-                  availableSpots={
-                    tour.max_travellers - joinableReservations[0].traveller_ids.length
-                  }
-                />
+            {/* Already reserved by current traveller - show cancel option */}
+            {reservationByCurrentUser && (
+              <ReservationDetailsCard
+                tour={tour}
+                reservation={reservationByCurrentUser}
+                onFinalize={() => handleCancelReservation(reservationByCurrentUser.id)}
+                isLoading={isCancellingReservation}
+                mode="cancel"
+              />
+            )}
+
+            {/* Join Existing Reservation (for selected slot, excludes reservations traveller is already in) */}
+            {joinableReservations.length > 0 && !reservationByCurrentUser && (
+              <ReservationDetailsCard
+                tour={tour}
+                reservation={joinableReservations[0]}
+                onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
+                isLoading={isJoiningReservation}
+                mode="join"
+                availableSpots={
+                  tour.max_travellers - joinableReservations[0].traveller_ids.length
+                }
+              />
             )}
           </>
         )}

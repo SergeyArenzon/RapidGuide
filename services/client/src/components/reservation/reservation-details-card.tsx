@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { CalendarDays, ClipboardClock, Clock, DollarSign, MapPin, UserPlus, Users } from 'lucide-react'
+import { CalendarDays, ClipboardClock, Clock, DollarSign, MapPin, UserPlus, Users, XCircle } from 'lucide-react'
 import type { ReservationDto, TourDto } from '@rapid-guide-io/contracts'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,7 +14,7 @@ interface ReservationDetailsCardProps {
   onFinalize: () => void
   isLoading?: boolean
   disabled?: boolean
-  mode?: 'create' | 'join'
+  mode?: 'create' | 'join' | 'cancel'
   availableSpots?: number
 }
 
@@ -34,6 +34,14 @@ const MODE_CONFIG = {
     loadingLabel: 'Joining reservation...',
     Icon: UserPlus,
     showSpotsBadge: true as const,
+  },
+  cancel: {
+    title: 'Your Reservation',
+    description: 'You have already reserved this time slot',
+    idleLabel: 'Cancel reservation',
+    loadingLabel: 'Cancelling...',
+    Icon: XCircle,
+    showSpotsBadge: false as const,
   },
 } satisfies Record<
   NonNullable<ReservationDetailsCardProps['mode']>,
@@ -58,6 +66,7 @@ export function ReservationDetailsCard({
 }: ReservationDetailsCardProps) {
   const config = MODE_CONFIG[mode]
   const isJoinMode = mode === 'join'
+  const isCancelMode = mode === 'cancel'
   const hasAvailableSpots = availableSpots !== undefined && availableSpots > 0
   const buttonLabel = isLoading ? config.loadingLabel : config.idleLabel
 
@@ -66,6 +75,7 @@ export function ReservationDetailsCard({
       className={cn(
         "w-full",
         isJoinMode && "border-primary/50 bg-primary/5",
+        isCancelMode && "border-primary/30 bg-primary/5",
         disabled && "opacity-60",
       )}
     >
@@ -183,7 +193,7 @@ export function ReservationDetailsCard({
           className="w-full"
           size="lg"
           disabled={isLoading || disabled || (isJoinMode && !hasAvailableSpots)}
-          variant="default"
+          variant={isCancelMode ? 'destructive' : 'default'}
         >
           {!isLoading && (
             <config.Icon className="h-4 w-4" />
