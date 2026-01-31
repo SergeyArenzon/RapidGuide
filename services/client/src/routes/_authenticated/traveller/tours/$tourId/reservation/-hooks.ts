@@ -219,7 +219,7 @@ export function useReservation({
     const allJoinableReservations = existingReservations.filter(
       (reservation) =>
         (reservation.status === 'pending' || reservation.status === 'confirmed') &&
-        reservation.number_of_travellers < tour.max_travellers
+        reservation.traveller_ids.length < tour.max_travellers
     )
   
     // If a specific availability is selected, only show reservations for that slot
@@ -238,7 +238,6 @@ export function useReservation({
     selectedAvailabilityId,
     selectedSlotDetails,
     reservationDatetime,
-    existingReservations,
     reservedAvailabilityIds,
 
     // Actions
@@ -247,7 +246,6 @@ export function useReservation({
     handleAvailabilityClick,
     handleFinalizeReservation,
     handleJoinReservation,
-    allJoinableReservations,
     joinableReservations,
     // Computed values
     modifiers,

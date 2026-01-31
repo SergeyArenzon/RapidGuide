@@ -43,7 +43,6 @@ function ScheduleTourContent() {
     selectedAvailabilityId,
     selectedSlotDetails,
     reservationDatetime,
-    existingReservations,
     reservedAvailabilityIds,
     setSelectedDate,
     setCurrentMonth,
@@ -54,7 +53,6 @@ function ScheduleTourContent() {
     isDateDisabled,
     isSelectedSlotReserved,
     isCreatingReservation,
-    allJoinableReservations,
     joinableReservations,
   } = useReservation({
     tourId,
@@ -98,7 +96,7 @@ function ScheduleTourContent() {
                 reservation={{
                   id: selectedSlotDetails.id,
                   datetime: reservationDatetime,
-                  number_of_travellers: 0
+                  traveller_ids: [],
                 }}
                 onFinalize={handleFinalizeReservation}
                 isLoading={isCreatingReservation}
@@ -116,7 +114,7 @@ function ScheduleTourContent() {
                   isLoading={isCreatingReservation}
                   mode="join"
                   availableSpots={
-                    tour.max_travellers - joinableReservations[0].number_of_travellers
+                    tour.max_travellers - joinableReservations[0].traveller_ids.length
                   }
                 />
             )}

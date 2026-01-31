@@ -72,29 +72,4 @@ export class ReservationController {
   ): Promise<ReservationDto[]> {
     return this.reservationService.findAll(filter);
   }
-
-  @Get(':id')
-  @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.RESERVATION_READ])
-  findOne(@Param('id') id: string): Promise<ReservationDto> {
-    return this.reservationService.findOne(id);
-  }
-
-  // @Patch(':id')
-  // @UseGuards(ScopesGuard)
-  // @Scopes([ScopePermission.RESERVATION_UPDATE])
-  // update(
-  //   @Param('id') id: string,
-  //   @Body(new ZodValidationPipe(updateReservationSchema))
-  //   updateReservationDto: UpdateReservationDto,
-  // ): Promise<ReservationDto> {
-  //   return this.reservationService.update(id, updateReservationDto);
-  // }
-
-  @Delete(':id')
-  @UseGuards(ScopesGuard)
-  @Scopes([ScopePermission.RESERVATION_DELETE])
-  remove(@Param('id') id: string): Promise<void> {
-    return this.reservationService.remove(id);
-  }
 }

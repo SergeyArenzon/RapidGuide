@@ -145,8 +145,8 @@ export function ReservationDetailsCard({
           <div className="space-y-1">
             <p className="text-sm font-medium text-muted-foreground">Travellers</p>
             <p className="text-sm">
-              {reservation.number_of_travellers !== undefined
-                ? `${reservation.number_of_travellers} / ${tour.max_travellers} (min: ${tour.min_travellers})`
+              {reservation.traveller_ids?.length !== undefined
+                ? `${reservation.traveller_ids.length} / ${tour.max_travellers} (min: ${tour.min_travellers})`
                 : `${tour.min_travellers} - ${tour.max_travellers}`}
             </p>
           </div>

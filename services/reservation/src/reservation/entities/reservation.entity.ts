@@ -5,6 +5,7 @@ import {
   Collection,
   BeforeCreate,
   BeforeUpdate,
+  AfterUpdate,
 } from '@mikro-orm/core';
 import { BaseEntity } from '../../entities/base.entity';
 import { ReservationTraveller } from './reservation-traveller.entity';
@@ -151,11 +152,9 @@ export class Reservation extends BaseEntity {
     this.calculateTotalPrice();
   }
 
-  /**
-   * Automatically sync traveller count and total price before updating a reservation
-   */
-  @BeforeUpdate()
-  beforeUpdate() {
+
+  @AfterUpdate()
+  afterUpdate() {
     this.countTravellerCount();
     this.calculateTotalPrice();
   }

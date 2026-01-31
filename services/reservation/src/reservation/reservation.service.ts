@@ -125,7 +125,11 @@ export class ReservationService {
     });
     reservation.travellers.add(reservationTraveller);
     em.persist(reservationTraveller);
-    em.persist(reservation);
+
+    // Recalculate denormalized fields - adding a child doesn't trigger @BeforeUpdate
+    reservation.countTravellerCount();
+    reservation.calculateTotalPrice();
+
     await em.flush();
 
     await em.populate(reservation, ['travellers', 'availabilities']);
@@ -163,23 +167,5 @@ export class ReservationService {
     });
 
     return reservations.map((reservation) => reservation.toDto());
-  }
-
-  findOne(id: string): Promise<ReservationDto> {
-    // TODO: Implement find one reservation
-    throw new Error('Not implemented');
-  }
-
-  update(
-    id: string,
-    updateReservationDto: UpdateReservationDto,
-  ): Promise<ReservationDto> {
-    // TODO: Implement update reservation
-    throw new Error('Not implemented');
-  }
-
-  remove(id: string): Promise<void> {
-    // TODO: Implement remove reservation
-    throw new Error('Not implemented');
   }
 }
