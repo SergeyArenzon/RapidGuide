@@ -12,10 +12,10 @@ export class BookingApi extends BaseApi {
   // Base URL for the booking service
   static readonly baseUrl = '/reservation';
 
-  async createReservation(reservation: CreateReservationDto): Promise<CreateReservationDto> {
+  async createReservation(reservation: CreateReservationDto): Promise<ReservationDto> {
     return this.validateResponse(
       () => this.axios.post(`${BookingApi.baseUrl}/reservation`, reservation),
-      createReservationSchema
+      reservationSchema
     );
   }
 

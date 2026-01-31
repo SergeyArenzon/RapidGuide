@@ -25,7 +25,7 @@ export const reservationSchema = timeSchema.extend({
   rejection_reason: z.string().nullable().optional(),
   // Nested arrays for related entities
   traveller_ids: z.array(z.uuid()).min(1, 'At least one traveller is required'),
-  availabilities: z.array(reservationAvailabilitySchema).min(1, 'At least one availability is required'),
+  reservation_availabilities: z.array(reservationAvailabilitySchema).min(1, 'At least one availability is required'),
 });
 
 // Create reservation schema - omits auto-generated fields and includes required inputs

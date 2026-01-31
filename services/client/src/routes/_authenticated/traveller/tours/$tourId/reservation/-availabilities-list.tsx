@@ -119,6 +119,7 @@ interface AvailabilitiesListProps {
   availabilities: Array<GuideAvailabilityDto>
   tourDurationMinutes?: number
   selectedAvailabilityId?: string
+  reservedAvailabilityIds?: Set<string>
   onAvailabilityClick?: (availability: GuideAvailabilityDto) => void
 }
 
@@ -127,6 +128,7 @@ export function AvailabilitiesList({
   availabilities,
   tourDurationMinutes,
   selectedAvailabilityId,
+  reservedAvailabilityIds = new Set(),
   onAvailabilityClick,
 }: AvailabilitiesListProps) {
   const availableTimeSlots = calculateValidTimeSlots(selectedDate, availabilities, tourDurationMinutes)
@@ -154,16 +156,20 @@ export function AvailabilitiesList({
         </h3>
         {/* <ul className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"> */}
         <ul className="flex flex-wrap gap-2">
-          {availableTimeSlots.map((slot) => (
-            <Availability
-              key={slot.id}
-              id={slot.id}
-              startTime={slot.startTime}
-              endTime={slot.endTime}
-              isActive={selectedAvailabilityId === slot.id}
-              onClick={() => onAvailabilityClick?.(slot.availability)}
-            />
-          ))}
+          {availableTimeSlots.map((slot) => {
+            const isReserved = reservedAvailabilityIds.has(slot.id)
+            return (
+              <Availability
+                key={slot.id}
+                id={slot.id}
+                startTime={slot.startTime}
+                endTime={slot.endTime}
+                isActive={selectedAvailabilityId === slot.id}
+                isReserved={isReserved}
+                onClick={() => onAvailabilityClick?.(slot.availability)}
+              />
+            )
+          })}
         </ul>
       </div>
     </div>

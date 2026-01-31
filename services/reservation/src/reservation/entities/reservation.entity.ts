@@ -178,7 +178,7 @@ export class Reservation extends BaseEntity {
       traveller_ids: this.travellers.isInitialized()
         ? this.travellers.getItems().map((t) => t.traveller_id)
         : [],
-      availabilities: this.availabilities.isInitialized()
+      reservation_availabilities: this.availabilities.isInitialized()
         ? this.availabilities
             .getItems()
             .map((reservationAvailability) => reservationAvailability.toDto())
