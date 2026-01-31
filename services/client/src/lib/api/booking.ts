@@ -5,6 +5,7 @@ import { BaseApi } from './base';
 import type {
   CreateReservationDto,
   GetReservationsFilterDto,
+  JoinReservationDto,
   ReservationDto,
 } from '@rapid-guide-io/contracts';
 
@@ -60,6 +61,12 @@ export class BookingApi extends BaseApi {
   ): Promise<ReservationDto> {
     return this.validateResponse(
       () => this.axios.patch(`${BookingApi.baseUrl}/reservation/${reservationId}`, reservation),
+      reservationSchema
+    );
+  }
+  async joinReservation(reservation: JoinReservationDto): Promise<ReservationDto> {
+    return this.validateResponse(
+      () => this.axios.post(`${BookingApi.baseUrl}/reservation/join`, reservation),
       reservationSchema
     );
   }
