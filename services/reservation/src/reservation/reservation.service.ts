@@ -1,9 +1,15 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import {
   CreateReservationDto,
   GetReservationsFilterDto,
+  JoinReservationDto,
   ReservationDto,
   reservationStatusSchema,
   UpdateReservationDto,
@@ -84,6 +90,49 @@ export class ReservationService {
     return reservation.toDto();
   }
 
+  async join(joinReservationDto: JoinReservationDto): Promise<ReservationDto> {
+    const em = this.em.fork();
+
+    const reservation = await this.reservationRepository.findOne(
+      { id: joinReservationDto.reservation_id },
+      { populate: ['travellers'] },
+    );
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    const isJoinable =
+      reservation.status === reservationStatusSchema.enum.pending;
+
+    if (!isJoinable) {
+      throw new BadRequestException(
+        'This reservation cannot be joined. Only pending or confirmed reservations allow new travellers.',
+      );
+    }
+
+    const alreadyJoined = reservation.travellers
+      .getItems()
+      .some((rt) => rt.traveller_id === joinReservationDto.traveller_id);
+
+    if (alreadyJoined) {
+      throw new ConflictException('You are already part of this reservation');
+    }
+
+    const reservationTraveller = new ReservationTraveller({
+      reservation,
+      traveller_id: joinReservationDto.traveller_id,
+    });
+    reservation.travellers.add(reservationTraveller);
+    em.persist(reservationTraveller);
+    em.persist(reservation);
+    await em.flush();
+
+    await em.populate(reservation, ['travellers', 'availabilities']);
+
+    return reservation.toDto();
+  }
+
   async findAll(
     filterDto: GetReservationsFilterDto,
   ): Promise<ReservationDto[]> {
@@ -114,23 +163,5 @@ export class ReservationService {
     });
 
     return reservations.map((reservation) => reservation.toDto());
-  }
-
-  findOne(id: string): Promise<ReservationDto> {
-    // TODO: Implement find one reservation
-    throw new Error('Not implemented');
-  }
-
-  update(
-    id: string,
-    updateReservationDto: UpdateReservationDto,
-  ): Promise<ReservationDto> {
-    // TODO: Implement update reservation
-    throw new Error('Not implemented');
-  }
-
-  remove(id: string): Promise<void> {
-    // TODO: Implement remove reservation
-    throw new Error('Not implemented');
   }
 }

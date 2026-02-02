@@ -4,8 +4,8 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
 import { calculateValidTimeSlots } from './-availabilities-list'
-import type { CreateReservationDto, GuideAvailabilityDto, TourDto } from '@rapid-guide-io/contracts'
-import { bookingQueries, bookingQueryKeys, queryKeys } from '@/lib/query'
+import type { CreateReservationDto, GuideAvailabilityDto, JoinReservationDto, TourDto } from '@rapid-guide-io/contracts'
+import { bookingQueries, bookingQueryKeys } from '@/lib/query'
 import Api from '@/lib/api'
 
 export function useCreateReservationMutation(tourId: string, selectedDate: Date) {
@@ -28,6 +28,31 @@ export function useCreateReservationMutation(tourId: string, selectedDate: Date)
     },
   })
 }
+
+export function useJoinReservationMutation(tourId: string, selectedDate: Date | undefined) {
+  const navigate = useNavigate()
+  const api = new Api()
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (dto: JoinReservationDto) => api.booking.joinReservation(dto),
+    onSuccess: () => {
+      toast.success('Successfully joined the reservation!')
+      if (selectedDate) {
+        queryClient.invalidateQueries({
+          queryKey: bookingQueryKeys.all({ tour_id: tourId, date: selectedDate }),
+        })
+      }
+      navigate({ to: '/traveller/tours' })
+    },
+    onError: (error: Error) => {
+      console.error('Error joining reservation:', error)
+      toast.error(error.message || 'Failed to join reservation')
+    },
+  })
+}
+
+
 
 interface UseReservationParams {
   tourId: string
@@ -54,6 +79,7 @@ export function useReservation({
   const [selectedAvailabilityId, setSelectedAvailabilityId] = useState<string | undefined>()
 
   const createReservationMutation = useCreateReservationMutation(tourId, selectedDate ?? new Date())
+  const joinReservationMutation = useJoinReservationMutation(tourId, selectedDate)
 
   // Check if a date is available (has valid time slots considering tour duration)
   const isDateAvailable = (date: Date): boolean => {
@@ -169,21 +195,15 @@ export function useReservation({
   }
 
   // Handle joining an existing reservation
-  const handleJoinReservation = (reservationId: string) => {
+  const handleJoinReservation = (reservationId: string): void => {
     if (!travellerId) {
-      toast.error('Please log in to join a reservation')
+      toast.error('You must be logged in to join a reservation')
       return
     }
-
-    // TODO: Implement join reservation API endpoint
-    // For now, show a message that this feature is coming soon
-    toast.info('Joining reservations will be available soon. For now, please create a new reservation.')
-    
-    // When the API is ready, this would be:
-    // joinReservationMutation.mutate({
-    //   reservation_id: reservationId,
-    //   traveller_id: travellerId,
-    // })
+    joinReservationMutation.mutate({
+      reservation_id: reservationId,
+      traveller_id: travellerId,
+    })
   }
 
   // Check if a date should be disabled (past dates or unavailable dates)
@@ -199,7 +219,7 @@ export function useReservation({
     const allJoinableReservations = existingReservations.filter(
       (reservation) =>
         (reservation.status === 'pending' || reservation.status === 'confirmed') &&
-        reservation.number_of_travellers < tour.max_travellers
+        reservation.traveller_ids.length < tour.max_travellers
     )
   
     // If a specific availability is selected, only show reservations for that slot
@@ -218,7 +238,6 @@ export function useReservation({
     selectedAvailabilityId,
     selectedSlotDetails,
     reservationDatetime,
-    existingReservations,
     reservedAvailabilityIds,
 
     // Actions
@@ -227,7 +246,6 @@ export function useReservation({
     handleAvailabilityClick,
     handleFinalizeReservation,
     handleJoinReservation,
-    allJoinableReservations,
     joinableReservations,
     // Computed values
     modifiers,
@@ -237,5 +255,6 @@ export function useReservation({
 
     // Mutation state
     isCreatingReservation: createReservationMutation.isPending,
+    isJoiningReservation: joinReservationMutation.isPending,
   }
 }
