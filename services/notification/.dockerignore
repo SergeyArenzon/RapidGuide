@@ -1,0 +1,5 @@
+# Ignore docs and Docker files; keep go.mod, go.sum, main.go, internal/
+DESIGN.md
+README.md
+.git
+.dockerignore
