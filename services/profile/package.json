@@ -27,7 +27,7 @@
     "@mikro-orm/postgresql": "^6.6.0",
     "@mikro-orm/seeder": "^6.6.0",
     "@nestjs/common": "^11.1.6",
-    "@nestjs/config": "^4.0.0",
+    "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.1.6",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
