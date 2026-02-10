@@ -7,17 +7,23 @@ import (
 	"os/signal"
 	"syscall"
 
+	"notification/internal/channel"
 	"notification/internal/config"
+	"notification/internal/handler"
 	"notification/internal/rabbitmq"
 )
 
 func main() {
 	cfg := config.Load()
 
-	consumer, err := rabbitmq.NewConsumer(cfg.AMQPURL, cfg.NotificationQueue, func(ctx context.Context, body []byte) error {
-		log.Printf("[notification] message: %s", string(body))
-		return nil
-	})
+	channels := map[string]channel.Channel{
+		"email": &channel.EmailChannel{},
+		"sms":   &channel.SMSChannel{},
+		"push":  &channel.PushChannel{},
+	}
+	notificationHandler := handler.New(channels)
+
+	consumer, err := rabbitmq.NewConsumer(cfg.AMQPURL, cfg.NotificationQueue, notificationHandler.Handle)
 	if err != nil {
 		log.Fatalf("rabbitmq: %v", err)
 	}

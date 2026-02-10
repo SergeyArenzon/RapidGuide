@@ -2,7 +2,6 @@ package rabbitmq
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
@@ -41,9 +40,9 @@ func NewConsumer(amqpURL, queue string, handler Handler) (*Consumer, error) {
 }
 
 // Run starts consuming. Blocks until context is cancelled. Reconnects on connection loss.
-func (c *Consumer) Run(ctx context.Context) {
+func (consumer *Consumer) Run(ctx context.Context) {
 	for {
-		deliveries, err := c.channel.Consume(c.queue, "notification-svc", false, false, false, false, nil)
+		deliveries, err := consumer.channel.Consume(consumer.queue, "notification-svc", false, false, false, false, nil)
 		if err != nil {
 			log.Printf("[rabbitmq] consume error: %v", err)
 			select {
@@ -61,7 +60,7 @@ func (c *Consumer) Run(ctx context.Context) {
 				if !ok {
 					return
 				}
-				if err := c.handler(ctx, d.Body); err != nil {
+				if err := consumer.handler(ctx, d.Body); err != nil {
 					log.Printf("[rabbitmq] handler error: %v", err)
 					_ = d.Nack(false, true)
 				} else {
@@ -73,34 +72,13 @@ func (c *Consumer) Run(ctx context.Context) {
 }
 
 // Close closes the channel and connection.
-func (c *Consumer) Close() error {
-	if c.channel != nil {
-		_ = c.channel.Close()
+func (consumer *Consumer) Close() error {
+	if consumer.channel != nil {
+		_ = consumer.channel.Close()
 	}
-	if c.conn != nil {
-		return c.conn.Close()
+	if consumer.conn != nil {
+		return consumer.conn.Close()
 	}
 	return nil
 }
 
-// PublishNotification is a helper for other services to publish (optional; they can use AMQP directly).
-func PublishNotification(amqpURL, queue string, payload interface{}) error {
-	conn, err := amqp.Dial(amqpURL)
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
-	ch, err := conn.Channel()
-	if err != nil {
-		return err
-	}
-	defer ch.Close()
-	body, err := json.Marshal(payload)
-	if err != nil {
-		return err
-	}
-	return ch.PublishWithContext(context.Background(), "", queue, false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        body,
-	})
-}
