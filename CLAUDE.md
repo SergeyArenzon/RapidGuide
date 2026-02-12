@@ -23,10 +23,11 @@ HuddleHub (package scope: `@rapid-guide-io/`) is a tour-guide booking platform b
 **Infrastructure** (`/k8s/helm/`): Helm charts for each service, per-service databases, gateway, ingress-nginx, RabbitMQ, Redis, secrets.
 
 ## Development Commands
+ask me questions when you developing for undertanding how to build the feature.
 
 ### Local Kubernetes development
 ```bash
-skaffold dev                    # Build, deploy, and live-sync all services
+skaffold dev -f .skaggold.dev.yaml                    # Build, deploy, and live-sync all services
 ```
 Skaffold uses `Dockerfile.dev` for NestJS services (hot-reload) and syncs `src/**/*.ts` changes without rebuild.
 
