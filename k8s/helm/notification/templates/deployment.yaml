@@ -25,9 +25,15 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: AMQP_URL
-              value: {{ .Values.env.AMQP_URL | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: RABBITMQ_URL
             - name: NOTIFICATION_QUEUE
-              value: {{ .Values.env.NOTIFICATION_QUEUE | quote }}
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: rabbitmq-notification-queue
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
