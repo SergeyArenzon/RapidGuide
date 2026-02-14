@@ -11,14 +11,9 @@ type Config struct {
 // Load reads config from environment.
 func Load() *Config {
 	return &Config{
-		AMQPURL:           getEnv("AMQP_URL", "amqp://guest:guest@localhost:5672/"),
-		NotificationQueue: getEnv("NOTIFICATION_QUEUE", "notifications"),
+		AMQPURL:           os.Getenv("AMQP_URL"),
+		NotificationQueue: os.Getenv("NOTIFICATION_QUEUE"),
 	}
 }
 
-func getEnv(key, defaultVal string) string {
-	if v := os.Getenv(key); v != "" {
-		return v
-	}
-	return defaultVal
-}
+
