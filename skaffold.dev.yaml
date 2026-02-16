@@ -44,6 +44,10 @@ build:
             dest: .
           - src: "src/**/*.json"
             dest: .
+    - image: sergeyarenzon/huddlehub-notification
+      context: services/notification
+      docker:
+        dockerfile: Dockerfile
   tagPolicy:
     gitCommit: {}
   local:
@@ -60,6 +64,10 @@ manifests:
         chartPath: k8s/helm/gateway/
         valuesFiles:
           - k8s/helm/gateway/values.yaml
+      - name: notification
+        chartPath: k8s/helm/notification/
+        valuesFiles:
+          - k8s/helm/notification/values.yaml
       - name: ingress-nginx
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
