@@ -125,7 +125,10 @@ export class ReservationService {
     });
     reservation.travellers.add(reservationTraveller);
     em.persist(reservationTraveller);
-    em.persist(reservation);
+    // Recalculate denormalized fields - adding a child doesn't trigger @BeforeUpdate
+    reservation.countTravellerCount();
+    reservation.calculateTotalPrice();
+
     await em.flush();
 
     await em.populate(reservation, ['travellers', 'availabilities']);

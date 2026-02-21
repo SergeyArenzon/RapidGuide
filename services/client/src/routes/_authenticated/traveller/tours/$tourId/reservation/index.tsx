@@ -8,6 +8,7 @@ import { ReservationDetailsCard } from '@/components/reservation-detail-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar.tsx'
 import { profileQueries, tourQueries } from '@/lib/query'
+import { CalendarDays } from 'lucide-react'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/reservation/',
@@ -43,18 +44,20 @@ function ScheduleTourContent() {
     selectedAvailabilityId,
     selectedSlotDetails,
     reservationDatetime,
-    existingReservations,
     reservedAvailabilityIds,
     setSelectedDate,
     setCurrentMonth,
     handleAvailabilityClick,
     handleFinalizeReservation,
     handleJoinReservation,
+    handleCancelReservation,
     modifiers,
     isDateDisabled,
     isSelectedSlotReserved,
+    reservationByCurrentUser,
     isCreatingReservation,
-    allJoinableReservations,
+    isJoiningReservation,
+    isCancellingReservation,
     joinableReservations,
   } = useReservation({
     tourId,
@@ -98,7 +101,7 @@ function ScheduleTourContent() {
                 reservation={{
                   id: selectedSlotDetails.id,
                   datetime: reservationDatetime,
-                  number_of_travellers: 0
+                  traveller_ids: [],
                 }}
                 onFinalize={handleFinalizeReservation}
                 isLoading={isCreatingReservation}
@@ -107,24 +110,36 @@ function ScheduleTourContent() {
               />
             )}
 
-            {/* Join Existing Reservation (for selected slot) */}
-            {joinableReservations.length > 0 && (
-                <ReservationDetailsCard
-                  tour={tour}
-                  reservation={joinableReservations[0]}
-                  onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
-                  isLoading={isCreatingReservation}
-                  mode="join"
-                  availableSpots={
-                    tour.max_travellers - joinableReservations[0].number_of_travellers
-                  }
-                />
+            {/* Already reserved by current traveller - show cancel option */}
+            {reservationByCurrentUser && (
+              <ReservationDetailsCard
+                tour={tour}
+                reservation={reservationByCurrentUser}
+                onFinalize={() => handleCancelReservation(reservationByCurrentUser.id)}
+                isLoading={isCancellingReservation}
+                mode="cancel"
+              />
+            )}
+
+            {/* Join Existing Reservation (for selected slot, excludes reservations traveller is already in) */}
+            {joinableReservations.length > 0 && !reservationByCurrentUser && (
+              <ReservationDetailsCard
+                tour={tour}
+                reservation={joinableReservations[0]}
+                onFinalize={() => handleJoinReservation(joinableReservations[0].id)}
+                isLoading={isJoiningReservation}
+                mode="join"
+                availableSpots={
+                  tour.max_travellers - joinableReservations[0].traveller_ids.length
+                }
+              />
             )}
           </>
         )}
 
         {!selectedDate && (
-          <div className="flex items-center justify-center h-64 text-muted-foreground">
+          <div className="flex items-center justify-center h-64 text-muted-foreground gap-2">
+            <CalendarDays className="h-5 w-5 text-muted-foreground" />
             <p>Select a date to see available reservations</p>
           </div>
         )}
