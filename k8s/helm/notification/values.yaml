@@ -1,0 +1,14 @@
+replicaCount: 1
+
+image:
+  repository: sergeyarenzon/huddlehub-notification
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi

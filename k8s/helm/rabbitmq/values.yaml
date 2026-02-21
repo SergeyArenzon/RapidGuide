@@ -1,0 +1,663 @@
+# yaml-language-server: $schema=values.schema.json
+## @section Global parameters
+global:
+  ## @param global.imageRegistry Global Docker Image registry
+  imageRegistry: ""
+  ## @param global.imagePullSecrets Global Docker registry secret names as an array
+  imagePullSecrets: []
+
+## @section Common parameters
+## @param nameOverride String to partially override rabbitmq.fullname
+nameOverride: ""
+## @param fullnameOverride String to fully override rabbitmq.fullname
+fullnameOverride: ""
+## @param commonLabels Labels to add to all deployed objects
+commonLabels: {}
+## @param commonAnnotations Annotations to add to all deployed objects
+commonAnnotations: {}
+
+## @section RabbitMQ image parameters
+image:
+  ## @param image.registry RabbitMQ image registry
+  registry: docker.io
+  ## @param image.repository RabbitMQ image repository
+  repository: rabbitmq
+  ## @param image.tag RabbitMQ image tag
+  tag: "4.2.3-management@sha256:9e537169ec1c6b97f13549c6d3a7a4690a6d5be19d7d6cc42c5beb212fce5873"
+  ## @param image.imagePullPolicy RabbitMQ image pull policy
+  imagePullPolicy: Always
+
+## @param clusterDomain Kubernetes cluster domain
+clusterDomain: cluster.local
+
+## @section Deployment configuration
+## @param replicaCount Number of RabbitMQ replicas to deploy (clustering needs to be enabled to set more than 1 replicas)
+replicaCount: 1
+
+## @param revisionHistoryLimit Number of revisions to keep in history for rollback (set to 0 for unlimited)
+revisionHistoryLimit: 10
+
+## @section Service configuration
+service:
+  ## @param service.type Kubernetes service type
+  type: ClusterIP
+  ## @param service.trafficDistribution Traffic distribution policy for the service
+  trafficDistribution: ""
+  ## @param service.externalTrafficPolicy External traffic policy for the service
+  externalTrafficPolicy: Cluster
+  ## @param service.allocateLoadBalancerNodePorts Allocate node ports for LoadBalancer service type
+  allocateLoadBalancerNodePorts: true
+  ## @param service.amqpPort RabbitMQ AMQP service port
+  amqpPort: 5672
+  ## @param service.managementPort RabbitMQ management UI port
+  managementPort: 15672
+  ## @param service.epmdPort RabbitMQ EPMD port
+  epmdPort: 4369
+  ## @param service.distPort RabbitMQ distribution port
+  distPort: 25672
+  ## @param service.annotations Kubernetes service annotations
+  annotations: {}
+  ## @param service.annotationsHeadless Kubernetes service-headless annotations
+  annotationsHeadless: {}
+
+## @section RabbitMQ Authentication
+auth:
+  ## @param auth.enabled Enable RabbitMQ authentication
+  enabled: true
+  ## @param auth.username RabbitMQ default username
+  username: admin
+  ## @param auth.password RabbitMQ password (if empty, random password will be generated)
+  password: admin
+  ## @param auth.erlangCookie Erlang cookie for clustering (if empty, random cookie will be generated)
+  erlangCookie: ""
+  ## @param auth.existingSecret Name of existing secret containing RabbitMQ credentials
+  existingSecret: ""
+  ## @param auth.existingPasswordKey Key in existing secret containing RabbitMQ password
+  existingPasswordKey: "password"
+  ## @param auth.existingErlangCookieKey Key in existing secret containing Erlang cookie
+  existingErlangCookieKey: "erlang-cookie"
+
+## @section RabbitMQ configuration
+config:
+  ## The memory threshold under which RabbitMQ will stop reading from client network sockets, in order to avoid being killed by the OS
+  ## ref: https://www.rabbitmq.com/alarms.html
+  ## ref: https://www.rabbitmq.com/memory.html#threshold
+  ##
+  memoryHighWatermark:
+    ## @param memoryHighWatermark.enabled Enable configuring Memory high watermark on RabbitMQ
+    ##
+    enabled: false
+    ## @param memoryHighWatermark.type Memory high watermark type. Either `absolute` or `relative`
+    ##
+    type: "relative"
+    ## Memory high watermark value.
+    ## @param memoryHighWatermark.value Memory high watermark value
+    ## The default value of 0.4 stands for 40% of available RAM
+    ## IMPORTANT: For relative type, RabbitMQ will use the container's memory limit (resources.limits.memory)
+    ## instead of the node's total memory when calculating the threshold. If no memory limit is set,
+    ## it will fall back to using the node's memory, which is usually not desired.
+    ## For absolute values, you can use:
+    ##   - Human-readable units as strings: "8GB", "256MiB", "1024MB" (recommended)
+    ##   - Large numbers as strings: "8590000000" (to avoid YAML scientific notation like 8e+9)
+    ##   - Small numbers as integers: 256000000 (only if < 1 million to avoid scientific notation)
+    ## Examples:
+    ##   value: 0.4              # relative: 40% of container memory limit
+    ##   value: "8GB"            # absolute: 8 gigabytes
+    ##   value: "8590000000"     # absolute: 8590000000 bytes (use string for large numbers)
+    ##
+    value: 0.4  # @schema type:[number, string]
+  ## Logging configuration
+  ## ref: https://www.rabbitmq.com/docs/logging
+  ##
+  logging:
+    ## @param config.logging.console.enabled Enable console logging (outputs to stdout/stderr instead of files)
+    console:
+      enabled: true
+    ## @param config.logging.file.enabled Enable file logging (outputs to /var/log/rabbitmq/)
+    file:
+      enabled: false
+    ## @param config.logging.level Log level for RabbitMQ (debug, info, warning, error, critical, none)
+    level: "info"
+  ## @param config.extraConfiguration Additional RabbitMQ configuration
+  extraConfiguration: ""
+  ## @param config.advancedConfiguration Advanced RabbitMQ configuration
+  advancedConfiguration: ""
+
+## @section Queue Balancing and Distribution Configuration
+## Addresses GitHub issue #653: Unbalanced queue distribution in multi-node RabbitMQ clusters
+##
+## Example configuration for a 3-node RabbitMQ cluster with balanced queues:
+##
+## queueBalancing:
+##   enabled: true
+##   queueLeaderLocator: "balanced"
+##   clusterFormation:
+##     targetClusterSizeHint: 3
+##   quorumQueues:
+##     continuousMembershipReconciliation:
+##       enabled: true
+##       targetGroupSize: 3
+##   autoRebalance:
+##     enabled: true
+##     delay: 30
+##     vhosts: ["/", "app"]
+##
+queueBalancing:
+  ## @param queueBalancing.enabled Enable queue balancing and distribution features
+  ## When enabled, configures RabbitMQ for better queue distribution across cluster nodes
+  enabled: false
+
+  ## Queue leader locator strategy for new queues
+  ## @param queueBalancing.queueLeaderLocator Strategy for placing queue leaders across cluster nodes
+  ## Options: "client-local" (default), "balanced", "min-masters" (deprecated)
+  ## - "client-local": Place queue leader on the node the creating client is connected to (default RabbitMQ behavior)
+  ## - "balanced": Distribute queue leaders evenly across all cluster nodes (recommended for multi-node clusters)
+  ## - "min-masters": Legacy option, use "balanced" instead
+  queueLeaderLocator: "balanced"
+
+  ## Cluster formation hints
+  ## @param queueBalancing.clusterFormation.targetClusterSizeHint Hint about expected cluster size (integer)
+  ## Helps RabbitMQ make better decisions during cluster formation and queue placement
+  ## Leave empty/null to use RabbitMQ's default
+  clusterFormation:
+    targetClusterSizeHint: null  # @schema type:[integer,null]
+
+  ## Quorum queue reconciliation settings (for RabbitMQ 3.10+)
+  ## Helps ensure quorum queues have the correct number of replicas across cluster nodes
+  quorumQueues:
+    ## @param queueBalancing.quorumQueues.continuousMembershipReconciliation.enabled Enable continuous membership reconciliation for quorum queues
+    ## Automatically adds/removes quorum queue members to match cluster size
+    continuousMembershipReconciliation:
+      enabled: false
+      ## @param queueBalancing.quorumQueues.continuousMembershipReconciliation.targetGroupSize Target number of members per quorum queue (integer)
+      ## Set to cluster size for full replication, or leave empty/null to use cluster_formation.target_cluster_size_hint
+      targetGroupSize: null  # @schema type:[integer,null]
+      ## @param queueBalancing.quorumQueues.continuousMembershipReconciliation.interval Reconciliation check interval in milliseconds
+      ## Default: 3600000 (1 hour) to match RabbitMQ's default
+      interval: 3600000
+      ## @param queueBalancing.quorumQueues.continuousMembershipReconciliation.triggerInterval How often to trigger reconciliation in milliseconds (integer)
+      ## Leave empty/null to use RabbitMQ's default
+      triggerInterval: null  # @schema type:[integer,null]
+
+  ## Automatic queue rebalancing
+  ## @param queueBalancing.autoRebalance.enabled Enable automatic queue rebalancing on pod startup
+  ## Uses a postStart hook to rebalance queues across cluster nodes when pods start
+  autoRebalance:
+    enabled: false
+    ## @param queueBalancing.autoRebalance.delay Delay in seconds before starting rebalancing
+    ## Allows time for the cluster to stabilize before rebalancing
+    delay: 30
+    ## @param queueBalancing.autoRebalance.vhosts List of vhosts to rebalance (empty = all vhosts)
+    ## Example: ["/", "app", "staging"]
+    vhosts: []
+
+## Usage Examples:
+##
+## 1. Basic queue balancing (recommended for most multi-node clusters):
+##    queueBalancing:
+##      enabled: true
+##      queueLeaderLocator: "balanced"
+##
+## 2. Full configuration for 3-node cluster with quorum queues:
+##    queueBalancing:
+##      enabled: true
+##      queueLeaderLocator: "balanced"
+##      clusterFormation:
+##        targetClusterSizeHint: 3
+##      quorumQueues:
+##        continuousMembershipReconciliation:
+##          enabled: true
+##          targetGroupSize: 3
+##
+## 3. With automatic rebalancing for existing deployments:
+##    queueBalancing:
+##      enabled: true
+##      queueLeaderLocator: "balanced"
+##      autoRebalance:
+##        enabled: true
+##        delay: 60  # Wait longer for large clusters
+##
+## 4. Production setup with specific vhosts:
+##    queueBalancing:
+##      enabled: true
+##      queueLeaderLocator: "balanced"
+##      clusterFormation:
+##        targetClusterSizeHint: 5
+##      autoRebalance:
+##        enabled: true
+##        delay: 45
+##        vhosts: ["/", "production", "staging"]
+##      quorumQueues:
+##        continuousMembershipReconciliation:
+##          enabled: true
+##          targetGroupSize: 3  # 3 replicas even in 5-node cluster
+##          interval: 1800000  # 30 minutes in milliseconds
+##
+## Note: When upgrading existing RabbitMQ deployments, enable autoRebalance
+##       to redistribute existing queues. For new deployments, queueLeaderLocator
+##       alone is usually sufficient.
+
+## @section PeerDiscoveryK8sPlugin configuration
+peerDiscoveryK8sPlugin:
+  ## @param peerDiscoveryK8sPlugin.enabled Enable K8s peer discovery plugin for a RabbitMQ HA-cluster
+  enabled: false
+  ## @param peerDiscoveryK8sPlugin.useLongname Uses the FQDN as connection string (RABBITMQ_USE_LONGNAME)
+  useLongname: true
+  ## @param peerDiscoveryK8sPlugin.addressType Peer discovery plugin address type
+  addressType: hostname
+
+## @section ManagementPlugin configuration
+managementPlugin:
+  ## @param managementPlugin.enabled Enable RabbitMQ management plugin
+  enabled: true
+
+## @section Init Container configuration
+initContainer:
+  image:
+    ## @param initContainer.image.registry Init container image registry
+    registry: docker.io
+    ## @param initContainer.image.registry Init container image repository
+    repository: busybox
+    ## @param initContainer.image.tag Init container image tag
+    tag: "1.37.0@sha256:e226d6308690dbe282443c8c7e57365c96b5228f0fe7f40731b5d84d37a06839"
+    ## @param initContainer.image.pullPolicy Init container image pull policy
+    pullPolicy: IfNotPresent
+
+## @section Metrics configuration
+metrics:
+  ## @param metrics.enabled Enable RabbitMQ metrics (via prometheus plugin)
+  enabled: false
+  ## @param metrics.port RabbitMQ metrics port
+  port: 15692
+  ## @param metrics.serviceMonitor.enabled Create ServiceMonitor for Prometheus monitoring
+  serviceMonitor:
+    enabled: false
+    ## @param metrics.serviceMonitor.namespace Namespace for ServiceMonitor
+    namespace: ""
+    ## @param metrics.serviceMonitor.labels Labels for ServiceMonitor
+    labels: {}
+    ## @param metrics.serviceMonitor.annotations Annotations for ServiceMonitor
+    annotations: {}
+    ## @param metrics.serviceMonitor.interval Scrape interval
+    interval: 30s
+    ## @param metrics.serviceMonitor.scrapeTimeout Scrape timeout
+    scrapeTimeout: 10s
+    ## @param metrics.serviceMonitor.path Select detail of metrics (/metrics, /metrics/detailed, /metrics/per-object)
+    path: /metrics
+
+## @param additionalPlugins Additional default RabbitMQ plugins to enable (Prometheus Metrics, PeerDiscoveryK8s and Management plugins are automatically added)
+additionalPlugins: []
+
+## @param installPlugins Additional 3rd party RabbitMQ plugins to download and enable
+installPlugins: []
+
+## @section Persistence
+persistence:
+  ## @param persistence.enabled Enable persistent storage
+  enabled: true
+  ## @param persistence.existingClaim Name of existing PVC to use (if empty, a new PVC will be created automatically)
+  existingClaim: ""
+  ## @param persistence.storageClass Storage class to use for persistent volume
+  storageClass: ""
+  ## @param persistence.mountPath Set the mountPath for the data Volume
+  mountPath: "/var/lib/rabbitmq"
+  ## @param persistence.accessModes Persistent Volume access modes
+  accessModes:
+    - ReadWriteOnce
+  ## @param persistence.size Size of persistent volume
+  size: 8Gi
+  ## @param persistence.labels Labels for persistent volume claims
+  labels: {}
+  ## @param persistence.annotations Annotations for persistent volume claims
+  annotations: {}
+
+## @section Ingress configuration
+ingress:
+  ## @param ingress.enabled Enable ingress for RabbitMQ management
+  enabled: false
+  ## @param ingress.className Ingress class name
+  className: ""
+  ## @param ingress.annotations Ingress annotations
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  ## @param ingress.hosts Ingress hosts configuration
+  hosts:
+    - host: rabbitmq.local
+      paths:
+        - path: /
+          pathType: Prefix
+  ## @param ingress.tls Ingress TLS configuration
+  tls: []
+
+## @section Resources
+## @param resources Resource limits and requests for RabbitMQ pods
+resources: {}
+  ## We usually recommend not to specify default resources and to leave this as a conscious
+  ## choice for the user. This also increases chances charts run on environments with little
+  ## resources, such as Minikube. If you do want to specify resources, uncomment the following
+  ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   memory: 2Gi
+  # requests:
+  #   cpu: 100m
+  #   memory: 1Gi
+
+## @section Node Selection
+## @param nodeSelector Node labels for pod assignment
+nodeSelector: {}
+
+## @param tolerations Toleration labels for pod assignment
+tolerations: []
+
+## @param affinity Affinity settings for pod assignment
+affinity: {}
+
+## @param topologySpreadConstraints Topology Spread Constraints for pod assignment
+topologySpreadConstraints: []
+
+containerSecurityContext:
+  ## @param containerSecurityContext.allowPrivilegeEscalation Enable container privilege escalation
+  allowPrivilegeEscalation: false
+  ## @param containerSecurityContext.runAsNonRoot Configure the container to run as a non-root user
+  runAsNonRoot: true
+  ## @param containerSecurityContext.runAsUser User ID for the RabbitMQ container
+  runAsUser: 999
+  ## @param containerSecurityContext.runAsGroup Group ID for the RabbitMQ container
+  runAsGroup: 999
+  ## @param containerSecurityContext.readOnlyRootFilesystem Mount container root filesystem as read-only
+  readOnlyRootFilesystem: true
+  ## @param containerSecurityContext.capabilities.drop Linux capabilities to be dropped
+  capabilities:
+    drop:
+      - ALL
+
+## @section Security Context
+podSecurityContext:
+  ## @param podSecurityContext.fsGroup Group ID for the volumes of the pod
+  fsGroup: 999
+
+## @param priorityClassName Priority class for the rabbitmq instance
+priorityClassName: ""
+
+## @section Liveness and readiness probes
+livenessProbe:
+  ## @param livenessProbe.enabled Enable livenessProbe on RabbitMQ containers
+  enabled: true
+  ## @param livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+  initialDelaySeconds: 120
+  ## @param livenessProbe.periodSeconds Period seconds for livenessProbe
+  periodSeconds: 30
+  ## @param livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+  timeoutSeconds: 20
+  ## @param livenessProbe.failureThreshold Failure threshold for livenessProbe
+  failureThreshold: 3
+  ## @param livenessProbe.successThreshold Success threshold for livenessProbe
+  successThreshold: 1
+
+readinessProbe:
+  ## @param readinessProbe.enabled Enable readinessProbe on RabbitMQ containers
+  enabled: true
+  ## @param readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+  initialDelaySeconds: 10
+  ## @param readinessProbe.periodSeconds Period seconds for readinessProbe
+  periodSeconds: 30
+  ## @param readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+  timeoutSeconds: 20
+  ## @param readinessProbe.failureThreshold Failure threshold for readinessProbe
+  failureThreshold: 3
+  ## @param readinessProbe.successThreshold Success threshold for readinessProbe
+  successThreshold: 1
+
+## @param extraEnvVars Additional environment variables to set
+extraEnvVars: []
+  # - name: CUSTOM_VAR
+  #   value: "custom-value"
+  # - name: SECRET_VAR
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-secret
+  #       key: secret-key
+
+## @param extraVolumes Additional volumes to add to the pod
+extraVolumes: []
+
+## @param extraVolumeMounts Additional volume mounts to add to the RabbitMQ container
+extraVolumeMounts: []
+
+## @param extraObjects Array of extra objects to deploy with the release
+extraObjects: []
+
+## @param extraPorts Additional ports to add to the pod and service
+extraPorts: []
+# extraPorts:
+#   - name: tls
+#     port: 5671
+#     targetPort: tls
+#     containerPort: 5671
+#   - name: mqtt
+#     port: 1883
+#     targetPort: mqtt
+#     containerPort: 1883
+
+## @section Custom Scripts and Hooks
+customScripts:
+  ## @param customScripts.postStart PostStart lifecycle hook configuration
+  postStart:
+    ## @param customScripts.postStart.enabled Enable postStart lifecycle hook
+    enabled: false
+    ## @param customScripts.postStart.command Command to execute in postStart hook
+    command: []
+    # Example:
+    # - /bin/bash
+    # - -c
+    # - |
+    #   sleep 10
+    #   rabbitmq-queues rebalance all
+  ## @param customScripts.preStop PreStop lifecycle hook configuration
+  preStop:
+    ## @param customScripts.preStop.enabled Enable preStop lifecycle hook
+    enabled: false
+    ## @param customScripts.preStop.command Command to execute in preStop hook
+    command: []
+    # Example:
+    # - /bin/bash
+    # - -c
+    # - |
+    #   sleep 10
+    #   rabbitmqctl stop_app
+  ## @param customScripts.initContainers Custom init containers to run before RabbitMQ starts
+  initContainers: []
+  # Example:
+  # - name: custom-setup
+  #   image: alpine:3.18
+  #   command:
+  #     - sh
+  #     - -c
+  #     - |
+  #       echo "Setting up custom configuration"
+  #       # Add your custom setup logic here
+  #   volumeMounts:
+  #     - name: data
+  #       mountPath: /var/lib/rabbitmq
+
+## @param podManagementPolicy
+podManagementPolicy: OrderedReady
+
+## @section Persistent Volume Claim Retention Policy
+persistentVolumeClaimRetentionPolicy:
+  ## @param persistentVolumeClaimRetentionPolicy.enabled Enable Persistent volume retention policy
+  enabled: false
+  ## @param persistentVolumeClaimRetentionPolicy.whenScaled Volume retention behavior when replica is deleted
+  whenDeleted: Retain
+  ## @param persistentVolumeClaimRetentionPolicy.whenScaled Volume retention behavior when replica count is reduced
+  whenScaled: Retain
+
+## @param statefulsetLabels statefulset labels
+statefulsetLabels: {}
+## @param podLabels pod labels
+podLabels: {}
+## @param podAnnotations pod annotations
+podAnnotations: {}
+## @param statefulsetAnnotations statefulset annotations.
+statefulsetAnnotations: {}
+
+## @section ServiceAccount
+serviceAccount:
+  ## @param serviceAccount.create Enable creation of ServiceAccount
+  create: true
+  ## @param serviceAccount.name Name of serviceAccount
+  name: ""
+  ## @param serviceAccount.automountServiceAccountToken Automount service account token inside the RabbitMQ pods
+  automountServiceAccountToken: false
+  ## @param serviceAccount.annotations Annotations for service account.
+  annotations: {}
+
+## @section RBAC parameters
+rbac:
+  ## @param rbac.create Whether RBAC rules should be created
+  create: true
+  ## @param rbac.rules Custom RBAC rules
+  rules: []
+  # Example:
+  # rules:
+  #   - apiGroups:
+  #       - ""
+  #     resources:
+  #       - pods
+  #     verbs:
+  #       - get
+  #       - list
+
+## @section Pod Disruption Budget configuration
+pdb:
+  ## @param pdb.create Enable/disable a Pod Disruption Budget creation
+  create: false
+  ## @param pdb.minAvailable Minimum number/percentage of pods that should remain scheduled
+  minAvailable: ""
+  ## @param pdb.maxUnavailable Maximum number/percentage of pods that may be made unavailable.
+  maxUnavailable: ""
+
+## @section RabbitMQ Definitions (https://www.rabbitmq.com/docs/definitions)
+definitions:
+  ## @param definitions.enabled Enable loading of RabbitMQ definitions on startup
+  enabled: false
+  ## @param definitions.existingConfigMap Name of existing ConfigMap containing RabbitMQ definitions
+  existingConfigMap: ""
+  ## @param definitions.existingConfigMapKey Key in existing ConfigMap containing RabbitMQ definitions
+  existingConfigMapKey: defs.json
+  ## @param definitions.existingSecret Name of existing Secret containing RabbitMQ definitions
+  existingSecret: ""
+  ## @param definitions.existingSecretKey Key in existing Secret containing RabbitMQ definitions
+  existingSecretKey: defs.json
+  ## @param definitions.bindings Array of RabbitMQ bindings to create
+  bindings: []
+  ## @param definitions.global_parameters Array of RabbitMQ global parameters to create
+  global_parameters: []
+  ## @param definitions.parameters Array of RabbitMQ parameters to create
+  parameters: []
+  ## @param definitions.policies Array of RabbitMQ policies to create
+  policies: []
+  # - name: ha-all
+  #   vhost: app
+  #   pattern: ".*"
+  #   definition:
+  #     ha-mode: all
+  #   priority: 0
+  #   apply-to: all
+  ## @param definitions.queues Array of RabbitMQ queues to create
+  queues: []
+  # - name: app-queue
+  #   vhost: app
+  #   durable: true
+  #   auto_delete: false
+  #   arguments:
+  #     x-message-ttl: 60000
+  #     x-dead-letter-exchange: "app-dlx"
+  # - name: app-dlx
+  #   vhost: app
+  #   durable: true
+  #   auto_delete: false
+  #   arguments: {}
+  ## @param definitions.exchanges Array of RabbitMQ exchanges to create
+  exchanges: []
+  #   - name: app-exchange
+  #   vhost: app
+  #   type: direct
+  #   durable: true
+  #   auto_delete: false
+  #   internal: false
+  #   arguments: {}
+  # - name: app-dlx
+  #   vhost: app
+  #   type: fanout
+  #   durable: true
+  #   auto_delete: false
+  #   internal: false
+  #   arguments: {}
+  ## @param definitions.topic_permissions Array of RabbitMQ topic permissions to create
+  topic_permissions: []
+  # - user: app-user
+  #   vhost: app
+  #   exchange: "amq.topic"
+  #   write: "app.*"
+  #   read: "app.*"
+  ## @param definitions.users Array of RabbitMQ users to create
+  users: []
+  # - name: user1
+  #   password_hash: "9/1i+jKFRpbTRV1PtRnzFFYibT3cEpP92JeZ8YKGtflf4e/"
+  #   hashing_algorithm: "rabbit_password_hashing_sha512"
+  #   tags: []
+  # - name: admin
+  #   password_hash: "9/1i+jKFRpbTRV1PtRnzFFYibT3cEpP92JeZ8YKGtflf4e/"
+  #   hashing_algorithm: "rabbit_password_hashing_sha512"
+  #   tags: ["administrator"]
+  ## @param definitions.vhosts Array of RabbitMQ vhosts to create
+  vhosts: []
+  # - name: vhost1
+  #   limits: []
+  #   metadata:
+  #     description: "vhost v1",
+  #     tags: []
+  # - name: vhost2
+  #   limits: []
+  #   metadata:
+  #     description: "vhost v2,
+  #     tags": []
+  ## @param definitions.permissions Array of RabbitMQ permissions to set
+  permissions: []
+  # - user: user1
+  #   vhost: vhost1
+  #   configure: ".*"
+  #   write: ".*"
+  #   read: ".*"
+  # - user: admin
+  #   vhost: "/"
+  #   configure: ".*"
+  #   write: ".*"
+  #   read: ".*"
+  # - user: admin
+  #   vhost: "vhost2"
+  #   configure: ".*"
+  #   write: ".*"
+  #   read: ".*"
+  ## @param definitions.autoReload.enabled Enable sidecar container to watch for ConfigMap/Secret changes and reload definitions automatically
+  autoReload:
+    enabled: false
+    ## @param definitions.autoReload.image.registry Container image registry for the config watcher sidecar
+    ## @param definitions.autoReload.image.repository Container image repository for the config watcher sidecar
+    ## @param definitions.autoReload.image.tag Container image tag for the config watcher sidecar
+    ## @param definitions.autoReload.image.pullPolicy Container image pull policy for the config watcher sidecar
+    image:
+      registry: docker.io
+      repository: curlimages/curl
+      tag: "8.18.0"
+      pullPolicy: IfNotPresent
+    ## @param definitions.autoReload.resources Resource limits and requests for the config watcher sidecar
+    resources:
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: 50m
+        memory: 32Mi

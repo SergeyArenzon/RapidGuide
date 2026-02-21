@@ -73,8 +73,6 @@ export function useCancelReservationMutation(tourId: string, selectedDate: Date 
   })
 }
 
-
-
 interface UseReservationParams {
   tourId: string
   tour: TourDto
