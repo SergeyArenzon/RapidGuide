@@ -57,7 +57,7 @@ export function useCancelReservationMutation(tourId: string, selectedDate: Date 
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (reservationId: string) => api.booking.deleteReservation(reservationId),
+    mutationFn: (reservationId: string) => api.booking.cancelReservation(reservationId),
     onSuccess: () => {
       toast.success('Reservation cancelled')
       if (selectedDate) {
