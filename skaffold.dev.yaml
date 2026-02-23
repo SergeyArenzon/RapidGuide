@@ -52,10 +52,10 @@ build:
     gitCommit: {}
   local:
     useBuildkit: true
-# portForward:
-#   - resourceType: service
-#     resourceName: rabbitmq
-#     port: 15672
+portForward:
+  - resourceType: service
+    resourceName: rabbitmq
+    port: 15672
     # RabbitMQ Management UI → http://localhost:15672 (admin / admin)
 manifests:
   helm:
@@ -108,10 +108,10 @@ manifests:
         chartPath: k8s/helm/booking/
         valuesFiles:
           - k8s/helm/booking/values.yaml
-      # - name: rabbitmq
-      #   remoteChart: oci://registry-1.docker.io/cloudpirates/rabbitmq
-      #   valuesFiles:
-      #     - k8s/helm/rabbitmq/values.yaml
+      - name: rabbitmq
+        remoteChart: oci://registry-1.docker.io/cloudpirates/rabbitmq
+        valuesFiles:
+          - k8s/helm/rabbitmq/values.yaml
       # - name: redis
       #   repo: https://charts.bitnami.com/bitnami
       #   remoteChart: redis

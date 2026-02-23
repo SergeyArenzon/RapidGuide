@@ -19,6 +19,13 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command:
+            - /bin/sh
+            - -c
+            - "until nc -z -v -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done"
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
