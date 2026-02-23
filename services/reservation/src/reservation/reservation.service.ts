@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -132,6 +133,53 @@ export class ReservationService {
     await em.flush();
 
     await em.populate(reservation, ['travellers', 'availabilities']);
+
+    return reservation.toDto();
+  }
+
+  async cancel(id: string, travellerId: string): Promise<ReservationDto> {
+    const em = this.em.fork();
+
+    const reservation = await this.reservationRepository.findOne(
+      { id },
+      { populate: ['travellers', 'availabilities'] },
+    );
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    const travellers = reservation.travellers.getItems();
+
+    const traveller = travellers.find((rt) => rt.traveller_id === travellerId);
+
+    if (!traveller) {
+      throw new ForbiddenException('You are not part of this reservation');
+    }
+
+    const isCancellable =
+      reservation.status === reservationStatusSchema.enum.pending ||
+      reservation.status === reservationStatusSchema.enum.confirmed;
+
+    if (!isCancellable) {
+      throw new BadRequestException(
+        'Only pending or confirmed reservations can be cancelled',
+      );
+    }
+
+    if (travellers.length === 1) {
+      // Last traveller — cancel the whole reservation
+      reservation.status = reservationStatusSchema.enum.cancelled;
+      reservation.reviewed_at = new Date();
+      em.persist(reservation);
+    } else {
+      // Other travellers remain — just remove this traveller
+      reservation.travellers.remove(traveller);
+      em.remove(traveller);
+      reservation.countTravellerCount();
+    }
+
+    await em.flush();
 
     return reservation.toDto();
   }

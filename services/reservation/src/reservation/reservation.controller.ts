@@ -3,9 +3,9 @@ import {
   ForbiddenException,
   Get,
   Post,
+  Patch,
   Body,
   Param,
-  Delete,
   UseGuards,
   Query,
 } from '@nestjs/common';
@@ -61,6 +61,16 @@ export class ReservationController {
       );
     }
     return this.reservationService.join(joinReservationDto);
+  }
+
+  @Patch(':id/cancel')
+  @UseGuards(ScopesGuard)
+  @Scopes([ScopePermission.RESERVATION_UPDATE])
+  cancel(
+    @TravellerId() jwtTravellerId: string,
+    @Param('id') id: string,
+  ): Promise<ReservationDto> {
+    return this.reservationService.cancel(id, jwtTravellerId);
   }
 
   @Get()
