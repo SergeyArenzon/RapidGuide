@@ -56,25 +56,25 @@ spec:
                   key: POSTGRES_USER
             - name: DB_PASSWORD
               value: {{ .Values.database.password | quote }}
-            # - name: REDIS_HOST
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: global-config
-            #       key: redis-host
-            # - name: REDIS_PORT
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: global-config
-            #       key: redis-port
-            # - name: REDIS_DB
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: global-config
-            #       key: redis-db
-            # - name: REDIS_PASSWORD
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: global-secrets
-            #       key: REDIS_PASSWORD
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: redis-host
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: redis-port
+            - name: REDIS_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: global-config
+                  key: redis-db
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: global-secrets
+                  key: REDIS_PASSWORD
       restartPolicy: Never
 
