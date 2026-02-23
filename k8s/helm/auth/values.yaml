@@ -77,12 +77,12 @@ configMaps:
       POSTGRES_PORT: 5432
       POSTGRES_DB: auth
       POSTGRES_USER: postgres
-  global:
-    name: global-config
-    keys:
-      redis-host: redis-host
-      redis-port: redis-port
-      redis-db: redis-db
+  # global:
+  #   name: global-config
+  #   keys:
+  #     redis-host: redis-host
+  #     redis-port: redis-port
+  #     redis-db: redis-db
 
 database:
   password: "postgres" 
