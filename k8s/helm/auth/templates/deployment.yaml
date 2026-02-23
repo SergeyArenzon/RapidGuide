@@ -90,6 +90,11 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: CLIENT_URL
+            - name: BETTER_AUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: BETTER_AUTH_URL
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
