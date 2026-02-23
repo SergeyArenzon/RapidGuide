@@ -64,6 +64,13 @@ export class BookingApi extends BaseApi {
       reservationSchema
     );
   }
+  async cancelReservation(reservationId: string): Promise<ReservationDto> {
+    return this.validateResponse(
+      () => this.axios.patch(`${BookingApi.baseUrl}/reservation/${reservationId}/cancel`),
+      reservationSchema
+    );
+  }
+
   async joinReservation(reservation: JoinReservationDto): Promise<ReservationDto> {
     return this.validateResponse(
       () => this.axios.post(`${BookingApi.baseUrl}/reservation/join`, reservation),
