@@ -2,9 +2,14 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Tour } from './tour.entity';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { CreateTourDto, TourDto } from '@rapid-guide-io/contracts';
+import {
+  CreateTourDto,
+  TourDto,
+  NOTIFICATION_EVENTS,
+} from '@rapid-guide-io/contracts';
 import { TourSubcategory } from '../tour-subcategory/entities/tour-subcategory.entity';
 import { SubCategory } from '../sub-category/entities/sub-category';
+import { RabbitmqPublisherService } from '../rabbitmq/rabbitmq-publisher.service';
 
 @Injectable()
 export class TourService {
@@ -12,6 +17,7 @@ export class TourService {
     @InjectRepository(Tour)
     private readonly tourRepository: EntityRepository<Tour>,
     private readonly em: EntityManager,
+    private readonly rabbitmq: RabbitmqPublisherService,
   ) {}
 
   async findAll(): Promise<TourDto[]> {
@@ -78,6 +84,14 @@ export class TourService {
       await em.populate(newTour, ['tourSubcategories.subcategory']);
     }
 
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.TOUR_CREATED, {
+      user_id: guideId,
+      channels: ['push'],
+      template: 'tour_created',
+      subject: 'Tour Created',
+      data: { tour_id: newTour.id, name: newTour.name },
+    });
+
     return newTour.toDto();
   }
 
@@ -125,6 +139,14 @@ export class TourService {
     await em.flush();
     await em.populate(tour, ['tourSubcategories.subcategory']);
 
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.TOUR_UPDATED, {
+      user_id: tour.guide_id,
+      channels: ['push'],
+      template: 'tour_updated',
+      subject: 'Tour Updated',
+      data: { tour_id: id },
+    });
+
     return tour.toDto();
   }
 
@@ -133,7 +155,16 @@ export class TourService {
     if (!tour) {
       throw new NotFoundException(`Tour with id ${id} not found`);
     }
+    const guideId = tour.guide_id;
     const em = this.em.fork();
     await em.removeAndFlush(tour);
+
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.TOUR_DELETED, {
+      user_id: guideId,
+      channels: ['push'],
+      template: 'tour_deleted',
+      subject: 'Tour Deleted',
+      data: { tour_id: id },
+    });
   }
 }

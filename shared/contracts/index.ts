@@ -3,3 +3,4 @@ export * from './src/user';
 export * from './src/session';
 export * from './src/tour';
 export * from './src/reservation';
+export * from './src/notification';

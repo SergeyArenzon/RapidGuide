@@ -14,12 +14,14 @@ import {
   ReservationDto,
   reservationStatusSchema,
   UpdateReservationDto,
+  NOTIFICATION_EVENTS,
 } from '@rapid-guide-io/contracts';
 import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
 import { Reservation } from './entities/reservation.entity';
 import { ReservationTraveller } from './entities/reservation-traveller.entity';
 import { ReservationAvailability } from './entities/reservation-availability.entity';
+import { RabbitmqPublisherService } from '../rabbitmq/rabbitmq-publisher.service';
 
 dayjs.extend(utc);
 
@@ -29,6 +31,7 @@ export class ReservationService {
     @InjectRepository(Reservation)
     private readonly reservationRepository: EntityRepository<Reservation>,
     private readonly em: EntityManager,
+    private readonly rabbitmq: RabbitmqPublisherService,
   ) {}
 
   async create(
@@ -88,6 +91,18 @@ export class ReservationService {
     // Populate relations for DTO conversion
     await em.populate(reservation, ['travellers', 'availabilities']);
 
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.RESERVATION_CREATED, {
+      user_id: createReservationDto.traveller_id,
+      channels: ['push'],
+      template: 'reservation_created',
+      subject: 'Reservation Created',
+      data: {
+        reservation_id: reservation.id,
+        tour_id: reservation.tour_id,
+        datetime: reservation.datetime.toISOString(),
+      },
+    });
+
     return reservation.toDto();
   }
 
@@ -133,6 +148,14 @@ export class ReservationService {
     await em.flush();
 
     await em.populate(reservation, ['travellers', 'availabilities']);
+
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.RESERVATION_JOINED, {
+      user_id: joinReservationDto.traveller_id,
+      channels: ['push'],
+      template: 'reservation_joined',
+      subject: 'You Joined a Reservation',
+      data: { reservation_id: reservation.id },
+    });
 
     return reservation.toDto();
   }
@@ -180,6 +203,14 @@ export class ReservationService {
     }
 
     await em.flush();
+
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.RESERVATION_CANCELLED, {
+      user_id: travellerId,
+      channels: ['push'],
+      template: 'reservation_cancelled',
+      subject: 'Reservation Cancelled',
+      data: { reservation_id: id },
+    });
 
     return reservation.toDto();
   }
