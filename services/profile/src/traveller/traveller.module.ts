@@ -7,6 +7,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { CountryModule } from '../country/country.module';
 import { CityModule } from '../city/city.module';
 import { LanguagesModule } from '../languages/languages.module';
+import { RabbitmqModule } from '../rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { LanguagesModule } from '../languages/languages.module';
     CountryModule,
     CityModule,
     LanguagesModule,
+    RabbitmqModule,
   ],
   controllers: [TravellerController],
   providers: [TravellerService],

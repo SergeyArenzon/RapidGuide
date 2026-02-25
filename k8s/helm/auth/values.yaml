@@ -47,6 +47,10 @@ env:
   JWT_REFRESH_EXPIRES_IN_MS: 604800000
   GOOGLE_REDIRECT_URI: http://localhost:80/api/v1/auth/auth/callback/google
   CLIENT_URL: http://localhost:3000
+  # Explicit BETTER_AUTH_URL prevents Better-Auth from falling back to BASE_URL
+  # (which is set globally to http://localhost/api/v1 via envFrom and would break routing).
+  # Must match the internal path where requests arrive after ingress rewrite: /auth/*
+  BETTER_AUTH_URL: http://localhost/auth
   # Redis credentials will be loaded from global secrets
   # Add other environment variables as needed
 
@@ -77,12 +81,12 @@ configMaps:
       POSTGRES_PORT: 5432
       POSTGRES_DB: auth
       POSTGRES_USER: postgres
-  global:
-    name: global-config
-    keys:
-      redis-host: redis-host
-      redis-port: redis-port
-      redis-db: redis-db
+  # global:
+  #   name: global-config
+  #   keys:
+  #     redis-host: redis-host
+  #     redis-port: redis-port
+  #     redis-db: redis-db
 
 database:
   password: "postgres" 

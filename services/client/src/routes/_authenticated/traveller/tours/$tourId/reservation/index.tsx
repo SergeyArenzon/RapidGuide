@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { CalendarDays } from 'lucide-react'
 import { AvailabilitiesList } from './-availabilities-list'
 import { ReservationSkeleton } from './-skeleton'
 import { useReservation } from './-hooks'
@@ -8,7 +9,6 @@ import { ReservationDetailsCard } from '@/components/reservation-detail-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar.tsx'
 import { profileQueries, tourQueries } from '@/lib/query'
-import { CalendarDays } from 'lucide-react'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/reservation/',

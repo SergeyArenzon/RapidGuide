@@ -19,10 +19,13 @@ spec:
       labels:
         app: {{ .Chart.Name }}
     spec:
-      {{- if .Values.initContainers }}
       initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ["/bin/sh", "-c", "until nc -z -v -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done"]
+        {{- if .Values.initContainers }}
         {{- toYaml .Values.initContainers | nindent 8 }}
-      {{- end }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -30,6 +33,11 @@ spec:
           ports:
             - name: auth
               containerPort: {{ .Values.service.port }}
+          envFrom:
+            - secretRef:
+                name: global-secrets
+            - configMapRef:
+                name: global-config
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
@@ -62,31 +70,6 @@ spec:
               value: {{ .Values.database.password | quote }}
             - name: DATABASE_URL
               value: "postgresql://{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_USER" }}:{{ .Values.database.password }}@{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_HOST" }}:{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_PORT" }}/{{ index .Values.configMaps "auth-db" "keys" "POSTGRES_DB" }}"
-            - name: REDIS_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: redis-host
-            - name: REDIS_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: redis-port
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: REDIS_PASSWORD
-            - name: REDIS_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: redis-db
-            - name: INTERNAL_SERVICE_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: INTERNAL_SERVICE_TOKEN
             - name: GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -107,21 +90,16 @@ spec:
                 configMapKeyRef:
                   name: auth-config
                   key: CLIENT_URL
+            - name: BETTER_AUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-config
+                  key: BETTER_AUTH_URL
             - name: BETTER_AUTH_SECRET
               valueFrom:
                 secretKeyRef:
                   name: auth-secrets
                   key: BETTER_AUTH_SECRET
-            - name: RABBITMQ_URL
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: RABBITMQ_URL
-            - name: NOTIFICATION_QUEUE
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: rabbitmq-notification-queue
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}

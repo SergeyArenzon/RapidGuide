@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import mikroOrmConfig from 'src/mikro-orm.config';
 import { BetterAuthModule } from './better-auth/better-auth.module';
 import { ScopeModule } from './scope/scope.module';
+import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ScopeModule } from './scope/scope.module';
     // Better Auth module
     BetterAuthModule,
     ScopeModule,
+    RabbitmqModule,
     // RedisModule.forRoot({
     //   host: process.env.REDIS_HOST,
     //   port: parseInt(process.env.REDIS_PORT),

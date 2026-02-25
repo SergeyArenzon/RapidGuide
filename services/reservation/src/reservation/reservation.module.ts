@@ -5,6 +5,7 @@ import { ReservationController } from './reservation.controller';
 import { Reservation } from './entities/reservation.entity';
 import { ReservationTraveller } from './entities/reservation-traveller.entity';
 import { ReservationAvailability } from './entities/reservation-availability.entity';
+import { RabbitmqModule } from '../rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ReservationAvailability } from './entities/reservation-availability.ent
       ReservationTraveller,
       ReservationAvailability,
     ]),
+    RabbitmqModule,
   ],
   controllers: [ReservationController],
   providers: [ReservationService],

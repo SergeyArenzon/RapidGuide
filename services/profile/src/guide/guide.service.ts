@@ -1,12 +1,17 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { CreateGuideDto, GuideDto } from '@rapid-guide-io/contracts';
+import {
+  CreateGuideDto,
+  GuideDto,
+  NOTIFICATION_EVENTS,
+} from '@rapid-guide-io/contracts';
 import { Guide } from './entities/guide.entity';
 import { CountryService } from '../country/country.service';
 import { CityService } from '../city/city.service';
 import { LanguagesService } from '../languages/languages.service';
 import { GuideSubcategory } from './entities/guide-subcategory.entity';
+import { RabbitmqPublisherService } from '../rabbitmq/rabbitmq-publisher.service';
 
 @Injectable()
 export class GuideService {
@@ -17,6 +22,7 @@ export class GuideService {
     private readonly countryService: CountryService,
     private readonly cityService: CityService,
     private readonly languagesService: LanguagesService,
+    private readonly rabbitmq: RabbitmqPublisherService,
   ) {}
 
   async create(
@@ -71,6 +77,14 @@ export class GuideService {
 
     // Use the forked em for both persist and flush
     await em.persist(newGuide).flush();
+
+    this.rabbitmq.emit(NOTIFICATION_EVENTS.GUIDE_CREATED, {
+      user_id: userId,
+      channels: ['push'],
+      template: 'guide_created',
+      subject: 'Guide Profile Created',
+      data: { guide_id: newGuide.id },
+    });
 
     return newGuide.toDto();
   }

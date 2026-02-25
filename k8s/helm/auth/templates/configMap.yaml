@@ -5,3 +5,4 @@ metadata:
 data:
   GOOGLE_REDIRECT_URI: {{ .Values.env.GOOGLE_REDIRECT_URI | quote }}
   CLIENT_URL: {{ .Values.env.CLIENT_URL | quote }}
+  BETTER_AUTH_URL: {{ .Values.env.BETTER_AUTH_URL | quote }}

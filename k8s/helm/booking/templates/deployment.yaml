@@ -18,6 +18,9 @@ spec:
         - name: wait-for-booking-db
           image: busybox
           command: ["/bin/sh", "-c", "until nc -z -v -w30 {{ .Values.database.host }} {{ .Values.database.port }}; do echo 'Waiting for PostgreSQL...'; sleep 5; done"]
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ["/bin/sh", "-c", "until nc -z -v -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done"]
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -26,6 +29,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          envFrom:
+            - secretRef:
+                name: global-secrets
+            - configMapRef:
+                name: global-config
           env:
             - name: DATABASE_URL
               value: "{{ .Values.database.url }}"
@@ -36,16 +44,6 @@ spec:
                   name: {{ .valueFrom.secretKeyRef.name }}
                   key: {{ .valueFrom.secretKeyRef.key }}
             {{- end }}
-            - name: RABBITMQ_URL
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: RABBITMQ_URL
-            - name: NOTIFICATION_QUEUE
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: rabbitmq-notification-queue
           livenessProbe:
             httpGet:
               path: /health

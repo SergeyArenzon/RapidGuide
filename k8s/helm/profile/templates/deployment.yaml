@@ -29,6 +29,9 @@ spec:
                   name: {{ index .Values.configMaps "profile-db" "name" | quote }}
                   key: POSTGRES_PORT
           command: ["/bin/sh", "-c", "until nc -z -v -w30 profile-db $PROFILE_DB_PORT; do echo 'Waiting for PostgreSQL...'; sleep 5; done"]
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ["/bin/sh", "-c", "until nc -z -v -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done"]
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -36,6 +39,11 @@ spec:
           ports:
             - name: profile
               containerPort: {{ .Values.service.port }}
+          envFrom:
+            - secretRef:
+                name: global-secrets
+            - configMapRef:
+                name: global-config
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
@@ -44,16 +52,6 @@ spec:
                 configMapKeyRef:
                   name: {{ index .Values.configMaps "profile-db" "name" | quote }}
                   key: POSTGRES_HOST
-            - name: BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: base-url
-            - name: INTERNAL_SERVICE_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: INTERNAL_SERVICE_TOKEN
             {{- range .Values.env }}
             - name: {{ .name }}
               valueFrom:
@@ -61,16 +59,6 @@ spec:
                   name: {{ .valueFrom.secretKeyRef.name }}
                   key: {{ .valueFrom.secretKeyRef.key }}
             {{- end }}
-            - name: RABBITMQ_URL
-              valueFrom:
-                secretKeyRef:
-                  name: global-secrets
-                  key: RABBITMQ_URL
-            - name: NOTIFICATION_QUEUE
-              valueFrom:
-                configMapKeyRef:
-                  name: global-config
-                  key: rabbitmq-notification-queue
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu }}
