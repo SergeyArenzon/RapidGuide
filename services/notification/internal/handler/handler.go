@@ -23,8 +23,18 @@ func New(channels map[string]channel.Channel) *Handler {
 // Handle is the rabbitmq.Handler callback. It parses the JSON body
 // and sends to each requested channel.
 func (handler *Handler) Handle(ctx context.Context, body []byte) error {
+	// NestJS ClientProxy.emit() wraps payloads in {"pattern":"...","data":{...}}.
+	// Detect and unwrap this envelope before parsing the notification message.
+	var envelope struct {
+		Data json.RawMessage `json:"data"`
+	}
+	payload := body
+	if err := json.Unmarshal(body, &envelope); err == nil && envelope.Data != nil {
+		payload = envelope.Data
+	}
+
 	var msg model.Message
-	if err := json.Unmarshal(body, &msg); err != nil {
+	if err := json.Unmarshal(payload, &msg); err != nil {
 		return fmt.Errorf("invalid message JSON: %w", err)
 	}
 
