@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ template "profile-db.fullname" . }}-pvc
+  name: {{ template "tour-db.fullname" . }}-pvc
   labels:
-    {{- include "profile-db.labels" . | nindent 4 }}
+    {{- include "tour-db.labels" . | nindent 4 }}
 spec:
   storageClassName: {{ .Values.persistence.storageClass }}
   accessModes:

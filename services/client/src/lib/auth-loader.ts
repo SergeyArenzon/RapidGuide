@@ -3,7 +3,7 @@ import type { GuideDto, SessionDto, TravellerDto, UserDto } from '@rapid-guide-i
 import type { QueryClient } from '@tanstack/react-query'
 import type { AuthContext } from '@/context/auth-context'
 import { getSessionQuery } from './auth.server'
-import { profileQueries } from './query'
+import { userQueries } from './query'
 
 /**
  * Loads and validates session data, including user, session, guide, and traveller profiles
@@ -53,7 +53,7 @@ export async function loadAuthContext(
     if (result.jwt) {
       try {
         const meData = await queryClient.ensureQueryData(
-          profileQueries.me(result.jwt)
+          userQueries.me(result.jwt)
         )
         guide = (meData.guide as GuideDto) || null
         traveller = (meData.traveller as TravellerDto) || null

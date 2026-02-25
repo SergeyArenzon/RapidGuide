@@ -1198,11 +1198,11 @@ ingress:
   rules:
     - host: localhost
       paths:
-        - path: /profile(/|$)(.*)
+        - path: /user(/|$)(.*)
           pathType: Prefix
           backend:
             service:
-              name: profile
+              name: user
               port:
                 number: 3000
           annotations:

@@ -10,13 +10,13 @@
 
 // Query keys (for invalidation, etc.)
 export { tourQueryKeys } from './tour.queries';
-export { profileQueryKeys } from './profile.queries';
+export { userQueryKeys } from './user.queries';
 export { authQueryKeys } from './auth.queries';
 export { bookingQueryKeys } from './booking.queries';
 
 // Query options factories (keys + queryFn)
 export { tourQueries } from './tour.queries';
-export { profileQueries } from './profile.queries';
+export { userQueries } from './user.queries';
 export { authQueries } from './auth.queries';
 export { bookingQueries } from './booking.queries';
 

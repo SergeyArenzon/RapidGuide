@@ -24,7 +24,7 @@ export function TimeSlotsManager() {
     queryKey: ['guide', 'schedules'],
     queryFn: async () => {
       try {
-        return await api.profile.getGuideSchedules()
+        return await api.user.getGuideSchedules()
       } catch (error) {
         // If endpoint doesn't exist yet, return empty array
         console.warn('Guide schedules endpoint not available:', error)
@@ -52,7 +52,7 @@ export function TimeSlotsManager() {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: async (slot: Omit<TimeSlot, 'id'>) => {
-      const created = await api.profile.createGuideSchedule({
+      const created = await api.user.createGuideSchedule({
         day_of_week: slot.dayOfWeek,
         start_time: slot.startTime + ':00', // Convert "HH:mm" to "HH:mm:ss"
         end_time: slot.endTime + ':00',
@@ -78,7 +78,7 @@ export function TimeSlotsManager() {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async ({ id, slot }: { id: string; slot: Omit<TimeSlot, 'id'> }) => {
-      const updated = await api.profile.updateGuideSchedule(id, {
+      const updated = await api.user.updateGuideSchedule(id, {
         day_of_week: slot.dayOfWeek,
         start_time: slot.startTime + ':00',
         end_time: slot.endTime + ':00',
@@ -104,7 +104,7 @@ export function TimeSlotsManager() {
   // Delete mutation
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await api.profile.deleteGuideSchedule(id)
+      await api.user.deleteGuideSchedule(id)
       return id
     },
     onSuccess: (id) => {

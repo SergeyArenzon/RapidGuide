@@ -44,7 +44,7 @@ function RouteComponent() {
     const { data: languages, isLoading: isLoadingLanguages, error: errorLanguages, refetch: refetchLanguages } = useQuery({
       retry: false,  
       queryKey: ['languages'], 
-      queryFn:() => api.profile.getLanguages() });
+      queryFn:() => api.user.getLanguages() });
   
     const { data: subCategories, isLoading: isLoadingSubCategories, error: errorSubCategories, refetch: refetchSubCategories } = useQuery({
       retry: false,  
@@ -59,18 +59,18 @@ function RouteComponent() {
     const { data: countries, isLoading: isLoadingCountries, error: errorCountries, refetch: refetchCountries } = useQuery({
       retry: false,  
       queryKey: ['countries'], 
-      queryFn:() => api.profile.getCountries() });
+      queryFn:() => api.user.getCountries() });
       
     const { data: cities, isLoading: isLoadingCities, error: errorCities, refetch: refetchCities } = useQuery({
       retry: false,  
       queryKey: ['cities'], 
-      queryFn:() => api.profile.getCities()});
+      queryFn:() => api.user.getCities()});
       
   
     const handleSubmit = async (data: z.infer<typeof createGuideSchema>) => {
       try {
         setIsLoading(true);
-        await api.profile.createGuide(data);
+        await api.user.createGuide(data);
         setRole("guide");
         setDialogState({
           open: true,

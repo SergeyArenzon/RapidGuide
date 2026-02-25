@@ -8,7 +8,7 @@ import { useReservation } from './-hooks'
 import { ReservationDetailsCard } from '@/components/reservation-detail-card'
 import { Route as RootRoute } from '@/routes/__root'
 import { Calendar } from '@/components/ui/calendar.tsx'
-import { profileQueries, tourQueries } from '@/lib/query'
+import { userQueries, tourQueries } from '@/lib/query'
 
 export const Route = createFileRoute(
   '/_authenticated/traveller/tours/$tourId/reservation/',
@@ -35,7 +35,7 @@ function ScheduleTourContent() {
   const { data: tour } = useSuspenseQuery(tourQueries.detail(tourId))
 
   const { data: guideAvailabilities } = useSuspenseQuery(
-    profileQueries.guideAvailabilitiesByGuideId(tour.guide_id)
+    userQueries.guideAvailabilitiesByGuideId(tour.guide_id)
   )
 
   const {
