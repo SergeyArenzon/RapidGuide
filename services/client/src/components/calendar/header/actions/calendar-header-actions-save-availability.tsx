@@ -12,8 +12,8 @@ export default function CalendarHeaderActionsSaveAvailability() {
   const api = new Api()
   
   // Get guide ID from profile
-  const { data: profile } = useQuery(userQueries.me())
-  const guideId = profile?.guide?.id
+  const { data: user } = useQuery(userQueries.me())
+  const guideId = user?.guide?.id
   
   // All hooks must be called before any conditional returns
   const saveAvailabilityMutation = useMutation({

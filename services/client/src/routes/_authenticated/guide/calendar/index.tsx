@@ -152,8 +152,8 @@ function RouteComponent() {
   const [calendarDate, setCalendarDate] = useState<Date>(new Date())
 
   // Fetch current user profile to get guide ID
-  const { data: profile } = useQuery(userQueries.me())
-  const guideId = profile?.guide?.id
+  const { data: user } = useQuery(userQueries.me())
+  const guideId = user?.guide?.id
   
   // Fetch guide availabilities when guide ID is available
   const { data: availabilities } = useQuery({

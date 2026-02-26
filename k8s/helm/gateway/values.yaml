@@ -15,19 +15,19 @@ ingress:
   host: localhost
   paths:
     - path: /api/v1/user(/|$)(.*)
-      pathType: Prefix
+      pathType: ImplementationSpecific
       serviceName: user
       servicePort: 3000
     - path: /api/v1/auth(/|$)(.*)
-      pathType: Prefix
+      pathType: ImplementationSpecific
       serviceName: auth
       servicePort: 3000
     - path: /api/v1/tour(/|$)(.*)
-      pathType: Prefix
+      pathType: ImplementationSpecific
       serviceName: tour
       servicePort: 3000
     - path: /api/v1/reservation(/|$)(.*)
-      pathType: Prefix
+      pathType: ImplementationSpecific
       serviceName: booking
       servicePort: 3000
 
