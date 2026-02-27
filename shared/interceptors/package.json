@@ -13,7 +13,7 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@nestjs/common": "^11.1.6",
+		"@nestjs/common": "^11.1.9",
 		"@nestjs/core": "^11.1.6",
 		"@rapid-guide-io/decorators": "^0.0.19",
 		"rxjs": "^7.8.2",
