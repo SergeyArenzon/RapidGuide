@@ -15,8 +15,8 @@ importers:
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@rapid-guide-io/decorators':
-        specifier: ^0.0.16
-        version: 0.0.16(reflect-metadata@0.2.2)(rxjs@7.8.2)
+        specifier: ^0.0.19
+        version: 0.0.19(reflect-metadata@0.2.2)(rxjs@7.8.2)
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -84,8 +84,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@rapid-guide-io/decorators@0.0.16':
-    resolution: {integrity: sha512-Yur1H7jDNf5/B/Qc4lAj02FBEsDROkKxZzmXFtrldinv7fEwHkgKlv+82YE85v6RmiBnGbA/87jJJ9dHCcBaVQ==}
+  '@rapid-guide-io/decorators@0.0.19':
+    resolution: {integrity: sha512-5fHoPD+L5++7nDN9cFxjY2XEPGMfwaGBbipu8X53S8y4opr5c9hCdEMwaGWn91uOraJX0/Puuj1hH2vqWDKoaw==}
 
   '@tokenizer/inflate@0.2.7':
     resolution: {integrity: sha512-MADQgmZT1eKjp06jpI2yozxaU9uVs4GzzgSL+uEq7bVcJ9V1ZXQkeGNql1fsSI0gMy1vhvNTNbUqrx+pZfJVmg==}
@@ -341,7 +341,7 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@rapid-guide-io/decorators@0.0.16(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+  '@rapid-guide-io/decorators@0.0.19(reflect-metadata@0.2.2)(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.6(reflect-metadata@0.2.2)(rxjs@7.8.2)
       zod: 4.1.7
