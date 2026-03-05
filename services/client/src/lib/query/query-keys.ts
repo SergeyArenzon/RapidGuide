@@ -9,9 +9,9 @@ export const queryKeys = {
   // Auth & Session
   session: () => ['session'] as const,
   
-  // Profile
-  profile: {
-    me: (jwt?: string) => ['profile', 'me', jwt] as const,
+  // User
+  user: {
+    me: (jwt?: string) => ['user', 'me', jwt] as const,
     countries: () => ['countries'] as const,
     cities: () => ['cities'] as const,
     languages: () => ['languages'] as const,

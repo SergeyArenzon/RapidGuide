@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "tour-db.fullname" . }}
+  name: {{ template "user-db.fullname" . }}
   labels:
-    {{- include "tour-db.labels" . | nindent 4 }}
+    {{- include "user-db.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "tour-db.selectorLabels" . | nindent 6 }}
+      {{- include "user-db.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "tour-db.selectorLabels" . | nindent 8 }}
+        {{- include "user-db.selectorLabels" . | nindent 8 }}
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
@@ -25,7 +25,7 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         envFrom:
         - configMapRef:
-            name: {{ template "tour-db.fullname" . }}-config
+            name: {{ template "user-db.fullname" . }}-config
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
         ports:
@@ -52,4 +52,4 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: {{ template "tour-db.fullname" . }}-pvc 
+          claimName: {{ template "user-db.fullname" . }}-pvc 

@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useCalendarContext } from '../../calendar-context'
 import Api from '@/lib/api'
-import { profileQueries, profileQueryKeys } from '@/lib/query'
+import { userQueries, userQueryKeys } from '@/lib/query'
 import { Button } from '@/components/ui/button'
 
 export default function CalendarHeaderActionsSaveAvailability() {
@@ -12,7 +12,7 @@ export default function CalendarHeaderActionsSaveAvailability() {
   const api = new Api()
   
   // Get guide ID from profile
-  const { data: profile } = useQuery(profileQueries.me())
+  const { data: profile } = useQuery(userQueries.me())
   const guideId = profile?.guide?.id
   
   // All hooks must be called before any conditional returns
@@ -26,14 +26,14 @@ export default function CalendarHeaderActionsSaveAvailability() {
     }) => {
       // First, delete all marked availabilities
       const deletePromises = deletions.map(availabilityId => 
-        api.profile.deleteGuideAvailability(availabilityId)
+        api.user.deleteGuideAvailability(availabilityId)
       )
       await Promise.all(deletePromises)
 
       // Then, create new availabilities if any
       if (availabilities.length > 0) {
         // @ts-expect-error - Type definition issue: PostGuideAvailabilitiesRequestDto should be an array but TypeScript infers it as a single object
-        await api.profile.createGuideAvailability(availabilities)
+        await api.user.createGuideAvailability(availabilities)
       }
 
       return { created: availabilities.length, deleted: deletions.length }
@@ -42,7 +42,7 @@ export default function CalendarHeaderActionsSaveAvailability() {
       // Invalidate availabilities query to refetch after save
       if (guideId) {
         queryClient.invalidateQueries({ 
-          queryKey: profileQueryKeys.guideAvailabilities() 
+          queryKey: userQueryKeys.guideAvailabilities() 
         })
       }
       

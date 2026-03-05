@@ -18,7 +18,7 @@ import { ScopeService } from '../scope/scope.service';
 @Injectable()
 export class JwtTokenPayloadService {
   private readonly logger = new Logger(JwtTokenPayloadService.name);
-  private readonly profileServiceUrl: string;
+  private readonly userServiceUrl: string;
   private readonly internalServiceToken: string;
   private readonly jwtExpirationTime: number;
 
@@ -27,7 +27,7 @@ export class JwtTokenPayloadService {
     private readonly scopeService: ScopeService,
   ) {
     // Consider using ConfigService for these values in the future
-    this.profileServiceUrl = 'http://profile:3000';
+    this.userServiceUrl = 'http://user:3000';
     this.internalServiceToken = process.env.INTERNAL_SERVICE_TOKEN;
     this.jwtExpirationTime = 15 * 60;
   }
@@ -44,7 +44,7 @@ export class JwtTokenPayloadService {
     try {
       const { data } = await firstValueFrom(
         this.httpService.get<GetProfilesMeResponseDto>(
-          `${this.profileServiceUrl}/profile/${user.id}`,
+          `${this.userServiceUrl}/profile/${user.id}`,
           {
             params: { userId: user.id },
             headers: {
@@ -93,7 +93,7 @@ export class JwtTokenPayloadService {
     const payload: Record<string, any> = {
       // iss is set by better-auth JWT plugin configuration
       iss: 'auth-svc',
-      aud: ['profile-svc', 'tour-svc', 'reservation-svc'],
+      aud: ['user-svc', 'tour-svc', 'reservation-svc'],
       id: user.id,
       sub: user.id,
       email: user.email,
@@ -110,13 +110,13 @@ export class JwtTokenPayloadService {
     return payload;
   }
 
-  getRoles(profiles: GetProfilesMeResponseDto): string[] {
+  getRoles(userData: GetProfilesMeResponseDto): string[] {
     const roles: string[] = [];
 
-    if (profiles.guide) {
+    if (userData.guide) {
       roles.push('guide');
     }
-    if (profiles.traveller) {
+    if (userData.traveller) {
       roles.push('traveller');
     }
 

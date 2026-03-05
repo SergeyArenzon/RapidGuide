@@ -3,13 +3,13 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import type { CreateTourDto } from '@rapid-guide-io/contracts'
 import Api from '@/lib/api'
-import { tourQueries, profileQueries, tourQueryKeys } from '@/lib/query'
+import { tourQueries, userQueries, tourQueryKeys } from '@/lib/query'
 
 export function useTourFormData() {
   const { data: categories } = useSuspenseQuery(tourQueries.categories())
   const { data: subcategories } = useSuspenseQuery(tourQueries.subcategories())
-  const { data: countries } = useSuspenseQuery(profileQueries.countries())
-  const { data: cities } = useSuspenseQuery(profileQueries.cities())
+  const { data: countries } = useSuspenseQuery(userQueries.countries())
+  const { data: cities } = useSuspenseQuery(userQueries.cities())
 
   // Prepare subcategory options grouped by category
   const subcategoryOptions = categories.map((category) => ({

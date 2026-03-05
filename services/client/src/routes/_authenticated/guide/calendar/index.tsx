@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import type { CalendarEvent } from '@/components/calendar/calendar-types'
 import Calendar from '@/components/calendar/calendar'
-import { profileQueries } from '@/lib/query'
+import { userQueries } from '@/lib/query'
 
 
 export const Route = createFileRoute(
@@ -152,12 +152,12 @@ function RouteComponent() {
   const [calendarDate, setCalendarDate] = useState<Date>(new Date())
 
   // Fetch current user profile to get guide ID
-  const { data: profile } = useQuery(profileQueries.me())
+  const { data: profile } = useQuery(userQueries.me())
   const guideId = profile?.guide?.id
   
   // Fetch guide availabilities when guide ID is available
   const { data: availabilities } = useQuery({
-    ...profileQueries.guideAvailabilities(),
+    ...userQueries.guideAvailabilities(),
     enabled: !!guideId,
   })
 

@@ -3,12 +3,12 @@ import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import type { TourDto } from '@rapid-guide-io/contracts'
-import { profileQueries } from '@/lib/query'
+import { userQueries } from '@/lib/query'
 import { useRoleStore } from '@/store/useRole'
 
 export function useTourColumns() {
-  const { data: countries = [] } = useQuery(profileQueries.countries())
-  const { data: cities = [] } = useQuery(profileQueries.cities())
+  const { data: countries = [] } = useQuery(userQueries.countries())
+  const { data: cities = [] } = useQuery(userQueries.cities())
   const { role } = useRoleStore()
   console.log({});
   

@@ -3,13 +3,13 @@ import { useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 import type { CreateTravellerDto } from '@rapid-guide-io/contracts'
 import Api from '@/lib/api'
-import { profileQueries, tourQueries } from '@/lib/query'
+import { userQueries, tourQueries } from '@/lib/query'
 import { useRoleStore } from '@/store/useRole'
 
 export function useTravellerFormData() {
-  const { data: languages } = useSuspenseQuery(profileQueries.languages())
-  const { data: countries } = useSuspenseQuery(profileQueries.countries())
-  const { data: cities } = useSuspenseQuery(profileQueries.cities())
+  const { data: languages } = useSuspenseQuery(userQueries.languages())
+  const { data: countries } = useSuspenseQuery(userQueries.countries())
+  const { data: cities } = useSuspenseQuery(userQueries.cities())
   const { data: categories } = useSuspenseQuery(tourQueries.categories())
   const { data: subCategories } = useSuspenseQuery(tourQueries.subCategories())
 
@@ -28,7 +28,7 @@ export function useCreateTravellerMutation() {
   const { setRole } = useRoleStore(state => state)
 
   return useMutation({
-    mutationFn: (traveller: CreateTravellerDto) => api.profile.createTraveller(traveller),
+    mutationFn: (traveller: CreateTravellerDto) => api.user.createTraveller(traveller),
     onSuccess: () => {
       setRole('traveller')
       toast.success('Your traveller profile has been created successfully.')

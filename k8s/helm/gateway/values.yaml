@@ -14,9 +14,9 @@ ingress:
   className: nginx
   host: localhost
   paths:
-    - path: /api/v1/profile(/|$)(.*)
+    - path: /api/v1/user(/|$)(.*)
       pathType: Prefix
-      serviceName: profile
+      serviceName: user
       servicePort: 3000
     - path: /api/v1/auth(/|$)(.*)
       pathType: Prefix

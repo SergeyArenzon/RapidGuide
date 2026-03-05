@@ -17,9 +17,9 @@ export class ScopeService {
   static readonly GUIDE_SCOPE = 'guide:*';
   static readonly TRAVELLER_SCOPE = 'tour:*';
 
-  getScopes(profile: GetProfilesMeResponseDto) {
+  getScopes(userData: GetProfilesMeResponseDto) {
     const scopes: string[] = [...ScopeService.DEFAULT_SCOPES];
-    if (profile.traveller) {
+    if (userData.traveller) {
       scopes.push(
         ScopeService.TRAVELLER_SCOPE,
         ScopePermission.RESERVATION_CREATE,
@@ -32,7 +32,7 @@ export class ScopeService {
       );
       scopes.splice(travellerWriteIndex, 1);
     }
-    if (profile.guide) {
+    if (userData.guide) {
       scopes.push(ScopeService.GUIDE_SCOPE);
       scopes.push(
         ScopePermission.RESERVATION_READ,
