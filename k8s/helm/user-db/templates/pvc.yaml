@@ -1,0 +1,15 @@
+{{- if .Values.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "user-db.fullname" . }}-pvc
+  labels:
+    {{- include "user-db.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.persistence.storageClass }}
+  accessModes:
+    - {{ .Values.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+{{- end }} 

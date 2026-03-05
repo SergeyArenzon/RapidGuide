@@ -1,0 +1,17 @@
+import { Controller, Get, Query } from '@nestjs/common';
+import { CityService } from './city.service';
+import { CityDto } from '@rapid-guide-io/contracts';
+
+@Controller('city')
+export class CityController {
+  constructor(private readonly cityService: CityService) {}
+
+  @Get()
+  async getCities(
+    @Query('countryCode') countryCode: string,
+  ): Promise<CityDto[]> {
+    return (await this.cityService.getCities(countryCode)).map((city) =>
+      city.toDto(),
+    );
+  }
+}
