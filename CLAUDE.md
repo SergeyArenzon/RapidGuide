@@ -10,7 +10,7 @@ HuddleHub (package scope: `@rapid-guide-io/`) is a tour-guide booking platform b
 
 **Services** (each with its own PostgreSQL database):
 - `services/auth` — NestJS. Authentication via Better-auth library, JWT token management
-- `services/profile` — NestJS. User profiles, guides, cities, countries, languages, categories
+- `services/user` — NestJS. User users, guides, cities, countries, languages, categories
 - `services/tour` — NestJS. Tour CRUD and guide availability calendar
 - `services/reservation` — NestJS. Booking management with double-booking prevention
 - `services/notification` — **Go** (Gin). Consumes RabbitMQ events, delivers via email/SMS/WebSocket
@@ -31,7 +31,7 @@ skaffold dev -f .skaggold.dev.yaml                    # Build, deploy, and live-
 ```
 Skaffold uses `Dockerfile.dev` for NestJS services (hot-reload) and syncs `src/**/*.ts` changes without rebuild.
 
-### NestJS services (auth, profile, tour, reservation)
+### NestJS services (auth, user, tour, reservation)
 ```bash
 cd services/<service>
 pnpm run start:dev              # Dev server with hot-reload
