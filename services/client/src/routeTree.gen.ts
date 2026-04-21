@@ -179,19 +179,19 @@ export interface FileRoutesByFullPath {
   '/traveller/tours': typeof AuthenticatedTravellerToursRouteWithChildren
   '/guide/': typeof AuthenticatedGuideIndexRoute
   '/traveller/': typeof AuthenticatedTravellerIndexRoute
-  '/signup/': typeof UnauthenticatedSignupIndexRoute
+  '/signup': typeof UnauthenticatedSignupIndexRoute
   '/guide/tours/$tourId': typeof AuthenticatedGuideToursTourIdRouteWithChildren
   '/traveller/tours/$tourId': typeof AuthenticatedTravellerToursTourIdRouteWithChildren
-  '/guide/calendar/': typeof AuthenticatedGuideCalendarIndexRoute
+  '/guide/calendar': typeof AuthenticatedGuideCalendarIndexRoute
   '/guide/tours/': typeof AuthenticatedGuideToursIndexRoute
   '/traveller/tours/': typeof AuthenticatedTravellerToursIndexRoute
-  '/signup/guide/': typeof UnauthenticatedSignupGuideIndexRoute
-  '/signup/traveller/': typeof UnauthenticatedSignupTravellerIndexRoute
+  '/signup/guide': typeof UnauthenticatedSignupGuideIndexRoute
+  '/signup/traveller': typeof UnauthenticatedSignupTravellerIndexRoute
   '/guide/tours/$tourId/': typeof AuthenticatedGuideToursTourIdIndexRoute
-  '/guide/tours/new/': typeof AuthenticatedGuideToursNewIndexRoute
+  '/guide/tours/new': typeof AuthenticatedGuideToursNewIndexRoute
   '/traveller/tours/$tourId/': typeof AuthenticatedTravellerToursTourIdIndexRoute
-  '/guide/tours/$tourId/edit/': typeof AuthenticatedGuideToursTourIdEditIndexRoute
-  '/traveller/tours/$tourId/reservation/': typeof AuthenticatedTravellerToursTourIdReservationIndexRoute
+  '/guide/tours/$tourId/edit': typeof AuthenticatedGuideToursTourIdEditIndexRoute
+  '/traveller/tours/$tourId/reservation': typeof AuthenticatedTravellerToursTourIdReservationIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -250,19 +250,19 @@ export interface FileRouteTypes {
     | '/traveller/tours'
     | '/guide/'
     | '/traveller/'
-    | '/signup/'
+    | '/signup'
     | '/guide/tours/$tourId'
     | '/traveller/tours/$tourId'
-    | '/guide/calendar/'
+    | '/guide/calendar'
     | '/guide/tours/'
     | '/traveller/tours/'
-    | '/signup/guide/'
-    | '/signup/traveller/'
+    | '/signup/guide'
+    | '/signup/traveller'
     | '/guide/tours/$tourId/'
-    | '/guide/tours/new/'
+    | '/guide/tours/new'
     | '/traveller/tours/$tourId/'
-    | '/guide/tours/$tourId/edit/'
-    | '/traveller/tours/$tourId/reservation/'
+    | '/guide/tours/$tourId/edit'
+    | '/traveller/tours/$tourId/reservation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -320,14 +320,14 @@ declare module '@tanstack/react-router' {
     '/_unauthenticated': {
       id: '/_unauthenticated'
       path: ''
-      fullPath: '/'
+      fullPath: ''
       preLoaderRoute: typeof UnauthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
-      fullPath: '/'
+      fullPath: ''
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -362,7 +362,7 @@ declare module '@tanstack/react-router' {
     '/_unauthenticated/signup/': {
       id: '/_unauthenticated/signup/'
       path: '/signup'
-      fullPath: '/signup/'
+      fullPath: '/signup'
       preLoaderRoute: typeof UnauthenticatedSignupIndexRouteImport
       parentRoute: typeof UnauthenticatedRoute
     }
@@ -404,14 +404,14 @@ declare module '@tanstack/react-router' {
     '/_unauthenticated/signup/traveller/': {
       id: '/_unauthenticated/signup/traveller/'
       path: '/signup/traveller'
-      fullPath: '/signup/traveller/'
+      fullPath: '/signup/traveller'
       preLoaderRoute: typeof UnauthenticatedSignupTravellerIndexRouteImport
       parentRoute: typeof UnauthenticatedRoute
     }
     '/_unauthenticated/signup/guide/': {
       id: '/_unauthenticated/signup/guide/'
       path: '/signup/guide'
-      fullPath: '/signup/guide/'
+      fullPath: '/signup/guide'
       preLoaderRoute: typeof UnauthenticatedSignupGuideIndexRouteImport
       parentRoute: typeof UnauthenticatedRoute
     }
@@ -432,7 +432,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated/guide/calendar/': {
       id: '/_authenticated/guide/calendar/'
       path: '/calendar'
-      fullPath: '/guide/calendar/'
+      fullPath: '/guide/calendar'
       preLoaderRoute: typeof AuthenticatedGuideCalendarIndexRouteImport
       parentRoute: typeof AuthenticatedGuideRoute
     }
@@ -460,7 +460,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated/guide/tours/new/': {
       id: '/_authenticated/guide/tours/new/'
       path: '/new'
-      fullPath: '/guide/tours/new/'
+      fullPath: '/guide/tours/new'
       preLoaderRoute: typeof AuthenticatedGuideToursNewIndexRouteImport
       parentRoute: typeof AuthenticatedGuideToursRoute
     }
@@ -474,14 +474,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/traveller/tours/$tourId/reservation/': {
       id: '/_authenticated/traveller/tours/$tourId/reservation/'
       path: '/reservation'
-      fullPath: '/traveller/tours/$tourId/reservation/'
+      fullPath: '/traveller/tours/$tourId/reservation'
       preLoaderRoute: typeof AuthenticatedTravellerToursTourIdReservationIndexRouteImport
       parentRoute: typeof AuthenticatedTravellerToursTourIdRoute
     }
     '/_authenticated/guide/tours/$tourId/edit/': {
       id: '/_authenticated/guide/tours/$tourId/edit/'
       path: '/edit'
-      fullPath: '/guide/tours/$tourId/edit/'
+      fullPath: '/guide/tours/$tourId/edit'
       preLoaderRoute: typeof AuthenticatedGuideToursTourIdEditIndexRouteImport
       parentRoute: typeof AuthenticatedGuideToursTourIdRoute
     }
