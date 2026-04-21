@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@nestjs/common": "^11.1.6",
 		"@nestjs/core": "^11.1.6",
-		"@rapid-guide-io/decorators": "^0.0.19",
+		"@rapid-guide-io/decorators": "workspace:*",
 		"rxjs": "^7.8.2",
 		"zod": "^4.1.7"
 	},

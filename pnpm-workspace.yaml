@@ -1,0 +1,11 @@
+packages:
+  - 'services/auth'
+  - 'services/user'
+  - 'services/tour'
+  - 'services/reservation'
+  - 'shared/contracts'
+  - 'shared/decorators'
+  - 'shared/guards'
+  - 'shared/interceptors'
+  - 'shared/pipes'
+  - 'shared/redis'

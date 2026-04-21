@@ -5,45 +5,45 @@ metadata:
 build:
   artifacts:
     - image: sergeyarenzon/huddlehub-auth
-      context: services/auth
+      context: .
       docker:
-        dockerfile: Dockerfile.dev
-      sync: 
+        dockerfile: services/auth/Dockerfile.dev
+      sync:
         manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
+          - src: "services/auth/src/**/*.ts"
+            dest: services/auth
+          - src: "services/auth/src/**/*.json"
+            dest: services/auth
     - image: sergeyarenzon/huddlehub-user
-      context: services/user
+      context: .
       docker:
-        dockerfile: Dockerfile.dev
-      sync: 
+        dockerfile: services/user/Dockerfile.dev
+      sync:
         manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
+          - src: "services/user/src/**/*.ts"
+            dest: services/user
+          - src: "services/user/src/**/*.json"
+            dest: services/user
     - image: sergeyarenzon/huddlehub-tour
-      context: services/tour
+      context: .
       docker:
-        dockerfile: Dockerfile.dev
-      sync: 
+        dockerfile: services/tour/Dockerfile.dev
+      sync:
         manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
+          - src: "services/tour/src/**/*.ts"
+            dest: services/tour
+          - src: "services/tour/src/**/*.json"
+            dest: services/tour
     - image: sergeyarenzon/huddlehub-booking
-      context: services/reservation
+      context: .
       docker:
-        dockerfile: Dockerfile.dev
-      sync: 
+        dockerfile: services/reservation/Dockerfile.dev
+      sync:
         manual:
-          - src: "src/**/*.ts"
-            dest: .
-          - src: "src/**/*.json"
-            dest: .
+          - src: "services/reservation/src/**/*.ts"
+            dest: services/reservation
+          - src: "services/reservation/src/**/*.json"
+            dest: services/reservation
     - image: sergeyarenzon/huddlehub-notification
       context: services/notification
       docker:

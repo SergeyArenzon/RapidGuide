@@ -1,23 +1,40 @@
 # Development Dockerfile for hot reloading
 FROM node:24-alpine
 
-# Install pnpm
 RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
-COPY tsconfig.json tsconfig.build.json nest-cli.json ./
+# Workspace manifests — changes here bust cache
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 
-# Install all dependencies (including dev dependencies)
+# Copy only package.json files first (cache layer for pnpm install)
+COPY shared/contracts/package.json         ./shared/contracts/package.json
+COPY shared/decorators/package.json        ./shared/decorators/package.json
+COPY shared/guards/package.json            ./shared/guards/package.json
+COPY shared/interceptors/package.json      ./shared/interceptors/package.json
+COPY shared/pipes/package.json             ./shared/pipes/package.json
+COPY shared/redis/package.json             ./shared/redis/package.json
+COPY services/auth/package.json            ./services/auth/package.json
+COPY services/user/package.json            ./services/user/package.json
+COPY services/tour/package.json            ./services/tour/package.json
+COPY services/reservation/package.json     ./services/reservation/package.json
+COPY services/client/package.json          ./services/client/package.json
+
+# Install all workspace deps
 RUN pnpm install --frozen-lockfile
 
-# Copy the source code
-COPY src/ ./src/
+# Build shared packages (services import from dist/)
+COPY shared/ ./shared/
+RUN pnpm --filter "@rapid-guide-io/*" build
 
-# Expose port
+# Copy service source
+COPY services/reservation/tsconfig.json       ./services/reservation/tsconfig.json
+COPY services/reservation/tsconfig.build.json ./services/reservation/tsconfig.build.json
+COPY services/reservation/nest-cli.json       ./services/reservation/nest-cli.json
+COPY services/reservation/src/                ./services/reservation/src/
+
+WORKDIR /app/services/reservation
+
 EXPOSE 3000
-
-# Start in development mode with hot reloading
 CMD ["pnpm", "run", "start:dev"]

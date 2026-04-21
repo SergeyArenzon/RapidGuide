@@ -11,12 +11,10 @@ import {
 import { JwtTokenPayloadService } from '../jwt-token-payload/jwt-token-payload.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-export type AuthInstance = ReturnType<typeof betterAuth>;
-
 export function createAuth(
   orm: MikroORM,
   jwtTokenPayloadService: JwtTokenPayloadService,
-): AuthInstance {
+) {
   return betterAuth({
     database: mikroOrmAdapter(orm),
     basePath: '/auth',
@@ -78,3 +76,5 @@ export function createAuth(
     },
   });
 }
+
+export type AuthInstance = ReturnType<typeof createAuth>;

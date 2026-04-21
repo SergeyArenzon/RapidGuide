@@ -27,9 +27,9 @@ spec:
           args:
             - |
               echo "Running DB migrations..." &&
-              npx mikro-orm migration:up &&
+              pnpm exec mikro-orm migration:up &&
               echo "Running seeders..." &&
-              npx mikro-orm seeder:run
+              pnpm exec mikro-orm seeder:run
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
