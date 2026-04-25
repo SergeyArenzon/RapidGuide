@@ -1,40 +1,15 @@
-# Development Dockerfile for hot reloading
-FROM node:24-alpine
-
+FROM node:24-alpine AS base
 RUN npm install -g pnpm
 
+FROM base AS build
 WORKDIR /app
-
-# Workspace manifests — changes here bust cache
-COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-
-# Copy only package.json files first (cache layer for pnpm install)
-COPY shared/contracts/package.json    ./shared/contracts/package.json
-COPY shared/decorators/package.json   ./shared/decorators/package.json
-COPY shared/guards/package.json       ./shared/guards/package.json
-COPY shared/interceptors/package.json ./shared/interceptors/package.json
-COPY shared/pipes/package.json        ./shared/pipes/package.json
-COPY shared/redis/package.json        ./shared/redis/package.json
-COPY services/auth/package.json        ./services/auth/package.json
-COPY services/user/package.json        ./services/user/package.json
-COPY services/tour/package.json        ./services/tour/package.json
-COPY services/reservation/package.json ./services/reservation/package.json
-COPY services/client/package.json      ./services/client/package.json
-
-# Install all workspace deps
-RUN pnpm install --frozen-lockfile
-
-# Build shared packages (services import from dist/)
-COPY shared/ ./shared/
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm --filter "@rapid-guide-io/*" build
+RUN pnpm deploy --filter=user --legacy /deploy/user
 
-# Copy service source
-COPY services/user/tsconfig.json       ./services/user/tsconfig.json
-COPY services/user/tsconfig.build.json ./services/user/tsconfig.build.json
-COPY services/user/nest-cli.json       ./services/user/nest-cli.json
-COPY services/user/src/                ./services/user/src/
-
+FROM base
+COPY --from=build /deploy/user /app/services/user
 WORKDIR /app/services/user
-
 EXPOSE 3000
 CMD ["pnpm", "run", "start:dev"]
