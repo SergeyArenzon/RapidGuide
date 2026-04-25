@@ -15,12 +15,15 @@ spec:
         app: {{ include "booking.fullname" . }}
     spec:
       initContainers:
-        - name: wait-for-booking-db
+        - name: wait-for-dependencies
           image: busybox
-          command: ["/bin/sh", "-c", "until nc -z -v -w30 {{ .Values.database.host }} {{ .Values.database.port }}; do echo 'Waiting for PostgreSQL...'; sleep 5; done"]
-        - name: wait-for-rabbitmq
-          image: busybox
-          command: ["/bin/sh", "-c", "until nc -z -v -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done"]
+          command:
+            - /bin/sh
+            - -c
+            - |
+              (until nc -z -w30 {{ .Values.database.host }} {{ .Values.database.port }}; do echo 'Waiting for PostgreSQL...'; sleep 5; done) &
+              (until nc -z -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done) &
+              wait
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

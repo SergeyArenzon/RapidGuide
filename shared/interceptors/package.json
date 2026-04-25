@@ -13,15 +13,15 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@nestjs/common": "^11.1.6",
-		"@nestjs/core": "^11.1.6",
+		"@nestjs/common": "catalog:",
+		"@nestjs/core": "catalog:",
 		"@rapid-guide-io/decorators": "workspace:*",
-		"rxjs": "^7.8.2",
-		"zod": "^4.1.7"
+		"rxjs": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"rimraf": "^5.0.10",
-		"typescript": "^5.1.0"
+		"rimraf": "catalog:",
+		"typescript": "catalog:"
 	},
 	"author": "",
 	"license": "ISC"
