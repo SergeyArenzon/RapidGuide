@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Workspace manifests — changes here bust cache
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-
+\
 # Copy only package.json files first (cache layer for pnpm install)
 COPY shared/contracts/package.json    ./shared/contracts/package.json
 COPY shared/decorators/package.json   ./shared/decorators/package.json

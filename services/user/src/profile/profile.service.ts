@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GuideService } from '../guide/guide.service';
 import { GetProfilesMeResponseDto } from '@rapid-guide-io/contracts';
-import { TravellerService } from 'src/traveller/traveller.service';
+import { TravellerService } from '../traveller/traveller.service';
 
 @Injectable()
 export class UserService {
