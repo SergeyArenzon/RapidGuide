@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm --filter "@rapid-guide-io/*" build
-RUN pnpm deploy --filter=user --legacy /deploy/user
+RUN pnpm deploy --filter=user /deploy/user
 
 FROM base
 COPY --from=build /deploy/user /app/services/user
