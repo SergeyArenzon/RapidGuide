@@ -1,23 +1,23 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: '{{ include "booking.fullname" . }}-db-job'
+  name: '{{ include "reservation.fullname" . }}-db-job'
   labels:
-    app: {{ include "booking.fullname" . }}
+    app: {{ include "reservation.fullname" . }}
     job: migration
 spec:
   backoffLimit: 0
   template:
     metadata:
       labels:
-        app: {{ include "booking.fullname" . }}
+        app: {{ include "reservation.fullname" . }}
         job: migration
     spec:
       initContainers:
-        - name: check-booking-db-ready
+        - name: check-reservation-db-ready
           image: busybox:latest
-          command: ['sh', '-c', 
-            'until nc -z -w1 {{ .Values.database.host }} {{ .Values.database.port }}; 
+          command: ['sh', '-c',
+            'until nc -z -w1 {{ .Values.database.host }} {{ .Values.database.port }};
             do echo waiting for database; sleep 2; done;']
       containers:
         - name: migration

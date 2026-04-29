@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: sergeyarenzon/huddlehub-booking
+  repository: sergeyarenzon/rapidguide-reservation
   pullPolicy: IfNotPresent
   tag: "latest"
 
@@ -11,10 +11,10 @@ service:
 
 
 database:
-  url: "postgresql://postgres:postgres@booking-db:5432/postgres?schema=public"
-  host: "booking-db"
+  url: "postgresql://postgres:postgres@reservation-db:5432/postgres?schema=public"
+  host: "reservation-db"
   port: 5432
-  name: "booking"
+  name: "reservation"
   user: "postgres"
   password: "postgres"
 

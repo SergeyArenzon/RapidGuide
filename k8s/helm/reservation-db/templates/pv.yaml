@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: {{ template "booking-db.fullname" . }}-pv
+  name: {{ template "reservation-db.fullname" . }}-pv
   labels:
-    {{- include "booking-db.labels" . | nindent 4 }}
+    {{- include "reservation-db.labels" . | nindent 4 }}
 spec:
   storageClassName: {{ .Values.persistence.storageClass }}
   capacity:
@@ -14,4 +14,4 @@ spec:
   hostPath:
     path: {{ .Values.persistence.hostPath }}
     type: DirectoryOrCreate
-{{- end }} 
+{{- end }}

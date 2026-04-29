@@ -18,20 +18,20 @@ resources:
 
 persistence:
   enabled: true
-  storageClass: booking-db-storage-class
+  storageClass: reservation-db-storage-class
   size: 1Gi
   accessMode: ReadWriteOnce
   hostPath: /var/lib/postgresql/data
 
 config:
-  POSTGRES_HOST: postgresql://postgres:postgres@booking-db.default.svc.cluster.local:5432/postgres?schema=public
+  POSTGRES_HOST: postgresql://postgres:postgres@reservation-db.default.svc.cluster.local:5432/postgres?schema=public
   POSTGRES_PORT: "5432"
   POSTGRES_MAX_CONNECTIONS: "100"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
-  POSTGRESS_DB: booking
-  
-  PGDATA: "/var/lib/postgresql/data/booking"
+  POSTGRESS_DB: reservation
+
+  PGDATA: "/var/lib/postgresql/data/reservation"
 
 service:
   type: ClusterIP
@@ -49,4 +49,4 @@ probes:
     periodSeconds: 10
     timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 3 
+    failureThreshold: 3

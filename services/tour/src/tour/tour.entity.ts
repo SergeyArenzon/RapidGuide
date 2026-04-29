@@ -52,13 +52,13 @@ export class Tour extends BaseEntity {
   description: string;
 
   /**
-   * Minimum number of travellers required for group booking
+   * Minimum number of travellers required for group reservation
    */
   @Property({ nullable: true })
   min_travellers?: number;
 
   /**
-   * Maximum number of travellers allowed for group booking
+   * Maximum number of travellers allowed for group reservation
    */
   @Property({ nullable: true })
   max_travellers?: number;
@@ -94,10 +94,10 @@ export class Tour extends BaseEntity {
   country_code: string;
 
   /**
-   * Bookings for this tour (pending, approved, rejected, cancelled)
+   * Reservations for this tour (pending, approved, rejected, cancelled)
    */
-  //   @OneToMany(() => Booking, (booking) => booking.tour)
-  //   bookings = new Collection<Booking>(this);
+  //   @OneToMany(() => Reservation, (reservation) => reservation.tour)
+  //   reservations = new Collection<Reservation>(this);
 
   toDto(): TourDto {
     return {

@@ -1,6 +1,6 @@
 /**
  * Centralized query utilities and configurations
- * 
+ *
  * This module exports all query-related utilities:
  * - Query key factories
  * - Query options factories (combining keys + API calls)
@@ -12,22 +12,21 @@
 export { tourQueryKeys } from './tour.queries';
 export { userQueryKeys } from './user.queries';
 export { authQueryKeys } from './auth.queries';
-export { bookingQueryKeys } from './booking.queries';
+export { reservationQueryKeys } from './reservation.queries';
 
 // Query options factories (keys + queryFn)
 export { tourQueries } from './tour.queries';
 export { userQueries } from './user.queries';
 export { authQueries } from './auth.queries';
-export { bookingQueries } from './booking.queries';
+export { reservationQueries } from './reservation.queries';
 
 // Legacy query keys export (for backward compatibility)
 export { queryKeys } from './query-keys';
 
 // Query options utilities
-export { 
-  defaultQueryOptions, 
-  createQueryOptions, 
-  createMutationOptions 
+export {
+  defaultQueryOptions,
+  createQueryOptions,
+  createMutationOptions
 } from './query-options';
 export { queryClientConfig } from './query-client-config';
-

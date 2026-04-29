@@ -14,7 +14,7 @@ function TravellerDashboard() {
       <div>
         <h2 className="text-2xl font-bold">Welcome to Traveller Mode</h2>
         <p className="text-muted-foreground mt-2">
-          Discover tours, manage bookings, and explore destinations.
+          Discover tours, manage reservations, and explore destinations.
         </p>
       </div>
       {/* Add traveller-specific dashboard content here */}

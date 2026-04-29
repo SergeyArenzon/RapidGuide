@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "booking-db.name" -}}
+{{- define "reservation-db.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "booking-db.fullname" -}}
+{{- define "reservation-db.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,9 +26,9 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Common labels
 */}}
-{{- define "booking-db.labels" -}}
-helm.sh/chart: {{ include "booking-db.chart" . }}
-{{ include "booking-db.selectorLabels" . }}
+{{- define "reservation-db.labels" -}}
+helm.sh/chart: {{ include "reservation-db.chart" . }}
+{{ include "reservation-db.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -38,14 +38,14 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "booking-db.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "booking-db.name" . }}
+{{- define "reservation-db.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "reservation-db.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "booking-db.chart" -}}
+{{- define "reservation-db.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }} 
+{{- end }}

@@ -17,7 +17,7 @@ import { ReservationDto } from '@rapid-guide-io/contracts';
  *
  * A reservation is a request to book a tour at a specific date/time.
  * It starts as 'pending' and requires guide confirmation to be confirmed.
- * Once confirmed, it becomes a confirmed booking.
+ * Once confirmed, it becomes a confirmed reservation.
  *
  * Key characteristics:
  * - Can hold multiple reservant travellers
@@ -75,7 +75,7 @@ export class Reservation extends BaseEntity {
   /**
    * Reservation status:
    * - pending: Waiting for guide confirmation
-   * - confirmed: Guide has confirmed, reservation is now a booking
+   * - confirmed: Guide has confirmed, reservation is now a reservation
    * - rejected: Guide rejected this reservation
    * - cancelled: Reservation was cancelled (by traveller or guide)
    */
@@ -102,7 +102,7 @@ export class Reservation extends BaseEntity {
 
   /**
    * All travellers in this reservation
-   * Multiple travellers can be part of one reservation, allowing for group bookings.
+   * Multiple travellers can be part of one reservation, allowing for group reservations.
    */
   @OneToMany(() => ReservationTraveller, (traveller) => traveller.reservation)
   travellers = new Collection<ReservationTraveller>(this);

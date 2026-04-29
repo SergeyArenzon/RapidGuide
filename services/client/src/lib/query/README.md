@@ -59,10 +59,10 @@ const { data } = useQuery({
 
 ### 4. Adding New Queries
 
-When adding new queries, create a new query file (e.g., `booking.queries.ts`) following the pattern:
+When adding new queries, create a new query file (e.g., `reservation.queries.ts`) following the pattern:
 
 ```typescript
-// lib/query/booking.queries.ts
+// lib/query/reservation.queries.ts
 import type { BookingDto } from '@rapid-guide-io/contracts';
 import Api from '@/lib/api';
 
