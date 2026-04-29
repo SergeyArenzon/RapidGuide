@@ -18,7 +18,7 @@ export function Breadcrumb() {
   const breadcrumbItems = matches
     .filter(match => match.staticData.showBreadcrumb)
     .map(match => {
-      // Try to extract name from loader data (works for tour, booking, or any entity with a name)
+      // Try to extract name from loader data (works for tour, reservation, or any entity with a name)
       const dynamicName = extractNameFromLoaderData(match.loaderData)
       const label = dynamicName || match.staticData.label!
       return {

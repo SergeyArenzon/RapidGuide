@@ -9,13 +9,13 @@ import type {
   ReservationDto,
 } from '@rapid-guide-io/contracts';
 
-export class BookingApi extends BaseApi {
-  // Base URL for the booking service
+export class ReservationApi extends BaseApi {
+  // Base URL for the reservation service
   static readonly baseUrl = '/reservation';
 
   async createReservation(reservation: CreateReservationDto): Promise<ReservationDto> {
     return this.validateResponse(
-      () => this.axios.post(`${BookingApi.baseUrl}/reservation`, reservation),
+      () => this.axios.post(`${ReservationApi.baseUrl}/reservation`, reservation),
       reservationSchema
     );
   }
@@ -39,8 +39,8 @@ export class BookingApi extends BaseApi {
 
     const queryString = params.toString();
     const url = queryString
-      ? `${BookingApi.baseUrl}/reservation?${queryString}`
-      : `${BookingApi.baseUrl}/reservation`;
+      ? `${ReservationApi.baseUrl}/reservation?${queryString}`
+      : `${ReservationApi.baseUrl}/reservation`;
 
     return this.validateResponse(
       () => this.axios.get(url),
@@ -50,7 +50,7 @@ export class BookingApi extends BaseApi {
 
   async getReservation(reservationId: string): Promise<Array<ReservationDto>> {
     return this.validateResponse(
-      () => this.axios.get(`${BookingApi.baseUrl}/reservation/${reservationId}`),
+      () => this.axios.get(`${ReservationApi.baseUrl}/reservation/${reservationId}`),
       z.array(reservationSchema)
     );
   }
@@ -60,26 +60,25 @@ export class BookingApi extends BaseApi {
     reservation: Partial<CreateReservationDto>
   ): Promise<ReservationDto> {
     return this.validateResponse(
-      () => this.axios.patch(`${BookingApi.baseUrl}/reservation/${reservationId}`, reservation),
+      () => this.axios.patch(`${ReservationApi.baseUrl}/reservation/${reservationId}`, reservation),
       reservationSchema
     );
   }
   async cancelReservation(reservationId: string): Promise<ReservationDto> {
     return this.validateResponse(
-      () => this.axios.patch(`${BookingApi.baseUrl}/reservation/${reservationId}/cancel`),
+      () => this.axios.patch(`${ReservationApi.baseUrl}/reservation/${reservationId}/cancel`),
       reservationSchema
     );
   }
 
   async joinReservation(reservation: JoinReservationDto): Promise<ReservationDto> {
     return this.validateResponse(
-      () => this.axios.post(`${BookingApi.baseUrl}/reservation/join`, reservation),
+      () => this.axios.post(`${ReservationApi.baseUrl}/reservation/join`, reservation),
       reservationSchema
     );
   }
 
   async deleteReservation(reservationId: string): Promise<void> {
-    return this.axios.delete(`${BookingApi.baseUrl}/reservation/${reservationId}`).then(() => undefined);
+    return this.axios.delete(`${ReservationApi.baseUrl}/reservation/${reservationId}`).then(() => undefined);
   }
 }
-

@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: sergeyarenzon/huddlehub-gateway
+  repository: sergeyarenzon/rapidguide-gateway
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -28,7 +28,7 @@ ingress:
       servicePort: 3000
     - path: /api/v1/reservation(/|$)(.*)
       pathType: Prefix
-      serviceName: booking
+      serviceName: reservation
       servicePort: 3000
 
 resources:

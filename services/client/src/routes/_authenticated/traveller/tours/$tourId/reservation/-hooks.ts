@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import dayjs from 'dayjs'
 import { calculateValidTimeSlots } from './-availabilities-list'
 import type { CreateReservationDto, GuideAvailabilityDto, JoinReservationDto, TourDto } from '@rapid-guide-io/contracts'
-import { bookingQueries, bookingQueryKeys } from '@/lib/query'
+import { reservationQueries, reservationQueryKeys } from '@/lib/query'
 import Api from '@/lib/api'
 
 export function useCreateReservationMutation(tourId: string, selectedDate: Date) {
@@ -14,11 +14,11 @@ export function useCreateReservationMutation(tourId: string, selectedDate: Date)
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (reservation: CreateReservationDto) => api.booking.createReservation(reservation),
+    mutationFn: (reservation: CreateReservationDto) => api.reservation.createReservation(reservation),
     onSuccess: () => {
       toast.success('Reservation created successfully!')
       // Refresh any reservations lists (for this tour/date and caches derived from it)
-      queryClient.invalidateQueries({ queryKey: bookingQueryKeys.all({ tour_id: tourId, date: selectedDate }) })
+      queryClient.invalidateQueries({ queryKey: reservationQueryKeys.all({ tour_id: tourId, date: selectedDate }) })
       // Navigate to reservation details or back to tours
       navigate({ to: '/traveller/tours' })
     },
@@ -35,12 +35,12 @@ export function useJoinReservationMutation(tourId: string, selectedDate: Date | 
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (dto: JoinReservationDto) => api.booking.joinReservation(dto),
+    mutationFn: (dto: JoinReservationDto) => api.reservation.joinReservation(dto),
     onSuccess: () => {
       toast.success('Successfully joined the reservation!')
       if (selectedDate) {
         queryClient.invalidateQueries({
-          queryKey: bookingQueryKeys.all({ tour_id: tourId, date: selectedDate }),
+          queryKey: reservationQueryKeys.all({ tour_id: tourId, date: selectedDate }),
         })
       }
       navigate({ to: '/traveller/tours' })
@@ -57,12 +57,12 @@ export function useCancelReservationMutation(tourId: string, selectedDate: Date 
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (reservationId: string) => api.booking.cancelReservation(reservationId),
+    mutationFn: (reservationId: string) => api.reservation.cancelReservation(reservationId),
     onSuccess: () => {
       toast.success('Reservation cancelled')
       if (selectedDate) {
         queryClient.invalidateQueries({
-          queryKey: bookingQueryKeys.all({ tour_id: tourId, date: selectedDate }),
+          queryKey: reservationQueryKeys.all({ tour_id: tourId, date: selectedDate }),
         })
       }
     },
@@ -145,7 +145,7 @@ export function useReservation({
 
   // Fetch existing reservations for the selected date
   const { data: existingReservations = [] } = useQuery({
-    ...bookingQueries.all({
+    ...reservationQueries.all({
       tour_id: tourId,
       // Value is ignored when query is disabled, but needed for stable key shape
       date: selectedDate ?? new Date(0),

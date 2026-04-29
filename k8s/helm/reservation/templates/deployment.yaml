@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "booking.fullname" . }}
+  name: {{ include "reservation.fullname" . }}
   labels:
-    app: {{ include "booking.fullname" . }}
+    app: {{ include "reservation.fullname" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "booking.fullname" . }}
+      app: {{ include "reservation.fullname" . }}
   template:
     metadata:
       labels:
-        app: {{ include "booking.fullname" . }}
+        app: {{ include "reservation.fullname" . }}
     spec:
       initContainers:
-        - name: wait-for-booking-db
+        - name: wait-for-reservation-db
           image: busybox
           command: ["/bin/sh", "-c", "until nc -z -v -w30 {{ .Values.database.host }} {{ .Values.database.port }}; do echo 'Waiting for PostgreSQL...'; sleep 5; done"]
         - name: wait-for-rabbitmq

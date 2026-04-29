@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: sergeyarenzon/huddlehub-user
+  repository: sergeyarenzon/rapidguide-user
   tag: latest
   pullPolicy: IfNotPresent
 

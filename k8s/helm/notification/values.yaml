@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: sergeyarenzon/huddlehub-notification
+  repository: sergeyarenzon/rapidguide-notification
   tag: latest
   pullPolicy: IfNotPresent
 

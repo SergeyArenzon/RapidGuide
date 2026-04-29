@@ -1,9 +1,9 @@
 /**
  * Extracts a name from loader data generically.
- * Checks for common patterns like { tour: { name } }, { booking: { name } }, or direct { name }
+ * Checks for common patterns like { tour: { name } }, { reservation: { name } }, or direct { name }
  * 
  * This allows routes to dynamically set labels based on loaded entity data.
- * Works for any entity type (tour, booking, etc.) as long as it has a name property.
+ * Works for any entity type (tour, reservation, etc.) as long as it has a name property.
  * 
  * @param loaderData - The loader data from a route match
  * @returns The name string if found, undefined otherwise
