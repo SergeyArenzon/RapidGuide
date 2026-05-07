@@ -23,12 +23,11 @@ spec:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          workingDir: /app
           command: ["sh", "-c"]
           args:
             - |
               echo "Running DB migrations..." &&
-              npx mikro-orm migration:up &&
+              pnpm exec mikro-orm migration:up &&
               echo "Migrations completed successfully"
           env:
             - name: DATABASE_URL

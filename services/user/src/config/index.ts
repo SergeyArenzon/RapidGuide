@@ -1,2 +1,2 @@
-import microOrmConfig from 'src/mikro-orm.config';
+import microOrmConfig from '../mikro-orm.config';
 export { microOrmConfig };

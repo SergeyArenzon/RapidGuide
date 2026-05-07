@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import mikroOrmConfig from 'src/mikro-orm.config';
+import mikroOrmConfig from './mikro-orm.config';
 import { BetterAuthModule } from './better-auth/better-auth.module';
 import { ScopeModule } from './scope/scope.module';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';

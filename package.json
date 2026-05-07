@@ -1,5 +1,18 @@
 {
-	"dependencies": {
-		"@rapid-guide-io/interceptors": "^0.0.9"
-	}
+  "name": "huddlehub",
+  "private": true,
+  "scripts": {
+    "build:shared": "pnpm --filter \"@rapid-guide-io/*\" build"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "better-sqlite3",
+      "esbuild",
+      "unrs-resolver"
+    ],
+"overrides": {
+      "better-auth": "1.6.5"
+    }
+  }
 }

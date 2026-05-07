@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { microOrmConfig } from 'src/config';
+import { microOrmConfig } from './config';
 import { AppController } from './app.controller';
 import { UserModule } from './profile/profile.module';
 import { APP_GUARD, APP_INTERCEPTOR, Reflector } from '@nestjs/core';

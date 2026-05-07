@@ -1,23 +1,15 @@
-# Development Dockerfile for hot reloading
-FROM node:24-alpine
-
-# Install pnpm
+FROM node:24-alpine AS base
 RUN npm install -g pnpm
 
+FROM base AS build
 WORKDIR /app
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm --filter "@rapid-guide-io/*" build
+RUN pnpm deploy --filter=auth /deploy/auth
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
-COPY tsconfig.json tsconfig.build.json nest-cli.json ./
-
-# Install all dependencies (including dev dependencies)
-RUN pnpm install --frozen-lockfile
-
-# Copy the source code
-COPY src/ ./src/
-
-# Expose port
+FROM base
+COPY --from=build /deploy/auth /app/services/auth
+WORKDIR /app/services/auth
 EXPOSE 3000
-
-# Start in development mode with hot reloading
 CMD ["pnpm", "run", "start:dev"]

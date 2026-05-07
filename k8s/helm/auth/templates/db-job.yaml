@@ -30,7 +30,7 @@ spec:
           args:
             - |
               echo "Running DB migrations..." &&
-              npx mikro-orm migration:up
+              pnpm exec mikro-orm migration:up
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}

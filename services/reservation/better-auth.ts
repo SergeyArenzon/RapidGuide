@@ -5,4 +5,4 @@ const auth = betterAuth({
   plugins: [jwt()],
 });
 
-export default auth as ReturnType<typeof betterAuth>;
+export default auth;

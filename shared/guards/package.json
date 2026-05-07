@@ -13,17 +13,17 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@nestjs/common": "^11.1.6",
-		"@nestjs/core": "^11.1.6",
-		"@nestjs/jwt": "^11.0.0",
-		"@rapid-guide-io/decorators": "^1.2.0",
-		"express": "^5.1.0",
-		"jose": "^6.1.1"
+		"@nestjs/common": "catalog:",
+		"@nestjs/core": "catalog:",
+		"@nestjs/jwt": "catalog:",
+		"@rapid-guide-io/decorators": "workspace:*",
+		"express": "catalog:",
+		"jose": "catalog:"
 	},
 	"devDependencies": {
-		"@types/node": "^24.10.1",
-		"rimraf": "^5.0.10",
-		"typescript": "^5.1.0"
+		"@types/node": "catalog:",
+		"rimraf": "catalog:",
+		"typescript": "catalog:"
 	},
 	"author": "",
 	"license": "ISC"

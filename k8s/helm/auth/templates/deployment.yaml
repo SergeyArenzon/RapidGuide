@@ -20,12 +20,21 @@ spec:
         app: {{ .Chart.Name }}
     spec:
       initContainers:
-        - name: wait-for-rabbitmq
+        - name: wait-for-dependencies
           image: busybox
-          command: ["/bin/sh", "-c", "until nc -z -v -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done"]
-        {{- if .Values.initContainers }}
-        {{- toYaml .Values.initContainers | nindent 8 }}
-        {{- end }}
+          env:
+            - name: AUTH_DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-db-config
+                  key: POSTGRES_PORT
+          command:
+            - /bin/sh
+            - -c
+            - |
+              (until nc -z -w30 auth-db $AUTH_DB_PORT; do echo 'Waiting for PostgreSQL...'; sleep 5; done) &
+              (until nc -z -w30 rabbitmq 5672; do echo 'Waiting for RabbitMQ...'; sleep 5; done) &
+              wait
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

@@ -13,12 +13,12 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@nestjs/common": "^11.1.6",
-		"zod": "^4.1.7"
+		"@nestjs/common": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
-		"rimraf": "^5.0.10",
-		"typescript": "^5.1.0"
+		"rimraf": "catalog:",
+		"typescript": "catalog:"
 	},
 	"author": "",
 	"license": "ISC"
