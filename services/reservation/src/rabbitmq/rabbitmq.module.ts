@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { QUEUE_NAMES } from '@rapid-guide-io/contracts';
 import { RabbitmqPublisherService } from './rabbitmq-publisher.service';
 import { RabbitmqController } from './rabbitmq.controller';
 
@@ -11,7 +12,7 @@ import { RabbitmqController } from './rabbitmq.controller';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBITMQ_URL],
-          queue: process.env.NOTIFICATION_QUEUE ?? 'notifications',
+          queue: process.env.NOTIFICATION_QUEUE ?? QUEUE_NAMES.NOTIFICATIONS,
           queueOptions: { durable: true },
         },
       },

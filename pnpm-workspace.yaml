@@ -4,6 +4,7 @@ packages:
   - 'services/tour'
   - 'services/reservation'
   - 'services/client'
+  - 'services/notification2'
   - 'shared/contracts'
   - 'shared/decorators'
   - 'shared/guards'

@@ -1,0 +1,14 @@
+FROM node:24-alpine AS base
+RUN npm install -g pnpm
+
+FROM base AS build
+WORKDIR /app
+COPY . .
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm deploy --filter=@rapid-guide-io/notification /deploy/notification
+
+FROM oven/bun:1
+COPY --from=build /deploy/notification /app/services/notification2
+WORKDIR /app/services/notification2
+EXPOSE 8080
+CMD ["bun", "run", "--hot", "src/index.ts"]

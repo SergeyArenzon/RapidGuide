@@ -34,20 +34,24 @@ build:
     #         dest: services/tour
     #       - src: "services/tour/src/**/*.json"
     #         dest: services/tour
-    - image: sergeyarenzon/rapidguide-reservation
+    # - image: sergeyarenzon/rapidguide-reservation
+    #   context: .
+    #   docker:
+    #     dockerfile: services/reservation/Dockerfile.dev
+    #   sync:
+    #     manual:
+    #       - src: "services/reservation/src/**/*.ts"
+    #         dest: services/reservation
+    #       - src: "services/reservation/src/**/*.json"
+    #         dest: services/reservation
+    - image: sergeyarenzon/rapidguide-notification
       context: .
       docker:
-        dockerfile: services/reservation/Dockerfile.dev
+        dockerfile: services/notification2/Dockerfile.dev
       sync:
         manual:
-          - src: "services/reservation/src/**/*.ts"
-            dest: services/reservation
-          - src: "services/reservation/src/**/*.json"
-            dest: services/reservation
-    # - image: sergeyarenzon/rapidguide-notification
-    #   context: services/notification
-    #   docker:
-    #     dockerfile: Dockerfile
+          - src: "services/notification2/src/**/*.ts"
+            dest: /app/services/notification2/src
   tagPolicy:
     gitCommit: {}
   local:
@@ -64,10 +68,10 @@ manifests:
         chartPath: k8s/helm/gateway/
         valuesFiles:
           - k8s/helm/gateway/values.yaml
-      # - name: notification
-      #   chartPath: k8s/helm/notification/
-      #   valuesFiles:
-      #     - k8s/helm/notification/values.yaml
+      - name: notification
+        chartPath: k8s/helm/notification/
+        valuesFiles:
+          - k8s/helm/notification/values.yaml
       - name: ingress-nginx
         chartPath: k8s/helm/ingress-nginx/
         valuesFiles:
@@ -88,10 +92,10 @@ manifests:
       #   chartPath: k8s/helm/tour-db/
       #   valuesFiles:
       #     - k8s/helm/tour-db/values.yaml
-      - name: reservation-db
-        chartPath: k8s/helm/reservation-db/
-        valuesFiles:
-          - k8s/helm/reservation-db/values.yaml
+      # - name: reservation-db
+      #   chartPath: k8s/helm/reservation-db/
+      #   valuesFiles:
+      #     - k8s/helm/reservation-db/values.yaml
       # - name: auth
       #   chartPath: k8s/helm/auth/
       #   valuesFiles:
@@ -104,10 +108,10 @@ manifests:
       #   chartPath: k8s/helm/tour/
       #   valuesFiles:
       #     - k8s/helm/tour/values.yaml
-      - name: reservation
-        chartPath: k8s/helm/reservation/
-        valuesFiles:
-          - k8s/helm/reservation/values.yaml
+      # - name: reservation
+      #   chartPath: k8s/helm/reservation/
+      #   valuesFiles:
+      #     - k8s/helm/reservation/values.yaml
       - name: rabbitmq
         remoteChart: oci://registry-1.docker.io/cloudpirates/rabbitmq
         valuesFiles:

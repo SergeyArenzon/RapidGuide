@@ -1,3 +1,10 @@
+export const QUEUE_NAMES = {
+  NOTIFICATIONS: 'notifications',
+  RESERVATION_EVENTS: 'reservation-events',
+} as const;
+
+export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];
+
 export const NOTIFICATION_EVENTS = {
   RESERVATION_CREATED: 'reservation.created',
   RESERVATION_JOINED: 'reservation.joined',
